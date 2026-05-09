@@ -1,9 +1,9 @@
-# Ví dụ Vòng lặp Dọn dẹp
+# クリーンアップループの例
 
-Các tác vụ dọn dẹp định kỳ:
+定期的なクリーンアップタスク:
 
-- quét tài liệu lỗi thời
-- quét các vi phạm cấu trúc
-- cập nhật điểm chất lượng
-- mở các PR dọn dẹp có mục tiêu
-- chạy lại một slice benchmark cố định sau khi dọn dẹp
+- 古くなったドキュメントを検出する
+- 構造上の違反を検出する
+- 品質スコアを更新する
+- 対象を絞ったクリーンアップ PR を作成する
+- クリーンアップ後に固定の slice benchmark を再実行する

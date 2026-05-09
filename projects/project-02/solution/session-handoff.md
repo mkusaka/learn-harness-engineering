@@ -1,52 +1,52 @@
-# Session Handoff -- Project 02
+# セッション引き継ぎ -- Project 02
 
-## Last Session: 2026-03-30
+## 前回のセッション: 2026-03-30
 
-### What Was Accomplished
+### 完了したこと
 
-1. **Document Import** -- Implemented full import flow:
-   - ImportPanel component with file picker for .txt and .md files
-   - App.tsx toggles import view and refreshes document list after import
-   - DocumentService.importDocument() copies file and stores content
+1. **Document Import** -- 取り込みフローを一通り実装しました:
+   - `.txt` と `.md` ファイルを選べる ImportPanel コンポーネント
+   - App.tsx で取り込み画面の切り替えと、取り込み後の文書一覧の再読み込み
+   - DocumentService.importDocument() によるファイルのコピーと内容の保存
 
-2. **Document Detail with Content** -- Enhanced DocumentDetail component:
-   - Added `getContent` IPC channel for retrieving document text
-   - "View Content" button loads and displays full document text
-   - Delete button removes document from metadata and filesystem
+2. **内容付きの Document Detail** -- DocumentDetail コンポーネントを拡張しました:
+   - 文書テキストを取得する `getContent` IPC チャンネルを追加
+   - "View Content" ボタンで全文を読み込み、表示
+   - Delete ボタンでメタデータとファイルシステムの両方から文書を削除
 
-3. **Basic Persistence** -- Documents now persist across restarts:
-   - App.tsx calls refreshDocuments() on mount via useEffect
-   - PersistenceService reads documents-meta.json at startup
-   - All document data stored under userData/knowledge-base-data/
+3. **基本的な永続化** -- 文書が再起動後も保持されるようになりました:
+   - App.tsx が useEffect 経由でマウント時に refreshDocuments() を呼び出す
+   - PersistenceService が起動時に documents-meta.json を読み込む
+   - すべての文書データを userData/knowledge-base-data/ 以下に保存
 
-### What Remains
+### 残っていること
 
-No remaining features for Project 02. All 7 features in feature_list.json are at status "pass".
+Project 02 に残っている機能はありません。feature_list.json の 7 機能はすべて status "pass" です。
 
-### Decisions Made
+### 決定事項
 
-- Added GET_DOCUMENT_CONTENT as a new IPC channel rather than bundling content with GET_DOCUMENT to keep payloads small for list views.
-- Document deletion removes both the stored content file and the original copy in the documents directory.
-- Import panel replaces the document detail view rather than appearing in a modal.
+- 一覧表示時のペイロードを小さく保つため、内容を GET_DOCUMENT にまとめず、GET_DOCUMENT_CONTENT を新しい IPC チャンネルとして追加しました。
+- 文書削除では、保存済みの内容ファイルと documents ディレクトリ内の元のコピーの両方を削除します。
+- 取り込みパネルはモーダルではなく、文書詳細ビューを置き換える形にしました。
 
-### Files Modified
+### 変更したファイル
 
-- `src/shared/types.ts` -- Added GET_DOCUMENT_CONTENT IPC channel
-- `src/main/ipc-handlers.ts` -- Registered GET_DOCUMENT_CONTENT handler
-- `src/preload/preload.ts` -- Exposed documents.getContent()
-- `src/renderer/types.d.ts` -- Added getContent type declaration
-- `src/renderer/App.tsx` -- Added import toggle, delete handler, mount-time refresh
-- `src/renderer/components/DocumentDetail.tsx` -- Content viewer, delete button
-- `src/services/document-service.ts` -- Enhanced deleteDocument(), added hasPersistedData()
-- `AGENTS.md` -- Updated with docs hierarchy and session handoff guidance
-- `feature_list.json` -- All features marked pass
-- `docs/ARCHITECTURE.md` -- Updated with import flow
-- `docs/PRODUCT.md` -- Updated with new features
+- `src/shared/types.ts` -- GET_DOCUMENT_CONTENT IPC チャンネルを追加
+- `src/main/ipc-handlers.ts` -- GET_DOCUMENT_CONTENT ハンドラを登録
+- `src/preload/preload.ts` -- documents.getContent() を公開
+- `src/renderer/types.d.ts` -- getContent の型宣言を追加
+- `src/renderer/App.tsx` -- 取り込み切り替え、削除ハンドラ、マウント時の再読み込みを追加
+- `src/renderer/components/DocumentDetail.tsx` -- 内容ビューア、削除ボタン
+- `src/services/document-service.ts` -- deleteDocument() を強化し、hasPersistedData() を追加
+- `AGENTS.md` -- ドキュメント階層とセッション引き継ぎの案内を更新
+- `feature_list.json` -- すべての機能を pass に変更
+- `docs/ARCHITECTURE.md` -- 取り込みフローを更新
+- `docs/PRODUCT.md` -- 新機能を更新
 
-### Blockers
+### ブロッカー
 
-None.
+なし。
 
-### Next Steps
+### 次のステップ
 
-Proceed to Project 03 to add indexing, metadata extraction, and grounded Q&A features.
+Project 03 に進み、インデックス作成、メタデータ抽出、根拠付き Q&A 機能を追加します。

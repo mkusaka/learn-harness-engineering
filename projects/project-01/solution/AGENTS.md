@@ -1,62 +1,62 @@
 # AGENTS.md -- Project 01: Baseline vs Minimal Harness
 
-## Startup Rules
+## 起動時のルール
 
-Before writing any code, complete these steps in order:
+コードを書く前に、次の手順を順番に実行してください。
 
-1. **Read this file completely.** It defines the boundaries and conventions for this project.
-2. **Read `docs/ARCHITECTURE.md`** to understand the Electron layer structure.
-3. **Read `docs/PRODUCT.md`** to understand the feature requirements.
-4. **Run `bash init.sh`** to verify the project builds cleanly. If it fails, fix build errors before proceeding.
-5. **Read `feature_list.json`** to see the current state of all features.
+1. **このファイルを最後まで読む。** このプロジェクトの境界と規約が定義されています。
+2. **`docs/ARCHITECTURE.md` を読む。** Electron のレイヤー構成を理解してください。
+3. **`docs/PRODUCT.md` を読む。** 機能要件を理解してください。
+4. **`bash init.sh` を実行する。** プロジェクトが問題なくビルドできることを確認してください。失敗した場合は、先にビルドエラーを修正してください。
+5. **`feature_list.json` を読む。** すべての機能の現在の状態を確認してください。
 
-## Electron Layer Boundaries
+## Electron レイヤーの境界
 
-This project has four strict layers. Code must respect these boundaries:
+このプロジェクトには、厳密に分けられた 4 つのレイヤーがあります。コードはこの境界を必ず守ってください。
 
 ### Main Process (`src/main/`)
-- Owns the `BrowserWindow` lifecycle and IPC registration.
-- Imports services but never renderer code.
-- All filesystem access happens here via services.
+- `BrowserWindow` のライフサイクルと IPC の登録を担当します。
+- サービスは読み込みますが、renderer のコードは読み込みません。
+- ファイルシステムへのアクセスは、すべてここでサービス経由で行います。
 
 ### Preload (`src/preload/`)
-- The ONLY bridge between main and renderer.
-- Uses `contextBridge.exposeInMainWorld` to expose typed APIs.
-- Never imports React or renderer code.
+- main と renderer をつなぐ唯一の橋渡しです。
+- `contextBridge.exposeInMainWorld` を使って型付き API を公開します。
+- React や renderer のコードは読み込みません。
 
 ### Renderer (`src/renderer/`)
-- React + TypeScript UI layer.
-- Communicates with main process exclusively through `window.knowledgeBase` API.
-- Never imports Node.js modules (`fs`, `path`, `electron`).
-- Uses the type declarations in `types.d.ts`.
+- React + TypeScript の UI レイヤーです。
+- `window.knowledgeBase` API を通じてのみ main process と通信します。
+- Node.js モジュール（`fs`, `path`, `electron`）は読み込みません。
+- `types.d.ts` の型宣言を使います。
 
 ### Services (`src/services/`)
-- Pure TypeScript business logic running in the main process.
-- Services may import from `src/shared/` but never from `src/renderer/`.
-- Each service receives `PersistenceService` via constructor injection.
+- main process で動作する、純粋な TypeScript のビジネスロジックです。
+- Services は `src/shared/` からは読み込めますが、`src/renderer/` からは読み込めません。
+- 各 service はコンストラクタ注入で `PersistenceService` を受け取ります。
 
-## Conventions
+## 規約
 
-- TypeScript strict mode is enabled. No `any` types without a comment explaining why.
-- Use named exports (no default exports).
-- IPC channel names are defined once in `src/shared/types.ts` (`IPC_CHANNELS`).
-- All async operations return Promises; never use synchronous I/O in the renderer.
+- TypeScript の strict mode が有効です。理由のコメントなしに `any` 型を使わないでください。
+- 名前付き export を使ってください。default export は使いません。
+- IPC channel 名は `src/shared/types.ts` の `IPC_CHANNELS` で 1 回だけ定義します。
+- すべての非同期操作は Promise を返してください。renderer で同期 I/O を使ってはいけません。
 
-## Definition of Done
+## 完了条件
 
-A feature is "done" when all of the following are true:
+機能が「完了」とみなされるのは、次のすべてを満たしたときです。
 
-1. TypeScript compiles without errors (`npm run check`).
-2. The app launches and the window is visible (`npm run dev`).
-3. The feature appears in `feature_list.json` with status `"pass"` and evidence.
-4. The code respects Electron layer boundaries defined above.
-5. No console errors during normal operation.
+1. TypeScript がエラーなしでコンパイルできること（`npm run check`）。
+2. アプリが起動し、ウィンドウが表示されること（`npm run dev`）。
+3. 機能が `feature_list.json` に `"pass"` 状態と根拠つきで載っていること。
+4. コードが上記の Electron レイヤー境界を守っていること。
+5. 通常操作中にコンソールエラーが出ないこと。
 
-## Working with the Feature List
+## Feature List の扱い
 
-The `feature_list.json` file is the source of truth for project progress:
+`feature_list.json` ファイルが、このプロジェクトの進捗に関する唯一の正本です。
 
-- Each feature has a `status`: `"pass"`, `"fail"`, `"not-started"`.
-- When implementing a feature, update its status to `"pass"` with evidence.
-- If a feature is blocked, set status to `"fail"` with a reason.
-- Never delete features from the list.
+- 各 feature には `"pass"`、`"fail"`、`"not-started"` のいずれかの `status` があります。
+- feature を実装したら、根拠を添えて `status` を `"pass"` に更新してください。
+- feature がブロックされている場合は、理由を添えて `status` を `"fail"` に設定してください。
+- リストから feature を削除しないでください。

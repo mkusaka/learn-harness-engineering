@@ -1,45 +1,42 @@
-# SOP: Encode Unseen Knowledge Into The Repo
+# SOP: リポジトリに見えない知識を埋め込む
 
-Use this SOP when important context still lives in Google Docs, chat threads,
-tickets, or people's heads.
+重要な文脈がまだ Google Docs、チャットスレッド、チケット、あるいは人の頭の中に残っているときに、このSOPを使います。
 
-## Goal
+## 目的
 
-Make agent-invisible knowledge discoverable in the codebase so a fresh session
-can act on it without relying on prior conversation.
+エージェントから見えない知識をコードベース内で見つけられる形にし、新しいセッションでも過去の会話に頼らずに対応できるようにします。
 
-## Trigger Signals
+## 発動条件
 
-- The agent keeps asking how the system works.
-- Humans say "we decided this in Slack" or "follow what X said last week."
-- Reviews reference product or security rules that are not written in-repo.
-- New sessions repeat discovery work that should already be settled.
+- エージェントがシステムの動作について何度も尋ねてくる。
+- 人間が「これは Slack で決めた」「先週 X が言ったことに従って」と言う。
+- レビューで、リポジトリ内に書かれていないプロダクト規則やセキュリティ規則が参照される。
+- 新しいセッションが、本来ならすでに確定しているはずの調査作業を繰り返す。
 
-## Execution SOP
+## 実行手順
 
-1. List the invisible knowledge sources: docs, chats, tacit team rules, verbal decisions.
-2. For each source, ask: is this architecture, product behavior, security policy,
-   reliability expectation, plan context, or reference material?
-3. Encode it into the matching repo artifact:
+1. 見えない知識の出どころを列挙します。docs、チャット、暗黙のチームルール、口頭での決定などです。
+2. 各出どころについて、それが architecture、product behavior、security policy、reliability expectation、plan context、reference material のどれに当たるかを確認します。
+3. 該当する repo artifact に書き込みます。
    - architecture -> `ARCHITECTURE.md`
    - product behavior -> `docs/product-specs/`
    - design rationale -> `docs/design-docs/`
    - execution state -> `docs/exec-plans/`
    - repeated external references -> `docs/references/`
    - quality or reliability expectations -> `docs/QUALITY_SCORE.md` or `docs/RELIABILITY.md`
-4. Replace vague statements with operationally useful wording.
-5. Remove or deprecate stale copies so the repo keeps one discoverable truth.
+4. 曖昧な表現を、運用上そのまま使える表現に置き換えます。
+5. 古い複製は削除するか非推奨にして、リポジトリに参照可能な真実を1つだけ残します。
 
-## Good Encoding Rules
+## 良い記述ルール
 
-- Write for discoverability, not for literary completeness.
-- Prefer short documents with clear filenames.
-- Link related artifacts together.
-- Store durable rules, not meeting transcripts.
-- Update the repo in the same session that the decision is made.
+- 発見しやすさを優先し、文学的な完成度は追い求めない。
+- 短く、ファイル名が明確な文書を優先する。
+- 関連する artifact 同士をリンクでつなぐ。
+- 会議の逐語録ではなく、長く有効なルールを保存する。
+- 決定が行われたそのセッションで、リポジトリも更新する。
 
-## Definition Of Done
+## 完了条件
 
-- A fresh agent can discover the relevant rule without asking a human.
-- The same fact is not scattered across multiple contradictory files.
-- The new artifact lives close to the code or workflow it governs.
+- 新しいエージェントが、人間に聞かずに関連ルールを見つけられる。
+- 同じ事実が、矛盾する複数のファイルに散らばっていない。
+- 新しい artifact が、それが管理するコードやワークフローの近くに置かれている。

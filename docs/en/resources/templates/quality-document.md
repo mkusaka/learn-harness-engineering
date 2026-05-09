@@ -1,21 +1,21 @@
-# Quality Document
+# 品質ドキュメント
 
-A quality snapshot for each product domain and architectural layer. Both agents and humans can use this document to quickly understand where the codebase is strong and where it needs work.
+各プロダクト領域とアーキテクチャ層ごとの品質のスナップショットです。このドキュメントは、エージェントと人間の両方が、コードベースの強みと改善が必要な箇所をすばやく把握するために使えます。
 
-**Update cadence:** After each significant session, or before starting a new phase of work.
+**更新頻度:** 重要なセッションごと、または新しい作業フェーズを始める前に更新します。
 
-**Grading scale:**
+**評価基準:**
 
-- **A**: All verification passing, clean architecture, agent-legible, stable tests
-- **B**: Verification passing, mostly clean, minor gaps in legibility or test coverage
-- **C**: Partially working, known gaps, some code areas hard for agents to understand
-- **D**: Not working, or major structural issues
+- **A**: すべての検証が通っており、アーキテクチャが整っていて、エージェントにとって読みやすく、テストも安定している
+- **B**: 検証は通っており、概ね整っているが、可読性やテストカバレッジに軽微な不足がある
+- **C**: 部分的に動作しており、既知の不足があり、エージェントには理解しづらいコード領域がある
+- **D**: 動作していない、または構造上の大きな問題がある
 
 ---
 
-## Product Domains
+## プロダクト領域
 
-| Domain | Grade | Verification | Agent Legibility | Test Stability | Key Gaps | Last Updated |
+| 領域 | 評価 | 検証 | エージェント向け可読性 | テストの安定性 | 主な不足点 | 最終更新 |
 |--------|-------|-------------|-----------------|---------------|----------|-------------|
 | Document Import | - | - | - | - | - | - |
 | Document Management | - | - | - | - | - | - |
@@ -23,21 +23,21 @@ A quality snapshot for each product domain and architectural layer. Both agents 
 | Q&A Flow | - | - | - | - | - | - |
 | Grounded Answers | - | - | - | - | - | - |
 
-## Architectural Layers
+## アーキテクチャ層
 
-| Layer | Grade | Boundary Enforcement | Agent Legibility | Key Gaps | Last Updated |
+| 層 | 評価 | 境界の厳格さ | エージェント向け可読性 | 主な不足点 | 最終更新 |
 |-------|-------|---------------------|-----------------|----------|-------------|
 | Main Process | - | - | - | - | - |
 | Preload | - | - | - | - | - |
 | Renderer | - | - | - | - | - |
 | Services | - | - | - | - | - |
 
-## Change History
+## 変更履歴
 
 ### YYYY-MM-DD
 
-- Changes:
-- Domains promoted:
-- Domoted:
-- New gaps identified:
-- Gaps closed:
+- 変更:
+- 昇格した領域:
+- 降格した領域:
+- 新たに見つかった不足点:
+- 解消された不足点:

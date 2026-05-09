@@ -1,23 +1,23 @@
-# Hiệu chỉnh Prompt
+# プロンプトの調整
 
-Hướng dẫn gốc nên định nghĩa khung vận hành, không phải mọi nước đi có thể.
+元のガイダンスは、あらゆる可能な手順ではなく、運用の枠組みを定義すべきです。
 
-## Giữ trong Tệp Gốc
+## 元のファイルに残すもの
 
-- mục đích và phạm vi kho lưu trữ
-- đường dẫn khởi động
-- đường dẫn xác minh
-- các ràng buộc không thể thương lượng
-- các artifact trạng thái bắt buộc
-- quy tắc cuối phiên
+- リポジトリの目的と範囲
+- 開始用のパス
+- 検証用のパス
+- 交渉の余地がない制約
+- 必須の状態アーティファクト
+- セッション終了時のルール
 
-## Chuyển Ra Khỏi Tệp Gốc
+## 元のファイルから移すもの
 
-- các edge case lịch sử dài
-- chi tiết triển khai cụ thể theo chủ đề
-- ghi chú kiến trúc cục bộ thuộc về gần mã
-- các ví dụ chỉ áp dụng cho một hệ thống con
+- 長く続く履歴上のエッジケース
+- トピックごとの具体的な実装詳細
+- コードの近くに置くべきローカルなアーキテクチャメモ
+- 1つのサブシステムにしか当てはまらない例
 
-## Quy tắc Làm việc
+## 作業ルール
 
-Tệp gốc nên giúp một phiên mới định hướng nhanh chóng. Nếu tệp đang trở thành bãi rác cho mọi lỗi trong quá khứ, hãy chia chi tiết thành các tài liệu nhỏ hơn và liên kết đến chúng thay thế.
+元のファイルは、新しいセッションがすばやく方向づけられるようにするべきです。もしそのファイルが過去のあらゆる問題の受け皿になっているなら、詳細を小さな文書に分割し、代わりにそれらへリンクしてください。

@@ -1,43 +1,43 @@
 # CLAUDE.md
 
-Bạn đang làm việc trong một kho lưu trữ được thiết kế cho công việc triển khai chạy lâu. Ưu tiên hoàn thành đáng tin cậy, tính liên tục qua các phiên, và xác minh rõ ràng hơn tốc độ.
+あなたは、長時間にわたる実装作業向けに設計されたリポジトリで作業しています。速度よりも、確実な完了、セッションをまたいだ継続性、そして明確な検証を優先してください。
 
-## Vòng lặp Vận hành
+## 運用ループ
 
-Ở đầu mỗi phiên:
+各セッションの開始時に:
 
-1. Chạy `pwd` và xác nhận bạn đang ở trong thư mục gốc kho lưu trữ dự kiến.
-2. Đọc `claude-progress.md`.
-3. Đọc `feature_list.json`.
-4. Xem lại các commit gần đây bằng `git log --oneline -5`.
-5. Chạy `./init.sh`.
-6. Kiểm tra xem đường dẫn smoke hoặc end-to-end baseline có đã bị hỏng chưa.
+1. `pwd` を実行し、想定しているリポジトリのルートにいることを確認します。
+2. `claude-progress.md` を読みます。
+3. `feature_list.json` を読みます。
+4. `git log --oneline -5` で最近のコミットを確認します。
+5. `./init.sh` を実行します。
+6. smoke または end-to-end の baseline の経路が壊れていないか確認します。
 
-Sau đó chọn chính xác một tính năng chưa hoàn thành và chỉ làm việc trên tính năng đó cho đến khi bạn xác minh nó hoặc ghi lại lý do tại sao nó bị chặn.
+そのあと、未完了の機能をちょうど1つ選び、検証が完了するか、ブロックされている理由を記録するまで、その機能だけに取り組みます。
 
-## Quy tắc
+## ルール
 
-- Một tính năng active tại một thời điểm.
-- Không tuyên bố hoàn thành mà không có bằng chứng có thể chạy được.
-- Không viết lại feature list để ẩn công việc chưa hoàn thành.
-- Không xóa hoặc làm yếu các test chỉ để tác vụ có vẻ hoàn thành.
-- Sử dụng các artifact kho lưu trữ như hệ thống ghi chép.
+- 同時にアクティブにする機能は1つだけです。
+- 実行可能な証拠がなければ、完了したと宣言しません。
+- 未完了の作業を隠すために feature list を書き換えません。
+- その作業を完了したように見せるためだけに、テストを削除したり弱めたりしません。
+- リポジトリの artifact を記録システムとして活用します。
 
-## Tệp Bắt buộc
+## 必須ファイル
 
 - `feature_list.json`
 - `claude-progress.md`
 - `init.sh`
-- `session-handoff.md` khi bàn giao ngắn gọn hữu ích
+- 簡潔な引き継ぎが役立つ場合の `session-handoff.md`
 
-## Cổng Hoàn thành
+## 完了ゲート
 
-Một tính năng chỉ có thể chuyển sang `passing` sau khi xác minh cần thiết thành công và kết quả được ghi lại.
+必要な検証が成功し、その結果が記録されてはじめて、機能は `passing` に移行できます。
 
-## Trước khi Bạn Dừng
+## 終了前に
 
-1. Cập nhật nhật ký tiến độ.
-2. Cập nhật trạng thái tính năng.
-3. Ghi lại những gì vẫn bị hỏng hoặc chưa được xác minh.
-4. Commit khi kho lưu trữ an toàn để tiếp tục.
-5. Để lại đường dẫn khởi động lại sạch sẽ cho phiên tiếp theo.
+1. 進捗ログを更新します。
+2. 機能の状態を更新します。
+3. まだ壊れているもの、または未検証のものを記録します。
+4. リポジトリが安全に再開できる状態なら commit します。
+5. 次のセッションでクリーンに再開できる手順を残します。

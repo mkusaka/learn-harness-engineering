@@ -1,32 +1,32 @@
 # RELIABILITY.md
 
-Tệp này định nghĩa cách hệ thống chứng minh nó khỏe mạnh và có thể khởi động lại.
+このファイルは、システムが正常に動作しており、再起動可能であることをどのように示すかを定義します。
 
-## Đường dẫn Chuẩn
+## 標準パス
 
-- Bootstrap: `[lệnh]`
-- Xác minh: `[lệnh]`
-- Khởi động app hoặc service: `[lệnh]`
-- Debug hoặc kiểm tra runtime: `[lệnh]`
+- Bootstrap: `[コマンド]`
+- 検証: `[コマンド]`
+- アプリまたは service の起動: `[コマンド]`
+- runtime のデバッグまたは確認: `[コマンド]`
 
-## Tín hiệu Runtime Bắt buộc
+## 必須の Runtime シグナル
 
-- log có cấu trúc cho khởi động và các luồng quan trọng
-- health check cho các service chính
-- dữ liệu trace hoặc timing cho các đường dẫn chậm khi có sẵn
-- trạng thái lỗi có thể nhìn thấy của người dùng cho các thất bại có thể phục hồi
+- 起動時および重要なフローに対する構造化された log
+- 主要な service の health check
+- 利用可能な場合は、遅いパスに対する trace または timing データ
+- 復旧可能な失敗に対してユーザーに見える error state
 
-## Journey Vàng
+## 黄金の Journey
 
 - `[journey 1]`
 - `[journey 2]`
 - `[journey 3]`
 
-Mỗi journey vàng nên có đường dẫn xác minh có thể lặp lại và tín hiệu thất bại rõ ràng.
+各黄金の journey には、繰り返し実行できる検証パスと、明確な失敗シグナルが必要です。
 
-## Quy tắc Độ tin cậy
+## 信頼性のルール
 
-- Không có tính năng nào hoàn thành nếu hệ thống không thể khởi động lại sạch sẽ sau đó.
-- Các thất bại runtime nên có thể chẩn đoán từ các tín hiệu cục bộ repo.
-- Nếu một chế độ thất bại lặp đi lặp lại xuất hiện, hãy thêm benchmark hoặc guardrail cho nó.
-- Dọn dẹp là một phần của độ tin cậy, không phải một mối quan tâm riêng biệt.
+- システムがその後にクリーンに再起動できないなら、どの機能も完了扱いにしないこと。
+- runtime の失敗は、repo 内のローカルなシグナルから診断できるようにすること。
+- 失敗モードが繰り返し現れる場合は、それに対する benchmark か guardrail を追加すること。
+- クリーンアップは信頼性の一部であり、別個の懸念ではない。

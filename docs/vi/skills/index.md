@@ -1,49 +1,49 @@
-# Kỹ năng (Skills)
+# スキル (Skills)
 
-Thư mục này chứa các bộ kỹ năng (skills) đi kèm với khóa học này. Các kỹ năng là các mẫu prompt độc lập có thể được nạp bởi các AI coding agent (Claude Code, Codex, Cursor, Windsurf, v.v.) để thực hiện các tác vụ chuyên môn.
+このディレクトリには、このコースに付属するスキル集が含まれています。スキルは、AI コーディングエージェント（Claude Code、Codex、Cursor、Windsurf など）が専門的なタスクを実行するために読み込める、独立したプロンプトテンプレートです。
 
 ## harness-creator
 
-Một kỹ năng xây dựng harness cấp độ thực tế (production-grade) dành cho AI coding agent. Nó giúp bạn tạo ra, đánh giá và cải thiện năm hệ thống cốt lõi của harness: hướng dẫn (instructions), trạng thái (state), xác minh (verification), phạm vi (scope) và vòng đời phiên làm việc (session lifecycle).
+AI コーディングエージェント向けの実運用レベル（production-grade）のハーネス構築スキルです。ハーネスの5つの中核システムである、指示（instructions）、状態（state）、検証（verification）、スコープ（scope）、セッションライフサイクル（session lifecycle）を作成し、評価し、改善するのに役立ちます。
 
-### Chức năng
+### 機能
 
-- **Tạo harness từ đầu** — AGENTS.md, danh sách tính năng, luồng công việc xác minh
-- **Cải thiện các harness hiện có** — Đánh giá năm hệ thống phụ với các cải tiến được ưu tiên
-- **Thiết kế tính liên tục của phiên** — Lưu trữ bộ nhớ, theo dõi tiến độ, thủ tục bàn giao
-- **Áp dụng các mẫu production** — Bộ nhớ, kỹ thuật ngữ cảnh, an toàn công cụ, điều phối đa agent
+- **ハーネスをゼロから作成する** — AGENTS.md、機能一覧、検証ワークフロー
+- **既存のハーネスを改善する** — 優先度付きの改善を伴う5つのサブシステムを評価する
+- **セッションの継続性を設計する** — メモリ保存、進捗追跡、引き継ぎ手順
+- **production パターンを適用する** — メモリ、コンテキスト技法、ツールの安全性、マルチエージェント調整
 
-### Bắt đầu Nhanh
+### クイックスタート
 
-Các tệp kỹ năng nằm trong kho lưu trữ tại [`skills/harness-creator/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/skills/harness-creator).
+スキルファイルはリポジトリ内の [`skills/harness-creator/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/skills/harness-creator) にあります。
 
-Để sử dụng nó với Claude Code, hãy sao chép thư mục `harness-creator/` vào đường dẫn kỹ năng trong dự án của bạn, hoặc chỉ định tệp SKILL.md cho agent của bạn.
+Claude Code で使うには、`harness-creator/` ディレクトリをプロジェクトのスキルパスへコピーするか、エージェントに SKILL.md ファイルを指定してください。
 
-### Các Mẫu Tham Khảo (Reference Patterns)
+### 参照パターン
 
-Kỹ năng này bao gồm 6 tài liệu tham khảo chuyên sâu:
+このスキルには、6つの詳細な参照ドキュメントが含まれています。
 
-| Mẫu (Pattern) | Khi nào sử dụng |
+| パターン | 使用する場面 |
 |---------|-------------|
-| Lưu trữ bộ nhớ | Agent quên giữa các phiên |
-| Kỹ thuật ngữ cảnh | Quản lý ngân sách ngữ cảnh, nạp tức thời (JIT) |
-| Đăng ký công cụ | An toàn công cụ, kiểm soát đồng thời |
-| Điều phối Đa Agent | Xử lý song song, quy trình làm việc chuyên môn hóa |
-| Vòng đời & Khởi động | Hooks, tác vụ nền, khởi tạo |
-| Cạm bẫy (Gotchas) | 15 chế độ lỗi không rõ ràng kèm theo cách sửa |
+| メモリ保存 | エージェントがセッション間で忘れてしまう |
+| コンテキスト技法 | コンテキスト予算の管理、JIT ロード |
+| ツール登録 | ツールの安全性、同時実行制御 |
+| マルチエージェント調整 | 並列処理、専門化されたワークフロー |
+| ライフサイクル & 起動 | フック、バックグラウンドタスク、初期化 |
+| 落とし穴 (Gotchas) | 15 の不明瞭な失敗モードとその修正方法 |
 
-### Các Mẫu (Templates)
+### テンプレート
 
-Kỹ năng này đi kèm với các mẫu sẵn sàng sử dụng:
+このスキルには、すぐに使えるテンプレートが含まれています。
 
-- `agents.md` — Khung AGENTS.md với các quy tắc hoạt động
-- `feature-list.json` — JSON Schema + danh sách tính năng mẫu
-- `init.sh` — Kịch bản khởi tạo tiêu chuẩn
-- `progress.md` — Mẫu nhật ký tiến độ phiên làm việc
+- `agents.md` — 運用ルールを含む AGENTS.md のひな形
+- `feature-list.json` — JSON Schema + 機能一覧のサンプル
+- `init.sh` — 標準的な初期化スクリプト
+- `progress.md` — セッション進捗ログのテンプレート
 
-### Kỹ năng này được Xây dựng như thế nào
+### このスキルの作成方法
 
-`harness-creator` được phát triển bằng phương pháp **skill-creator** — kỹ năng meta (meta-skill) chính thức của Anthropic để tạo, thử nghiệm và cải thiện lặp đi lặp lại các kỹ năng của agent. skill-creator cung cấp một luồng công việc có cấu trúc (bản nháp → thử nghiệm → đánh giá → lặp lại) được tích hợp sẵn các công cụ chạy đánh giá (eval runners), máy chấm điểm (graders) và trình xem điểm chuẩn (benchmark viewer).
+`harness-creator` は、Anthropic の公式メタスキルである **skill-creator** を使って開発されました。skill-creator は、エージェント向けスキルを作成し、テストし、反復的に改善するための構造化されたワークフロー（ドラフト → テスト → 評価 → 反復）を提供し、評価ランナー（eval runners）、採点器（graders）、ベンチマークビューア（benchmark viewer）を標準で組み込んでいます。
 
-- **Mã nguồn skill-creator**: [anthropics/skills — skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator)
-- **Tài liệu kỹ năng Claude Code**: [anthropics/claude-code — plugin-dev/skills](https://github.com/anthropics/claude-code/tree/main/plugins/plugin-dev/skills)
+- **skill-creator のソース**: [anthropics/skills — skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator)
+- **Claude Code のスキル関連ドキュメント**: [anthropics/claude-code — plugin-dev/skills](https://github.com/anthropics/claude-code/tree/main/plugins/plugin-dev/skills)

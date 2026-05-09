@@ -1,42 +1,42 @@
 # Project 01: Baseline vs Minimal Harness
 
-比较弱 harness（仅靠 prompt）和显式 harness（规则文件 + 验证机制）对 AI 编码代理任务完成率的影响。
+弱い harness（プロンプトのみ）と、明示的な harness（ルールファイル + 検証機構）が AI コーディングエージェントのタスク完了率に与える影響を比較します。
 
-## 目录说明
+## ディレクトリ説明
 
-| 目录 | 含义 |
+| ディレクトリ | 意味 |
 |------|------|
-| `starter/` | **起点**——只有一个模糊的 `task-prompt.md`，没有 AGENTS.md、没有 feature_list.json。这是你给代理的"弱 harness"版本。 |
-| `solution/` | **参考实现**——相同的应用代码，但配备了完整的 harness 文件（AGENTS.md、feature_list.json、init.sh、claude-progress.md）。这是"显式 harness"版本。 |
+| `starter/` | **出発点**。曖昧な `task-prompt.md` だけがあり、AGENTS.md も feature_list.json もありません。これはエージェントに渡す「弱い harness」版です。 |
+| `solution/` | **参考実装**。同じアプリコードですが、完全な harness ファイル（AGENTS.md、feature_list.json、init.sh、claude-progress.md）が揃っています。これは「明示的な harness」版です。 |
 
-## 使用方法
+## 使い方
 
 ```sh
-# 1. 用 starter（弱 harness）跑一次代理任务
+# 1. starter（弱い harness）で一度エージェントタスクを実行する
 cd starter
 npm install
-# 把 task-prompt.md 的内容作为 prompt 给 Claude Code / Codex
-# 让代理尝试完成：窗口启动、文档列表、问答面板、数据目录
+# task-prompt.md の内容を Claude Code / Codex への prompt として渡す
+# エージェントに以下の完了を試させる: ウィンドウ起動、文書一覧、QA パネル、データディレクトリ
 
-# 2. 用 solution（显式 harness）跑一次
+# 2. solution（明示的な harness）でもう一度実行する
 cd ../solution
 npm install
-# 让代理读取 AGENTS.md，按规则执行同样的任务
+# AGENTS.md を読み、ルールに従って同じタスクを実行させる
 
-# 3. 对比两次结果
-# - 任务是否完成？
-# - 需要重试几次？
-# - 代理是否提前声称"完成"？
+# 3. 2 回の結果を比較する
+# - タスクは完了したか？
+# - 何回再試行が必要だったか？
+# - エージェントは途中で「完了した」と先に主張したか？
 ```
 
-## 本项目涉及的功能
+## このプロジェクトで扱う機能
 
-- Electron 窗口成功启动
-- UI 显示文档列表区域
-- UI 显示问答面板
-- 应用创建并使用本地数据目录
+- Electron ウィンドウが正常に起動する
+- UI に文書一覧エリアが表示される
+- UI に QA パネルが表示される
+- アプリがローカルデータディレクトリを作成し、それを使用する
 
-## 对应课件
+## 対応する講義
 
-- [Lecture 01: 为什么强大的模型仍然会失败](../../docs/lectures/lecture-01-why-capable-agents-still-fail/index.md)
-- [Lecture 02: Harness 到底是什么](../../docs/lectures/lecture-02-what-a-harness-actually-is/index.md)
+- [Lecture 01: なぜ有能なモデルでも失敗するのか](../../docs/lectures/lecture-01-why-capable-agents-still-fail/index.md)
+- [Lecture 02: Harness とは実際には何か](../../docs/lectures/lecture-02-what-a-harness-actually-is/index.md)

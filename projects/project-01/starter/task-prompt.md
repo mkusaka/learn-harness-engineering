@@ -1,3 +1,3 @@
-# Task
+# タスク
 
-Build an Electron app that can show documents and answer questions.
+ドキュメントを表示し、質問に回答できる Electron アプリを構築してください。

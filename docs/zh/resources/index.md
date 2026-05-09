@@ -1,52 +1,51 @@
 # 中文资料库
 
-这个文件夹把课程里的方法整理成可以直接参考和复用的材料，不是再讲一遍概念，而是尽量回答两个问题：
+このフォルダは、コースで扱う手法をそのまま参照・再利用できる形に整理したものです。概念を繰り返し説明するのではなく、できるだけ次の2点に答えることを目的にしています。
 
-- 我现在应该先抄哪些文件
-- 这些文件分别解决什么问题
+- 今すぐ最初にどのファイルを真似ればよいか
+- それぞれのファイルが何を解決するのか
 
-## 适合什么时候用
+## いつ使うか
 
-当你准备让 Codex、Claude Code 或其他 coding agent 在一个仓库里持续工作时，就可以从这里开始。它特别适合这些场景：
+Codex、Claude Code、または他の coding agent を1つのリポジトリで継続的に動かしたいときは、ここから始めるとよいです。特に次のような場面に向いています。
 
-- 多轮会话开发，担心上下文断裂
-- 功能多，容易出现做一半就停的半成品
-- 常常提前宣布完成，但实际没测透
-- 每次开工都要重新摸索启动方式
+- 複数回の会話をまたぐ開発で、コンテキストが途切れるのが心配なとき
+- 機能数が多く、中途半端な状態のまま止まりやすいとき
+- できたと早めに宣言しがちだが、実際には十分にテストできていないとき
+- 毎回作業を始めるたびに、起動方法を一から思い出す必要があるとき
 
-## 从这里开始
+## ここから始める
 
-如果你想先搭一个最小可用版本，优先看这些文件：
+まず最小構成で始めたいなら、次のファイルを優先して確認してください。
 
-- 根指令文件：[`templates/AGENTS.md`](./templates/AGENTS.md) 或 [`templates/CLAUDE.md`](./templates/CLAUDE.md)
-- 功能状态文件：[`templates/feature_list.json`](./templates/feature_list.json)
-- 进度日志：[`templates/claude-progress.md`](./templates/claude-progress.md)
-- 启动脚本参考：`docs/resources/templates/init.sh`
+- ルート指示ファイル：[`templates/AGENTS.md`](./templates/AGENTS.md) または [`templates/CLAUDE.md`](./templates/CLAUDE.md)
+- 機能状態ファイル：[`templates/feature_list.json`](./templates/feature_list.json)
+- 進捗ログ：[`templates/claude-progress.md`](./templates/claude-progress.md)
+- 起動スクリプトの参考：`docs/resources/templates/init.sh`
 
-然后按需要补上：
+そのうえで、必要に応じて次を追加します。
 
-- 会话交接模板：[`templates/session-handoff.md`](./templates/session-handoff.md)
-- 收尾检查清单：[`templates/clean-state-checklist.md`](./templates/clean-state-checklist.md)
-- 评审模板：[`templates/evaluator-rubric.md`](./templates/evaluator-rubric.md)
+- 会話引き継ぎテンプレート：[`templates/session-handoff.md`](./templates/session-handoff.md)
+- 終了時チェックリスト：[`templates/clean-state-checklist.md`](./templates/clean-state-checklist.md)
+- レビューテンプレート：[`templates/evaluator-rubric.md`](./templates/evaluator-rubric.md)
 
-如果你想直接采用 OpenAI 那篇 harness engineering 文章里更完整的仓库组织方式，可以继续看：
+OpenAI のあの harness engineering 記事で紹介されている、より完全なリポジトリ構成をそのまま採用したいなら、こちらも参照してください。
 
 - [`openai-advanced/index.md`](./openai-advanced/index.md)
 
-## 资料库结构
+## 資料庫の構成
 
-- [`templates/`](./templates/index.md)：可以直接复制到真实仓库里的模板
-- [`reference/`](./reference/index.md)：方法说明、启动流程和问题对照表
-- [`openai-advanced/`](./openai-advanced/index.md)：更完整的 OpenAI 风格高级资源包，包括仓库骨架、质量文档、执行计划和系统级治理文件
+- [`templates/`](./templates/index.md)：実際のリポジトリにそのままコピーできるテンプレート
+- [`reference/`](./reference/index.md)：手法の説明、起動手順、問題の対照表
+- [`openai-advanced/`](./openai-advanced/index.md)：リポジトリ骨組み、品質文書、実行計画、システムレベルのガバナンス文書を含む、より完全な OpenAI 風の上級リソースパック
 
-## 推荐最小组合
+## 推奨最小構成
 
-- `AGENTS.md` 或 `CLAUDE.md`
+- `AGENTS.md` または `CLAUDE.md`
 - `feature_list.json`
 - `claude-progress.md`
 - `init.sh`
 
-先把这四样放进项目里，再开始让 agent 持续工作，通常就已经能明显降低返工和瞎猜。
+まずこの4つをプロジェクトに入れてから agent を継続的に動かし始めると、手戻りと当て推量をかなり減らせます。
 
-如果你的仓库已经进入多模块、多阶段、多角色协作，可以直接升级到
-[`openai-advanced/`](./openai-advanced/index.md) 这一套高级结构，而不是继续把最小模板硬撑成一个大而乱的系统。
+リポジトリがすでにマルチモジュール、マルチステージ、マルチロールの協働段階に入っているなら、最小テンプレートを無理に巨大で雑多なシステムへ押し広げるのではなく、[`openai-advanced/`](./openai-advanced/index.md) の上級構成にそのまま移行してください。

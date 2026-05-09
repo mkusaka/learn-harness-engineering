@@ -1,12 +1,12 @@
-# Ví dụ Sprint Contract
+# Sprint Contract の例
 
-Mục tiêu sprint:
+スプリントの目的:
 
-- Thêm trích dẫn có thể nhìn thấy vào các kết quả Q&A có grounding
+- grounding された Q&A の結果に、表示可能な引用を追加する
 
-Xong có nghĩa là:
+完了条件:
 
-- Người dùng đặt câu hỏi
-- Ứng dụng trả về câu trả lời
-- Ít nhất một trích dẫn được hiển thị
-- Nhấp vào trích dẫn mở vị trí nguồn trong document view
+- ユーザーが質問をする
+- アプリケーションが回答を返す
+- 少なくとも1件の引用が表示される
+- 引用をクリックすると、document view で該当ソースの位置が開く

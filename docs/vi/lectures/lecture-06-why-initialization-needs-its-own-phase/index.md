@@ -1,146 +1,146 @@
-[English Version →](../../../en/lectures/lecture-06-why-initialization-needs-its-own-phase/) | [中文版本 →](../../../zh/lectures/lecture-06-why-initialization-needs-its-own-phase/)
+[英語版 →](../../../en/lectures/lecture-06-why-initialization-needs-its-own-phase/) | [中国語版 →](../../../zh/lectures/lecture-06-why-initialization-needs-its-own-phase/)
 
-> Ví dụ mã nguồn: [code/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/vi/lectures/lecture-06-why-initialization-needs-its-own-phase/code/)
-> Dự án thực hành: [Dự án 03. Tính liên tục đa phiên](./../../projects/project-03-multi-session-continuity/index.md)
+> ソースコード例: [code/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/vi/lectures/lecture-06-why-initialization-needs-its-own-phase/code/)
+> 演習プロジェクト: [Project 03. マルチセッション継続性](./../../projects/project-03-multi-session-continuity/index.md)
 
-# Bài 06. Khởi tạo Trước Mỗi Phiên Agent
+# 講義 06. 各 Agent セッションの前に初期化を行う
 
-Bạn bắt đầu một phiên agent mới và nói "thêm tính năng tìm kiếm." Nó nhảy thẳng vào việc lập trình — sự nhiệt tình đáng ngưỡng mộ. Sau 20 phút, nó phát hiện ra khung test chưa được cấu hình đúng, dành thêm 10 phút để sửa cái đó, sau đó định dạng script migration cơ sở dữ liệu sai, loay hoay thêm. Tính năng tìm kiếm cuối cùng được thêm vào, nhưng toàn bộ phiên không hiệu quả — hầu hết thời gian dành cho "tìm hiểu dự án này hoạt động như thế nào" thay vì viết tính năng tìm kiếm.
+新しい agent セッションを始めて、「検索機能を追加してください」と伝えます。すると、その agent は勢いよく実装に取りかかります。やる気があるのは良いことです。しかし 20 分後、テスト基盤が正しく整っていないことに気づき、さらに 10 分かけて修正し、その後でデータベース migration スクリプトの整形を誤って、また手が止まります。最終的に検索機能は追加されますが、セッション全体は非効率でした。時間の大半は検索機能を書くことではなく、「このプロジェクトがどう動くのかを理解すること」に費やされていたのです。
 
-Cách tiếp cận tốt hơn: trước khi để agent bắt đầu làm việc, sử dụng một giai đoạn riêng để chuẩn bị môi trường cơ sở, các lệnh xác minh vượt qua, và cấu trúc dự án được hiểu. Giống như xây nhà — bạn không đổ móng và dựng tường cùng một lúc. Nếu bạn làm vậy, tường dựng lên trước khi móng đã đông cứng, và cả tòa nhà phải bị phá đi và bắt đầu lại. Đổ móng trước, để móng đông cứng, rồi xây tường — sạch sẽ và hiệu quả.
+より良い方法があります。agent に作業を始めさせる前に、基盤環境を整え、検証コマンドが通る状態を作り、プロジェクト構造を把握するための専用フェーズを設けることです。家を建てるのと同じです。基礎工事と壁の建築を同時には行いません。もし同時に進めれば、基礎が固まる前に壁が立ち上がり、建物全体を壊して最初からやり直すことになります。まず基礎を打ち、固まるのを待ち、それから壁を建てる。そのほうが明快で効率的です。
 
-Bài giảng này giải thích tại sao khởi tạo phải là một giai đoạn riêng, không được trộn lẫn với triển khai.
+この講義では、なぜ初期化を実装とは切り離した独立フェーズにすべきなのかを説明します。
 
-## Móng và Tường: Hai Công việc Khác Nhau Về Bản chất
+## 基礎と壁: 本質的に異なる2つの作業
 
-Khởi tạo và triển khai có mục tiêu tối ưu hóa hoàn toàn khác nhau. Giai đoạn triển khai tối ưu hóa cho: tối đa hóa số lượng và chất lượng của các tính năng được xác minh. Giai đoạn khởi tạo tối ưu hóa cho: tối đa hóa độ tin cậy và hiệu quả của tất cả các triển khai tiếp theo.
+初期化と実装は、最適化の目的がまったく異なります。実装フェーズが最適化するのは、検証済みの機能をどれだけ多く、どれだけ高品質に届けられるかです。初期化フェーズが最適化するのは、その後に続くすべての実装を、どれだけ信頼性高く効率的に進められるかです。
 
-Khi bạn trộn khởi tạo và triển khai, agent đối mặt với bài toán tối ưu hóa đa mục tiêu — đồng thời xây dựng cơ sở hạ tầng và viết mã tính năng. Không có cài đặt ưu tiên rõ ràng, agent tự nhiên nghiêng về viết mã (vì đó là kết quả có thể nhìn thấy trực tiếp) trong khi hy sinh cơ sở hạ tầng (vì giá trị của nó chỉ hiện ra trong các phiên sau). Giống như nói với đội xây dựng đồng thời đổ móng và xây tường — họ có thể sẽ vội vàng xây tường vì tường có thể nhìn thấy và trình diễn được. Nhưng một ngôi nhà có móng tệ có vấn đề hệ thống về sau.
+初期化と実装を混ぜると、agent は多目的最適化を強いられます。つまり、インフラを整えながら機能コードも書くことになります。優先順位が明確でないと、agent は自然とコードを書くほうに寄ります。なぜなら、コードは目に見える成果だからです。一方で、インフラの価値は後のセッションになって初めて現れるため、後回しにされがちです。これは、建設チームに基礎工事と壁の建築を同時にやれと言うようなものです。見えて成果として示しやすい壁のほうを急いでしまうでしょう。しかし、基礎が弱い家はあとで構造的な問題を抱えます。
 
-## Vòng đời Khởi tạo
+## 初期化のライフサイクル
 
 ```mermaid
 flowchart TB
-    subgraph Wrong["Phiên hỗn hợp (sai)"]
-        W1["Bắt đầu ngay vào công việc tính năng"] --> W2["Phát hiện các khoảng trống env và test giữa tác vụ"]
-        W2 --> W3["Tích lũy mã chưa được xác minh"]
-        W3 --> W4["Phiên tiếp theo phải khám phá lại trạng thái dự án"]
+    subgraph Wrong["混在セッション（誤り）"]
+        W1["すぐに機能実装へ着手する"] --> W2["作業の途中で env と test の穴に気づく"]
+        W2 --> W3["未検証のコードが蓄積する"]
+        W3 --> W4["次のセッションで再びプロジェクト状態を把握し直す必要がある"]
     end
 
-    subgraph Right["Khởi tạo riêng biệt (đúng)"]
-        R1["Phiên 1: môi trường có thể chạy"] --> R2["Test mẫu vượt qua"]
-        R2 --> R3["Bootstrap contract + danh sách tác vụ được viết"]
-        R3 --> R4["Checkpoint sạch được commit"]
-        R4 --> R5["Các phiên sau bắt đầu trực tiếp trên các tác vụ đã xác minh"]
+    subgraph Right["独立した初期化（正しい）"]
+        R1["セッション 1: 実行可能な環境"] --> R2["サンプル test が通る"]
+        R2 --> R3["Bootstrap contract + タスクリストを作成"]
+        R3 --> R4["クリーンな checkpoint を commit"]
+        R4 --> R5["以降のセッションは検証済みのタスクから直接始められる"]
     end
 ```
 
-## Điều Gì Xảy ra Khi Bạn Trộn Chúng
+## 混ぜると何が起きるか
 
-Vấn đề trực tiếp nhất: móng không đông cứng đúng cách. Agent dành 80% công sức cho mã tính năng và 20% tùy tiện thiết lập một số cơ sở hạ tầng. Khung test được cấu hình nhưng không bao giờ được xác minh, quy tắc lint được thiết lập nhưng quá lỏng, không có tệp tiến độ được tạo. Những khiếm khuyết này không rõ ràng trong phiên đầu tiên (vì agent vẫn nhớ những gì nó đã làm), nhưng chúng nổi lên trong phiên thứ hai — agent mới không biết cách chạy, test, hoặc mọi thứ đang ở đâu. Móng cẩu thả, tòa nhà lung lay.
+最も直接的な問題は、基礎が正しく固まらないことです。agent が工数の 80% を機能コードに使い、残りの 20% で適当にインフラを整えるだけ、という状態になりがちです。テスト基盤は構成されていても一度も検証されず、lint ルールは設定されても緩すぎて、進捗ファイルも作られません。こうした欠陥は最初のセッションでは見えにくいです。agent は自分がやったことを覚えているからです。しかし 2 回目のセッションで問題が表面化します。新しい agent には、どう起動するのか、どう test するのか、何がどこにあるのかが分かりません。基礎が雑だと、建物はぐらつきます。
 
-Một chi phí ẩn hơn là "tích lũy chưa xác minh" — mã tính năng được viết trước khi khung test được cấu hình là mã không có xác minh. Khi bạn cuối cùng quay lại thêm test cho mã đó, bạn có thể phát hiện ra thiết kế ngay từ đầu đã sai — nếu biết trước, bạn đã triển khai khác đi. Giống như lát gạch lên bê tông ướt — khi bạn phát hiện ra sàn không phẳng, tất cả gạch phải được cạy lên và làm lại.
+より見えにくいコストは「未検証の蓄積」です。テスト基盤が整う前に書かれた機能コードは、検証手段のないコードです。後になってそのコードに test を追加すると、そもそもの設計が間違っていたと分かることがあります。事前に分かっていれば、別の実装にしていたはずです。これは、固まっていないコンクリートの上にタイルを貼るようなものです。床が平らでないと分かったときには、タイルをすべて剥がしてやり直すしかありません。
 
-Ngân sách phiên cũng đang bị lãng phí. Công việc khởi tạo (cấu hình môi trường, thiết lập test, hiểu cấu trúc dự án) tiêu thụ ngân sách đáng kể, để lại ít hơn cho việc triển khai tính năng thực tế. Kết quả: phiên đầu chỉ hoàn thành một nửa tính năng, và phiên thứ hai phải bắt đầu lại hiểu dự án. Ngân sách dành cho móng, nhưng móng cũng không vững — không mục tiêu nào đạt được.
+セッション予算も無駄になります。初期化作業、つまり環境設定、test の整備、プロジェクト構造の理解にはかなりの予算が消費され、実際の機能実装に回せる分が減ります。その結果、1 回目のセッションでは機能を半分しか終えられず、2 回目のセッションではプロジェクト理解からやり直すことになります。基礎に予算を使ったのに、その基礎すら不十分です。どちらの目的も達成できません。
 
-Vấn đề dễ bị bỏ qua nhất là bẫy giả định ẩn. Các quyết định mà agent đưa ra trong quá trình khởi tạo (khung test nào, cách tổ chức thư mục, quản lý phụ thuộc) — nếu không được ghi lại rõ ràng, các phiên sau không thể hiểu những lựa chọn này. Tệ hơn, các phiên sau có thể đưa ra các lựa chọn mâu thuẫn. Đội xây dựng đầu tiên dùng móng bê tông, đội thứ hai không biết và đóng cọc gỗ vào đó — móng nứt.
+見落とされやすい問題は、暗黙の前提の落とし穴です。初期化の過程で agent が下す決定、たとえばどの test 基盤を使うか、フォルダをどう整理するか、依存関係をどう管理するかは、明示的に記録されていないと後のセッションでは理解できません。さらに悪いことに、後続のセッションが矛盾する選択をしてしまうこともあります。最初の建設チームはコンクリート基礎を使ったのに、2 番目のチームはそれを知らずに木杭を打ち込む。基礎がひび割れてしまいます。
 
-Nghiên cứu phát triển ứng dụng chạy lâu của Anthropic đặc biệt khuyến nghị tách khởi tạo khỏi triển khai. Dữ liệu thực nghiệm của họ: các dự án sử dụng giai đoạn khởi tạo riêng biệt cho thấy tỷ lệ hoàn thành tính năng cao hơn 31% trong các kịch bản đa phiên so với các cách tiếp cận hỗn hợp. Hiểu biết chính — thời gian đầu tư vào giai đoạn khởi tạo được thu hồi hoàn toàn trong 3-4 phiên tiếp theo. Móng càng vững, tường xây càng nhanh.
+Anthropic の長時間稼働するアプリケーション開発に関する研究でも、初期化を実装から分離することが特に推奨されています。彼らの実証データでは、独立した初期化フェーズを持つプロジェクトは、混在型のアプローチと比べて、マルチセッションのシナリオで機能完了率が 31% 高くなっていました。重要なのは、初期化フェーズへの投資はその後の 3〜4 セッションで完全に回収されるという点です。基礎がしっかりしているほど、壁は速く建ちます。
 
-Hướng dẫn harness engineering Codex của OpenAI cũng nhấn mạnh nguyên tắc "kho lưu trữ là bản ghi hoạt động" — thiết lập cấu trúc hoạt động rõ ràng từ lần chạy đầu tiên, hoặc mọi phiên mới phải suy ra lại các quy ước dự án.
+OpenAI の Codex harness engineering ガイドでも、「リポジトリは実行記録である」という原則が強調されています。最初の実行から明確な運用構造を整えておかなければ、新しいセッションは毎回プロジェクトの規約を推測し直さなければなりません。
 
-## Các Khái niệm Cốt lõi
+## 重要概念
 
-- **Giai đoạn Khởi tạo**: Giai đoạn đầu tiên trong vòng đời của agent — không triển khai tính năng, chỉ thiết lập các điều kiện tiên quyết cho tất cả các giai đoạn triển khai tiếp theo. Kết quả không phải là mã, mà là cơ sở hạ tầng.
-- **Bootstrap Contract**: Các điều kiện mà một dự án có thể được vận hành không mơ hồ bởi một phiên agent mới — có thể bắt đầu, có thể test, có thể thấy tiến độ, có thể chọn bước tiếp theo. Bốn điều kiện, tất cả đều cần thiết.
-- **Khởi động Lạnh vs. Khởi động Ấm (Cold Start vs. Warm Start)**: Khởi động lạnh là từ một thư mục trống nơi agent phải đoán cấu trúc dự án; khởi động ấm là từ một mẫu hoặc dự án hiện có nơi cơ sở hạ tầng đã có sẵn. Khởi động ấm vượt trội hơn nhiều so với khởi động lạnh — giống như bắt đầu làm việc trên công trường có nước chạy và điện so với bắt đầu từ vùng đất hoang.
-- **Sẵn sàng Bàn giao (Handoff Readiness)**: Dự án ở trạng thái tại bất kỳ thời điểm nào mà một agent mới có thể tiếp quản. Không cần giải thích bằng lời — chỉ cần nội dung repo.
-- **Thời gian Đến Xác minh Đầu tiên (Time to First Verification)**: Thời gian từ khi bắt đầu dự án đến khi điểm tính năng đầu tiên vượt qua xác minh. Đây là chỉ số cốt lõi để đo hiệu quả khởi tạo.
-- **Khả năng Sử dụng Downstream**: Thước đo tốt nhất về chất lượng khởi tạo — tỷ lệ các phiên tiếp theo có thể thực thi thành công các tác vụ mà không cần dựa vào kiến thức ẩn.
+- **初期化フェーズ**: agent のライフサイクルにおける最初のフェーズです。機能は実装せず、その後のすべての実装フェーズに必要な前提条件だけを整えます。成果物はコードではなく、インフラです。
+- **Bootstrap Contract**: 新しい agent セッションが曖昧さなく運用できるための条件です。起動できること、test できること、進捗が見えること、次に取るべき一手を選べること。この 4 条件がすべて必要です。
+- **Cold Start vs. Warm Start**: Cold Start は、agent がプロジェクト構造を推測しなければならない空のディレクトリから始めることです。Warm Start は、すでにインフラが整ったテンプレートや既存プロジェクトから始めることです。Warm Start は Cold Start よりはるかに優れています。水道と電気が通った工事現場で作業を始めるのと、荒地から始めるのとでは大きな差があります。
+- **Handoff Readiness**: 新しい agent が引き継げる状態に、プロジェクトがいつでもなっていることです。口頭説明は不要で、必要なのは repo の内容だけです。
+- **Time to First Verification**: プロジェクト開始から、最初の機能スライスが検証を通過するまでの時間です。これは初期化の効率を測る中核指標です。
+- **Downstream Usability**: 初期化品質を測る最良の指標です。後続のセッションが、暗黙知に頼らずにタスクを正常に実行できる割合を指します。
 
-## Cách Khởi tạo Đúng
+## 正しい初期化の進め方
 
-**Coi khởi tạo là một giai đoạn riêng biệt.** Phiên đầu tiên chỉ làm khởi tạo — hoàn toàn không có mã tính năng kinh doanh. Khởi tạo tạo ra:
+**初期化は独立したフェーズとして扱います。** 最初のセッションは初期化だけを行い、業務機能のコードは一切書きません。初期化で作るものは次のとおりです。
 
-**1. Môi trường có thể chạy.** Dự án khởi động, dependencies được cài đặt, không có vấn đề môi trường. Móng được đổ, không có vết nứt.
+**1. 実行可能な環境。** プロジェクトが起動し、dependencies がインストールされ、環境上の問題がありません。基礎が打たれ、ひび割れもありません。
 
-**2. Khung test có thể xác minh.** Ít nhất một test mẫu vượt qua. Điều này chứng minh bản thân khung test được cấu hình đúng — giống như đứng một cột trên móng để chứng minh nó có thể chịu được trọng lượng.
+**2. 検証可能な test 基盤。** 少なくとも 1 つのサンプル test が通ります。これにより、test 基盤そのものが正しく構成されていることが証明されます。基礎の上に柱を立てて、荷重に耐えられることを示すようなものです。
 
-**3. Tài liệu bootstrap contract.** Một tài liệu rõ ràng cho các phiên sau:
+**3. bootstrap contract の文書。** 後続セッション向けの明確な文書です。
 ```markdown
-# Khởi tạo Contract
+# 初期化 Contract
 
-## Lệnh Khởi động
-- Cài đặt dependencies: `make setup`
-- Khởi động dev server: `make dev`
-- Chạy test: `make test`
-- Xác minh đầy đủ: `make check`
+## 起動コマンド
+- dependencies をインストール: `make setup`
+- dev server を起動: `make dev`
+- test を実行: `make test`
+- 全体を検証: `make check`
 
-## Trạng thái Hiện tại
-- Tất cả dependencies đã được cài đặt và khóa
-- Khung test được cấu hình (Vitest + React Testing Library)
-- Test mẫu vượt qua (1/1)
-- Quy tắc lint được cấu hình (ESLint + Prettier)
+## 現在の状態
+- すべての dependencies がインストールされ、固定されている
+- test 基盤が構成済み（Vitest + React Testing Library）
+- サンプル test が通過済み (1/1)
+- lint ルールが構成済み（ESLint + Prettier）
 
-## Cấu trúc Dự án
-- src/ — Mã nguồn
+## プロジェクト構造
+- src/ — ソースコード
 - src/components/ — React components
 - src/api/ — API client
-- tests/ — Tệp test
+- tests/ — test ファイル
 ```
 
-**4. Phân chia tác vụ.** Chia toàn bộ dự án thành danh sách tác vụ có thứ tự, mỗi tác vụ có tiêu chí chấp nhận rõ ràng:
+**4. タスク分割。** プロジェクト全体を順序付きのタスクリストに分割し、各タスクに明確な受け入れ基準を持たせます。
 ```markdown
-# Phân chia Tác vụ
+# タスク分割
 
-## Tác vụ 1: Xác thực Người dùng Cơ bản
-- Triển khai JWT auth middleware
-- Thêm endpoint đăng nhập/đăng ký
-- Chấp nhận: pytest tests/test_auth.py tất cả vượt qua
+## タスク 1: 基本的なユーザー認証
+- JWT auth middleware を実装
+- ログイン/登録 endpoint を追加
+- 受け入れ条件: `pytest tests/test_auth.py` がすべて通ること
 
-## Tác vụ 2: Trang Hồ sơ Người dùng
-- Triển khai CRUD hồ sơ người dùng
-- Thêm form chỉnh sửa hồ sơ
-- Chấp nhận: pytest tests/test_profile.py tất cả vượt qua
+## タスク 2: ユーザープロフィール画面
+- ユーザープロフィールの CRUD を実装
+- プロフィール編集フォームを追加
+- 受け入れ条件: `pytest tests/test_profile.py` がすべて通ること
 
-## Tác vụ 3: Tính năng Tìm kiếm
+## タスク 3: 検索機能
 - ...
 ```
 
-**5. Git commit như checkpoint.** Sau khi khởi tạo hoàn thành, commit một checkpoint sạch. Tất cả công việc tiếp theo bắt đầu từ checkpoint này.
+**5. Git commit を checkpoint にする。** 初期化が終わったら、クリーンな checkpoint を commit します。その後の作業はすべてこの checkpoint から始めます。
 
-**Chiến lược khởi động ấm**: Đừng bắt đầu từ một thư mục trống. Sử dụng mẫu dự án (create-react-app, fastapi-template, v.v.) để đặt trước cấu trúc thư mục chuẩn, cấu hình phụ thuộc và khung test. Nướng các bước khởi tạo thông thường vào mẫu, chỉ để lại công việc khởi tạo cụ thể cho dự án. Giống như bắt đầu làm việc trên công trường có nước chạy và điện — tốt hơn mười nghìn lần so với bắt đầu từ vùng đất hoang.
+**Warm Start 戦略**: 空のディレクトリから始めないでください。create-react-app や fastapi-template などのプロジェクトテンプレートを使って、標準的なフォルダ構成、dependencies 設定、test 基盤をあらかじめ用意します。一般的な初期化手順はテンプレートに焼き込み、プロジェクト固有の初期化だけを残します。水道と電気が通った現場で作業を始めるのと同じで、荒地から始めるより何万倍も良いのです。
 
-**Tiêu chí hoàn thành khởi tạo**: Không phải "bao nhiêu mã đã được viết," mà là liệu bốn điều kiện của bootstrap contract có được đáp ứng không — có thể bắt đầu, có thể test, có thể thấy tiến độ, có thể chọn bước tiếp theo. Sử dụng danh sách kiểm tra này để xác nhận khởi tạo:
+**初期化完了の基準**: 「どれだけコードを書いたか」ではありません。bootstrap contract の 4 条件が満たされたかどうかです。つまり、起動できること、test できること、進捗が見えること、次の一手を選べることです。初期化の確認には次のチェックリストを使います。
 
 ```markdown
-## Danh sách Kiểm tra Chấp nhận Khởi tạo
-- [ ] `make setup` thành công từ đầu
-- [ ] `make test` có ít nhất một test vượt qua
-- [ ] Một phiên agent mới có thể trả lời "làm thế nào để chạy" và "làm thế nào để test" chỉ từ nội dung repo
-- [ ] Tệp phân chia tác vụ tồn tại với ít nhất 3 tác vụ
-- [ ] Mọi thứ đã được commit vào git
+## 初期化の受け入れチェックリスト
+- [ ] `make setup` が最初から成功する
+- [ ] `make test` で少なくとも 1 つの test が通る
+- [ ] 新しい agent セッションが、repo の内容だけを見て「どう起動するか」と「どう test するか」に答えられる
+- [ ] 3 つ以上のタスクがあるタスク分割ファイルが存在する
+- [ ] すべてが git に commit されている
 ```
 
-## Ví dụ Thực tế
+## 実例
 
-Hai cách tiếp cận khởi tạo cho một dự án frontend React:
+React frontend プロジェクトに対する 2 つの初期化アプローチを比較します。
 
-**Cách tiếp cận hỗn hợp (đồng thời đổ móng và xây tường)**: Agent đồng thời tạo scaffolding dự án và triển khai tính năng đầu tiên trong phiên 1. Ở cuối phiên, repo có mã có thể chạy nhưng: không có tài liệu lệnh bắt đầu/test rõ ràng, không có tệp theo dõi tiến độ, không có phân chia tác vụ. Phiên 2 dành ~20 phút để suy ra cấu trúc dự án, khung test và quy trình build — giống như đội xây dựng mới đến công trường, không biết móng đã chạy đến đâu hoặc đường ống nước ở đâu, phải đào lỗ từng chỗ để tìm ra.
+**混在アプローチ（基礎工事と壁の建築を同時に行う）**: agent がセッション 1 で、プロジェクトの scaffold 作成と最初の機能実装を同時に行います。セッション終了時点で repo には動くコードがありますが、起動/test のコマンドを示す明確な文書はなく、進捗追跡ファイルもなく、タスク分割もありません。セッション 2 では、プロジェクト構造、test 基盤、build 手順を推測するのに約 20 分かかります。まるで、現場に新しく来た建設チームが、基礎がどこまで進んでいるのかも、水道管がどこにあるのかも分からず、場所ごとに穴を掘って確かめるようなものです。
 
-**Khởi tạo riêng biệt (móng trước)**: Phiên 1 chỉ làm khởi tạo — tạo cấu trúc thư mục từ mẫu, cấu hình khung test (Vitest + React Testing Library), viết và xác minh một test mẫu, tạo tài liệu bootstrap contract và tệp phân chia tác vụ, commit checkpoint ban đầu. Chi phí tái xây dựng của phiên 2 dưới 3 phút, và nó bắt đầu làm việc trực tiếp từ danh sách tác vụ — đội đến, nhìn vào bản vẽ, và biết chính xác nơi cần tiếp tục.
+**独立した初期化（基礎を先に作る）**: セッション 1 は初期化だけを行います。テンプレートからフォルダ構成を作り、test 基盤（Vitest + React Testing Library）を設定し、サンプル test を書いて検証し、bootstrap contract とタスク分割ファイルを作成し、最初の checkpoint を commit します。セッション 2 の再構築コストは 3 分未満で済み、タスクリストから直接作業を始められます。つまり、チームが図面を見て、どこから再開すべきかを正確に把握できる状態です。
 
-So sánh chu kỳ dự án đầy đủ: tổng thời gian tái xây dựng (qua tất cả các phiên) của cách tiếp cận hỗn hợp cao hơn ~60% so với cách tiếp cận khởi tạo riêng biệt. 20 phút thêm dành cho khởi tạo được thu hồi nhiều lần trong các phiên tiếp theo. Giống như móng vững giúp tường xây nhanh hơn — chậm là nhanh.
+プロジェクト全体のサイクルで比較すると、混在アプローチの総再構築時間は、独立初期化アプローチより約 60% 長くなります。初期化に追加した 20 分は、その後のセッションで何度も回収されます。しっかりした基礎があれば壁は速く建つのです。遅く始めるほうが、結果的には速いのです。
 
-## Những Điểm chính cần Nhớ
+## 覚えておくべきポイント
 
-- Khởi tạo và triển khai có mục tiêu tối ưu hóa khác nhau — trộn lẫn chúng chỉ kéo cả hai xuống. Đổ móng trước, rồi xây tường.
-- Kết quả của khởi tạo không phải là mã, mà là cơ sở hạ tầng: môi trường có thể chạy, test có thể xác minh, bootstrap contract, phân chia tác vụ.
-- Xác nhận khởi tạo bằng bốn điều kiện của bootstrap contract: có thể bắt đầu, có thể test, có thể thấy tiến độ, có thể chọn bước tiếp theo.
-- Khởi động ấm tốt hơn khởi động lạnh. Sử dụng mẫu dự án để đặt trước cơ sở hạ tầng chuẩn hóa.
-- Thời gian đầu tư vào khởi tạo được thu hồi hoàn toàn trong 3-4 phiên tiếp theo. Đây không phải chi phí thêm — đó là đầu tư trước. Móng càng vững, tòa nhà xây càng nhanh.
+- 初期化と実装は最適化の目的が異なります。混ぜると両方が弱くなります。まず基礎を打ち、それから壁を建てます。
+- 初期化の成果物はコードではなくインフラです。実行可能な環境、検証可能な test、bootstrap contract、タスク分割がその成果です。
+- 初期化は bootstrap contract の 4 条件で確認します。起動できること、test できること、進捗が見えること、次の一手を選べることです。
+- Warm Start は Cold Start より優れています。標準化されたインフラを先に用意するために、プロジェクトテンプレートを活用してください。
+- 初期化への投資は、その後の 3〜4 セッションで完全に回収されます。これは余分なコストではなく、先行投資です。基礎がしっかりしているほど、建物は速く完成します。
 
-## Đọc thêm
+## 参考文献
 
 - [Anthropic: Effective Harnesses for Long-Running Agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
 - [OpenAI: Harness Engineering](https://openai.com/index/harness-engineering/)
@@ -148,10 +148,10 @@ So sánh chu kỳ dự án đầy đủ: tổng thời gian tái xây dựng (qu
 - [Infrastructure as Code — Martin Fowler](https://martinfowler.com/bliki/InfrastructureAsCode.html)
 - [SWE-agent: Agent-Computer Interfaces](https://github.com/princeton-nlp/SWE-agent)
 
-## Bài tập
+## 演習
 
-1. **Thiết kế bootstrap contract**: Viết một bootstrap contract hoàn chỉnh cho một dự án bạn đang phát triển. Sau đó mở một phiên agent hoàn toàn mới, chỉ hiển thị nội dung repo (không có ngữ cảnh lời nói), và để nó thử bắt đầu dự án, chạy test và hiểu tiến độ hiện tại. Ghi lại mọi vấn đề gặp phải — mỗi vấn đề tương ứng với một điều khoản còn thiếu trong bootstrap contract của bạn.
+1. **bootstrap contract を設計する**: 今開発中のプロジェクトに対して、完全な bootstrap contract を書いてください。そのあと、まったく新しい agent セッションを開き、repo の内容だけを見せます（会話の文脈なし）。その agent に、プロジェクトの起動、test 実行、現在の進捗把握を試させてください。発生した問題をすべて記録します。各問題は、あなたの bootstrap contract に不足している項目に対応します。
 
-2. **Thí nghiệm so sánh**: Chọn một dự án mới cỡ vừa. Cách A: để agent đồng thời khởi tạo và thực hiện triển khai đầu tiên. Cách B: dành một phiên cho khởi tạo riêng biệt, bắt đầu triển khai trong phiên 2. Sau 4 phiên, so sánh: thời gian đến xác minh đầu tiên, chi phí tái xây dựng, tỷ lệ hoàn thành tính năng.
+2. **比較実験**: 中規模の新規プロジェクトを 1 つ選びます。方法 A は、agent に初期化と最初の実装を同時にやらせます。方法 B は、初期化だけのセッションを 1 回確保し、実装はセッション 2 から始めます。4 セッション後に、Time to First Verification、再構築コスト、機能完了率を比較してください。
 
-3. **Danh sách kiểm tra chấp nhận khởi tạo**: Thiết kế một danh sách kiểm tra chấp nhận khởi tạo cho dự án của bạn. Để một phiên agent mới thực thi từng mục trong danh sách kiểm tra và ghi lại cái nào vượt qua và cái nào thất bại. Các mục thất bại là nơi harness của bạn cần được tăng cường.
+3. **初期化受け入れチェックリスト**: あなたのプロジェクト向けに、初期化受け入れチェックリストを設計してください。新しい agent セッションに、そのチェックリストの各項目を順番に実行させ、どれが通ってどれが失敗したかを記録します。失敗した項目は、あなたの harness を強化すべき箇所です。

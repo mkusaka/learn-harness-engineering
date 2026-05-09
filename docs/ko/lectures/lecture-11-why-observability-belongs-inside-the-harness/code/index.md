@@ -1,8 +1,8 @@
-# 강의 11 코드
+# 講義 11 コード
 
-이 폴더는 다음 항목의 예제에 사용합니다.
+このフォルダは、次の項目の例で使用します。
 
-- 계획자 출력(planner outputs)
-- 평가자 루브릭(evaluator rubrics)
-- 생성자/평가자 루프(generator/evaluator loops)
-- 단일 에이전트 대 다중 역할 비교(single-agent vs multi-role comparisons)
+- プランナー出力(planner outputs)
+- 評価者ルーブリック(evaluator rubrics)
+- 生成者/評価者ループ(generator/evaluator loops)
+- 単一エージェントと複数役割の比較(single-agent vs multi-role comparisons)

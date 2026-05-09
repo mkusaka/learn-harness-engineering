@@ -1,89 +1,89 @@
-# harness-creator Skill
+# harness-creator スキル
 
-Production harness engineering skill for AI coding agents, distilled from Learn Harness Engineering course and industry best practices.
+Learn Harness Engineering の講義内容と業界のベストプラクティスを凝縮した、AI コーディングエージェント向けの実運用ハーネス設計スキルです。
 
-## Installation
+## インストール
 
 ```bash
 npx skills add github:harness-creator
 ```
 
-Or manually copy the `skills/harness-creator/` directory to your skill path.
+または `skills/harness-creator/` ディレクトリを手動で skill パスにコピーします。
 
-## What This Skill Does
+## このスキルでできること
 
-This skill helps you:
-- **Create harnesses from scratch** — AGENTS.md, feature lists, verification workflows
-- **Improve existing harnesses** — Five-subsystem assessment with prioritized improvements  
-- **Design session continuity** — Memory persistence, progress tracking, handoff procedures
-- **Benchmark effectiveness** — Before/after comparison with quantitative metrics
-- **Apply production patterns** — Memory, context engineering, tool safety, multi-agent coordination
+このスキルは次のことを支援します。
+- **ゼロからハーネスを作る** — AGENTS.md、機能一覧、検証ワークフロー
+- **既存のハーネスを改善する** — 5 サブシステム評価と優先度付き改善
+- **セッション継続性を設計する** — メモリ永続化、進捗追跡、引き継ぎ手順
+- **効果をベンチマークする** — 定量指標による改善前後比較
+- **実運用パターンを適用する** — メモリ、コンテキストエンジニアリング、ツール安全性、マルチエージェント協調
 
-## Core Framework: Five Subsystems
+## 基本フレームワーク: 5 つのサブシステム
 
-Every harness consists of five subsystems:
+すべてのハーネスは 5 つのサブシステムで構成されます。
 
-1. **Instructions** — AGENTS.md as routing layer, progressive disclosure via docs/ hierarchy
-2. **State** — feature_list.json, progress.md, session handoff files
-3. **Verification** — Explicit commands that agent MUST run before claiming done
-4. **Scope** — One-feature-at-a-time policy, clear definition of done
-5. **Lifecycle** — init.sh, clean-state checklists, session continuity mechanisms
+1. **Instructions** — ルーティング層としての AGENTS.md、`docs/` 階層による段階的開示
+2. **State** — `feature_list.json`、`progress.md`、セッション引き継ぎファイル
+3. **Verification** — エージェントが完了を宣言する前に必ず実行しなければならない明示的なコマンド
+4. **Scope** — 1 機能ずつ進める方針、明確な完了条件
+5. **Lifecycle** — `init.sh`、クリーン状態チェックリスト、セッション継続メカニズム
 
-## Reference Patterns
+## 参考パターン
 
-This skill includes 6 deep-dive reference documents:
+このスキルには、6 つの詳細な参考文書が含まれます。
 
-| Pattern | When to Use |
+| パターン | 使う場面 |
 |---------|-------------|
-| [Memory Persistence](references/memory-persistence-pattern.md) | Agent forgets between sessions, need persistent project knowledge |
-| [Context Engineering](references/context-engineering-pattern.md) | Context budget management, JIT loading, delegation isolation |
-| [Tool Registry](references/tool-registry-pattern.md) | Tool safety, concurrency control, permission pipelines |
-| [Multi-Agent Coordination](references/multi-agent-pattern.md) | Parallelism, specialization, researcher→implementer workflows |
-| [Lifecycle & Bootstrap](references/lifecycle-bootstrap-pattern.md) | Hooks, background tasks, initialization sequences |
-| [Gotchas](references/gotchas.md) | 15 non-obvious failure modes with fixes |
+| [Memory Persistence](references/memory-persistence-pattern.md) | セッション間でエージェントが忘れてしまうとき、永続的なプロジェクト知識が必要なとき |
+| [Context Engineering](references/context-engineering-pattern.md) | コンテキスト予算の管理、JIT 読み込み、委譲の分離 |
+| [Tool Registry](references/tool-registry-pattern.md) | ツールの安全性、並行制御、権限パイプライン |
+| [Multi-Agent Coordination](references/multi-agent-pattern.md) | 並列化、専門化、調査者→実装者のワークフロー |
+| [Lifecycle & Bootstrap](references/lifecycle-bootstrap-pattern.md) | フック、バックグラウンドタスク、初期化シーケンス |
+| [Gotchas](references/gotchas.md) | 15 個の非自明な失敗モードとその対処法 |
 
-## Usage Examples
+## 使用例
 
-### Create Minimal Harness
-
-```
-User: "I need to set up AGENTS.md for my TypeScript project"
-
-Skill will:
-1. Ask about project context (stack, size, agent tool)
-2. Generate AGENTS.md with startup workflow and working rules
-3. Create feature_list.json template with placeholder features
-4. Create init.sh with verification commands
-5. Explain how to use each file
-```
-
-### Assess Existing Harness
+### 最小ハーネスを作成する
 
 ```
-User: "My agent still breaks things even with AGENTS.md"
+ユーザー: "TypeScript プロジェクト用に AGENTS.md を整備したい"
 
-Skill will:
-1. Request current AGENTS.md content
-2. Score each of 5 subsystems (1-5 scale)
-3. Identify lowest-scoring subsystem as bottleneck
-4. Provide prioritized improvement plan with concrete steps
+スキルは次のことを行います。
+1. プロジェクトの文脈（スタック、規模、エージェントツール）を確認する
+2. 起動ワークフローと作業ルールを含む AGENTS.md を生成する
+3. プレースホルダー付きの機能を含む `feature_list.json` テンプレートを作成する
+4. 検証コマンド付きの `init.sh` を作成する
+5. 各ファイルの使い方を説明する
 ```
 
-### Design Session Continuity
+### 既存ハーネスを評価する
 
 ```
-User: "Agent forgets everything between sessions"
+ユーザー: "AGENTS.md があっても、エージェントがまだ壊してしまう"
 
-Skill will:
-1. Explain memory layers (instruction vs auto-memory)
-2. Design progress.md template for session tracking
-3. Create session-handoff.md structure
-4. Implement two-step save invariant (topic file → index)
+スキルは次のことを行います。
+1. 現在の AGENTS.md の内容を確認する
+2. 5 つのサブシステムそれぞれを 1〜5 で採点する
+3. 最低得点のサブシステムをボトルネックとして特定する
+4. 具体的な手順を伴う優先度付き改善計画を提示する
 ```
 
-## When to Trigger
+### セッション継続性を設計する
 
-This skill triggers on:
+```
+ユーザー: "エージェントがセッションのたびにすべてを忘れてしまう"
+
+スキルは次のことを行います。
+1. メモリの層（instruction と auto-memory）の違いを説明する
+2. セッション追跡用の `progress.md` テンプレートを設計する
+3. `session-handoff.md` の構成を作成する
+4. 2 段階保存の不変条件（topic file → index）を実装する
+```
+
+## トリガー条件
+
+このスキルは次のような場合に使います。
 - "Create AGENTS.md / CLAUDE.md"
 - "Improve agent reliability"
 - "Agent forgets between sessions"
@@ -93,101 +93,86 @@ This skill triggers on:
 - "Memory persistence patterns"
 - "Context engineering for agents"
 
-## When NOT to Use
+## 対象外
 
-This skill does NOT cover:
-- Prompt engineering or system prompt design
-- Model selection or fine-tuning
-- Generic software architecture
-- LLM API integration basics
+このスキルは次の内容は扱いません。
+- Prompt engineering や system prompt の設計
+- モデル選定や fine-tuning
+- 一般的なソフトウェアアーキテクチャ
+- LLM API 統合の基礎
 
-## Templates Included
+## 含まれるテンプレート
 
-- `templates/agents.md` — AGENTS.md scaffold with working rules
-- `templates/feature-list.json` — JSON Schema + example
-- `templates/init.sh` — Standard initialization script
-- `templates/progress.md` — Session progress log template
-- `templates/session-handoff.md` — Handoff structure
+- `templates/agents.md` — 作業ルール付きの AGENTS.md スキャフォールド
+- `templates/feature-list.json` — JSON Schema とサンプル
+- `templates/init.sh` — 標準初期化スクリプト
+- `templates/progress.md` — セッション進捗ログテンプレート
+- `templates/session-handoff.md` — 引き継ぎ構成
 
-## EvaluationFramework
+## 評価フレームワーク
 
-5 test cases in `evals/evals.json`:
-1. **Minimal Harness Creation** — Full setup from scratch
-2. **Session Continuity Setup** — Memory and handoff design
-3. **Harness Assessment** — Five-subsystem scoring
-4. **Verification Workflow Design** — Force agent to verify before done
-5. **Memory Taxonomy Design** — What to save vs skip
+`evals/evals.json` には 5 つのテストケースがあります。
+1. **Minimal Harness Creation** — ゼロからの完全セットアップ
+2. **Session Continuity Setup** — メモリと引き継ぎの設計
+3. **Harness Assessment** — 5 サブシステムの採点
+4. **Verification Workflow Design** — 完了前に必ず検証させる
+5. **Memory Taxonomy Design** — 何を保存し、何を省くか
 
-Run evaluation with skill-creator framework for quantitative benchmarks.
+定量ベンチマークには skill-creator フレームワークで評価を実行してください。
 
-## Compatibility
+## 互換性
 
 - **Agents**: Claude Code, Codex, Cursor, Windsurf, generic
 - **License**: MIT
-- **Languages**: English / 中文 (bilingual support in SKILL.md)
+- **Languages**: English / 中文 (SKILL.md でのバイリンガル対応)
 
-## 兼容性
-
-- **代理工具**: Claude Code, Codex, Cursor, Windsurf, generic
-- **许可证**: MIT
-- **语言**: 英文 / 中文 (SKILL.md 中双语支持)
-
-## Project Structure
+## プロジェクト構成
 
 ```
 harness-creator/
-├── SKILL.md                          # Main skill definition
-├── metadata.json                     # Skill metadata, triggers, compatibility
+├── SKILL.md                          # スキル本体の定義
+├── metadata.json                     # スキルメタデータ、トリガー、互換性
 ├── evals/
-│   └── evals.json                    # 5 test cases with expectations
+│   └── evals.json                    # 期待値付きの 5 テストケース
 ├── templates/
-│   ├── agents.md                     # AGENTS.md template
-│   ├── feature-list.json             # Feature tracker template
-│   ├── init.sh                       # Initialization script
-│   └── progress.md                   # Session progress template
+│   ├── agents.md                     # AGENTS.md テンプレート
+│   ├── feature-list.json             # 機能トラッカーテンプレート
+│   ├── init.sh                       # 初期化スクリプト
+│   └── progress.md                   # セッション進捗テンプレート
 └── references/
     ├── memory-persistence-pattern.md
     ├── context-engineering-pattern.md
     ├── tool-registry-pattern.md
     ├── multi-agent-pattern.md
     ├── lifecycle-bootstrap-pattern.md
-    └── gotchas.md                    # 15 failure modes
+    └── gotchas.md                    # 15 の失敗モード
 ```
 
-## Development Roadmap
+## 開発ロードマップ
 
-- [x] Chinese translation in SKILL.md (bilingual support added)
-- [ ] Python scripts for automated harness generation
-- [ ] HTML viewer for harness assessment results
-- [ ] Expanded eval set (10+ test cases)
-- [ ] Integration with skill-creator benchmark framework
-- [ ] Full Chinese localization (harness-creator-zh directory)
+- [x] `SKILL.md` の中国語翻訳（バイリンガル対応を追加済み）
+- [ ] ハーネス自動生成用の Python スクリプト
+- [ ] ハーネス評価結果の HTML ビューア
+- [ ] 評価用テストケースの拡張（10 件以上）
+- [ ] skill-creator ベンチマークフレームワークとの統合
+- [ ] 中国語の完全ローカライズ（`harness-creator-zh` ディレクトリ）
 
-## 开发路线图
+## 貢献
 
-- [x] SKILL.md 中文翻译（已添加双语支持）
-- [ ] Harness 自动生成 Python 脚本
-- [ ] Harness 评估结果 HTML 查看器
-- [ ] 扩展测试用例（10+ 个）
-- [ ] 集成 skill-creator 基准测试框架
-- [ ] 完整中文本地化（harness-creator-zh 目录）
+Issue と PR を歓迎します。主な貢献領域は次のとおりです。
+- 追加の参考パターン（skill runtime、hook lifecycle など）
+- 例外ケースを含む評価テストケースの追加
+- よく使うハーネスタスクのスクリプト自動化
+- 実運用デプロイのケーススタディ
 
-## Contributing
+## ライセンス
 
-Issues and PRs welcome. Key areas for contribution:
-- Additional reference patterns (skill runtime, hook lifecycle, etc.)
-- More eval test cases covering edge cases
-- Script automation for common harness tasks
-- Case studies from production deployments
+MIT — 詳細は `LICENSE` ファイルを参照してください。
 
-## License
+## 謝辞
 
-MIT — See LICENSE file for details.
-
-## Acknowledgments
-
-This skill synthesizes:
-- Learn Harness Engineering course framework
-- OpenAI Harness Engineering principles
-- Anthropic effective harnesses research
-- Agentic Harness Patterns skill (pattern extraction methodology)
+このスキルは次の内容を統合しています。
+- Learn Harness Engineering コースのフレームワーク
+- OpenAI Harness Engineering の原則
+- Anthropic の effective harnesses に関する研究
+- Agentic Harness Patterns スキル（パターン抽出手法）

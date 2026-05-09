@@ -1,7 +1,7 @@
-# Code for Lecture 05
+# Lecture 05 のコード
 
-Use this folder for examples of:
+このフォルダには、次のような例を置いてください:
 
-- broken multi-session tasks
-- missing continuity artifacts
-- continuity recovery patterns
+- 壊れたマルチセッションタスク
+- 継続性アーティファクトの不足
+- 継続性回復のパターン

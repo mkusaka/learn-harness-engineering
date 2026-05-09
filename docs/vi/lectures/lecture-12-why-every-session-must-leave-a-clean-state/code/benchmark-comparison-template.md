@@ -1,18 +1,18 @@
-# Mẫu So sánh Benchmark
+# ベンチマーク比較テンプレート
 
 Harness A:
 
-- tỷ lệ hoàn thành
-- số lần thử lại trung bình
-- lỗi được bắt trước khi review của con người
+- 完了率
+- 平均再試行回数
+- 人間のレビュー前に検出されたエラー
 
 Harness B:
 
-- tỷ lệ hoàn thành
-- số lần thử lại trung bình
-- lỗi được bắt trước khi review của con người
+- 完了率
+- 平均再試行回数
+- 人間のレビュー前に検出されたエラー
 
-Diễn giải:
+解釈:
 
-- Harness nào thay đổi kết quả?
-- Harness nào thay đổi chi phí để đạt được kết quả?
+- どちらの Harness が結果を変えたか?
+- どちらの Harness が、その結果に到達するためのコストを変えたか?

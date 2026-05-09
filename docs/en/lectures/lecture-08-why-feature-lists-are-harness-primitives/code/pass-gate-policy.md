@@ -1,8 +1,8 @@
-# Pass Gate Policy
+# Pass Gate ポリシー
 
-A feature may only move from `passes: false` to `passes: true` when:
+機能は、次の条件を満たした場合にのみ `passes: false` から `passes: true` に移行できます。
 
-- the expected workflow has been exercised
-- the evidence of success is recorded
-- no blocking error is present in the tested path
-- the implementation does not leave the app in a broken or ambiguous state
+- 想定されたワークフローが実行されている
+- 成功の証拠が記録されている
+- テストした経路にブロッキングエラーがない
+- 実装によってアプリが壊れた状態や曖昧な状態のままになっていない

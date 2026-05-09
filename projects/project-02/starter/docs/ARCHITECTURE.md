@@ -2,7 +2,7 @@
 
 ## System Overview
 
-The Knowledge Base is an Electron desktop application built with TypeScript and React. It provides document import, text indexing with chunking, and grounded question answering with citations.
+Knowledge Base は、TypeScript と React で構築された Electron のデスクトップアプリです。文書の取り込み、チャンク分割を伴うテキスト索引化、引用付きの根拠ベース回答を提供します。
 
 ## Layer Diagram
 
@@ -35,17 +35,17 @@ The Knowledge Base is an Electron desktop application built with TypeScript and 
 
 ### Main Process (`src/main/`)
 
-The main process is the Node.js process that manages the application lifecycle. Responsibilities:
+main process は、アプリケーションのライフサイクルを管理する Node.js プロセスです。責務は次のとおりです。
 
-- **Window management**: Creates `BrowserWindow` instances with secure web preferences (`contextIsolation: true`, `nodeIntegration: false`).
-- **IPC registration**: Maps IPC channel names to service methods via `registerIpcHandlers()`.
-- **Service initialization**: Constructs `PersistenceService`, `DocumentService`, `IndexingService`, and `QaService` with dependency injection.
+- **Window management**: `contextIsolation: true`、`nodeIntegration: false` といった安全な web preferences を指定して `BrowserWindow` インスタンスを作成します。
+- **IPC registration**: `registerIpcHandlers()` を通じて、IPC チャンネル名を service メソッドに対応付けます。
+- **Service initialization**: 依存性注入を使って `PersistenceService`、`DocumentService`、`IndexingService`、`QaService` を構築します。
 
-**Key invariant**: The main process never imports React or renderer code.
+**Key invariant**: main process は React や renderer のコードを決して import しません。
 
 ### Preload (`src/preload/`)
 
-The preload script runs in the renderer context before any page scripts load. It uses Electron's `contextBridge` to expose a limited, typed API:
+preload script は、いずれの page scripts よりも先に renderer コンテキストで実行されます。Electron の `contextBridge` を使って、制限された型付き API を公開します。
 
 ```typescript
 window.knowledgeBase = {
@@ -55,51 +55,51 @@ window.knowledgeBase = {
 }
 ```
 
-**Key invariant**: The preload bridge is the only communication channel between renderer and main. No Node.js modules are accessible from the renderer.
+**Key invariant**: renderer と main の通信チャネルは preload bridge だけです。renderer からは Node.js モジュールにアクセスできません。
 
 ### Renderer (`src/renderer/`)
 
-The renderer is a React 18 application bundled by Vite. Components:
+renderer は、Vite でバンドルされる React 18 アプリケーションです。コンポーネントは次のとおりです。
 
-- `App.tsx` -- Root layout with header, sidebar, main panel, and status bar.
-- `DocumentList` -- Sidebar listing of imported documents.
-- `DocumentDetail` -- Shows document metadata, chunks, and indexing controls.
-- `ImportPanel` -- File input for importing .txt and .md documents.
-- `QuestionPanel` -- Text input for asking questions.
-- `StatusBar` -- Shows index status and document count.
+- `App.tsx` -- ヘッダー、サイドバー、メインパネル、ステータスバーを備えたルートレイアウト。
+- `DocumentList` -- 取り込まれた文書の一覧を表示するサイドバー。
+- `DocumentDetail` -- 文書のメタデータ、チャンク、索引化コントロールを表示します。
+- `ImportPanel` -- `.txt` と `.md` 文書を取り込むためのファイル入力。
+- `QuestionPanel` -- 質問を送るためのテキスト入力。
+- `StatusBar` -- 索引の状態と文書数を表示します。
 
-**Key invariant**: Renderer code never imports `fs`, `path`, `electron`, or any Node.js module.
+**Key invariant**: renderer のコードは `fs`、`path`、`electron`、または他の Node.js モジュールを import しません。
 
 ### Services (`src/services/`)
 
-Business logic classes running in the main process:
+main process で動作するビジネスロジックのクラス群です。
 
-- `PersistenceService` -- Low-level JSON/text file I/O with atomic writes.
-- `DocumentService` -- Document CRUD operations (import, list, get, update, delete).
-- `IndexingService` -- Paragraph-aware chunking (~500 chars per chunk) and index management.
-- `QaService` -- Mock question answering with keyword-based retrieval and citation generation.
+- `PersistenceService` -- 原子的書き込みを伴う低レベルの JSON/text ファイル I/O。
+- `DocumentService` -- 文書の CRUD 操作（import、list、get、update、delete）。
+- `IndexingService` -- 段落を意識したチャンク分割（1 チャンクあたり約 500 文字）と index 管理。
+- `QaService` -- キーワードベースの検索と引用生成を行うモックの質問応答。
 
-**Key invariant**: Services may import shared types but never renderer code.
+**Key invariant**: services は共有型を import してよいですが、renderer のコードは import しません。
 
 ## Data Flow
 
-1. User interacts with a React component (e.g., clicks "Ask").
-2. Component calls `window.knowledgeBase.qa.ask(question)`.
-3. Preload bridge invokes `ipcRenderer.invoke('qa:ask', question)`.
-4. Main process IPC handler delegates to `QaService.ask()`.
-5. QaService retrieves chunks, scores by keyword overlap, generates answer.
-6. Response flows back through IPC to the renderer.
-7. React component updates state and re-renders.
+1. ユーザーが React コンポーネントを操作します（例: "Ask" をクリック）。
+2. コンポーネントが `window.knowledgeBase.qa.ask(question)` を呼び出します。
+3. preload bridge が `ipcRenderer.invoke('qa:ask', question)` を実行します。
+4. main process の IPC handler が `QaService.ask()` に処理を委譲します。
+5. `QaService` がチャンクを取得し、キーワードの重なりでスコア付けし、回答を生成します。
+6. レスポンスは IPC を通じて renderer に戻ります。
+7. React コンポーネントが state を更新し、再レンダーします。
 
 ## Build Pipeline
 
-1. `tsc -p tsconfig.node.json` compiles main, preload, shared, and services to `dist/`.
-2. `vite build` bundles the renderer React app to `dist/renderer/`.
-3. Electron loads `dist/main/main.js` as the entry point.
+1. `tsc -p tsconfig.node.json` が main、preload、shared、services を `dist/` にコンパイルします。
+2. `vite build` が renderer の React アプリを `dist/renderer/` にバンドルします。
+3. Electron がエントリポイントとして `dist/main/main.js` を読み込みます。
 
 ## Data Storage
 
-All user data is stored under `app.getPath('userData')/knowledge-base-data/`:
+すべてのユーザーデータは `app.getPath('userData')/knowledge-base-data/` の下に保存されます。
 
 ```
 knowledge-base-data/

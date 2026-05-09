@@ -1,7 +1,7 @@
-# Các Anti-Pattern Tệp Hướng dẫn
+# インストラクションファイルのアンチパターン
 
-- Đưa tất cả kiến thức kho lưu trữ vào một tệp duy nhất
-- Lặp lại cùng một quy tắc ở nhiều nơi
-- Mã hóa các quy tắc lỗi thời mà không ai kiểm toán
-- Viết các hướng dẫn có điều kiện cụ thể đến mức ít khi áp dụng
-- Nhúng các hướng dẫn công cụ dài vào ngữ cảnh khởi động
+- リポジトリの知識をすべて1つのファイルに詰め込む
+- 同じルールをあちこちに重複して書く
+- 誰も監査していない古いルールを固定化する
+- 条件が具体的すぎて、ほとんど適用できない指示を書く
+- 長いツール指示を起動時のコンテキストに埋め込む

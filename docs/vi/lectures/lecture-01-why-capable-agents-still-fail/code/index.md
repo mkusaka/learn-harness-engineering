@@ -1,7 +1,7 @@
-# Mã cho Bài 01
+# レクチャー 01 のコード
 
-Sử dụng thư mục này cho các ví dụ nhỏ minh họa:
+このディレクトリは、次の小さなデモ例に使います:
 
-- một mô hình mạnh thất bại trong môi trường yếu
-- thiết lập repo không được chỉ định rõ ràng
-- thiếu vòng phản hồi
+- 強力なモデルが弱い環境で失敗する例
+- リポジトリのセットアップが明確に指定されていない例
+- フィードバックループがない例

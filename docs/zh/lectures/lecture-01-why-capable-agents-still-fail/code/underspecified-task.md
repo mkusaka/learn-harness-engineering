@@ -1,18 +1,18 @@
-# Underspecified Task Example
+# 仕様が不十分なタスクの例
 
-Build a desktop knowledge base app with AI question answering.
+AI による質問応答機能を備えたデスクトップ向けナレッジベースアプリを作成する。
 
-Constraints:
+制約:
 
-- None specified
-- No startup command given
-- No folder structure guidance
-- No data model defined
-- No explicit completion criteria
+- 特に指定なし
+- 起動コマンドの指定なし
+- フォルダ構成の指示なし
+- データモデルの定義なし
+- 明確な完了条件なし
 
-Typical outcomes from this kind of prompt:
+この種のプロンプトでよくある結果:
 
-- the agent invents a structure ad hoc
-- the app may compile but not start consistently
-- the UI may appear before there is any usable ingest/query path
-- the agent often stops after cosmetic success
+- エージェントがその場しのぎで構成を作ってしまう
+- アプリはコンパイルできても、安定して起動しないことがある
+- 実際に使える取り込み・検索の経路がないまま UI だけ先に見えることがある
+- エージェントが見た目だけ整った時点で止まってしまいがち

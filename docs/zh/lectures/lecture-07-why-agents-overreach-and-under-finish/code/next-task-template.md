@@ -1,6 +1,6 @@
 # Next Task Template
 
-- Current highest-priority feature:
-- Why this feature is next:
-- What counts as passing:
-- What must not be changed during this step:
+- 現在の最優先機能:
+- なぜこの機能が次なのか:
+- 何を満たせば合格とするか:
+- このステップで変更してはいけないもの:

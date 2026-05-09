@@ -1,6 +1,6 @@
-# Mẫu Tác vụ Tiếp theo
+# 次のタスクのテンプレート
 
-- Tính năng có mức ưu tiên cao nhất hiện tại:
-- Tại sao tính năng này là tiếp theo:
-- Điều gì được tính là vượt qua:
-- Điều gì không được thay đổi trong bước này:
+- 現在、最も優先度の高い機能:
+- この機能が次である理由:
+- 何をもって合格とするか:
+- この手順で変更しないもの:

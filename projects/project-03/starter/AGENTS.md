@@ -1,44 +1,44 @@
-# AGENTS.md -- Project 03: Scope Control and Grounded Verification
+# AGENTS.md -- Project 03: スコープ管理と根拠に基づく検証
 
-## Quick Start
+## クイックスタート
 
-1. Run `npm install && npm run check` to verify the build.
-2. Read `docs/ARCHITECTURE.md` for layer structure.
-3. Read `docs/PRODUCT.md` for feature requirements.
-4. Check `feature_list.json` for what needs to be done.
+1. ビルドを確認するために `npm install && npm run check` を実行してください。
+2. レイヤー構成については `docs/ARCHITECTURE.md` を読んでください。
+3. 機能要件については `docs/PRODUCT.md` を読んでください。
+4. 何を進めるべきかは `feature_list.json` を確認してください。
 
-## Layers
+## レイヤー
 
 - Main: `src/main/` -- window, IPC, services
 - Preload: `src/preload/` -- bridge API
 - Renderer: `src/renderer/` -- React UI
 - Services: `src/services/` -- business logic
 
-## Conventions
+## 規約
 
-- TypeScript strict mode. No `any` without comment.
-- Named exports only.
-- IPC channels in `src/shared/types.ts`.
+- TypeScript は strict mode です。`any` を使う場合はコメントを付けてください。
+- export は named export のみを使ってください。
+- IPC channels は `src/shared/types.ts` にあります。
 
-## Features to Implement
+## 実装対象の機能
 
-The new features for this project are:
+このプロジェクトで新たに実装する機能は次のとおりです。
 
-1. **Document Chunking** -- IndexingService splits documents into ~500 char chunks
-2. **Metadata Extraction** -- Extract word count, line count, file type on import
-3. **Indexing Status UI** -- StatusBar shows indexing progress with counts
-4. **Grounded Q&A** -- QaService returns answers with citations and confidence
+1. **Document Chunking** -- `IndexingService` が文書をおよそ500文字ごとの chunk に分割する
+2. **Metadata Extraction** -- import 時に単語数、行数、ファイル種別を抽出する
+3. **Indexing Status UI** -- `StatusBar` が件数付きで indexing の進捗を表示する
+4. **Grounded Q&A** -- `QaService` が引用と confidence 付きで回答を返す
 
-Check `feature_list.json` for current status.
+現在の状態は `feature_list.json` を確認してください。
 
-## Definition of Done
+## 完了条件
 
-A feature is "done" when:
+機能が「完了」とみなされるのは、次の条件を満たしたときです。
 
-1. TypeScript compiles without errors (`npm run check`).
-2. The app launches and the feature works.
-3. The feature appears in `feature_list.json` with status `"pass"` and evidence.
+1. TypeScript がエラーなくコンパイルできること（`npm run check`）。
+2. アプリが起動し、機能が動作すること。
+3. `feature_list.json` に status `"pass"` と evidence を伴ってその機能が記載されていること。
 
-## Session Handoff
+## セッション引き継ぎ
 
-When resuming work, read `session-handoff.md` for context from the previous session.
+作業を再開するときは、前回セッションの文脈として `session-handoff.md` を読んでください。

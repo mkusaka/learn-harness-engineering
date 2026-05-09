@@ -1,9 +1,9 @@
-# Cleanup Loop Example
+# Cleanup Loop の例
 
-Recurring cleanup tasks:
+繰り返し行うクリーンアップ作業:
 
-- scan for stale docs
-- scan for structural violations
-- update quality grades
-- open targeted cleanup PRs
-- rerun a fixed benchmark slice after cleanup
+- 古くなったドキュメントを確認する
+- 構造上の違反を確認する
+- 品質グレードを更新する
+- 対象を絞ったクリーンアップ PR を作成する
+- クリーンアップ後に固定したベンチマークの一部を再実行する

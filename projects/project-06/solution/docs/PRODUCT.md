@@ -1,105 +1,105 @@
-# Product Description -- Knowledge Base (Capstone)
+# 製品説明 -- ナレッジベース（Capstone）
 
-## What Is This?
+## これは何ですか？
 
-A desktop application for managing a personal knowledge base. Users import text and Markdown documents, the system indexes them into searchable chunks, and provides grounded question answering with citations. Users can view conversation history, provide feedback on answers, and reset the application to a clean state for testing.
+個人用ナレッジベースを管理するデスクトップアプリケーションです。ユーザーがテキストや Markdown ドキュメントを取り込むと、システムがそれらを検索可能なチャンクにインデックス化し、出典付きの根拠ある質問応答を提供します。ユーザーは会話履歴を確認し、回答にフィードバックを残し、テスト用にアプリケーションをクリーンな状態へリセットできます。
 
-## Core Features
+## 主な機能
 
-### Document Management
-- Import `.txt` and `.md` files through a file picker in the ImportPanel.
-- File validation: existence check, 10 MB size limit.
-- View document metadata: title, filename, size, import date, indexing status.
-- View document chunks with metadata (character count, word count).
-- Browse a list of all imported documents in a sidebar panel.
-- Delete documents and their associated data (content file, original copy).
+### ドキュメント管理
+- `ImportPanel` のファイルピッカーから `.txt` と `.md` ファイルを取り込みます。
+- ファイル検証: 存在確認、10 MB のサイズ上限。
+- ドキュメントのメタデータを表示します: タイトル、ファイル名、サイズ、取り込み日、インデックス状態。
+- メタデータ付きでドキュメントのチャンクを表示します（文字数、単語数）。
+- サイドバーパネルで、取り込んだすべてのドキュメント一覧を閲覧できます。
+- ドキュメントと関連データ（内容ファイル、元のコピー）を削除できます。
 
-### Text Indexing
-- Split documents into ~500-character chunks at paragraph boundaries.
-- Store chunks with metadata (character count, word count).
-- Track indexing status per document and overall.
-- Support indexing individual documents or the full library.
-- Documents automatically marked as "indexed" after chunking.
-- Indexing status visible in sidebar and status bar.
+### テキストのインデックス化
+- ドキュメントを段落の区切りで、約 500 文字のチャンクに分割します。
+- メタデータ付きでチャンクを保存します（文字数、単語数）。
+- ドキュメントごとおよび全体のインデックス状態を追跡します。
+- 個別のドキュメントまたはライブラリ全体のインデックス化をサポートします。
+- チャンク化後、ドキュメントは自動的に `"indexed"` としてマークされます。
+- インデックス状態はサイドバーとステータスバーに表示されます。
 
-### Grounded Q&A
-- Ask natural language questions about the document library.
-- Receive answers with citations pointing to specific document chunks.
-- Confidence scores indicate answer reliability (0.85 with citations, 0.30 without).
-- 8 mock answer patterns covering architecture, import, indexing, retrieval, meetings, logging, feedback, and clean state.
-- Full Q&A history is persisted across sessions.
-- Query latency typically under 500ms.
+### 根拠付き Q&A
+- ドキュメントライブラリについて自然言語で質問できます。
+- 特定のドキュメントチャンクを指す引用付きの回答を受け取れます。
+- 信頼度スコアで回答の信頼性を示します（引用ありで 0.85、なしで 0.30）。
+- アーキテクチャ、取り込み、インデックス化、検索、会議、ログ、フィードバック、クリーン状態をカバーする 8 つのモック回答パターンがあります。
+- Q&A の完全な履歴はセッションをまたいで保持されます。
+- クエリの遅延は通常 500ms 未満です。
 
-### Conversation History
-- Chat-style display of all Q&A exchanges.
-- User questions shown as purple bubbles (right-aligned).
-- Assistant answers shown as dark bubbles (left-aligned).
-- Expandable citations for each answer.
-- Confidence indicator with color coding (green/yellow/red).
-- Timestamps on each exchange.
-- Clear history with confirmation dialog.
+### 会話履歴
+- すべての Q&A のやり取りをチャット形式で表示します。
+- ユーザーの質問は紫の吹き出しで表示されます（右寄せ）。
+- アシスタントの回答は濃い色の吹き出しで表示されます（左寄せ）。
+- 各回答には展開可能な引用があります。
+- 信頼度インジケーターは色分けされます（緑 / 黄 / 赤）。
+- 各やり取りにタイムスタンプを表示します。
+- 確認ダイアログ付きで履歴を消去できます。
 
-### Feedback Collection
-- Thumbs up/down buttons on each Q&A response in conversation history.
-- Thumbs up/down buttons on the latest response in document view.
-- Feedback persists across sessions.
-- Each feedback entry includes: ID, Q&A timestamp, question, rating, optional comment, submission time.
+### フィードバック収集
+- 会話履歴内の各 Q&A 応答に、いいね / 低評価ボタンがあります。
+- ドキュメントビューの最新応答にも、いいね / 低評価ボタンがあります。
+- フィードバックはセッションをまたいで保持されます。
+- 各フィードバック項目には、ID、Q&A のタイムスタンプ、質問、評価、任意コメント、送信時刻が含まれます。
 
-### Clean State Reset
-- Reset button in application header.
-- Confirmation dialog before reset.
-- Clears all documents, chunks, Q&A history, and feedback.
-- Application returns to initial empty state.
-- Data directory is removed and recreated.
+### クリーン状態へのリセット
+- アプリケーションのヘッダーにリセットボタンがあります。
+- リセット前に確認ダイアログを表示します。
+- すべてのドキュメント、チャンク、Q&A 履歴、フィードバックを消去します。
+- アプリケーションは初期の空状態に戻ります。
+- データディレクトリは削除して再作成されます。
 
-### Persistence
-- All data persists across application restarts.
-- Document list loads automatically on application startup.
-- Data stored locally in the user's application data directory.
-- Four data files: documents-meta.json, qa-history.json, feedback.json, index-meta.json.
+### 永続化
+- すべてのデータはアプリケーションの再起動後も保持されます。
+- ドキュメント一覧はアプリケーション起動時に自動で読み込まれます。
+- データはユーザーのアプリケーションデータディレクトリにローカル保存されます。
+- データファイルは 4 つあります: documents-meta.json, qa-history.json, feedback.json, index-meta.json。
 
-### Status Bar
-- Real-time display of index status (idle, indexing, ready, error).
-- Color-coded status indicator.
-- Document count.
-- Indexed document count.
-- Last activity timestamp.
+### ステータスバー
+- インデックス状態をリアルタイムで表示します（idle, indexing, ready, error）。
+- 色分けされたステータスインジケーター。
+- ドキュメント数。
+- インデックス済みドキュメント数。
+- 最終アクティビティのタイムスタンプ。
 
-## User Interface
+## ユーザーインターフェース
 
 ```
 +------------------+----------------------------------------+
-| Header           | History | Reset | Refresh              |
+| ヘッダー         | 履歴    | リセット | 更新            |
 +------------------+----------------------------------------+
-| Document List    | Document Detail / Conversation History |
-| (sidebar)        |   - Metadata display                   |
-|                  |   - Show Chunks toggle                 |
-| [+ Import]       |   - Index Document button              |
-|                  |   - Delete button                      |
-| doc1 (Indexed)   |                                        |
-|   3.2 KB         | Q&A Response:                          |
-| doc2 (Imported)  |   Answer text...                       |
-|   1.8 KB         |   Citations: [expandable]              |
-|                  |   Confidence: 85%                      |
-|                  |   [+1] [-1] feedback                   |
+| ドキュメント一覧 | ドキュメント詳細 / 会話履歴            |
+| （サイドバー）   |   - メタデータ表示                     |
+|                  |   - チャンク表示の切り替え             |
+| [+ 取り込み]     |   - ドキュメントをインデックス化ボタン |
+|                  |   - 削除ボタン                         |
+| doc1 (インデックス済み) |                              |
+|   3.2 KB         | Q&A 応答:                              |
+| doc2 (取り込み済み)    |   回答テキスト...                  |
+|   1.8 KB         |   引用: [展開可能]                     |
+|                  |   信頼度: 85%                          |
+|                  |   [+1] [-1] フィードバック             |
 +------------------+----------------------------------------+
-| Ask a question...                              [Ask]       |
+| 質問を入力...                              [質問する]      |
 +-----------------------------------------------------------+
-| Status: Ready | Documents: 3 | Indexed: 3 | 12:34 PM     |
+| ステータス: 準備完了 | ドキュメント: 3 | インデックス済み: 3 | 12:34 PM |
 +-----------------------------------------------------------+
 ```
 
-## Constraints
+## 制約
 
-- Maximum supported file size: 10 MB.
-- Supported formats: `.txt`, `.md`.
-- Q&A uses mock patterns -- no LLM integration.
-- All data is local; no network requests.
-- Structured logging outputs to console (no file-based logging in this version).
+- 最大対応ファイルサイズ: 10 MB。
+- 対応形式: `.txt`, `.md`。
+- Q&A はモックパターンを使用します -- LLM 連携はありません。
+- すべてのデータはローカルにあり、ネットワークリクエストはありません。
+- 構造化ログはコンソールに出力されます（このバージョンではファイルベースのログはありません）。
 
-## Performance Targets
+## パフォーマンス目標
 
-- Import throughput: 10+ files per batch under 1 second.
-- Indexing speed: 100+ chunks per second.
-- Query latency: under 500ms per question.
-- Citation accuracy: top 2 chunks must be relevant.
+- 取り込みスループット: 1 バッチあたり 10 ファイル以上を 1 秒未満で処理。
+- インデックス化速度: 1 秒あたり 100 チャンク以上。
+- クエリ遅延: 1 問あたり 500ms 未満。
+- 引用の精度: 上位 2 チャンクが関連していること。

@@ -1,224 +1,228 @@
-[English](https://walkinglabs.github.io/learn-harness-engineering/en/) · [中文](https://walkinglabs.github.io/learn-harness-engineering/zh/) · [Русский](https://walkinglabs.github.io/learn-harness-engineering/ru/) · [Tiếng Việt](https://walkinglabs.github.io/learn-harness-engineering/vi/) · [한국어](https://walkinglabs.github.io/learn-harness-engineering/ko/)
+[英語版](https://walkinglabs.github.io/learn-harness-engineering/en/) · [中国語版](https://walkinglabs.github.io/learn-harness-engineering/zh/) · [ロシア語版](https://walkinglabs.github.io/learn-harness-engineering/ru/) · [ベトナム語版](https://walkinglabs.github.io/learn-harness-engineering/vi/) · [韓国語版](https://walkinglabs.github.io/learn-harness-engineering/ko/)
 
 # Learn Harness Engineering
 
-> **A project-based course on building the environment, state management, verification, and control mechanisms that make AI coding agents work reliably.**
+> **AI コーディングエージェントを安定して動かすための、環境構築・状態管理・検証・制御機構を学ぶプロジェクトベースの講座です。**
 
-Learn Harness Engineering is a course dedicated to the engineering of AI coding agents. We have deeply studied and synthesized the most advanced Harness Engineering theories and practices in the industry. Our core references include:
+Learn Harness Engineering は、AI コーディングエージェント向けのエンジニアリングに特化した講座です。私たちは、業界の最前線にある harness engineering の理論と実践を深く研究し、それらを統合しています。主な参照元は次のとおりです。
 
 - [OpenAI: Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/)
 - [Anthropic: Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
 - [Anthropic: Harness design for long-running application development](https://www.anthropic.com/engineering/harness-design-long-running-apps)
 - [Awesome Harness Engineering](https://github.com/walkinglabs/awesome-harness-engineering)
 
-> **Quick start?** The [`skills/harness-creator/`](./skills/) skill can help you scaffold a production-grade harness (AGENTS.md, feature lists, init.sh, verification workflows) for your own project in minutes.
+> **すぐに始めたいですか？** [`skills/harness-creator/`](./skills/) の skill を使えば、自分のプロジェクト向けに本番レベルの harness（`AGENTS.md`、機能一覧、`init.sh`、検証ワークフロー）を数分で組み立てられます。
 
 ---
 
-## Table of Contents
+## 目次
 
-- [✨ Visual Preview](#-visual-preview)
-- [What Harness Engineering Actually Means](#what-harness-engineering-actually-means)
-- [Quick Start: Improve Your Agent Today](#quick-start-improve-your-agent-today)
-- [Capstone Project: A Real App](#capstone-project-a-real-app)
-- [Learning Path](#learning-path)
-- [Syllabus](#syllabus)
+- [✨ ビジュアルプレビュー](#-visual-preview)
+- [Harness Engineering とは何か](#what-harness-engineering-actually-means)
+- [クイックスタート: 今すぐエージェントを改善する](#quick-start-improve-your-agent-today)
+- [キャップストーンプロジェクト: 実アプリ](#capstone-project-a-real-app)
+- [学習パス](#learning-path)
+- [シラバス](#syllabus)
 - [Skills](#skills)
-- [Other Courses](#other-courses)
+- [他の講座](#other-courses)
 
 ---
 
-## ✨ Visual Preview
+<a id="-visual-preview"></a>
+## ✨ ビジュアルプレビュー
 
-### 🏠 Course Homepage
-> A comprehensive course outline and introduction to core philosophies, providing a clear path to get started.
+### 🏠 コースホームページ
+> コース全体の構成と中核となる考え方をまとめた、学習の入口がひと目で分かるページです。
 
-![Course homepage preview](./docs/public/screenshots/readme/en-home.png)
+![コースホームページのプレビュー](./docs/public/screenshots/readme/en-home.png)
 
-### 📖 Immersive Lectures
-> Deep dives into real-world pain points and hands-on projects (like Project 01) for an immersive learning experience.
+### 📖 没入型の講義
+> 実際の課題や、Project 01 のようなハンズオンプロジェクトを深く掘り下げた、没入感のある学習体験を提供します。
 
-![Course lecture preview](./docs/public/screenshots/readme/en-lecture-01.png)
+![講義プレビュー](./docs/public/screenshots/readme/en-lecture-01.png)
 
-### 🗂️ Ready-to-Use Resource Library
-> Templates and reference configurations designed to solve common pitfalls in multi-turn AI agent development, such as context loss and premature task completion.
+### 🗂️ すぐ使えるリソースライブラリ
+> コンテキスト喪失やタスクの早すぎる完了といった、マルチターンの AI エージェント開発でよく起きる落とし穴を避けるために設計されたテンプレートと参照設定をまとめています。
 
-![Resource library preview](./docs/public/screenshots/readme/en-resources.png)
+![リソースライブラリのプレビュー](./docs/public/screenshots/readme/en-resources.png)
 
-## PDF Coursebooks
+## PDF コースブック
 
-The repository now includes a PDF build pipeline for the course content.
+このリポジトリには、講義内容を PDF に出力するパイプラインが含まれています。
 
-- Run `npm run pdf:build` to generate English and Chinese PDFs locally.
-- Output files are written to `artifacts/pdfs/`.
-- Run `npm run screenshots:readme` if you want to refresh the README preview images.
-- GitHub Actions workflow [`release-course-pdfs.yml`](./.github/workflows/release-course-pdfs.yml) can build the PDFs and publish them to GitHub Releases.
+- `npm run pdf:build` を実行すると、英語版と中国語版の PDF をローカル生成できます。
+- 出力先は `artifacts/pdfs/` です。
+- README のプレビュー画像を更新したい場合は `npm run screenshots:readme` を実行してください。
+- GitHub Actions のワークフロー [`release-course-pdfs.yml`](./.github/workflows/release-course-pdfs.yml) は、PDF をビルドして GitHub Releases に公開できます。
 
 ---
 
-## The Model Is Smart, The Harness Makes It Reliable
+## モデルは賢い。ハーネスがそれを信頼できるものにする。
 
-There's a hard truth most people learn the hard way: **the strongest model in the world will still fail on real engineering tasks if you don't build a proper environment around it.**
+多くの人が痛みを伴って学ぶ厳しい事実があります。**世界で最も強力なモデルでも、適切な環境を周囲に用意しなければ、実際のエンジニアリング作業では失敗します。**
 
-You've probably seen this yourself. You give Claude or GPT a task in your repo. It starts well — reads files, writes code, looks productive. Then something goes wrong. It skips a step. It breaks a test. It says "done" but nothing actually works. You spend more time cleaning up than if you'd done it yourself.
+きっとあなたも似た経験があるはずです。リポジトリ上で Claude や GPT にタスクを与えると、最初は順調に進みます。ファイルを読み、コードを書き、うまく動いているように見えます。ところが、どこかで崩れます。手順を飛ばす。テストを壊す。「完了しました」と言うのに、実際には何も動かない。自分でやるより、後始末のほうに時間がかかります。
 
-This isn't a model problem. It's a harness problem.
+これはモデルの問題ではありません。ハーネスの問題です。
 
-The evidence is clear. Anthropic ran a controlled experiment: same model (Opus 4.5), same prompt ("build a 2D retro game editor"). Without a harness, it spent $9 in 20 minutes and produced something that didn't work. With a full harness (planner + generator + evaluator), it spent $200 in 6 hours and built a game you could actually play. The model didn't change. The harness did.
+証拠は明確です。Anthropic は制御実験を行いました。モデルは同じ（Opus 4.5）、プロンプトも同じ（「2D レトロゲームエディタを作る」）。ハーネスなしでは、20 分で 9 ドルを消費し、動かないものしか作れませんでした。完全なハーネス（planner + generator + evaluator）を使うと、6 時間で 200 ドルを消費し、実際に遊べるゲームを構築しました。モデルは変わっていません。変わったのはハーネスです。
 
-OpenAI reported the same thing with Codex: in a well-harnessed repository, the same model goes from "unreliable" to "reliable." Not a marginal improvement — a qualitative shift.
+OpenAI も Codex で同じことを報告しています。よく整備されたハーネスのあるリポジトリでは、同じモデルが「不安定」から「信頼できる」へと変わります。単なる微調整ではなく、質的な変化です。
 
-**This course teaches you how to build that environment.**
+**この講座では、その環境をどう作るかを学びます。**
 
 ```text
-                    THE HARNESS PATTERN
-                    ====================
+                    ハーネスの基本パターン
+                    ======================
 
-    You --> give task --> Agent reads harness files --> Agent executes
+    あなた --> タスクを与える --> Agent が harness ファイルを読む --> Agent が実行
                                                         |
-                                              harness governs every step:
+                                              harness が各ステップを統制する:
                                               |
-                                              +--> Instructions: what to do, in what order
-                                              +--> Scope:       one feature at a time, no overreach
-                                              +--> State:       progress log, feature list, git history
-                                              +--> Verification: tests, lint, type-check, smoke runs
-                                              +--> Lifecycle:   init at start, clean state at end
+                                              +--> Instructions: 何を、どの順番でやるか
+                                              +--> Scope:       1 つの機能ずつ、過剰拡張なし
+                                              +--> State:       進捗ログ、機能一覧、git 履歴
+                                              +--> Verification: tests、lint、type-check、smoke 実行
+                                              +--> Lifecycle:   最初に init、最後にクリーンな状態へ
                                               |
                                               v
-                                         Agent stops only when
-                                         verification passes
+                                         検証に合格するまで
+                                         Agent は止まらない
 ```
 
 ---
 
-## What Harness Engineering Actually Means
+<a id="what-harness-engineering-actually-means"></a>
+## Harness Engineering とは何か
 
-Harness engineering is about building a complete working environment around the model so it produces reliable results. It's not about writing better prompts. It's about designing the system the model operates inside.
+harness engineering とは、モデルの周囲に完全な実行環境を作り、安定した結果を出せるようにすることです。より良いプロンプトを書くことではありません。モデルが動くシステムそのものを設計することです。
 
-A harness has five subsystems:
+ハーネスには 5 つのサブシステムがあります。
 
 ```text
     ┌─────────────────────────────────────────────────────────────────┐
-    │                        THE HARNESS                              │
+    │                         ハーネス                               │
     │                                                                 │
-    │   ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐ │
-    │   │ Instructions  │  │    State     │  │   Verification       │ │
-    │   │              │  │              │  │                      │ │
-    │   │ AGENTS.md    │  │ progress.md  │  │ tests + lint         │ │
-    │   │ CLAUDE.md    │  │ feature_list │  │ type-check           │ │
-    │   │ feature_list │  │ git log      │  │ smoke runs           │ │
-    │   │ docs/        │  │ session hand │  │ e2e pipeline         │ │
-    │   └──────────────┘  └──────────────┘  └──────────────────────┘ │
+    │   ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐  │
+    │   │ Instructions  │  │    State     │  │   Verification      │  │
+    │   │              │  │              │  │                      │  │
+    │   │ AGENTS.md    │  │ progress.md  │  │ tests + lint         │  │
+    │   │ CLAUDE.md    │  │ feature_list │  │ type-check           │  │
+    │   │ feature_list │  │ git log      │  │ smoke runs           │  │
+    │   │ docs/        │  │ session hand │  │ e2e pipeline         │  │
+    │   └──────────────┘  └──────────────┘  └──────────────────────┘  │
     │                                                                 │
-    │   ┌──────────────┐  ┌──────────────────────────────────────┐   │
-    │   │    Scope     │  │         Session Lifecycle             │   │
-    │   │              │  │                                      │   │
-    │   │ one feature  │  │ init.sh at start                     │   │
-    │   │ at a time   │  │ clean-state checklist at end          │   │
-    │   │ definition   │  │ handoff note for next session        │   │
-    │   │ of done      │  │ commit only when safe to resume      │   │
-    │   └──────────────┘  └──────────────────────────────────────┘   │
+    │   ┌──────────────┐  ┌──────────────────────────────────────┐    │
+    │   │    Scope     │  │         Session Lifecycle            │    │
+    │   │              │  │                                      │    │
+    │   │ one feature  │  │ init.sh at start                     │    │
+    │   │ at a time   │  │ clean-state checklist at end          │    │
+    │   │ definition   │  │ handoff note for next session        │    │
+    │   │ of done      │  │ commit only when safe to resume      │    │
+    │   └──────────────┘  └──────────────────────────────────────┘    │
     │                                                                 │
     └─────────────────────────────────────────────────────────────────┘
 
-    The MODEL decides what code to write.
-    The HARNESS governs when, where, and how it writes it.
-    The harness doesn't make the model smarter.
-    It makes the model's output reliable.
+    モデルは書くコードを決める。
+    ハーネスは、いつ、どこで、どのように書くかを統制する。
+    ハーネスはモデルを賢くするわけではない。
+    モデルの出力を信頼できるものにする。
 ```
 
-Each subsystem has one job:
+それぞれのサブシステムには、明確な役割があります。
 
-- **Instructions** — Tell the agent what to do, in what order, and what to read before starting. Not one giant file; a progressive disclosure structure the agent navigates on demand.
-- **State** — Track what's been done, what's in progress, and what's next. Persisted to disk so the next session picks up exactly where the last one left off.
-- **Verification** — Only a passing test suite counts as evidence. The agent cannot declare victory without runnable proof.
-- **Scope** — Constrain the agent to one feature at a time. No overreach. No half-finishing three things. No rewriting the feature list to hide unfinished work.
-- **Session Lifecycle** — Initialize at the start. Clean up at the end. Leave a clean restart path for the next session.
+- **Instructions** — エージェントに、何を、どの順番で、開始前に何を読むべきかを伝えます。巨大な 1 ファイルではなく、必要に応じて辿れる段階的開示の構造です。
+- **State** — 何を終えたか、いま何をしているか、次に何をするかを追跡します。ディスクに永続化されるため、次のセッションは前回の続きから正確に始められます。
+- **Verification** — 合格したテストスイートだけが証拠になります。実行可能な裏付けなしに、エージェントは勝利を宣言できません。
+- **Scope** — エージェントを一度に 1 つの機能に制限します。過剰拡張なし。3 つのことを中途半端に終わらせない。未完了の作業を隠すために機能一覧を書き換えない。
+- **Session Lifecycle** — 開始時に初期化し、最後に片付けます。次のセッションがすぐ再開できる、クリーンな状態を残します。
 
 ---
 
-## Why This Course Exists
+## この講座が存在する理由
 
-The question isn't "can models write code?" They can. The question is: **can they reliably complete real engineering tasks inside real repositories, over multiple sessions, without constant human supervision?**
+問いは「モデルはコードを書けるか？」ではありません。書けます。本当に問うべきなのは、**複数セッションにまたがって、実際のリポジトリ内で、人の継続的な監督なしに、現実のエンジニアリング作業を安定して完了できるか？** です。
 
-Right now, the answer is: not without a harness.
+現時点の答えは、ハーネスなしでは無理、です。
 
 ```text
-    WITHOUT HARNESS                          WITH HARNESS
-    ==============                          ============
+    ハーネスなし                         ハーネスあり
+    ============                         ============
 
-    Session 1: agent writes code            Session 1: agent reads instructions
-              agent breaks tests                      agent runs init.sh
-              agent says "done"                       agent works on one feature
-              you fix it manually                     agent verifies before claiming done
-                                                       agent updates progress log
-    Session 2: agent starts fresh                    agent commits clean state
-              agent has no memory
-              of what happened before         Session 2: agent reads progress log
-              agent re-does work                       agent picks up exactly where it left off
-              or does something else entirely          agent continues the unfinished feature
-              you fix it again                         you review, not rescue
+    セッション 1: agent がコードを書く      セッション 1: agent が指示を読む
+              agent がテストを壊す                  agent が init.sh を実行する
+              agent が「完了」と言う               agent が 1 つの機能だけに取り組む
+              あなたが手で直す                      agent が完了を宣言する前に検証する
+                                                      agent が進捗ログを更新する
+    セッション 2: agent が新しく始める            agent がクリーンな状態をコミットする
+              agent には前回の記憶がない          セッション 2: agent が進捗ログを読む
+              何が起きたか分からない               agent が前回の続きから正確に再開する
+              agent が同じ作業をやり直す            agent が未完了の機能を続ける
+              あるいは別のことを始める            あなたは救済ではなくレビューをする
+              あなたがまた直す
 
-    Result: you spend more time                  Result: agent does the work,
-            cleaning up than if you                      you verify the result
-            did it yourself
+    結果: あなたは                    結果: agent が仕事をし、
+          自分でやるより多く                あなたは結果を確認する
+          後始末に時間を使う
 ```
 
-The questions this course actually cares about:
+この講座が本当に扱う問いは次のとおりです。
 
-- Which harness designs improve task completion rates?
-- Which designs reduce rework and incorrect completions?
-- Which mechanisms keep long-running tasks progressing steadily?
-- Which structures keep the system maintainable after multiple agent runs?
-
----
-
-## Course Curriculum & Documentation
-
-For the full course materials, please visit the **[Documentation Website](https://walkinglabs.github.io/learn-harness-engineering/)**.
-
-The curriculum is divided into three parts:
-
-1. **Lectures**: 12 conceptual units explaining the theory behind harness engineering.
-2. **Projects**: 6 hands-on projects where you build an agentic workspace from scratch.
-3. **Resource Library**: Copy-ready templates (`AGENTS.md`, `feature_list.json`, `init.sh`, etc.) to use in your own repositories today.
+- どの harness 設計がタスク完了率を改善するのか？
+- どの設計が手戻りや誤完了を減らすのか？
+- どの仕組みが長時間タスクを安定して進め続けるのか？
+- どの構造が、エージェントを何度動かしても保守しやすいシステムを維持するのか？
 
 ---
 
-## Quick Start: Improve Your Agent Today
+## コースカリキュラムとドキュメント
 
-You don't need to read all 12 lectures before you start getting value. If you're already using a coding agent on a real project, here's how to improve it right now.
+講座全体の教材は、**[ドキュメントサイト](https://walkinglabs.github.io/learn-harness-engineering/)** で確認してください。
 
-The idea is simple: instead of just writing prompts, give your agent a set of structured files that define what to do, what's been done, and how to verify the work. These files live inside your repo, so every session starts from the same state.
+カリキュラムは 3 つのパートに分かれています。
+
+1. **Lectures**: harness engineering の理論を説明する 12 の概念単元
+2. **Projects**: agentic workspace をゼロから構築する 6 つのハンズオンプロジェクト
+3. **Resource Library**: 自分のリポジトリですぐ使える、コピペ可能なテンプレート（`AGENTS.md`、`feature_list.json`、`init.sh` など）
+
+---
+
+<a id="quick-start-improve-your-agent-today"></a>
+## クイックスタート: 今すぐエージェントを改善する
+
+価値を得るために、12 講義すべてを最初から読む必要はありません。すでに実案件でコーディングエージェントを使っているなら、今すぐ改善する方法があります。
+
+考え方は単純です。プロンプトだけを書くのではなく、エージェントに「何をするか」「何が終わったか」「どう検証するか」を定義した構造化ファイル群を与えます。これらのファイルはリポジトリ内に置かれるため、毎回のセッションが同じ状態から始まります。
 
 ```text
     YOUR PROJECT ROOT
-    ├── AGENTS.md              <-- the agent's operating manual
-    ├── CLAUDE.md              <-- (alternative, if using Claude Code)
-    ├── init.sh                <-- runs install + verify + start
-    ├── feature_list.json      <-- what features exist, which are done
-    ├── claude-progress.md     <-- what happened each session
-    └── src/                   <-- your actual code
+    ├── AGENTS.md              <-- エージェントの操作マニュアル
+    ├── CLAUDE.md              <-- (Claude Code を使う場合の代替)
+    ├── init.sh                <-- install + verify + start を実行
+    ├── feature_list.json      <-- どんな機能があり、何が完了したか
+    ├── claude-progress.md     <-- 各セッションで何が起きたか
+    └── src/                   <-- 実際のコード
 ```
 
-Grab the starter templates from the [Resource Library](https://walkinglabs.github.io/learn-harness-engineering/en/resources/) and drop them into your project. That's it. Four files, and your agent sessions will already be significantly more stable than running on prompts alone.
+[Resource Library](https://walkinglabs.github.io/learn-harness-engineering/en/resources/) からスターターテンプレートを取り出して、自分のプロジェクトに入れてください。それだけです。たった 4 ファイルで、エージェントのセッションはプロンプトだけで動かすよりずっと安定します。
 
 ---
 
-## Capstone Project: A Real App
+<a id="capstone-project-a-real-app"></a>
+## キャップストーンプロジェクト: 実アプリ
 
-All six course projects revolve around the same product: **an Electron-based personal knowledge base desktop app**.
+6 つのコースプロジェクトはすべて、同じ製品を中心に進みます。**Electron ベースの個人用ナレッジベースデスクトップアプリ** です。
 
 ```text
     ┌─────────────────────────────────────────────────────┐
-    │               Knowledge Base Desktop App            │
+    │               ナレッジベースデスクトップアプリ        │
     │                                                     │
     │  ┌──────────────┐  ┌──────────────────────────────┐│
     │  │ Document List │  │       Q&A Panel              ││
     │  │              │  │                              ││
-    │  │ doc-001.md   │  │  Q: What is harness eng?    ││
-    │  │ doc-002.md   │  │  A: The environment built    ││
-    │  │ doc-003.md   │  │     around an agent model... ││
+    │  │ doc-001.md   │  │  Q: harness eng とは？       ││
+    │  │ doc-002.md   │  │  A: エージェントモデルの周囲 ││
+    │  │ doc-003.md   │  │     に構築された環境...       ││
     │  │ ...          │  │     [citation: doc-002.md]   ││
     │  └──────────────┘  └──────────────────────────────┘│
     │                                                     │
@@ -227,257 +231,259 @@ All six course projects revolve around the same product: **an Electron-based per
     │  └─────────────────────────────────────────────────┘│
     └─────────────────────────────────────────────────────┘
 
-    Core features:
-    ├── Import local documents
-    ├── Manage a document library
-    ├── Process and index documents
-    ├── Run AI-powered Q&A over imported content
-    └── Return grounded answers with citations
+    コア機能:
+    ├── ローカル文書を取り込む
+    ├── 文書ライブラリを管理する
+    ├── 文書を処理してインデックス化する
+    ├── 取り込んだ内容に対して AI 搭載 Q&A を実行する
+    └── 根拠付きの回答と引用を返す
 ```
 
-This project was chosen because it combines strong practical value, enough real-world product complexity, and a good setting for observing before/after harness improvements.
+このプロジェクトが選ばれたのは、実用性が高く、現実的な製品としての複雑さがあり、ハーネス改善の前後差を観察するのに適しているからです。
 
-Each course project's starter/solution is a complete copy of this Electron app at that evolutionary stage. P(N+1)'s starter is derived from P(N)'s solution — the app evolves as your harness skills grow.
+各コースプロジェクトの starter/solution は、その進化段階にあるこの Electron アプリの完全なコピーです。P(N+1) の starter は P(N) の solution から派生します。つまり、ハーネスの技術が上がるにつれて、アプリも進化していくわけです。
 
 ---
 
-## Learning Path
+<a id="learning-path"></a>
+## 学習パス
 
-The course is designed to be done in order. Each phase builds on the last.
+この講座は順番どおりに進めることを前提に設計されています。各フェーズは前の内容の上に積み上がります。
 
 ```text
-    Phase 1: SEE THE PROBLEM              Phase 2: STRUCTURE THE REPO
-    ========================              ==========================
+    Phase 1: 問題を見つける           Phase 2: リポジトリを構造化する
+    ========================           ==========================
 
-    L01  Strong models ≠ reliable         L03  Repository as single
-         execution                              source of truth
-    L02  What harness actually means
-                                       L04  Split instructions across
-         |                                   files, not one giant file
+    L01  強いモデル ≠ 信頼できる        L03  リポジトリを唯一の
+         実行                                真実の源にする
+    L02  harness とは実際に何か
+                                       L04  指示を 1 つの巨大ファイルでは
+         |                                   なく分割する
          v
-    P01  Prompt-only vs.                       |
-         rules-first comparison                v
-                                               P02  Agent-readable workspace
+    P01  プロンプトのみ vs.               |
+         rules-first の比較               v
+                                               P02  エージェントが読める workspace
 
 
-    Phase 3: CONNECT SESSIONS             Phase 4: FEEDBACK & SCOPE
+    Phase 3: セッションをつなぐ         Phase 4: フィードバックとスコープ
     ==========================           =========================
 
-    L05  Keep context alive               L07  Draw clear task boundaries
-         across sessions
-                                       L08  Feature lists as harness
-    L06  Initialize before every               primitives
-         agent session
+    L05  セッションをまたいでも          L07  タスク境界を明確に引く
+         コンテキストを維持する
+                                       L08  harness の原始要素としての
+    L06  すべてのエージェント                 機能一覧
+         セッション前に初期化する
                                                |
          |                                     v
-         v                                     P04  Runtime feedback to
-    P03  Multi-session continuity                   correct agent behavior
+         v                                     P04  エージェントの振る舞いを
+    P03  複数セッションの継続性                  修正するためのランタイムフィードバック
 
 
-    Phase 5: VERIFICATION                 Phase 6: PUT IT ALL TOGETHER
-    =====================                 ============================
+    Phase 5: 検証                       Phase 6: すべてを組み合わせる
+    =====================               ============================
 
-    L09  Stop agents from                 L11  Make agent's runtime
-         declaring victory early               observable
+    L09  エージェントが早く                L11  エージェントの実行時
+         勝利宣言しないようにする              の挙動を可視化する
 
-    L10  Full-pipeline run =              L12  Clean handoff at end of
-         real verification                      every session
+    L10  フルパイプライン実行 =          L12  各セッションの最後に
+         本当の検証                         クリーンな引き継ぎを行う
 
          |                                     |
          v                                     v
-    P05  Agent verifies its own work       P06  Build a complete harness
+    P05  エージェント自身に作業を検証させる   P06  完全なハーネスを構築する
                                                (capstone project)
 ```
 
-Each phase takes about a week if you're going part-time. If you want to go faster, phases 1–3 can be done in a long weekend.
+各フェーズは、パートタイムで進めるならおよそ 1 週間です。もっと速く進めたいなら、フェーズ 1〜3 は長い週末で終えられます。
 
 ---
 
-## Syllabus
+<a id="syllabus"></a>
+## シラバス
 
-### Lectures — 12 conceptual units, each answering one core question
+### Lectures — 12 の概念単元、それぞれが 1 つの核心的な問いに答える
 
-*Read the full text for each lecture on the [Documentation Website](https://walkinglabs.github.io/learn-harness-engineering/).*
+*各講義の全文は [ドキュメントサイト](https://walkinglabs.github.io/learn-harness-engineering/) で読んでください。*
 
-| Session | Question | Core Idea |
-|---------|----------|-----------|
-| [L01](./docs/lectures/lecture-01-why-capable-agents-still-fail/index.md) | Why do strong models still fail on real tasks? | The capability gap between benchmarks and real engineering |
-| [L02](./docs/lectures/lecture-02-what-a-harness-actually-is/index.md) | What does "harness" actually mean? | Five subsystems: instructions, state, verification, scope, lifecycle |
-| [L03](./docs/lectures/lecture-03-why-the-repository-must-become-the-system-of-record/index.md) | Why must the repo be the single source of truth? | If the agent can't see it, it doesn't exist |
-| [L04](./docs/lectures/lecture-04-why-one-giant-instruction-file-fails/index.md) | Why does one giant instruction file fail? | Progressive disclosure: give a map, not an encyclopedia |
-| [L05](./docs/lectures/lecture-05-why-long-running-tasks-lose-continuity/index.md) | Why do long-running tasks lose continuity? | Persist progress to disk; pick up where you left off |
-| [L06](./docs/lectures/lecture-06-why-initialization-needs-its-own-phase/index.md) | Why does initialization need its own phase? | Verify the environment is healthy before the agent starts work |
-| [L07](./docs/lectures/lecture-07-why-agents-overreach-and-under-finish/index.md) | Why do agents overreach and under-finish? | One feature at a time; explicit definition of done |
-| [L08](./docs/lectures/lecture-08-why-feature-lists-are-harness-primitives/index.md) | Why are feature lists harness primitives? | Machine-readable scope boundaries the agent can't ignore |
-| [L09](./docs/lectures/lecture-09-why-agents-declare-victory-too-early/index.md) | Why do agents declare victory too early? | Verification gaps: confidence ≠ correctness |
-| [L10](./docs/lectures/lecture-10-why-end-to-end-testing-changes-results/index.md) | Why does end-to-end testing change results? | Only a full-pipeline run counts as real verification |
-| [L11](./docs/lectures/lecture-11-why-observability-belongs-inside-the-harness/index.md) | Why does observability belong inside the harness? | If you can't see what the agent did, you can't fix what it broke |
-| [L12](./docs/lectures/lecture-12-why-every-session-must-leave-a-clean-state/index.md) | Why must every session leave a clean state? | The next session's success depends on this session's cleanup |
+| セッション | 問い | 中核となる考え |
+|---------|------|----------------|
+| [L01](./docs/lectures/lecture-01-why-capable-agents-still-fail/index.md) | なぜ強いモデルでも実タスクで失敗するのか？ | ベンチマークと現実のエンジニアリングの間にある能力ギャップ |
+| [L02](./docs/lectures/lecture-02-what-a-harness-actually-is/index.md) | 「harness」とは実際には何を意味するのか？ | 5 つのサブシステム: instructions、state、verification、scope、lifecycle |
+| [L03](./docs/lectures/lecture-03-why-the-repository-must-become-the-system-of-record/index.md) | なぜリポジトリが唯一の真実の源でなければならないのか？ | エージェントに見えないものは存在しない |
+| [L04](./docs/lectures/lecture-04-why-one-giant-instruction-file-fails/index.md) | なぜ巨大な 1 つの指示ファイルは失敗するのか？ | 段階的開示: 百科事典ではなく地図を与える |
+| [L05](./docs/lectures/lecture-05-why-long-running-tasks-lose-continuity/index.md) | なぜ長時間タスクは継続性を失うのか？ | 進捗をディスクに保存し、前回の続きから再開する |
+| [L06](./docs/lectures/lecture-06-why-initialization-needs-its-own-phase/index.md) | なぜ初期化には専用フェーズが必要なのか？ | エージェントが作業を始める前に、環境が健全か確認する |
+| [L07](./docs/lectures/lecture-07-why-agents-overreach-and-under-finish/index.md) | なぜエージェントはやり過ぎ、終わり切れないのか？ | 1 つずつ機能を進める。完了条件を明示する |
+| [L08](./docs/lectures/lecture-08-why-feature-lists-are-harness-primitives/index.md) | なぜ機能一覧は harness の原始要素なのか？ | エージェントが無視できない、機械可読なスコープ境界 |
+| [L09](./docs/lectures/lecture-09-why-agents-declare-victory-too-early/index.md) | なぜエージェントは勝利を早く宣言しすぎるのか？ | 検証の穴: 自信 ≠ 正しさ |
+| [L10](./docs/lectures/lecture-10-why-end-to-end-testing-changes-results/index.md) | なぜ end-to-end テストで結果が変わるのか？ | フルパイプライン実行だけが本当の検証になる |
+| [L11](./docs/lectures/lecture-11-why-observability-belongs-inside-the-harness/index.md) | なぜ可観測性は harness の内側にあるべきなのか？ | エージェントが何をしたか見えなければ、壊したものも直せない |
+| [L12](./docs/lectures/lecture-12-why-every-session-must-leave-a-clean-state/index.md) | なぜ各セッションはクリーンな状態で終わる必要があるのか？ | 次のセッションの成功は、このセッションの片付けに依存する |
 
-### Projects — 6 hands-on projects applying lecture methods to the same Electron app
+### Projects — 同じ Electron アプリに講義の方法を適用する 6 つのハンズオンプロジェクト
 
-| Project | What You Do | Harness Mechanism |
-|---------|------------|-------------------|
-| [P01](./docs/projects/project-01-baseline-vs-minimal-harness/index.md) | Run the same task twice: prompt-only vs. rules-first | Minimal harness: AGENTS.md + init.sh + feature_list.json |
-| [P02](./docs/projects/project-02-agent-readable-workspace/index.md) | Restructure the repo so the agent can read it | Agent-readable workspace + persistent state files |
-| [P03](./docs/projects/project-03-multi-session-continuity/index.md) | Make the agent pick up from where it left off | Progress log + session handoff + multi-session continuity |
-| [P04](./docs/projects/project-04-incremental-indexing/index.md) | Stop the agent from doing too much or too little | Runtime feedback + scope control + incremental indexing |
-| [P05](./docs/projects/project-05-grounded-qa-verification/index.md) | Make the agent verify its own work | Self-verification + grounded Q&A + evidence-based completion |
-| [P06](./docs/projects/project-06-runtime-observability-and-debugging/index.md) | Build a complete harness from scratch (capstone) | Full harness: all mechanisms + observability + ablation study |
+| Project | やること | Harness の仕組み |
+|---------|----------|-------------------|
+| [P01](./docs/projects/project-01-baseline-vs-minimal-harness/index.md) | 同じタスクを 2 回実行する: prompt-only と rules-first | 最小限の harness: `AGENTS.md` + `init.sh` + `feature_list.json` |
+| [P02](./docs/projects/project-02-agent-readable-workspace/index.md) | エージェントが読めるようにリポジトリを再構成する | エージェントが読める workspace + 永続的な state ファイル |
+| [P03](./docs/projects/project-03-multi-session-continuity/index.md) | エージェントが前回の続きから再開できるようにする | 進捗ログ + セッションの引き継ぎ + 複数セッション継続性 |
+| [P04](./docs/projects/project-04-incremental-indexing/index.md) | エージェントがやり過ぎたり、やらなさ過ぎたりするのを防ぐ | ランタイムフィードバック + スコープ制御 + 増分インデックス化 |
+| [P05](./docs/projects/project-05-grounded-qa-verification/index.md) | エージェント自身に作業を検証させる | self-verification + 根拠付き Q&A + 証拠ベースの完了判定 |
+| [P06](./docs/projects/project-06-runtime-observability-and-debugging/index.md) | ゼロから完全な harness を構築する (capstone) | 完全な harness: すべての仕組み + 可観測性 + ablation study |
 
 ```text
-    PROJECT EVOLUTION
-    =================
+    プロジェクトの進化
+    ==================
 
-    P01  Prompt-only vs. rules-first       You see the problem
+    P01  prompt-only vs. rules-first      問題が見える
      |
      v
-    P02  Agent-readable workspace           You restructure the repo
+    P02  エージェントが読める workspace   リポジトリを再構成する
      |
      v
-    P03  Multi-session continuity           You connect sessions
+    P03  複数セッションの継続性         セッションをつなぐ
      |
      v
-    P04  Runtime feedback & scope           You add feedback loops
+    P04  ランタイムフィードバック & スコープ  フィードバックループを加える
      |
      v
-    P05  Self-verification                  You make the agent check itself
+    P05  self-verification               エージェントに自分をチェックさせる
      |
      v
-    P06  Complete harness (capstone)        You build the full system
+    P06  完全な harness (capstone)       完全なシステムを構築する
 
-    Each project's solution becomes the next project's starter.
-    The app evolves. Your harness skills grow with it.
+    各プロジェクトの solution が、次のプロジェクトの starter になる。
+    アプリは進化し、あなたの harness 技術もそれに合わせて成長する。
 ```
 
 ### Resource Library
 
-- [English Resource Library](https://walkinglabs.github.io/learn-harness-engineering/en/resources/) — templates, checklists, and method references
+- [English Resource Library](https://walkinglabs.github.io/learn-harness-engineering/en/resources/) — テンプレート、チェックリスト、方法の参照
 - [Chinese Resource Library](https://walkinglabs.github.io/learn-harness-engineering/zh/resources/) — 中文模板、清单和方法参考
-- [Russian Resource Library](https://walkinglabs.github.io/learn-harness-engineering/ru/resources/) — шаблоны, чек-листы и справочники
-- [Vietnamese Resource Library](https://walkinglabs.github.io/learn-harness-engineering/vi/resources/) — mẫu, danh sách kiểm tra và tài liệu tham khảo
+- [Russian Resource Library](https://walkinglabs.github.io/learn-harness-engineering/ru/resources/) — テンプレート、チェックリスト、参照資料
+- [Vietnamese Resource Library](https://walkinglabs.github.io/learn-harness-engineering/vi/resources/) — テンプレート、チェックリスト、参照資料
 
 ---
 
-## The Agent Session Lifecycle
+## Agent セッションのライフサイクル
 
-One of the core ideas in this course: **the agent's session should follow a structured lifecycle, not a free-for-all.** Here's what that looks like:
+この講座の中核となる考え方の 1 つは、**エージェントのセッションは無秩序ではなく、構造化されたライフサイクルに従うべきだ** ということです。流れは次のとおりです。
 
 ```text
-    AGENT SESSION LIFECYCLE
-    ======================
+    エージェントのセッションライフサイクル
+    ==================================
 
     ┌──────────────────────────────────────────────────────────────────┐
-    │  START                                                          │
+    │  開始                                                            │
     │                                                                  │
-    │  1. Agent reads AGENTS.md / CLAUDE.md                           │
-    │  2. Agent runs init.sh (install, verify, health check)          │
-    │  3. Agent reads claude-progress.md (what happened last time)    │
-    │  4. Agent reads feature_list.json (what's done, what's next)    │
-    │  5. Agent checks git log (recent changes)                       │
+    │  1. Agent が AGENTS.md / CLAUDE.md を読む                       │
+    │  2. Agent が init.sh を実行する (install, verify, health check) │
+    │  3. Agent が claude-progress.md を読む (前回何が起きたか)        │
+    │  4. Agent が feature_list.json を読む (完了済み、次にやること)   │
+    │  5. Agent が git log を確認する (最近の変更)                    │
     │                                                                  │
-    │  SELECT                                                          │
+    │  選択                                                            │
     │                                                                  │
-    │  6. Agent picks exactly ONE unfinished feature                   │
-    │  7. Agent works only on that feature                             │
+    │  6. Agent が未完了の機能を 1 つだけ選ぶ                         │
+    │  7. Agent はその機能だけに取り組む                              │
     │                                                                  │
-    │  EXECUTE                                                         │
+    │  実行                                                            │
     │                                                                  │
-    │  8. Agent implements the feature                                 │
-    │  9. Agent runs verification (tests, lint, type-check)           │
-    │  10. If verification fails: fix and re-run                      │
-    │  11. If verification passes: record evidence                    │
+    │  8. Agent が機能を実装する                                       │
+    │  9. Agent が検証を実行する (tests, lint, type-check)            │
+    │  10. 検証に失敗したら: 修正して再実行する                       │
+    │  11. 検証に通ったら: 証拠を記録する                              │
     │                                                                  │
-    │  WRAP UP                                                         │
+    │  まとめ                                                          │
     │                                                                  │
-    │  12. Agent updates claude-progress.md                           │
-    │  13. Agent updates feature_list.json                            │
-    │  14. Agent records what's still broken or unverified            │
-    │  15. Agent commits (only when safe to resume)                   │
-    │  16. Agent leaves clean restart path for next session           │
+    │  12. Agent が claude-progress.md を更新する                     │
+    │  13. Agent が feature_list.json を更新する                      │
+    │  14. Agent がまだ壊れているもの、未検証のものを記録する         │
+    │  15. Agent が commit する (安全に再開できるときだけ)           │
+    │  16. Agent が次のセッションに向けたクリーンな再開経路を残す    │
     │                                                                  │
     └──────────────────────────────────────────────────────────────────┘
 
-    The harness governs every transition in this lifecycle.
-    The model decides what code to write at each step.
-    Without the harness, step 9 becomes "agent says it looks fine."
-    With the harness, step 9 is "tests pass, lint is clean, types check."
+    harness はこのライフサイクルのすべての遷移を統制する。
+    モデルは各ステップでどのコードを書くかを決める。
+    harness がなければ、ステップ 9 は「agent が問題なさそうと言う」になる。
+    harness があれば、ステップ 9 は「テスト合格、lint はクリーン、型チェックも通過」になる。
 ```
 
 ---
 
-## Who This Is For
+## この講座の対象者
 
-This course is for:
+この講座は、次のような人向けです。
 
-- Engineers already using coding agents who want better stability and quality
-- Researchers or builders who want a systematic understanding of harness design
-- Tech leads who need to understand how environment design affects agent performance
+- すでにコーディングエージェントを使っていて、安定性と品質をさらに高めたいエンジニア
+- harness 設計を体系的に理解したい研究者やビルダー
+- 環境設計がエージェント性能にどう影響するかを知りたいテックリード
 
-This course is not for:
+この講座は、次のような人向けではありません。
 
-- People looking for a zero-code AI introduction
-- People who only care about prompts and don't plan to build real implementations
-- Learners not prepared to let agents work inside real repositories
+- ノーコードの AI 入門を探している人
+- プロンプトだけに関心があり、実装までやるつもりがない人
+- 実際のリポジトリ内でエージェントに作業させる準備がない学習者
 
 ---
 
-## Requirements
+## 必要条件
 
-This is a course where you actually run coding agents.
+これは、実際にコーディングエージェントを動かす講座です。
 
-You need at least one of these tools:
+少なくとも次のいずれか 1 つが必要です。
 
 - Claude Code
 - Codex
-- Another IDE or CLI coding agent that supports file editing, command execution, and multi-step tasks
+- ファイル編集、コマンド実行、マルチステップタスクに対応した別の IDE または CLI のコーディングエージェント
 
-The course assumes you can:
+この講座は、次のことができる前提です。
 
-- Open a local repository
-- Allow the agent to edit files
-- Allow the agent to run commands
-- Inspect output and re-run tasks
+- ローカルリポジトリを開ける
+- エージェントにファイル編集を許可できる
+- エージェントにコマンド実行を許可できる
+- 出力を確認し、タスクを再実行できる
 
-If you don't have such a tool, you can still read the course content, but you won't be able to complete the projects as intended.
+そのようなツールがない場合でも、講座内容を読むことはできますが、意図どおりにプロジェクトを完了することはできません。
 
 ---
 
-## Local Preview
+## ローカルプレビュー
 
-This repository uses VitePress as a documentation viewer.
+このリポジトリは、ドキュメントビューアとして VitePress を使っています。
 
 ```sh
 npm install
-npm run docs:dev        # Dev server with hot reload
-npm run docs:build      # Production build
-npm run docs:preview    # Preview built site
+npm run docs:dev        # ホットリロード付きの開発サーバー
+npm run docs:build      # 本番ビルド
+npm run docs:preview    # ビルド済みサイトのプレビュー
 ```
 
-Then open the local URL that VitePress outputs in your browser.
+そのあと、VitePress が出力するローカル URL をブラウザで開いてください。
 
 ---
 
-## Prerequisites
+## 前提条件
 
-Required:
+必須:
 
-- Familiarity with the terminal, git, and local development environments
-- Ability to read and write code in at least one common application stack
-- Basic software debugging experience (reading logs, tests, and runtime behavior)
-- Enough time to commit to implementation-focused coursework
+- ターミナル、git、ローカル開発環境に関する基本的な知識
+- 少なくとも 1 つの一般的なアプリケーションスタックでコードを読み書きできること
+- 基本的なソフトウェアデバッグ経験（ログ、テスト、実行時の挙動を読む力）
+- 実装重視の講座に取り組めるだけの時間
 
-Helpful but not required:
+あると助かるが必須ではない:
 
-- Experience with Electron, desktop apps, or local-first tools
-- Background in testing, logging, or software architecture
-- Prior exposure to Codex, Claude Code, or similar coding agents
+- Electron、デスクトップアプリ、local-first ツールの経験
+- テスト、ログ、ソフトウェアアーキテクチャの知識
+- Codex、Claude Code、または類似のコーディングエージェントを使った経験
 
 ---
 
-## Core References
+## 主要参考資料
 
-Primary:
+主要:
 
 - [OpenAI: Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/)
 - [Anthropic: Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
@@ -488,72 +494,73 @@ Primary:
 - [Thoughtworks / Martin Fowler: Harness engineering for coding agent users](https://martinfowler.com/articles/harness-engineering.html)
 - [Cursor: Continually improving our agent harness](https://cursor.com/blog/continually-improving-agent-harness)
 
-See the full layered reference list in [`docs/en/resources/reference/`](./docs/en/resources/reference/index.md).
+詳細な階層構造の参考一覧は [`docs/en/resources/reference/`](./docs/en/resources/reference/index.md) を参照してください。
 
 ---
 
-## Repository Structure
+## リポジトリ構成
 
 ```text
 learn-harness-engineering/
-├── docs/                          # VitePress documentation site
-│   ├── lectures/                  # 12 lectures (index.md + code/ examples)
+├── docs/                          # VitePress のドキュメントサイト
+│   ├── lectures/                  # 12 講義 (index.md + code/ examples)
 │   │   ├── lecture-01-*/
 │   │   ├── lecture-02-*/
-│   │   └── ... (12 total)
-│   ├── projects/                  # 6 project descriptions
+│   │   └── ... (全 12)
+│   ├── projects/                  # 6 つのプロジェクト説明
 │   │   ├── project-01-*/
-│   │   └── ... (6 total)
-│   └── resources/                 # Multilingual templates & references
-│       ├── en/                    # English templates, checklists, guides
-│       ├── zh/                    # Chinese templates, checklists, guides
-│       ├── ru/                    # Russian templates, checklists, guides
-│       └── vi/                    # Vietnamese templates, checklists, guides
+│   │   └── ... (全 6)
+│   └── resources/                 # 多言語テンプレートと参照資料
+│       ├── en/                    # 英語のテンプレート、チェックリスト、ガイド
+│       ├── zh/                    # 中国語のテンプレート、チェックリスト、ガイド
+│       ├── ru/                    # ロシア語のテンプレート、チェックリスト、ガイド
+│       └── vi/                    # ベトナム語のテンプレート、チェックリスト、ガイド
 ├── projects/
-│   ├── shared/                    # Shared Electron + TypeScript + React foundation
-│   └── project-NN/               # Per-project starter/ and solution/ directories
-├── skills/                        # Reusable AI agent skills
+│   ├── shared/                    # 共有の Electron + TypeScript + React 基盤
+│   └── project-NN/                # 各プロジェクトの starter/ と solution/ ディレクトリ
+├── skills/                        # 再利用可能な AI エージェント skills
 │   └── harness-creator/           # Harness engineering skill
-├── package.json                   # VitePress + dev tooling
-└── CLAUDE.md                      # Claude Code instructions for this repo
+├── package.json                   # VitePress + 開発ツール
+└── CLAUDE.md                      # このリポジトリ向けの Claude Code 指示
 ```
 
 ---
 
-## How the Course Is Organized
+## 講座の構成
 
-- Each lecture focuses on one question
-- The course includes 6 projects
-- Every project requires the agent to do real work
-- Every project compares weak vs. strong harness results
-- What matters is the measured difference, not how many docs were written
+- 各講義は 1 つの問いに集中します
+- 講座には 6 つのプロジェクトがあります
+- すべてのプロジェクトで、エージェントに実際の作業をさせます
+- すべてのプロジェクトで、弱い harness と強い harness の結果を比較します
+- 重要なのは、書いたドキュメントの量ではなく、測定された差分です
 
 ---
 
 ## Skills
 
-This repository also includes reusable AI agent skills that you can install directly into your IDE or agent workspace.
+このリポジトリには、IDE やエージェント workspace に直接インストールして再利用できる AI エージェント skills も含まれています。
 
-- [**harness-creator**](./skills/harness-creator/): A skill that helps you scaffold a production-grade harness for your own project in minutes.
+- [**harness-creator**](./skills/harness-creator/): 自分のプロジェクト向けに本番グレードの harness を数分で組み立てるのを助ける skill です。
 
 ---
 
-## Other Courses
+<a id="other-courses"></a>
+## 他の講座
 
-Our team has also created other courses! Check them out:
+私たちのチームは他にも講座を公開しています。ぜひ見てください。
 
 [![Hands-on Modern RL](https://img.shields.io/badge/HANDS--ON_MODERN_RL-0052cc?style=for-the-badge)](https://github.com/walkinglabs/hands-on-modern-rl)
 
-**Hands-on Modern RL**: An open-source, hands-on curriculum bridging the gap from basic RL concepts to LLM alignment, RLVR, and advanced Agentic systems.
+**Hands-on Modern RL**: 基礎的な RL の概念から、LLM アライメント、RLVR、そして高度な Agentic システムへとつなぐ、オープンソースの実践的カリキュラムです。
 
 ---
 
-## Star History
+## スター履歴
 
 [![Star History Chart](https://api.star-history.com/svg?repos=walkinglabs/learn-harness-engineering&type=date&legend=top-left)](https://www.star-history.com/#walkinglabs/learn-harness-engineering&type=date&legend=top-left)
 
 ---
 
-## Acknowledgments
+## 謝辞
 
-This course was inspired by and draws ideas from [learn-claude-code](https://github.com/shareAI-lab/learn-claude-code) — a progressive guide to building an agent from scratch, from a single loop to isolated autonomous execution.
+この講座は、[learn-claude-code](https://github.com/shareAI-lab/learn-claude-code) に触発され、そのアイデアを取り入れています。これは、単一ループから分離された自律実行まで、エージェントをゼロから構築するための段階的ガイドです。

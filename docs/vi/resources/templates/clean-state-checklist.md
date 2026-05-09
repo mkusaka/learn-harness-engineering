@@ -1,8 +1,8 @@
-# Danh sách Kiểm tra Trạng thái Sạch
+# クリーン状態チェックリスト
 
-- [ ] Đường dẫn khởi động chuẩn vẫn hoạt động.
-- [ ] Đường dẫn xác minh chuẩn vẫn chạy được.
-- [ ] Tiến độ hiện tại được ghi lại trong nhật ký tiến độ.
-- [ ] Trạng thái tính năng phản ánh những gì thực sự đang vượt qua so với chưa được xác minh.
-- [ ] Không có bước làm dở nào bị bỏ lại mà không được ghi lại.
-- [ ] Phiên tiếp theo có thể tiếp tục mà không cần sửa chữa thủ công.
+- [ ] 標準の開始パスが引き続き動作している。
+- [ ] 標準の検証パスが引き続き実行できる。
+- [ ] 現在の進捗が進捗ログに記録されている。
+- [ ] 機能の状態が、実際に合格しているものと未検証のものを反映している。
+- [ ] 中途半端に終わった作業が、記録されないまま残っていない。
+- [ ] 次のセッションが手動修正なしで続行できる。

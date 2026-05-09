@@ -1,62 +1,62 @@
-# Retrieval Plan
+# 検索計画
 
-## Overview
+## 概要
 
-This document outlines the strategy for implementing text retrieval in the knowledge base application. The goal is to enable grounded question answering over imported documents without requiring an external LLM API.
+このドキュメントでは、ナレッジベースアプリケーションにテキスト検索を実装するための戦略を示します。目的は、外部の LLM API を必要とせず、取り込んだドキュメントに基づく根拠付きの質問応答を可能にすることです。
 
-## Chunking Approach
+## チャンク分割の方針
 
-Documents are split into chunks using a paragraph-aware algorithm:
-- Split on double newlines (paragraph boundaries)
-- Merge short paragraphs until chunk reaches ~500 characters
-- Each chunk gets a unique ID, document reference, and metadata
+ドキュメントは、段落を考慮したアルゴリズムでチャンクに分割します。
+- 2 つの改行で分割する（段落境界）
+- 短い段落は、チャンクが約 500 文字になるまで結合する
+- 各チャンクには一意の ID、ドキュメント参照、メタデータを付与する
 
-## Keyword Matching
+## キーワード一致
 
-The retrieval system uses keyword-based matching:
-1. Tokenize the question into individual words
-2. Filter out stop words (words shorter than 3 characters)
-3. For each chunk, count how many question keywords appear in the content
-4. Rank chunks by keyword overlap score
-5. Return top 2 most relevant chunks as citations
+検索システムは、キーワードベースの一致を使用します。
+1. 質問を個々の単語に分割する
+2. ストップワード（3 文字未満の単語）を除外する
+3. 各チャンクについて、質問キーワードが内容にいくつ含まれるかを数える
+4. キーワードの重なりスコアでチャンクを順位付けする
+5. 最も関連性の高い上位 2 件のチャンクを引用として返す
 
-## Citation Format
+## 引用形式
 
-Each citation includes:
-- Document ID and title
-- Chunk index within the document
-- Text excerpt (first 200 characters of the chunk)
+各引用には次の情報を含めます。
+- ドキュメント ID とタイトル
+- ドキュメント内でのチャンク番号
+- テキスト抜粋（チャンクの先頭 200 文字）
 
-## Mock Q&A Patterns
+## モック Q&A パターン
 
-The mock Q&A service includes predefined answer patterns for common topics:
-- Architecture and design questions
-- Document import and management
-- Indexing and search
-- Meeting notes and summaries
-- Logging and observability
-- Feedback and quality
-- Clean state and benchmarking
+モック Q&A サービスには、よくあるトピック向けの事前定義済み回答パターンが含まれます。
+- アーキテクチャと設計に関する質問
+- ドキュメントの取り込みと管理
+- インデックス作成と検索
+- 会議メモと要約
+- ロギングとオブザーバビリティ
+- フィードバックと品質
+- クリーンな状態とベンチマーク
 
-For questions that don't match a pattern, the system returns a generic response based on the most relevant citation, or indicates that no indexed documents are available.
+いずれのパターンにも一致しない質問に対しては、最も関連性の高い引用に基づく汎用的な応答を返すか、インデックス済みドキュメントが利用できないことを示します。
 
-## Confidence Scoring
+## 信頼度スコアリング
 
-Responses include a confidence score:
-- 0.85 when citations are found
-- 0.30 when no citations are available
+応答には信頼度スコアを含めます。
+- 引用が見つかった場合は 0.85
+- 引用が利用できない場合は 0.30
 
-This scoring system allows the UI to visually distinguish between well-grounded and speculative answers.
+このスコアリングにより、UI 上で根拠のしっかりした回答と推測に基づく回答を視覚的に区別できます。
 
-## Feedback Loop
+## フィードバックループ
 
-Users can rate each Q&A response as positive or negative. Feedback is persisted in a dedicated log and can be analyzed to improve answer patterns and retrieval accuracy over time.
+ユーザーは各 Q&A 応答を肯定的または否定的に評価できます。フィードバックは専用ログに保存され、時間の経過とともに回答パターンや検索精度を改善するために分析できます。
 
-## Benchmarking
+## ベンチマーク
 
-The retrieval pipeline should be benchmarked with:
-- Document import throughput (files/second)
-- Indexing speed (chunks/second)
-- Query latency (milliseconds per question)
-- Citation accuracy (relevance of returned chunks)
-- Feedback ratio (positive vs negative ratings)
+検索パイプラインは、次の指標でベンチマークする必要があります。
+- ドキュメント取り込みのスループット（ファイル/秒）
+- インデックス作成速度（チャンク/秒）
+- クエリ遅延（質問あたりのミリ秒）
+- 引用精度（返されたチャンクの関連性）
+- フィードバック比率（肯定的評価と否定的評価の比率）

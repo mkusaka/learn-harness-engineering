@@ -1,25 +1,25 @@
-[中文版本 →](../../../zh/projects/project-01-baseline-vs-minimal-harness/)
+[中国語版 →](../../../zh/projects/project-01-baseline-vs-minimal-harness/)
 
-> Related lectures: [Lecture 01. Strong models don't mean reliable execution](./../../lectures/lecture-01-why-capable-agents-still-fail/index.md) · [Lecture 02. What harness actually means](./../../lectures/lecture-02-what-a-harness-actually-is/index.md)
+> 関連講義: [Lecture 01. 強力なモデルでも確実に実行できるとは限らない](./../../lectures/lecture-01-why-capable-agents-still-fail/index.md) · [Lecture 02. harness が実際に意味するもの](./../../lectures/lecture-02-what-a-harness-actually-is/index.md)
 > Template files: [templates/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/en/resources/templates/)
 
-# Project 01. Prompt-Only vs. Rules-First: How Much Difference Does It Make
+# Project 01. Prompt-Only vs. Rules-First: どのくらい違いが出るのか
 
-## What You Do
+## やること
 
-Build a minimal Electron knowledge-base app shell — a window with a document list on the left, a Q&A panel on the right, and a local data directory. The task itself is not complex. What's complex is how you get the agent to complete it.
+最小構成の Electron ナレッジベースアプリのひな形を作ります。ウィンドウには、左にドキュメント一覧、右に Q&A パネル、そしてローカルのデータディレクトリを持たせます。タスク自体は複雑ではありません。複雑なのは、それをどうやってエージェントに完了させるかです。
 
-You run it twice. First time: just a prompt, no preparation. Second time: `AGENTS.md`, `init.sh`, `feature_list.json` pre-placed in the repo. Then compare.
+これを2回実行します。1回目は、準備なしでプロンプトだけを与えます。2回目は、`AGENTS.md`、`init.sh`、`feature_list.json` をあらかじめリポジトリに配置してから実行します。そのうえで比較します。
 
-The core of this project is not writing code — it's figuring out how big the gap is between "spend 15 minutes preparing rules first" and "just let the agent go."
+このプロジェクトの本質は、コードを書くことではありません。「先に15分かけてルールを整える」のと「そのままエージェントに任せる」の間に、どれだけ差が出るかを確かめることです。
 
-## Tools
+## 使うもの
 
-- Claude Code or Codex (pick one, use it for both runs)
-- Git (manage branches and compare)
-- Node.js + Electron (project stack)
-- A timer (record each run's duration)
+- Claude Code か Codex（どちらか1つを選び、2回とも同じものを使う）
+- Git（ブランチ管理と比較）
+- Node.js + Electron（プロジェクトの技術スタック）
+- タイマー（各実行時間を記録する）
 
-## Harness Mechanism
+## ハーネスの仕組み
 
-Minimal harness: `AGENTS.md` + `init.sh` + `feature_list.json`
+最小構成のハーネス: `AGENTS.md` + `init.sh` + `feature_list.json`

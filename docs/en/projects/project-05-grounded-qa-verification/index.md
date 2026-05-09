@@ -1,22 +1,22 @@
-[中文版本 →](../../../zh/projects/project-05-grounded-qa-verification/)
+[中国語版 →](../../../zh/projects/project-05-grounded-qa-verification/)
 
-> Related lectures: [Lecture 09. Stop agents from declaring victory early](./../../lectures/lecture-09-why-agents-declare-victory-too-early/index.md) · [Lecture 10. Only a full-pipeline run counts as real verification](./../../lectures/lecture-10-why-end-to-end-testing-changes-results/index.md)
-> Template files: [templates/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/en/resources/templates/)
+> 関連講義: [講義 09. エージェントが勝利宣言を早まるのを防ぐ](./../../lectures/lecture-09-why-agents-declare-victory-too-early/index.md) · [講義 10. フルパイプラインの実行だけが本当の検証になる](./../../lectures/lecture-10-why-end-to-end-testing-changes-results/index.md)
+> テンプレートファイル: [templates/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/en/resources/templates/)
 
-# Project 05. Make the Agent Verify Its Own Work
+# プロジェクト 05. エージェント自身に作業を検証させる
 
-## What You Do
+## やること
 
-Implement role separation — a generator that implements, an evaluator that reviews, and optionally a planner. Run three times to measure the effect of each added role.
+役割分担を実装します。実装を担う `generator`、レビューを行う `evaluator`、必要に応じて `planner` を分けます。3回実行して、役割を追加するたびの効果を測定してください。
 
-Choose a substantive feature upgrade (multi-turn conversation, citation panel redesign, or document filtering) and keep it consistent across all runs.
+多段会話、引用パネルの再設計、ドキュメントの絞り込みなど、実質的な機能改善を1つ選び、すべての実行で一貫して使ってください。
 
-## Tools
+## ツール
 
 - Claude Code or Codex
 - Git
 - Node.js + Electron
 
-## Harness Mechanism
+## ハーネスの仕組み
 
-Self-verification + grounded Q&A + evidence-based completion
+自己検証 + grounded Q&A + 証拠に基づく完了判定

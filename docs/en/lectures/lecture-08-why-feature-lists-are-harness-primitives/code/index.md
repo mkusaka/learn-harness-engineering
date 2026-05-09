@@ -1,8 +1,8 @@
-# Code for Lecture 08
+# Lecture 08 のコード
 
-Use this folder for examples of:
+このフォルダは、次の例に使ってください。
 
 - pass-state gating
 - end-to-end verification
 - weak vs strong completion criteria
-- evaluator-loop examples
+- evaluator-loop の例

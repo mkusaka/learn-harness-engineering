@@ -1,8 +1,8 @@
-# Code for Lecture 09
+# レクチャー09のコード
 
-Use this folder for examples of:
+このフォルダには、次の例を置いてください:
 
-- logs as feedback
-- runtime-state visibility
-- clean-state checks
-- recovery examples
+- ログをフィードバックとして扱う例
+- 実行時状態の可視化
+- クリーン状態の確認
+- リカバリーの例

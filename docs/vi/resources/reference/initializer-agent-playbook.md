@@ -1,35 +1,35 @@
 # Playbook Initializer Agent
 
-Sử dụng playbook này cho phiên nghiêm túc đầu tiên trong một kho lưu trữ, trước khi công việc tính năng tăng dần bắt đầu.
+この playbook は、機能追加の段階的な作業が始まる前に、リポジトリで最初に行う本格的なセッションで使用します。
 
-## Mục tiêu
+## 目的
 
-Tạo ra một bề mặt vận hành ổn định để các phiên sau có thể triển khai hành vi mà không cần phải suy ra lại các lệnh khởi động, trạng thái hiện tại, hoặc ranh giới tác vụ.
+後続のセッションが、起動コマンド、現在の状態、タスクの境界を毎回推測し直さなくても、挙動を実装できる安定した運用基盤を作ります。
 
-## Kết quả Đầu ra Bắt buộc
+## 必須成果物
 
-Initializer nên để lại ít nhất các artifact này:
+Initializer は、少なくとも次の artifact を残す必要があります。
 
-- một tệp hướng dẫn gốc như `AGENTS.md` hoặc `CLAUDE.md`
-- một bề mặt tính năng có thể đọc bởi máy như `feature_list.json`
-- một artifact tiến độ lâu bền như `claude-progress.md`
-- một helper khởi động chuẩn như `init.sh`
-- một commit cơ sở an toàn ban đầu ghi lại scaffold cơ sở
+- `AGENTS.md` や `CLAUDE.md` のようなルート向けの指示ファイル
+- `feature_list.json` のような機械可読な機能面
+- `claude-progress.md` のような永続的な進捗 artifact
+- `init.sh` のような標準的な起動 helper
+- 基盤の scaffold を記録した、最初の安全なベースライン commit
 
-## Danh sách Kiểm tra
+## チェックリスト
 
-1. Định nghĩa đường dẫn khởi động chuẩn.
-2. Định nghĩa đường dẫn xác minh chuẩn.
-3. Tạo nhật ký tiến độ và ghi lại trạng thái khởi đầu.
-4. Phân chia công việc thành các tính năng rõ ràng với trạng thái.
-5. Tạo commit baseline sạch đầu tiên.
+1. 標準の起動パスを定義する。
+2. 標準の検証パスを定義する。
+3. 進捗ログを作成し、開始時点の状態を記録する。
+4. 作業を、状態付きの明確な機能に分割する。
+5. 最初のクリーンな baseline commit を作成する。
 
-## Bài kiểm tra Thành công
+## 成功基準
 
-Một phiên mới không có ngữ cảnh chat trước đó nên có thể trả lời:
+チャットの事前コンテキストがない新しいセッションでも、次の内容に答えられること。
 
-- kho lưu trữ này làm gì
-- cách khởi động nó
-- cách xác minh nó
-- những gì chưa hoàn thành
-- bước tốt nhất tiếp theo là gì
+- このリポジトリが何をするものか
+- どう起動するか
+- どう検証するか
+- 何が未完了か
+- 次に取るべき最善の手順は何か

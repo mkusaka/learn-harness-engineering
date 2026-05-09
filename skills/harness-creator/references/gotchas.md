@@ -1,16 +1,16 @@
-# Gotchas — Harness Engineering Failure Modes
+# 落とし穴 — Harness Engineering の失敗パターン
 
-Non-obvious principles that will cause bugs if you violate them.
+見落としやすいが、破るとバグにつながる原則。
 
 ---
 
-## 1. Memory Index Caps Fire Silently
+## 1. Memory Index の上限は静かに発動する
 
-**Symptom**: Recent memories "disappear" without error.
+**症状**: 直近のメモリがエラーなしで「消える」。
 
-**Cause**: Index has hard caps (e.g., 200 lines / 25KB) enforced at read time. Long entries (multi-sentence summaries) hit byte cap while staying under line cap.
+**原因**: インデックスにはハードな上限があり（例: 200 行 / 25KB）、読み込み時に強制される。長いエントリ（複数文の要約）は、行数の上限内でもバイト上限に達する。
 
-**Fix**: Keep index entries to one-line hooks. Put detail in topic files.
+**対策**: インデックスのエントリは 1 行のフックにとどめる。詳細は topic ファイルに置く。
 
 ```markdown
 ✓ Good: "Use bun, not npm - user preference 2024-01-15"
@@ -19,16 +19,16 @@ Non-obvious principles that will cause bugs if you violate them.
 
 ---
 
-## 2. Priority Ordering is Counterintuitive
+## 2. 優先順位の順序は直感に反する
 
-**Symptom**: Global rule silently overridden by local file.
+**症状**: グローバルなルールがローカルファイルに静かに上書きされる。
 
-**Cause**: Local overrides beat project rules, which beat user rules, which beat org rules. If you inject at user level expecting it to dominate, a local override file in project root wins.
+**原因**: ローカルの上書きは project ルールより強く、project ルールは user ルールより強く、user ルールは org ルールより強い。user レベルに入れれば最優先されると思っていても、project ルートのローカル上書きファイルが勝つ。
 
-**Fix**: Test with full instruction-file stack present:
+**対策**: instruction ファイルのスタック全体がある状態でテストする。
 
 ```bash
-# Test priority ordering
+# 優先順位の順序をテストする
 cat ~/.claude/CLAUDE.md          # User level
 cat ./CLAUDE.md                   # Project level  
 cat ./CLAUDE.local.md             # Local override (WINS)
@@ -36,39 +36,39 @@ cat ./CLAUDE.local.md             # Local override (WINS)
 
 ---
 
-## 3. Extraction Timing Creates Race Window
+## 3. 抽出タイミングが競合の窓を作る
 
-**Symptom**: Background extractor writes memory, but user starts next turn before extraction completes.
+**症状**: バックグラウンドの extractor がメモリを書き込むが、抽出が終わる前にユーザーが次のターンを始めてしまう。
 
-**Cause**: Extraction fires at end of response. User can send message before extraction finishes.
+**原因**: 抽出はレスポンスの末尾に走る。抽出が完了する前にユーザーがメッセージを送れてしまう。
 
-**Fix**: Coalesce concurrent extraction requests. Advance cursor only after successful run. Failed extraction means those messages reconsidered next time.
-
----
-
-## 4. Derivable Content Doesn't Belong in Memory
-
-**Symptom**: Memory index fills with architecture details that stale quickly.
-
-**Cause**: Agent saves what's derivable from codebase (architecture, code patterns, version history).
-
-**Fix**: Exclude derivable content by design. Type taxonomy should forbid saving what's in the repo already.
+**対策**: 競合する抽出リクエストはまとめる。カーソルは成功した実行の後にだけ進める。抽出に失敗した場合は、そのメッセージを次回あらためて再検討する。
 
 ---
 
-## 5. Concurrent Classification is Per-Call, Not Per-Tool
+## 4. 推論で導ける内容はメモリに入れない
 
-**Symptom**: Tool marked "concurrent-safe" causes race conditions.
+**症状**: メモリインデックスが、すぐ古くなるアーキテクチャ詳細で埋まる。
 
-**Cause**: Same tool can be safe for some inputs and unsafe for others. Don't assume tool's concurrency behavior is static.
+**原因**: エージェントが、コードベースから導ける内容（アーキテクチャ、コードパターン、バージョン履歴）まで保存してしまう。
 
-**Fix**: Classify each call at runtime:
+**対策**: 推論で導ける内容は設計上除外する。型の taxonomy で、すでに repo にあるものを保存できないようにする。
+
+---
+
+## 5. 並行実行の分類はツール単位ではなく呼び出し単位
+
+**症状**: 「concurrent-safe」とされたツールが race condition を起こす。
+
+**原因**: 同じツールでも、入力によって安全な場合と危険な場合がある。ツールの並行動作が固定だと思い込まない。
+
+**対策**: 各呼び出しを実行時に分類する。
 
 ```typescript
-// Don't do this:
+// こうしない:
 toolRegistry.register('shell', { concurrentSafe: false });
 
-// Do this:
+// こうする:
 function isCallConcurrentSafe(call: ToolCall): boolean {
   if (call.args.command.startsWith('rm -rf')) return false;
   if (call.args.command.startsWith('cat')) return true;
@@ -78,46 +78,46 @@ function isCallConcurrentSafe(call: ToolCall): boolean {
 
 ---
 
-## 6. Permission Evaluation Has Side Effects
+## 6. 権限評価には副作用がある
 
-**Symptom**: Permission check changes behavior on subsequent calls.
+**症状**: 権限チェックが、その後の呼び出しの挙動を変える。
 
-**Cause**: Permission evaluator tracks denials, transforms modes, updates state as side effect. Not a pure lookup function.
+**原因**: 権限 evaluator は拒否を追跡し、モードを変換し、副作用として state を更新する。純粋な lookup 関数ではない。
 
-**Fix**: Don't cache permission results across calls. Re-evaluate each call fresh.
-
----
-
-## 7. Most Async Work Skips "Pending" State
-
-**Symptom**: UI shows "pending" but work unit never enters that state.
-
-**Cause**: Work units register directly as "running" in practice. "Pending" exists in state machine but rarely used.
-
-**Fix**: Don't build UI that assumes every work unit starts pending.
+**対策**: 呼び出しをまたいで権限結果をキャッシュしない。毎回あらためて評価する。
 
 ---
 
-## 8. Fork Children Must Not Fork
+## 7. ほとんどの async 作業は "pending" 状態を飛ばす
 
-**Symptom**: Context cost explodes exponentially.
+**症状**: UI には "pending" と表示されるのに、作業単位がその状態に入らない。
 
-**Cause**: Recursive forks multiply context: parent + child1 + child2 + grandchildren...
+**原因**: 実際には、作業単位は直接 "running" として登録されることが多い。"pending" は state machine には存在するが、ほとんど使われない。
 
-**Fix**: Enforce single-level invariant. Keep fork tool in child's pool (for prompt cache sharing) but block at call time.
+**対策**: すべての作業単位が pending から始まる前提で UI を作らない。
 
 ---
 
-## 9. Context Builders are Memoized but Manually Invalidated
+## 8. fork した子はさらに fork してはいけない
 
-**Symptom**: Model sees stale data for entire session.
+**症状**: context コストが指数関数的に膨らむ。
 
-**Cause**: Context builder cached at startup, but mutation doesn't clear cache.
+**原因**: 再帰的な fork で context が増殖する。親 + child1 + child2 + 孫...
 
-**Fix**: Every mutation point must explicitly clear its corresponding cache:
+**対策**: 1 段だけに制限する invariant を強制する。fork ツールは child の pool に残す（prompt cache 共有のため）が、呼び出し時にブロックする。
+
+---
+
+## 9. context builder は memoize されるが、手動で無効化する
+
+**症状**: モデルがセッション全体で古いデータを見続ける。
+
+**原因**: context builder は起動時にキャッシュされるが、mutation では cache が消えない。
+
+**対策**: すべての mutation ポイントで、対応する cache を明示的に消す。
 
 ```typescript
-// Example: Cache invalidation at mutation point
+// 例: mutation ポイントでの cache invalidation
 async function editFile(path: string, content: string) {
   await writeFile(path, content);
   context.cache.invalidate(`file:${path}`); // MUST invalidate
@@ -126,35 +126,35 @@ async function editFile(path: string, content: string) {
 
 ---
 
-## 10. Hook Trust is All-or-Nothing
+## 10. hook の信頼判定は全体一括で行う
 
-**Symptom**: Entire extension system disabled because one hook untrusted.
+**症状**: 1 つの hook が untrusted なだけで、拡張システム全体が無効になる。
 
-**Cause**: If workspace untrusted, all hooks skip — not just suspicious ones.
+**原因**: workspace が untrusted だと、怪しいものだけでなく全ての hook がスキップされる。
 
-**Fix**: Design hooks with trust gate at dispatch point. Don't attempt per-hook trust evaluation.
+**対策**: hook は dispatch 点で trust gate をかける設計にする。hook ごとの trust 評価はしない。
 
 ---
 
-## 11. Eviction Requires Notification
+## 11. eviction には通知が必要
 
-**Symptom**: Parent can never read work unit result.
+**症状**: 親が作業単位の結果を読めない。
 
-**Cause**: Work unit evicted before parent notified of completion. Race condition: parent tries to read result that's already GC'd.
+**原因**: 親に完了通知が届く前に作業単位が evict される。race condition により、親はすでに GC 済みの結果を読もうとしてしまう。
 
-**Fix**: Two-phase eviction:
+**対策**: 2 段階で eviction する。
 1. Clean disk output at terminal state (eager)
 2. Clean in-memory record after parent notified (lazy)
 
 ---
 
-## 12. Skill Listing Budgets Are Tight
+## 12. skill 一覧の予算は厳しい
 
-**Symptom**: Skill description truncated, can't trigger properly.
+**症状**: skill の説明が途中で切れ、正しく trigger できない。
 
-**Cause**: Skill descriptions concatenated and capped per entry (~150 chars). Front-loaded trigger language gets priority.
+**原因**: skill の説明は連結され、エントリごとに上限（約 150 文字）がある。先頭に置いた trigger 用の文言が優先される。
 
-**Fix**: Front-load distinctive trigger language:
+**対策**: 特徴的な trigger 文言を先頭に置く。
 
 ```markdown
 ✓ Good: "harness-patterns: Memory, permissions, context engineering, multi-agent"
@@ -163,13 +163,13 @@ async function editFile(path: string, content: string) {
 
 ---
 
-## 13. Default Tool Permission is "Allow"
+## 13. tool のデフォルト権限は "Allow"
 
-**Symptom**: Tool bypasses expected gate.
+**症状**: tool が想定した gate を素通りする。
 
-**Cause**: Tools without custom permission logic delegate entirely to rule-based system. Default is "allow" unless configured otherwise.
+**原因**: 独自の権限ロジックを持たない tool は、完全に rule-based system に委ねられる。特に設定しない限り、デフォルトは "allow"。
 
-**Fix**: Override default for sensitive tools:
+**対策**: 機微な tool ではデフォルトを上書きする。
 
 ```typescript
 registry.register('shell', {
@@ -180,27 +180,27 @@ registry.register('shell', {
 
 ---
 
-## 14. Team Memory Requires Auto-Memory Enabled
+## 14. team memory には auto-memory の有効化が必要
 
-**Symptom**: Team-shared memory doesn't work even when configured.
+**症状**: 設定しているのに team 共有 memory が動かない。
 
-**Cause**: Team memory builds on same directory/index infrastructure as auto-memory. Disabling auto-memory (via env var or settings) also disables team memory.
+**原因**: team memory は auto-memory と同じ directory / index 基盤の上に成り立っている。auto-memory を env var や settings で無効化すると、team memory も無効になる。
 
-**Fix**: Ensure auto-memory enabled before enabling team memory. Check both feature gate and enablement check.
-
----
-
-## 15. Orphaned Topic Files Accumulate
-
-**Symptom**: Disk space fills with `.claude/memory/topics/` files.
-
-**Cause**: Two-step save (topic file then index). Crash between steps leaves orphaned topic file.
-
-**Fix**: Periodic sweep deletes topic files not referenced by index. Orphans don't corrupt index but consume disk space.
+**対策**: team memory を有効にする前に、auto-memory が有効になっていることを確認する。feature gate と有効化チェックの両方を見る。
 
 ---
 
-## Related Reading
+## 15. 孤立した topic ファイルがたまる
+
+**症状**: ディスク容量が `.claude/memory/topics/` のファイルで埋まる。
+
+**原因**: topic ファイルと index の 2 段階保存になっているため、途中で crash すると孤立した topic ファイルが残る。
+
+**対策**: 定期的な sweep で、index から参照されていない topic ファイルを削除する。孤立ファイルは index を壊さないが、ディスク容量を消費する。
+
+---
+
+## 関連資料
 
 - [Memory Persistence Pattern](memory-persistence-pattern.md) — Gotchas #1, #3, #4, #15
 - [Tool Registry Pattern](tool-registry-pattern.md) — Gotchas #5, #6, #13

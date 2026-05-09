@@ -1,158 +1,158 @@
-[中文版本 →](../../../zh/lectures/lecture-10-why-end-to-end-testing-changes-results/)
+[中国語版 →](../../../zh/lectures/lecture-10-why-end-to-end-testing-changes-results/)
 
-> Code examples for this lecture: [code/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/en/lectures/lecture-10-why-end-to-end-testing-changes-results/code/)
-> Hands-on practice: [Project 05. Let the agent verify its own work](./../../projects/project-05-grounded-qa-verification/index.md)
+> この講義のコード例: [code/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/en/lectures/lecture-10-why-end-to-end-testing-changes-results/code/)
+> ハンズオン: [Project 05. エージェントに自分の作業を検証させる](./../../projects/project-05-grounded-qa-verification/index.md)
 
-# Lecture 10. Only End-to-End Testing is True Verification
+# 講義 10. エンドツーエンドテストは結果を変える
 
-You ask the agent to add a file export feature to an Electron app. It writes the render process component, the preload script, and the service layer logic. The unit tests for each component pass perfectly. The agent says, "It's done." When you actually click the export button—the file path format is wrong, the progress bar doesn't update, and exporting large files causes a memory leak. Five component boundary defects, and the unit tests didn't catch a single one.
+Electron アプリにファイル書き出し機能を追加するようエージェントに依頼したとします。エージェントはレンダラープロセスのコンポーネント、preload スクリプト、サービス層のロジックを書きました。各コンポーネントのユニットテストは完璧に通ります。エージェントは「完了しました」と言います。ところが実際にエクスポートボタンを押してみると、ファイルパスの形式が間違っていて、進捗バーは更新されず、大きなファイルを書き出すとメモリリークが起きます。コンポーネント境界の不具合が 5 つもあるのに、ユニットテストは 1 つも拾えていません。
 
-It's like a choir rehearsal—each voice part sounds perfect when sung individually, but when they sing together, the sopranos are half a beat faster than the basses, and the accompaniment is a semitone off from the main melody. Each part is "correct" on its own, but the whole thing is out of tune.
+これは合唱のリハーサルのようなものです。各パートは個別に歌えば完璧に聞こえますが、いざ一緒に歌うと、ソプラノはバスより半拍早く、伴奏は主旋律から半音ずれています。各パートはそれぞれ「正しい」のに、全体としては調和していません。
 
-Google's Testing Pyramid tells us: a large number of unit tests are the foundation, but if you stop there, you will systematically miss component interaction issues. For AI coding agents, this problem is even more severe—agents tend to run only the fastest tests and then declare completion. **Only end-to-end testing can prove that system-level defects don't exist.**
+テストピラミッドが示すのは、大量のユニットテストが土台にはなるものの、そこだけで止まるとコンポーネント間の相互作用の問題を体系的に取り逃がす、ということです。AI コーディングエージェントではこの問題はさらに深刻で、エージェントは最速のテストだけを実行して完了宣言しがちです。**エンドツーエンドテストは、ユニットテストや統合テストだけでは見えにくいシステムレベルの欠陥を露出させます。ただし、どのテスト層も欠陥の不存在を証明するものではありません。**
 
-## The Blind Spots of Unit Testing
+## ユニットテストの盲点
 
-The design philosophy of unit testing is isolation—mocking dependencies and focusing solely on the unit under test. This philosophy makes unit testing fast and precise, but it also creates systematic blind spots. It's like having each voice part practice with headphones on during a choir rehearsal—it sounds fine to them, but the issues only emerge when they come together:
+ユニットテストの設計思想は分離です。依存関係をモックし、対象の単位だけに集中します。この考え方はユニットテストを高速かつ正確にしますが、同時に体系的な盲点も生みます。合唱のリハーサルで各パートがヘッドホンを付けて練習しているようなもので、本人たちには問題なく聞こえても、全員が揃ったときに初めて問題が表面化します。
 
-**Interface Mismatch**: The file path passed by the render process to the preload script is a relative path, but the preload script expects an absolute path. Their respective unit tests both used mocks and passed. The issue is only discovered when the end-to-end flow is executed—just like two voice parts practicing independently and feeling fine, only to realize during the ensemble that one is singing in 4/4 time and the other in 3/4 time.
+**インターフェースの不一致**: レンダラープロセスから preload スクリプトへ渡されるファイルパスは相対パスなのに、preload スクリプトは絶対パスを想定している。双方のユニットテストはモックを使っていたため通過していました。問題が見つかるのはエンドツーエンドの流れを実行したときだけです。ちょうど、2 つのパートが別々に練習している間は問題なく感じても、合奏したら片方は 4/4 拍子、もう片方は 3/4 拍子で歌っていたと気づくようなものです。
 
-**State Propagation Errors**: A database migration changes the table schema, but the ORM caching layer still holds cache entries for the old schema. Unit tests provide a completely new mock environment every time, which won't expose this cross-layer state inconsistency. It's like changing the lyrics of a song, but someone is still singing the old version.
+**状態伝播の誤り**: データベースのマイグレーションでテーブルスキーマは変わったのに、ORM のキャッシュ層には古いスキーマのキャッシュエントリが残っている。ユニットテストは毎回まったく新しいモック環境を用意するため、この層をまたぐ状態の不整合は表に出ません。歌詞を変更したのに、誰かがまだ古い版を歌っているようなものです。
 
-**Resource Lifecycle Issues**: The acquisition and release of file handles, database connections, and network sockets span multiple components. Unit tests create and destroy independent resources for each test, failing to expose resource contention or leaks. It's like each voice part taking turns using the microphones during rehearsal, but when everyone goes on stage together, there aren't enough mics.
+**リソースのライフサイクル問題**: ファイルハンドル、データベース接続、ネットワークソケットの取得と解放は複数コンポーネントにまたがります。ユニットテストは各テストごとに独立したリソースを生成して破棄するため、リソース競合やリークを露出できません。リハーサルでは各パートが順番にマイクを使えていても、本番で全員が一斉に出るとマイクが足りないのと同じです。
 
-**Environment Dependency**: The code behaves correctly in the test environment (where everything is mocked) but fails in the real environment due to configuration differences, network latency, or service unavailability. Like singing perfectly in the rehearsal room, but encountering audio feedback and wind interference at an outdoor festival.
+**環境依存**: テスト環境では（すべてがモックされているので）正しく動くのに、本番環境では設定差、ネットワーク遅延、サービス停止などで失敗する。練習室では完璧に歌えても、屋外フェスではハウリングや風の影響を受けるようなものです。
 
-## End-to-End Testing Not Only Changes Results, It Changes Behavior
+## エンドツーエンドテストは結果を変えるだけでなく、振る舞いも変える
 
-This is something many people fail to realize: when an agent knows its work will be subjected to end-to-end testing, its coding behavior changes.
+多くの人が見落としがちですが、エージェントは自分の作業がエンドツーエンドテストにかけられると分かると、コーディングの振る舞い自体が変わります。
 
-1. **Considering Component Interactions**: While writing code, it will think about "how this interface connects with upstream," rather than just focusing on a single function. Just like knowing you'll eventually sing together, you'll pay attention to other voice parts during practice.
-2. **Respecting Architectural Boundaries**: In systems with architectural constraints, end-to-end testing forces the agent to adhere to boundary rules. Like sheet music marked with "crescendo here," you have to follow it.
-3. **Handling Error Paths**: End-to-end tests usually include failure scenarios, forcing the agent to consider exception handling. It's like simulating "what if the mic suddenly dies" during rehearsal, so you know what to do.
+1. **コンポーネント間の相互作用を考える**: コードを書きながら、単一の関数だけを見るのではなく、「このインターフェースは上流とどうつながるか」を考えるようになります。あとで一緒に歌うと分かっていれば、練習中も他のパートに注意を向けるのと同じです。
+2. **アーキテクチャの境界を守る**: アーキテクチャ上の制約があるシステムでは、エンドツーエンドテストが境界ルールの遵守をエージェントに強います。楽譜に「ここはクレッシェンド」と書いてあれば、それに従わなければならないのと同じです。
+3. **エラーパスを扱う**: エンドツーエンドテストには通常失敗シナリオが含まれるため、エージェントは例外処理を考えるようになります。リハーサルで「もしマイクが突然壊れたらどうするか」を試しておくようなものです。
 
-## Testing Pyramid and Review Feedback Promotion
+## テストピラミッドとレビュー指摘の昇格
 
 ```mermaid
 flowchart TB
-    subgraph Unit["Unit tests only check isolated parts"]
-    U1["Renderer tests"]
-    U2["Preload tests"]
-    U3["Service tests"]
+    subgraph Unit["ユニットテストは分離された部分だけを検証する"]
+    U1["レンダラーのテスト"]
+    U2["preload のテスト"]
+    U3["サービスのテスト"]
     end
 
-    subgraph E2E["E2E runs through the real system"]
-    R["Click renderer button"] --> P["Preload bridge"]
-    P --> S["Service layer"]
-    S --> F["File System / OS"]
-    F --> Result["Actual exported file"]
+    subgraph E2E["E2E は実システムを通して実行する"]
+    R["レンダラーのボタンを押す"] --> P["Preload ブリッジ"]
+    P --> S["サービス層"]
+    S --> F["ファイルシステム / OS"]
+    F --> Result["実際に書き出されたファイル"]
     end
 ```
 
 ```mermaid
 flowchart LR
-    Review["Review feedback:<br/>renderer cannot import fs directly"] --> Rule["Add a direct fs import check"]
-    Rule --> Message["Tell agent in error message<br/>to move file access to preload"]
-    Message --> Harness["Add this check to harness"]
-    Harness --> Stronger["Will fail immediately next time"]
+    Review["レビュー指摘:<br/>renderer から fs を直接 import していない"] --> Rule["直接 fs を import しないか確認する"]
+    Rule --> Message["エラーメッセージでエージェントに<br/>ファイルアクセスを preload に移すよう伝える"]
+    Message --> Harness["このチェックを harness に追加する"]
+    Harness --> Stronger["次回はすぐ失敗する"]
 ```
 
-In Codex engineering practices, OpenAI emphasizes: **error messages written for agents must include fix instructions.** Don't just write `"Direct filesystem access in renderer"`; write `"Direct filesystem access in renderer. All file operations must go through the preload bridge. Move this call to preload/file-ops.ts and invoke it via window.api."` This turns architectural rules into an auto-correction loop. Like a choir conductor who doesn't just say "you sang that wrong," but instead says "you were half a beat fast here, listen to the altos' rhythm, and come in at measure 32."
+Codex のエンジニアリング実践では、OpenAI は **エージェント向けのエラーメッセージには修正手順を含めるべき** だと強調しています。`"Direct filesystem access in renderer"` とだけ書くのではなく、`"Direct filesystem access in renderer. All file operations must go through the preload bridge. Move this call to preload/file-ops.ts and invoke it via window.api."` のように書きます。これによって、アーキテクチャ上のルールが自動修正ループに変わります。合唱指揮者が「そこは間違っている」と言うだけでなく、「ここは半拍早い。アルトのリズムを聞いて、32 小節目で入って」と具体的に指示するようなものです。
 
-## Core Concepts
+## 基本概念
 
-- **Component Boundary Defects**: Component A and B both pass their unit tests, but their interaction produces incorrect behavior. This is the type of issue end-to-end testing is best at catching—like choir parts that are individually correct but out of tune together.
-- **Testing Adequacy Gradient**: Defects caught by unit tests <= defects caught by integration tests <= defects caught by end-to-end tests. Each layer up increases detection capability.
-- **Architectural Boundary Enforcement Rules**: Turning rules from architecture documents (like "render process cannot access the file system directly") into executable, automated checks. From "written on paper" to "running in CI."
-- **Review Feedback Promotion**: Converting repeated code review comments into automated tests. Every time a recurring issue is found, add a rule, and the harness automatically grows stronger. Like a conductor turning common rehearsal mistakes into warm-up exercises—the next time the same mistake is made, the exercise itself exposes it without the conductor needing to say a word.
-- **Agent-Oriented Error Messages**: Failure messages shouldn't just state "what went wrong," but also tell the agent exactly how to fix it. This turns test failures into self-correcting feedback loops.
+- **コンポーネント境界の欠陥**: コンポーネント A と B はどちらもユニットテストに通るのに、その相互作用によって不正な振る舞いが起きる。これはエンドツーエンドテストが最も得意とする検出対象です。個々には正しいのに、一緒だと不協和音になる合唱パートのようなものです。
+- **テスト妥当性の組み合わせ**: ユニットテスト、統合テスト、エンドツーエンドテストは、それぞれ違う欠陥を見つけやすい層です。層が上がるほど実システムに近い振る舞いを確認できますが、低い層のテストを置き換えるものではありません。
+- **アーキテクチャ境界の強制ルール**: アーキテクチャ文書にあるルール（たとえば「レンダラープロセスはファイルシステムに直接アクセスできない」）を実行可能な自動チェックに変えることです。紙の上に書かれたルールから、CI で動くルールへ。
+- **レビュー指摘の昇格**: 繰り返し発生するコードレビューコメントを自動テストに変換することです。同じ問題が見つかるたびにルールを追加し、harness を自動的に強化していきます。よくあるリハーサルのミスを指揮者がウォームアップ練習に変えるようなもので、次に同じミスが起きたときは、指揮者が何も言わなくても練習そのものがそれを露呈します。
+- **エージェント指向のエラーメッセージ**: 失敗メッセージは「何が起きたか」だけでなく、エージェントに「どう直すか」まで具体的に伝えるべきです。これによってテスト失敗が自己修正ループになります。
 
-## How to Do It
+## 進め方
 
-### 0. Define Architectural Boundaries First, Then Write E2E Tests
+### 0. まずアーキテクチャ境界を定義し、そのあとで E2E テストを書く
 
-The prerequisite for end-to-end testing is clear system boundaries. If the architecture is a plate of spaghetti, end-to-end testing will only prove "this plate of spaghetti runs," it won't tell you where design intents were violated. It's like a choir that hasn't even divided into voice parts—no amount of rehearsal will make it sound good.
+エンドツーエンドテストの前提は、システム境界が明確であることです。アーキテクチャがスパゲッティ状態なら、エンドツーエンドテストで分かるのは「このスパゲッティは動く」ということだけで、どこで設計意図が破られたのかは分かりません。そもそも声部に分かれていない合唱のようなもので、どれだけリハーサルしても良くはなりません。
 
-OpenAI's experience: **for codebases generated by agents, architectural constraints must be early prerequisites established on day one, not something to consider when the team grows larger.** The reason is simple—agents will copy existing patterns in the repository, even if those patterns are uneven or suboptimal. Without architectural constraints, the agent will introduce more deviations in every session.
+OpenAI の経験では、**エージェントが生成するコードベースでは、アーキテクチャ制約はチームが大きくなってから考えるものではなく、初日に定める前提条件でなければなりません。** 理由は単純で、エージェントはリポジトリ内の既存パターンを、たとえそれが不揃いで最適でなくても、そのままコピーしてしまうからです。アーキテクチャ制約がなければ、エージェントは毎回のセッションで逸脱をさらに増やしてしまいます。
 
-OpenAI adopted a "Layered Domain Architecture"—each business domain is divided into fixed layers: Types → Config → Repo → Service → Runtime → UI. Dependencies flow strictly forward, and cross-domain concerns enter through explicit Providers interfaces. Any other dependencies are forbidden and mechanically enforced via custom linting.
+OpenAI は「Layered Domain Architecture」を採用しました。各ビジネスドメインは Types → Config → Repo → Service → Runtime → UI の固定レイヤーに分かれています。依存関係は厳密に前方へ流れ、ドメイン横断の関心事は明示的な Providers インターフェースを通じて入ります。それ以外の依存はすべて禁止され、独自 lint によって機械的に強制されます。
 
-Key principle: **Enforce invariants, don't micromanage implementation.** For example, require "data is parsed at the boundary," but don't dictate which library to use. Error messages must include fix instructions—not just saying "violation," but telling the agent exactly how to change it.
+重要な原則は、**実装を細かく指示するのではなく、不変条件を強制すること** です。たとえば、「データは境界でパースされるべき」とは要求しても、どのライブラリを使うかまでは指定しません。エラーメッセージには修正手順が必要です。「違反です」とだけ言うのではなく、エージェントにどう変えるべきかを正確に伝えます。
 
-> Source: [OpenAI: Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/)
+> 出典: [OpenAI: Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/)
 
-### 1. Harness Must Include an End-to-End Layer
+### 1. Harness にはエンドツーエンド層を含める
 
-Make it explicit in your validation flow: for tasks involving cross-component changes, passing end-to-end tests is a prerequisite for completion:
+検証フローでは明示しておきます。コンポーネント横断の変更を伴うタスクでは、エンドツーエンドテストに通ることが完了の前提です。
 
 ```
-## Validation Hierarchy
-- Level 1: Unit tests (Must pass)
-- Level 2: Integration tests (Must pass)
-- Level 3: End-to-end tests (Must pass when cross-component changes are involved)
-- Skipping any required level = Not Complete
+## 検証階層
+- レベル 1: ユニットテスト（必須）
+- レベル 2: 統合テスト（必須）
+- レベル 3: エンドツーエンドテスト（コンポーネント横断の変更がある場合は必須）
+- 必須レベルを 1 つでも飛ばしたら = 完了ではない
 ```
 
-### 2. Turn Architectural Rules into Executable Checks
+### 2. アーキテクチャルールを実行可能なチェックに変える
 
-Every architectural constraint should have a corresponding test or lint rule:
+すべてのアーキテクチャ制約には、対応するテストまたは lint ルールが必要です。
 
 ```bash
-# Check if the render process directly calls Node.js APIs
-grep -r "require('fs')" src/renderer/ && exit 1 || echo "OK: no direct fs access in renderer"
+# render process が Node.js API を直接呼んでいないか確認する
+grep -r "require('fs')" src/renderer/ && exit 1 || echo "OK: renderer に fs の直接アクセスはない"
 ```
 
-### 3. Design Agent-Oriented Error Messages
+### 3. エージェント指向のエラーメッセージを設計する
 
-Failure messages should contain three elements: what went wrong, why, and how to fix it:
+失敗メッセージには、何が起きたか、なぜ起きたか、どう直すかの 3 要素を含めるべきです。
 
 ```
-ERROR: Found direct import of 'fs' in src/renderer/App.tsx:12
-WHY: Renderer process has no access to Node.js APIs for security
-FIX: Move file operations to src/preload/file-ops.ts and call via window.api.readFile()
+ERROR: src/renderer/App.tsx:12 で 'fs' の直接 import を検出しました
+WHY: セキュリティ上、renderer process は Node.js API にアクセスできません
+FIX: ファイル操作を src/preload/file-ops.ts に移し、window.api.readFile() 経由で呼び出してください
 ```
 
-### 4. Establish a Review Feedback Promotion Process
+### 4. レビュー指摘を昇格させる仕組みを作る
 
-Every time a new type of agent error is found during code review, turn it into an automated check. A month later, your harness will be significantly stronger than at the start of the month. It's like rehearsal notes for a choir—recording issues found in every rehearsal so they can be checked before the next one. Over time, common errors decrease, and the music becomes more harmonious.
+コードレビューで新しい種類のエージェントエラーが見つかるたび、それを自動チェックに変えます。1 か月後には、harness は月初よりかなり強くなっています。合唱のリハーサルノートのように、毎回のリハーサルで見つかった問題を記録して、次の回の前に確認できるようにするのです。時間がたつにつれて、よくあるミスは減り、演奏はより調和していきます。
 
-## Real-World Case
+## 実例
 
-**Task**: Implement a file export feature in an Electron app. Involves render process UI, preload script filesystem proxy, and service layer data transformation.
+**タスク**: Electron アプリにファイル書き出し機能を実装する。レンダラープロセスの UI、preload スクリプトのファイルシステム・プロキシ、サービス層のデータ変換が関わる。
 
-**Singing parts individually (Unit tests passed)**: Render component tests (passed, file operations mocked), preload script tests (passed, filesystem mocked), service layer tests (passed, data source mocked). Agent declares completion.
+**各パートを個別に歌う場合（ユニットテストは通過）**: レンダラーコンポーネントのテスト（通過、ファイル操作はモック）、preload スクリプトのテスト（通過、ファイルシステムはモック）、サービス層のテスト（通過、データソースはモック）。エージェントは完了を宣言する。
 
-**Singing together (Defects revealed by End-to-End tests)**:
+**一緒に歌う場合（エンドツーエンドテストで不具合が露呈）**:
 
-| Defect | Description | Unit Test | E2E |
+| 不具合 | 説明 | ユニットテスト | E2E |
 |--------|-------------|-----------|-----|
-| Interface Mismatch | Inconsistent file path format | Missed | Caught |
-| State Propagation | Export progress not sent back to UI via IPC | Missed | Caught |
-| Resource Leak | Large file export handles not released | Missed | Caught |
-| Permission Issue | Different permissions in packaged environment | Missed | Caught |
-| Error Propagation | Service layer exceptions didn't reach UI layer | Missed | Caught |
+| インターフェースの不一致 | ファイルパスの形式が不一致 | 取り逃し | 検出 |
+| 状態伝播 | エクスポートの進捗が IPC 経由で UI に返らない | 取り逃し | 検出 |
+| リソースリーク | 大きなファイルの書き出しで handle が解放されない | 取り逃し | 検出 |
+| 権限の問題 | パッケージ化された環境で権限が異なる | 取り逃し | 検出 |
+| エラー伝播 | サービス層の例外が UI 層まで届かない | 取り逃し | 検出 |
 
-All 5 defects were caught by end-to-end tests, while unit tests caught none. The cost was an increase in test time from 2 seconds to 15 seconds—completely acceptable in an agent workflow. No matter how well each part sings individually, it can't beat a full ensemble rehearsal.
+5 つの不具合はすべてエンドツーエンドテストで検出され、ユニットテストは 1 つも捕捉できませんでした。代わりにテスト時間は 2 秒から 15 秒に増えましたが、これはエージェントのワークフローでは十分に許容範囲です。各パートがどれだけ個別に上手く歌えても、全体の合奏リハーサルには敵いません。
 
-## Key Takeaways
+## 要点
 
-- **Unit tests are systematically blind to component boundary defects**—their isolation design is exactly what prevents them from detecting interaction issues. Everyone singing correctly doesn't mean the choir isn't out of tune.
-- **End-to-end testing not only detects defects, it changes agent coding behavior**—making it focus more on integration and boundaries.
-- **Architectural rules must be executable**—not written in a document waiting to be read, but automatically checked on every commit.
-- **Error messages must be designed for agents**—including specific steps on "how to fix it" to form a self-correcting loop.
-- **Review feedback promotion makes the harness automatically stronger**—every category of captured defect becomes a permanent line of defense.
+- **ユニットテストはコンポーネント境界の欠陥に体系的に弱い**。分離を重視する設計そのものが、相互作用の問題を検出しにくくしています。全員が正しく歌っていることと、合唱全体が調和していることは別です。
+- **エンドツーエンドテストは欠陥を見つけるだけでなく、エージェントのコーディング行動も変える**。統合と境界をより意識するようになります。
+- **アーキテクチャルールは実行可能でなければならない**。文書に書いて読まれるのを待つのではなく、毎回の commit で自動的にチェックされるべきです。
+- **エラーメッセージはエージェント向けに設計する**。`how to fix it` を具体的に含めることで、自己修正ループを作れます。
+- **レビュー指摘の昇格は harness を自動的に強くする**。捕捉した欠陥の各カテゴリが、そのまま恒久的な防御線になります。
 
-## Further Reading
+## 参考文献
 
-- [How Google Tests Software - Whittaker et al.](https://www.goodreads.com/book/show/13563030-how-google-tests-software) — The classic source of the Testing Pyramid model
-- [Harness Engineering - OpenAI](https://openai.com/index/harness-engineering/) — Engineering practices for automated execution of architectural constraints
-- [Chaos Engineering - Netflix (Basiri et al.)](https://ieeexplore.ieee.org/document/7466237) — Proactively injecting failures to verify system resilience
-- [QuickCheck - Claessen & Hughes](https://www.cs.tufts.edu/~nr/cs257/archive/john-hughes/quick.pdf) — Property testing methodology, sitting between example testing and formal verification
+- [How Google Tests Software - Whittaker et al.](https://www.goodreads.com/book/show/13563030-how-google-tests-software) — テストピラミッドの古典的な出典
+- [Harness Engineering - OpenAI](https://openai.com/index/harness-engineering/) — アーキテクチャ制約を自動実行するためのエンジニアリング実践
+- [Chaos Engineering - Netflix (Basiri et al.)](https://ieeexplore.ieee.org/document/7466237) — システムの耐障害性を検証するために障害を意図的に注入する手法
+- [QuickCheck - Claessen & Hughes](https://www.cs.tufts.edu/~nr/cs257/archive/john-hughes/quick.pdf) — 例示ベースのテストと形式検証の間に位置するプロパティテスト手法
 
-## Exercises
+## 演習
 
-1. **Cross-Component Defect Detection**: Pick a modification task involving at least three components. First, run only unit tests and record the results, then run end-to-end tests. Analyze which type of cross-layer interaction issue each additionally discovered defect belongs to.
+1. **コンポーネント横断の欠陥検出**: 少なくとも 3 つのコンポーネントにまたがる変更タスクを 1 つ選びます。まずユニットテストだけを実行して結果を記録し、そのあとでエンドツーエンドテストを実行します。追加で見つかった各欠陥が、どの種類の層間相互作用の問題に当たるかを分析してください。
 
-2. **Architectural Rule Automation**: Pick an architectural constraint from your project and turn it into an executable check (with an agent-oriented error message). Integrate it into the harness and verify its effectiveness with a baseline task.
+2. **アーキテクチャルールの自動化**: 自分のプロジェクトからアーキテクチャ制約を 1 つ選び、エージェント向けのエラーメッセージ付きで実行可能なチェックに変えてください。それを harness に組み込み、ベースラインタスクで有効性を確認します。
 
-3. **Review Feedback Promotion**: Find a recurring comment type from your code review history and convert it into an automated check using the five-step process. Compare the frequency of the issue before and after the promotion.
+3. **レビュー指摘の昇格**: コードレビュー履歴から繰り返し出てくるコメントの種類を 1 つ見つけ、5 段階の手順で自動チェックに変えてください。昇格前後で、その問題の発生頻度を比較します。

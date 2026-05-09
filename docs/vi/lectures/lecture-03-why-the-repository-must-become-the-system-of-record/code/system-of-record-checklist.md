@@ -1,11 +1,11 @@
-# Danh sách Kiểm tra Hệ thống Ghi chép
+# システム・オブ・レコードのチェックリスト
 
-Một agent mới có thể khám phá những điều sau chỉ từ repo không?
+新しい agent は、repo だけから次のことを把握できるでしょうか?
 
-- Sản phẩm nào đang được xây dựng?
-- Ứng dụng nên làm gì cho người dùng?
-- Codebase được tổ chức như thế nào?
-- Ứng dụng khởi động như thế nào?
-- Sức khỏe được kiểm tra như thế nào?
-- Công việc nào hiện đang được tiến hành?
-- Tiêu chuẩn chất lượng nào quan trọng?
+- 何の製品を作っているのか?
+- アプリケーションはユーザーのために何をすべきか?
+- codebase はどのように整理されているか?
+- アプリケーションはどのように起動するか?
+- 健康状態はどのように確認するか?
+- いま進行中の作業は何か?
+- 重要な品質基準は何か?

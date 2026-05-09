@@ -1,3 +1,3 @@
-# Kế hoạch Đã hoàn thành
+# 完了済みの計画
 
-Di chuyển các kế hoạch đã hoàn thành ở đây thay vì xóa chúng. Các kế hoạch đã hoàn thành là một phần của bề mặt bộ nhớ kho lưu trữ và giúp các lần chạy agent sau hiểu tại sao mã trông như vậy.
+完了した計画は、削除する代わりにここへ移動してください。完了した計画はリポジトリの記憶領域の一部であり、後続の agent の実行が、コードがこのような形になっている理由を理解する助けになります。

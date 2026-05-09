@@ -1,8 +1,8 @@
-# Mã cho Bài 02
+# レクチャー 02 のコード
 
-Sử dụng thư mục này cho các ví dụ nhỏ phân biệt:
+このディレクトリは、次の違いを分けて示す小さな例に使います。
 
-- hành vi mô hình
-- hành vi harness
-- thiết lập chỉ dùng prompt
-- thiết lập agent được hỗ trợ bởi môi trường
+- モデルの振る舞い
+- harness の振る舞い
+- prompt のみの設定
+- 環境に支えられた agent の設定

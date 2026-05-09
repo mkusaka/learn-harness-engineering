@@ -1,21 +1,21 @@
-# Mẫu Repo Nâng cao
+# 高度なリポジトリテンプレート
 
-Sao chép starter này vào một kho lưu trữ thực khi bạn muốn một bề mặt tài liệu agent-first theo phong cách OpenAI thay vì chỉ một harness tối giản.
+OpenAI 風の agent-first なドキュメント面を、最小限のハーネスではなく本番のリポジトリにしたいときは、この starter をそのままコピーしてください。
 
-## Thứ tự Sao chép
+## コピーの順序
 
-1. Sao chép `AGENTS.md` và `ARCHITECTURE.md` vào thư mục gốc repo.
-2. Sao chép toàn bộ cây `docs/`.
-3. Điền vào `docs/PRODUCT_SENSE.md`, `docs/QUALITY_SCORE.md`, và `docs/RELIABILITY.md` trước tiên.
-4. Thêm kế hoạch active đầu tiên của bạn trong `docs/exec-plans/active/`.
-5. Giữ các tệp đầu vào ngắn và định tuyến chi tiết vào các tài liệu được liên kết.
+1. `AGENTS.md` と `ARCHITECTURE.md` を repo ルートにコピーします。
+2. `docs/` ツリー全体をコピーします。
+3. まず `docs/PRODUCT_SENSE.md`、`docs/QUALITY_SCORE.md`、`docs/RELIABILITY.md` を埋めます。
+4. 最初の active な計画を `docs/exec-plans/active/` に追加します。
+5. 入力ファイルは短く保ち、詳細はリンクされたドキュメントへ振り分けます。
 
-## Mẫu Này Tối ưu hóa Cho
+## このテンプレートが最適な用途
 
-- ngữ cảnh cục bộ repo lâu bền
-- tiết lộ tiến triển thay vì một tệp hướng dẫn khổng lồ
-- vòng đời kế hoạch rõ ràng
-- theo dõi chất lượng theo thời gian
-- ranh giới có thể đọc được cho agent và con người
+- 長く使える repo ローカルのコンテキスト
+- 巨大な指示ファイルではなく、進捗の見える化
+- 明確な計画ライフサイクル
+- 時間を通じた品質追跡
+- agent と人間の両方に読みやすい境界
 
-Coi mỗi tệp ở đây là một starter. Thay thế các placeholder, ví dụ và lệnh mẫu bằng các đặc thù dự án thực của bạn trước khi dựa vào nó.
+ここにある各ファイルは starter と考えてください。プレースホルダー、例、サンプルコマンドは、実際のプロジェクト固有の内容に置き換えてから使ってください。

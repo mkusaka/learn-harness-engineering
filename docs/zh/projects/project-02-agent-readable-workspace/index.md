@@ -1,88 +1,88 @@
-# Project 02. 让 agent 看懂项目、接住上次的工作
+# Project 02. agent にプロジェクトを理解させ、前回の作業を引き継がせる
 
-> 相关讲义：[L03. 让代码仓库成为唯一的事实来源](./../../lectures/lecture-03-why-the-repository-must-become-the-system-of-record/index.md) · [L04. 为什么一个巨大的指令文件会失败](./../../lectures/lecture-04-why-one-giant-instruction-file-fails/index.md)
-> 本篇模板文件：[templates/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/zh/resources/templates/)
+> 関連講義：[L03. コードベースを唯一の真実の源にする](./../../lectures/lecture-03-why-the-repository-must-become-the-system-of-record/index.md) · [L04. なぜ巨大な1つの指示ファイルは失敗するのか](./../../lectures/lecture-04-why-one-giant-instruction-file-fails/index.md)
+> 本編のテンプレートファイル：[templates/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/zh/resources/templates/)
 
-## 你要做什么
+## 何をするか
 
-P01 证明了准备规则有用。但 P01 的任务一次会话就干完了。真实开发不是这样的——你昨天干了一半，今天开新会话，agent 得从仓库状态里搞清楚"做了什么、没做什么、接下来干什么"。
+P01 では、準備ルールが有効だと示しました。ただし、P01 の課題は 1 回の会話で完了するものでした。実際の開発はそうではありません。昨日の途中から今日の新しい会話に続くことがあり、agent はリポジトリの状態から「何をしたか、何をまだしていないか、次に何をすべきか」を把握しなければなりません。
 
-这个项目要求你给仓库加上"可读性"：让一个全新的 agent 打开仓库后，能快速理解项目结构、知道当前进度、接手上次的工作。具体任务是给知识库应用加上三个功能：文档导入、文档详情页、导入后的本地持久化。这些功能必须跨至少两个 agent 会话完成。
+このプロジェクトでは、リポジトリに「読みやすさ」を持たせます。まったく新しい agent がリポジトリを開いたときに、プロジェクト構造をすばやく理解し、現在の進捗を把握し、前回の作業を引き継げるようにします。具体的には、ナレッジベースアプリに 3 つの機能を追加します。文書インポート、文書詳細ページ、インポート後のローカル永続化です。これらの機能は、少なくとも 2 回の agent 会話をまたいで完了させる必要があります。
 
-你需要跑两次。第一次不给 agent 任何帮助，看它在第二个会话里要花多久才能"接上"。第二次提前放好 `ARCHITECTURE.md`、`PRODUCT.md`、`session-handoff.md`，让它快速对齐上下文。
+2 回実行します。1 回目は agent に何の助けも与えず、2 回目の会話で「引き継ぎ」にどれくらい時間がかかるかを見ます。2 回目は、あらかじめ `ARCHITECTURE.md`、`PRODUCT.md`、`session-handoff.md` を用意しておき、コンテキストをすばやく合わせられるようにします。
 
-## 用什么工具
+## 使うツール
 
-- Claude Code 或 Codex（和 P01 保持一致）
+- Claude Code または Codex（P01 と同じ）
 - Git
 - Node.js + Electron
-- 文本编辑器（写文档用）
+- テキストエディタ（文書作成用）
 
-## 具体步骤
+## 手順
 
-### 准备工作
+### 準備
 
-1. 基于 P01 完成后的代码，从同一个 commit 出发。
-2. 创建两个分支：`p02-baseline` 和 `p02-improved`。
-3. 列出要实现的三个功能：文档导入流程、文档详情视图、文档持久化。两条分支任务范围完全一致。
+1. P01 完了時点のコードを基点に、同じ commit から始めます。
+2. `p02-baseline` と `p02-improved` の 2 つのブランチを作成します。
+3. 実装する 3 つの機能を列挙します。文書インポートフロー、文書詳細ビュー、文書永続化です。両方のブランチでタスク範囲は完全に同じにします。
 
-### 第一次运行（弱 harness）
+### 1 回目の実行（弱い harness）
 
-切到 `p02-baseline` 分支。
+`p02-baseline` ブランチに切り替えます。
 
-**会话 A：**
+**会話 A:**
 
-1. 启动 agent，只给任务描述，不给架构文档，不给进度文件。
-2. 故意在功能完成之前停止会话（比如只完成文档导入）。
-3. 不写任何交接文件。直接结束。
+1. agent を起動し、タスク説明だけを渡します。アーキテクチャ文書や進捗ファイルは渡しません。
+2. 機能が完成する前に、意図的に会話を止めます（たとえば文書インポートだけを完了した時点で止める）。
+3. 交接ファイルは何も書かず、そのまま終了します。
 
-**会话 B：**
+**会話 B:**
 
-1. 开一个全新的 agent 会话。
-2. 只说"继续开发"，不给额外上下文。
-3. 记录 agent 花了多久才做出第一个有意义的代码修改。
-4. 记录 agent 哪些时候在"重新发现"本来已经知道的东西。
+1. まったく新しい agent 会話を開きます。
+2. 「続けて開発して」とだけ伝え、追加のコンテキストは渡しません。
+3. agent が最初の有意味なコード変更を行うまでにかかった時間を記録します。
+4. agent が、すでに知っているはずの情報をどのタイミングで「再発見」したかを記録します。
 
-### 第二次运行（强 harness）
+### 2 回目の実行（強い harness）
 
-切到 `p02-improved` 分支。在第一个会话之前，先在仓库里准备好：
+`p02-improved` ブランチに切り替えます。最初の会話の前に、リポジトリ内で次を準備します。
 
-- `ARCHITECTURE.md`：描述项目结构、Electron 各层职责、数据流
-- `PRODUCT.md`：描述产品功能范围和当前阶段目标
-- `AGENTS.md`：启动命令、工作规则、验证方式
-- `init.sh`：一键恢复可运行状态
+- `ARCHITECTURE.md`: プロジェクト構造、Electron の各層の責務、データフローを説明する
+- `PRODUCT.md`: 製品機能の範囲と現在のフェーズ目標を説明する
+- `AGENTS.md`: 起動コマンド、作業ルール、検証方法
+- `init.sh`: すぐに実行可能な状態へ戻すためのワンコマンド
 
-**会话 A：**
+**会話 A:**
 
-1. 启动 agent，让它开始工作。
-2. 同样在功能完成之前停止。
-3. **这次要求 agent 更新 `session-handoff.md`**：记录做了什么、没做什么、下一步是什么。
+1. agent を起動して作業を開始させます。
+2. これも機能が完成する前に止めます。
+3. **今回は agent に `session-handoff.md` の更新を求めます**。何をしたか、何をしていないか、次に何をするかを記録させます。
 
-**会话 B：**
+**会話 B:**
 
-1. 开一个全新的 agent 会话。
-2. 让 agent 读 `session-handoff.md` 和 `feature_list.json`，然后继续。
-3. 同样记录接手速度和重复工作比例。
+1. まったく新しい agent 会話を開きます。
+2. `session-handoff.md` と `feature_list.json` を読ませてから、作業を続けさせます。
+3. 引き継ぎ速度と重複作業の割合を同様に記録します。
 
-## 怎么衡量结果
+## どう測るか
 
-| 指标 | 说明 |
+| 指標 | 説明 |
 |------|------|
-| 会话 B 接手时间 | 从开始到第一个有效代码修改的时间 |
-| 重新发现次数 | agent 重新了解架构、命令、状态等已有信息的次数 |
-| 交接文件质量 | 交接记录是否完整、准确、可操作 |
-| 重复工作比例 | 会话 B 中有多少工作量是在重复会话 A 已做过的事 |
-| 最终完成状态 | 三个功能是否全部完成 |
+| 会話 B の引き継ぎ時間 | 開始から最初の有効なコード変更までの時間 |
+| 再発見の回数 | 既存の情報であるアーキテクチャ、コマンド、状態などを agent が再確認した回数 |
+| 交接ファイルの品質 | 引き継ぎ記録が完全で、正確で、実行可能か |
+| 重複作業の割合 | 会話 B の作業量のうち、会話 A で既に行った内容の繰り返しがどれだけあるか |
+| 最終完了状態 | 3 つの機能がすべて完成したか |
 
-## 要交什么
+## 提出物
 
-- 弱 harness 的会话 A + B 日志/对话记录
-- 强 harness 的会话 A + B 日志/对话记录
-- 两次运行中产生的交接文件
-- 一份对比笔记：重点比较接手速度和上下文恢复质量
+- 弱い harness の会話 A + B のログ / 対話記録
+- 強い harness の会話 A + B のログ / 対話記録
+- 2 回の実行で生成された交接ファイル
+- 比較メモ: 引き継ぎ速度とコンテキスト復元の品質を重点的に比較する
 
-## 对应讲义
+## 対応講義
 
-- [Lecture 03 — 为什么仓库必须成为唯一事实来源](../../lectures/lecture-03-why-the-repository-must-become-the-system-of-record/index.md)
-- [Lecture 04 — 为什么一个大而全的指令文件不行](../../lectures/lecture-04-why-one-giant-instruction-file-fails/index.md)
-- [Lecture 05 — 为什么长任务会丢失连续性](../../lectures/lecture-05-why-long-running-tasks-lose-continuity/index.md)
+- [Lecture 03 — なぜリポジトリが唯一の事実の源でなければならないのか](../../lectures/lecture-03-why-the-repository-must-become-the-system-of-record/index.md)
+- [Lecture 04 — なぜ大きすぎる 1 つの指示ファイルはうまくいかないのか](../../lectures/lecture-04-why-one-giant-instruction-file-fails/index.md)
+- [Lecture 05 — なぜ長時間タスクでは連続性が失われるのか](../../lectures/lecture-05-why-long-running-tasks-lose-continuity/index.md)

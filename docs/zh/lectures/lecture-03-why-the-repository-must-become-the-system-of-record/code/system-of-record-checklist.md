@@ -1,11 +1,11 @@
-# System of Record Checklist
+# System of Record チェックリスト
 
-Can a fresh agent discover the following from the repo alone?
+新しいエージェントが、リポジトリだけを見て次のことを把握できるでしょうか?
 
-- What product is being built?
-- What the app should do for users?
-- How the codebase is organized?
-- How the app starts?
-- How health is checked?
-- What work is currently in progress?
-- What quality standards matter?
+- どのようなプロダクトを作っているのか?
+- アプリはユーザーに対して何をすべきか?
+- コードベースはどのように整理されているか?
+- アプリはどのように起動するか?
+- ヘルスチェックはどのように行うか?
+- 現在どの作業が進行中か?
+- どの品質基準が重要か?

@@ -1,61 +1,61 @@
-# 中文参考
+# 日本語リファレンス
 
-这一部分解释这些模板该怎么配合使用，而不是把它们当成一堆孤立文件。
+このセクションでは、これらのテンプレートを孤立したファイルの寄せ集めとしてではなく、どう組み合わせて使うかを説明します。
 
-## 内部参考材料
+## 内部参考資料
 
-- [`method-map.md`](./method-map.md)：把常见长时任务翻车点映射到对应方法和工件
-- [`initializer-agent-playbook.md`](./initializer-agent-playbook.md)：初始化代理在第一轮应该产出什么
-- [`coding-agent-startup-flow.md`](./coding-agent-startup-flow.md)：后续编码代理每次开工的固定流程
-- [`prompt-calibration.md`](./prompt-calibration.md)：根指令应该写到什么程度才合适
+- [`method-map.md`](./method-map.md)：よくある長時間タスクの失敗ポイントを、対応する方法や成果物に対応づける
+- [`initializer-agent-playbook.md`](./initializer-agent-playbook.md)：初期化エージェントが最初のラウンドで何を出すべきか
+- [`coding-agent-startup-flow.md`](./coding-agent-startup-flow.md)：後続のコーディングエージェントが毎回着手時に踏む固定フロー
+- [`prompt-calibration.md`](./prompt-calibration.md)：ルート指示をどこまで具体化するのが適切か
 
-## 重点参考文章
+## 重点参考記事
 
-这里的筛选标准很窄：只保留能直接解释 harness 机制的文章。Harness 在这里指模型外部的运行系统，包括 agent loop、工具执行、沙箱、状态、上下文、验证、终止条件、控制平面和观测反馈；不是泛泛的 prompt engineering 或 agent 框架介绍。
+ここでの選定基準はかなり厳しく、harness の仕組みを直接説明している記事だけを残しています。ここでいう harness とは、モデルの外側で動く実行システム全体を指し、agent loop、ツール実行、サンドボックス、状態、コンテキスト、検証、終了条件、制御プレーン、観測フィードバックを含みます。一般的な prompt engineering や agent フレームワークの紹介ではありません。
 
-保留原始三篇作为课程主轴：
+元の3本を授業の主軸として残します。
 
-- [OpenAI: Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/)（2026-02-11）：agent-first 仓库、repo-local context、custom lint、结构性 guardrail。
-- [Anthropic: Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)（2025-11-26）：initializer agent、coding agent、feature list、progress log、跨上下文窗口交接。
-- [Anthropic: Harness design for long-running application development](https://www.anthropic.com/engineering/harness-design-long-running-apps)（2026-03-24）：planner / generator / evaluator 三角色、context reset、harness 简化和组件过期问题。
+- [OpenAI: Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/)（2026-02-11）：agent-first のリポジトリ、repo-local context、custom lint、構造的な guardrail。
+- [Anthropic: Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)（2025-11-26）：initializer agent、coding agent、feature list、progress log、コンテキストウィンドウをまたぐ引き継ぎ。
+- [Anthropic: Harness design for long-running application development](https://www.anthropic.com/engineering/harness-design-long-running-apps)（2026-03-24）：planner / generator / evaluator の3役割、context reset、harness の簡素化、コンポーネントの陳腐化問題。
 
-额外只加入几篇高相关、高含金量的 2026 文章：
+さらに、関連性が高く価値の大きい 2026 年の記事だけを追加します。
 
-- [OpenAI: Unrolling the Codex agent loop](https://openai.com/index/unrolling-the-codex-agent-loop/)（2026-01-23）：解释 Codex runtime harness 的核心循环、工具调用、上下文增长和终止状态。
-- [Anthropic: Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)（2026-01-09）：明确评估 agent 时评的是 model + harness，并区分 evaluation harness 与 agent harness。
-- [LangChain: Improving Deep Agents with harness engineering](https://www.langchain.com/blog/improving-deep-agents-with-harness-engineering)（2026-02-17）：同一模型不变，只改 system prompt、tools、middleware、tracing 和 self-verification，让 coding agent 在 Terminal Bench 2.0 上从 Top 30 进到 Top 5。
-- [Thoughtworks / Martin Fowler: Harness engineering for coding agent users](https://martinfowler.com/articles/harness-engineering.html)（2026-04-02）：把 coding-agent user harness 拆成 feedforward guides 和 feedback sensors，并区分 deterministic controls 与 inferential controls。
-- [Cursor: Continually improving our agent harness](https://cursor.com/blog/continually-improving-agent-harness)（2026-04-30）：把 harness 当成持续迭代的产品系统，用离线评估、线上指标、工具错误分类、模型定制和 mid-chat model switching 改善 agent 行为。
+- [OpenAI: Unrolling the Codex agent loop](https://openai.com/index/unrolling-the-codex-agent-loop/)（2026-01-23）：Codex runtime harness の中核ループ、ツール呼び出し、コンテキストの増大、終了状態を解説。
+- [Anthropic: Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)（2026-01-09）：agent を評価する際には model + harness を評価していることを明確にし、evaluation harness と agent harness を区別する。
+- [LangChain: Improving Deep Agents with harness engineering](https://www.langchain.com/blog/improving-deep-agents-with-harness-engineering)（2026-02-17）：モデルは同じまま、system prompt、tools、middleware、tracing、self-verification だけを変えて、Terminal Bench 2.0 で coding agent を Top 30 から Top 5 へ押し上げる。
+- [Thoughtworks / Martin Fowler: Harness engineering for coding agent users](https://martinfowler.com/articles/harness-engineering.html)（2026-04-02）：coding-agent user harness を feedforward guides と feedback sensors に分け、deterministic controls と inferential controls を区別する。
+- [Cursor: Continually improving our agent harness](https://cursor.com/blog/continually-improving-agent-harness)（2026-04-30）：harness を継続的に改善する製品システムとして捉え、オフライン評価、オンライン指標、ツールエラー分類、モデルのカスタマイズ、mid-chat model switching で agent の挙動を改善する。
 
-## 2026 扩展参考
+## 2026 年の拡張参考
 
-这些文章不作为课程主轴，但在设计特定 harness 模块时很有借鉴价值。只保留文章正文直接涉及 agent loop、工具执行、上下文管理、验证、沙箱、控制层、回归治理等机制的材料；纯 agent 产品、平台发布、团队实践或 benchmark 不放进这里。
+これらの記事は授業の主軸ではありませんが、特定の harness モジュールを設計するときに大いに参考になります。記事本文のうち、agent loop、ツール実行、コンテキスト管理、検証、サンドボックス、制御層、回帰ガバナンスに直接触れている部分だけを残し、純粋な agent 製品、プラットフォーム発表、チーム実践、ベンチマークはここに含めません。
 
-- [OpenAI: Unlocking the Codex harness: how we built the App Server](https://openai.com/index/unlocking-the-codex-harness/)（2026-02-04）：把 harness 抽象成 App Server 协议，覆盖 thread lifecycle、resume、fork、diff 和客户端集成。
-- [OpenAI Developers: Run long horizon tasks with Codex](https://developers.openai.com/blog/run-long-horizon-tasks-with-codex)（2026-02-23）：长时任务中的 durable project memory、milestone validation 和 done-when 例子。
-- [OpenAI: The next evolution of the Agents SDK](https://openai.com/index/the-next-evolution-of-the-agents-sdk/)（2026-04-15）：model-native harness、sandbox execution、文件与命令执行能力。
-- [OpenAI: An open-source spec for Codex orchestration: Symphony](https://openai.com/index/open-source-codex-orchestration-symphony/)（2026-04-27）：把 issue tracker / Linear 变成多 agent 控制平面。
-- [Anthropic: Building a C compiler with a team of parallel Claudes](https://www.anthropic.com/engineering/building-c-compiler)（2026-02-05）：并行 agent 团队、任务锁、git 同步、容器隔离和自主循环。
-- [Anthropic: Scaling Managed Agents: Decoupling the brain from the hands](https://www.anthropic.com/engineering/managed-agents)（2026-04-08）：meta-harness 视角，把 session、harness、sandbox 拆成可替换接口。
-- [Anthropic: An update on recent Claude Code quality reports](https://www.anthropic.com/engineering/april-23-postmortem)（2026-04-23）：reasoning effort、context pruning、system prompt 都属于 harness 变更，且需要回归治理。
-- [LangChain: Context Management for Deep Agents](https://www.langchain.com/blog/context-management-for-deepagents)（2026-01-28）：filesystem offloading、tool-call truncation、summarization 和 targeted evals 组成的 context-management harness。
-- [LangChain: Tuning Deep Agents to Work Well with Different Models](https://www.langchain.com/blog/tuning-deep-agents-different-models)（2026-04-29）：用 model-specific harness profiles 调整 prompt、tool names、middleware 和 subagent 配置。
-- [LangChain: Continual learning for AI agents](https://www.langchain.com/blog/continual-learning-for-ai-agents)（2026-04-05）：把 agent 改进拆成 model、harness、context 三层，并把 traces 作为改进信号。
+- [OpenAI: Unlocking the Codex harness: how we built the App Server](https://openai.com/index/unlocking-the-codex-harness/)（2026-02-04）：harness を App Server プロトコルとして抽象化し、thread lifecycle、resume、fork、diff、クライアント統合を扱う。
+- [OpenAI Developers: Run long horizon tasks with Codex](https://developers.openai.com/blog/run-long-horizon-tasks-with-codex)（2026-02-23）：長期タスクにおける durable project memory、milestone validation、done-when の例。
+- [OpenAI: The next evolution of the Agents SDK](https://openai.com/index/the-next-evolution-of-the-agents-sdk/)（2026-04-15）：model-native harness、sandbox execution、ファイルとコマンドの実行機能。
+- [OpenAI: An open-source spec for Codex orchestration: Symphony](https://openai.com/index/open-source-codex-orchestration-symphony/)（2026-04-27）：issue tracker / Linear を多 agent の制御プレーンに変える。
+- [Anthropic: Building a C compiler with a team of parallel Claudes](https://www.anthropic.com/engineering/building-c-compiler)（2026-02-05）：並列 agent チーム、タスクロック、git 同期、コンテナ分離、自律ループ。
+- [Anthropic: Scaling Managed Agents: Decoupling the brain from the hands](https://www.anthropic.com/engineering/managed-agents)（2026-04-08）：meta-harness の観点から、session、harness、sandbox を差し替え可能なインターフェースとして分割する。
+- [Anthropic: An update on recent Claude Code quality reports](https://www.anthropic.com/engineering/april-23-postmortem)（2026-04-23）：reasoning effort、context pruning、system prompt はすべて harness 変更であり、回帰ガバナンスが必要になる。
+- [LangChain: Context Management for Deep Agents](https://www.langchain.com/blog/context-management-for-deepagents)（2026-01-28）：filesystem offloading、tool-call truncation、summarization、targeted evals から成る context-management harness。
+- [LangChain: Tuning Deep Agents to Work Well with Different Models](https://www.langchain.com/blog/tuning-deep-agents-different-models)（2026-04-29）：model-specific harness profiles を使って prompt、tool names、middleware、subagent 設定を調整する。
+- [LangChain: Continual learning for AI agents](https://www.langchain.com/blog/continual-learning-for-ai-agents)（2026-04-05）：agent 改善を model、harness、context の3層に分け、traces を改善シグナルとして扱う。
 - [Microsoft: Agent Harness in Agent Framework](https://devblogs.microsoft.com/agent-framework/agent-harness-in-agent-framework/)（2026-03-12）：shell/filesystem harness、approval flow、hosted shell、context compaction。
-- [Google: Announcing ADK for Java 1.0.0](https://developers.googleblog.com/announcing-adk-for-java-100-building-the-future-of-ai-agents-in-java/)（2026-03-30）：插件、event compaction、HITL、session/memory service、A2A 等可复用 harness primitives。
-- [GitHub: Automate repository tasks with GitHub Agentic Workflows](https://github.blog/ai-and-ml/automate-repository-tasks-with-github-agentic-workflows/)（2026-02-13）：把 GitHub Actions 变成 agentic workflow runner，包含 safe outputs、sandboxing、permissions、review。
-- [AWS: AI agents in enterprises: Best practices with Amazon Bedrock AgentCore](https://aws.amazon.com/blogs/machine-learning/ai-agents-in-enterprises-best-practices-with-amazon-bedrock-agentcore/)（2026-02-03）：Runtime、Memory、Gateway、Identity/Policy、Observability、Evaluations 的企业级 harness 分层。
-- [Stripe: Minions: Stripe's one-shot, end-to-end coding agents](https://stripe.dev/blog/minions-stripes-one-shot-end-to-end-coding-agents)（2026-02-09）和 [Part 2](https://stripe.dev/blog/minions-stripes-one-shot-end-to-end-coding-agents-part-2)（2026-02-19）：devbox 隔离、custom agent harness、blueprints 状态机、规则文件、MCP tool curation、安全控制、pre-push/CI 反馈循环。
-- [Cognition: What We Learned Building Cloud Agents](https://cognition.ai/blog/what-we-learned-building-cloud-agents)（2026-04-23）：云端 agent runtime 的 VM 隔离、session snapshot/resume、orchestration、governance、audit logging 和 integrations。
-- [Cognition: Multi-Agents: What's Actually Working](https://cognition.ai/blog/multi-agents-working)（2026-04-22）：generator-verifier loop、clean-context reviewer、smart-friend routing、manager-child coordination 和跨 agent 通信边界。
-- [Replit: Decision-Time Guidance: Keeping Replit Agent Reliable](https://blog.replit.com/decision-time-guidance)（2026-01-20，2026-01-23 更新）：用轻量分类器在关键决策点注入短指令，而不是把所有规则塞进系统提示词。
-- [Vercel: How we made v0 an effective coding agent](https://vercel.com/blog/how-we-made-v0-an-effective-coding-agent)（2026-01-07）：动态系统提示、streaming rewrite layer 和 deterministic/model-driven autofixers。
-- [Vercel: Introducing deepsec](https://vercel.com/blog/introducing-deepsec-find-and-fix-vulnerabilities-in-your-code-base)（2026-05-04）：面向安全扫描的 coding-agent harness，包含 scan、investigate、revalidate、enrich、export、plugin 和 refusal-checker。
-- [Sourcegraph: CodeScaleBench](https://sourcegraph.com/blog/codescalebench-testing-coding-agents-on-large-codebases-and-multi-repo-software-engineering-tasks)（2026-03-03）：偏 eval/tooling harness，包含 MCP tool adoption、tool-use transcripts、benchmark QA、verifier/reproducibility gates 和 prompt/preamble 迭代。
+- [Google: Announcing ADK for Java 1.0.0](https://developers.googleblog.com/announcing-adk-for-java-100-building-the-future-of-ai-agents-in-java/)（2026-03-30）：プラグイン、event compaction、HITL、session/memory service、A2A など、再利用可能な harness primitives。
+- [GitHub: Automate repository tasks with GitHub Agentic Workflows](https://github.blog/ai-and-ml/automate-repository-tasks-with-github-agentic-workflows/)（2026-02-13）：GitHub Actions を agentic workflow runner に変え、safe outputs、sandboxing、permissions、review を含める。
+- [AWS: AI agents in enterprises: Best practices with Amazon Bedrock AgentCore](https://aws.amazon.com/blogs/machine-learning/ai-agents-in-enterprises-best-practices-with-amazon-bedrock-agentcore/)（2026-02-03）：Runtime、Memory、Gateway、Identity/Policy、Observability、Evaluations の企業向け harness 階層。
+- [Stripe: Minions: Stripe's one-shot, end-to-end coding agents](https://stripe.dev/blog/minions-stripes-one-shot-end-to-end-coding-agents)（2026-02-09）と [Part 2](https://stripe.dev/blog/minions-stripes-one-shot-end-to-end-coding-agents-part-2)（2026-02-19）：devbox 分離、custom agent harness、blueprints 状態機械、ルールファイル、MCP tool curation、安全制御、pre-push/CI フィードバックループ。
+- [Cognition: What We Learned Building Cloud Agents](https://cognition.ai/blog/what-we-learned-building-cloud-agents)（2026-04-23）：クラウド上の agent runtime における VM 分離、session snapshot/resume、orchestration、governance、audit logging、integrations。
+- [Cognition: Multi-Agents: What's Actually Working](https://cognition.ai/blog/multi-agents-working)（2026-04-22）：generator-verifier loop、clean-context reviewer、smart-friend routing、manager-child coordination、agent 間通信の境界。
+- [Replit: Decision-Time Guidance: Keeping Replit Agent Reliable](https://blog.replit.com/decision-time-guidance)（2026-01-20、2026-01-23 更新）：すべてのルールを system prompt に詰め込まず、軽量分類器で重要な意思決定点に短い指示を差し込む。
+- [Vercel: How we made v0 an effective coding agent](https://vercel.com/blog/how-we-made-v0-an-effective-coding-agent)（2026-01-07）：動的 system prompt、streaming rewrite layer、deterministic/model-driven autofixers。
+- [Vercel: Introducing deepsec](https://vercel.com/blog/introducing-deepsec-find-and-fix-vulnerabilities-in-your-code-base)（2026-05-04）：セキュリティスキャン向けの coding-agent harness で、scan、investigate、revalidate、enrich、export、plugin、refusal-checker を含む。
+- [Sourcegraph: CodeScaleBench](https://sourcegraph.com/blog/codescalebench-testing-coding-agents-on-large-codebases-and-multi-repo-software-engineering-tasks)（2026-03-03）：eval/tooling harness 寄りで、MCP tool adoption、tool-use transcripts、benchmark QA、verifier/reproducibility gates、prompt/preamble の反復を含む。
 
-严格按时间筛选时，2025-only 的泛参考不进入主列表。原始三篇中的 Anthropic 2025 文章保留，是因为它是本课程方法的基础来源。
+厳密に時系列で絞ると、2025 年だけの一般的な参考記事は主リストに入りません。元の3本のうち Anthropic の 2025 年記事を残しているのは、このコースの手法の基礎的な出典だからです。
 
-## 推荐阅读顺序
+## 推奨読む順
 
 1. `method-map.md`
 2. `initializer-agent-playbook.md`

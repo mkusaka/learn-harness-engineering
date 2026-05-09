@@ -1,10 +1,9 @@
 # Failure Signals Checklist
 
-Use this checklist when reviewing a weak harness run.
+弱いハーネス実行をレビューするときは、このチェックリストを使ってください。
 
-- Did the agent ask, or infer incorrectly, how to start the app?
-- Did it create directories or abstractions that do not match the intended
-  product?
-- Did it stop after making a visible UI shell without a complete workflow?
-- Did it leave notes or artifacts that help a future run continue?
-- Could a fresh session understand what happened in under five minutes?
+- エージェントは、アプリの起動方法を確認したり、誤って推測したりしていませんでしたか？
+- 目的のプロダクトに合わないディレクトリや抽象化を作っていませんでしたか？
+- 画面上に見える UI の枠だけを作って、完全なワークフローを仕上げないまま止まっていませんでしたか？
+- 次の実行が続きやすくなるようなメモや成果物を残していましたか？
+- 新しいセッションでも、5分以内に何が起きたか理解できそうでしたか？

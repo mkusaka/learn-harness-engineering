@@ -1,10 +1,10 @@
-# Ví dụ: Biến Phản hồi Review thành Quy tắc
+# 例: レビューのフィードバックをルールに変える
 
-Nhận xét review lặp đi lặp lại:
+繰り返し出てくるレビューコメント:
 
-> Không gọi filesystem utilities từ renderer. Sử dụng preload bridge.
+> renderer から filesystem utilities を呼び出さないこと。preload bridge を使うこと。
 
-Quy tắc harness được đẩy lên:
+ハーネスのルールに反映すると:
 
-- thêm lint hoặc quy tắc import ngăn việc sử dụng `fs` trong mã renderer
-- thêm văn bản giải pháp giải thích ranh giới preload
+- renderer コードで `fs` の使用を防ぐ lint ルールまたは import ルールを追加する
+- preload の境界を説明する解決策の文書を追加する

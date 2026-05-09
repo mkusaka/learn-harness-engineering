@@ -1,80 +1,73 @@
 # AGENTS.md
 
-This repository is designed for long-running coding-agent work. The goal is not
-to maximize raw code output. The goal is to leave the repo in a state where the
-next session can continue without guessing.
+このリポジトリは、長時間にわたる coding-agent の作業を前提に設計されています。目的は、単純にコード出力を最大化することではありません。次のセッションが推測なしで続けられる状態でリポジトリを残すことです。
 
 ## Startup Workflow
 
-Before writing code:
+コードを書く前に:
 
-1. Confirm the working directory with `pwd`.
-2. Read `claude-progress.md` for the latest verified state and next step.
-3. Read `feature_list.json` and choose the highest-priority unfinished feature.
-4. Review recent commits with `git log --oneline -5`.
-5. Run `./init.sh`.
-6. Run the required smoke or end-to-end verification before starting new work.
+1. `pwd` で作業ディレクトリを確認する。
+2. `claude-progress.md` を読み、最新の検証済み状態と次の手順を確認する。
+3. `feature_list.json` を読み、最優先の未完了 feature を選ぶ。
+4. `git log --oneline -5` で直近のコミットを確認する。
+5. `./init.sh` を実行する。
+6. 新しい作業を始める前に、必要な smoke test または end-to-end verification を実行する。
 
-If baseline verification is already failing, fix that first. Do not stack new
-feature work on top of a broken starting state.
+ベースラインの verification がすでに失敗している場合は、先にそれを修正すること。壊れた開始状態の上に新しい feature 作業を積み重ねてはいけません。
 
 ## Working Rules
 
-- Work on one feature at a time.
-- Do not mark a feature complete just because code was added.
-- Keep changes within the selected feature scope unless a blocker forces a
-  narrow supporting fix.
-- Do not silently change verification rules during implementation.
-- Prefer durable repo artifacts over chat summaries.
+- 1つの feature を一度に扱うこと。
+- コードを追加しただけで feature 完了と見なしてはいけません。
+- ブロッカーがあってどうしても必要な場合を除き、変更は選択した feature の範囲内に収めること。
+- 実装中に verification ルールを黙って変更しないこと。
+- チャット要約よりも、リポジトリ内に残る永続的な成果物を優先すること。
 
 ## Runtime Observability
 
-All services use structured logging via `src/services/logger.ts`. Log output is
-JSON-formatted with timestamp, level, service name, and message. Log levels:
-DEBUG, INFO, WARN, ERROR.
+すべてのサービスは `src/services/logger.ts` 経由で structured logging を使います。ログ出力は JSON 形式で、timestamp、level、service name、message を含みます。ログレベルは `DEBUG`、`INFO`、`WARN`、`ERROR` です。
 
-When debugging, check logs for:
-- Service initialization events at startup
-- IPC channel invocations and their parameters
-- Indexing chunk counts and content lengths
-- Q&A confidence scores and citation counts
+デバッグ時は、ログで次を確認してください:
+- 起動時の service 初期化イベント
+- IPC channel の呼び出しとそのパラメータ
+- indexing の chunk 数とコンテンツ長
+- Q&A の confidence score と citation 数
 
 ## Architecture Constraints
 
-The following layer boundaries are enforced by `scripts/check-architecture.sh`:
+次の layer boundary は `scripts/check-architecture.sh` によって強制されます:
 
-- **Renderer** must not import `fs`, `path`, or any Node.js core modules.
-- **Services** must not import Electron IPC or renderer-specific modules.
-- **Preload** must only expose the typed API via contextBridge.
+- **Renderer** は `fs`、`path`、および任意の Node.js core modules を import してはいけません。
+- **Services** は Electron IPC または renderer 固有の modules を import してはいけません。
+- **Preload** は contextBridge 経由で typed API だけを公開しなければなりません。
 
-Run `bash scripts/check-architecture.sh` before committing.
+コミット前に `bash scripts/check-architecture.sh` を実行してください。
 
 ## Required Artifacts
 
-- `feature_list.json`: source of truth for feature state
-- `claude-progress.md`: session log and current verified status
-- `init.sh`: standard startup and verification path
-- `session-handoff.md`: optional compact handoff for larger sessions
-- `clean-state-checklist.md`: pre-commit repository health check
+- `feature_list.json`: feature 状態の source of truth
+- `claude-progress.md`: セッションログと現在の検証済み状態
+- `init.sh`: 標準の startup と verification の手順
+- `session-handoff.md`: 大きなセッション向けの任意の簡潔な引き継ぎ
+- `clean-state-checklist.md`: コミット前のリポジトリ健全性チェック
 
 ## Definition Of Done
 
-A feature is done only when all of the following are true:
+feature が完了したと言えるのは、次のすべてを満たした場合だけです:
 
-- the target behavior is implemented
-- the required verification actually ran
-- evidence is recorded in `feature_list.json` or `claude-progress.md`
-- the repository remains restartable from the standard startup path
-- `scripts/check-architecture.sh` passes with no violations
+- 対象の behavior が実装されている
+- 必要な verification が実際に実行された
+- その証拠が `feature_list.json` または `claude-progress.md` に記録されている
+- 標準の startup path から再起動可能な状態が保たれている
+- `scripts/check-architecture.sh` が違反なしで通過する
 
 ## End Of Session
 
-Before ending a session:
+セッションを終える前に:
 
-1. Update `claude-progress.md`.
-2. Update `feature_list.json`.
-3. Record any unresolved risk or blocker.
-4. Run `bash scripts/check-architecture.sh`.
-5. Commit with a descriptive message once the work is in a safe state.
-6. Leave the repo clean enough for the next session to run `./init.sh`
-   immediately.
+1. `claude-progress.md` を更新する。
+2. `feature_list.json` を更新する。
+3. 未解決の risk または blocker を記録する。
+4. `bash scripts/check-architecture.sh` を実行する。
+5. 作業が安全な状態になったら、説明的な message で commit する。
+6. 次のセッションがすぐに `./init.sh` を実行できるだけの clean な状態でリポジトリを残す。

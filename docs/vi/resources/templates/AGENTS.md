@@ -1,50 +1,50 @@
 # AGENTS.md
 
-Kho lưu trữ này được thiết kế cho công việc coding-agent chạy lâu. Mục tiêu không phải là tối đa hóa đầu ra mã thô. Mục tiêu là để lại repo ở trạng thái mà phiên tiếp theo có thể tiếp tục mà không cần đoán.
+このリポジトリは、長時間稼働する coding-agent の作業向けに設計されています。目的は生のコード出力を最大化することではありません。次のセッションが推測なしで続けられる状態で repo を残すことです。
 
-## Quy trình Khởi động
+## 起動手順
 
-Trước khi viết mã:
+コードを書く前に:
 
-1. Xác nhận thư mục làm việc bằng `pwd`.
-2. Đọc `claude-progress.md` để biết trạng thái đã xác minh mới nhất và bước tiếp theo.
-3. Đọc `feature_list.json` và chọn tính năng chưa hoàn thành có mức ưu tiên cao nhất.
-4. Xem lại các commit gần đây bằng `git log --oneline -5`.
-5. Chạy `./init.sh`.
-6. Chạy xác minh smoke hoặc end-to-end cần thiết trước khi bắt đầu công việc mới.
+1. `pwd` で作業ディレクトリを確認します。
+2. `claude-progress.md` を読んで、直近で検証済みの状態と次の手順を把握します。
+3. `feature_list.json` を読んで、未完了の機能のうち最優先のものを選びます。
+4. `git log --oneline -5` で最近の commit を確認します。
+5. `./init.sh` を実行します。
+6. 新しい作業を始める前に、必要な smoke または end-to-end の検証を実行します。
 
-Nếu xác minh baseline đã thất bại, hãy sửa điều đó trước. Không chồng công việc tính năng mới lên trên trạng thái khởi đầu bị hỏng.
+baseline の検証が失敗している場合は、まずそれを修正します。壊れた起動状態の上に新しい機能作業を積み重ねてはいけません。
 
-## Quy tắc Làm việc
+## 作業ルール
 
-- Làm việc trên một tính năng tại một thời điểm.
-- Không đánh dấu tính năng hoàn thành chỉ vì mã đã được thêm vào.
-- Giữ các thay đổi trong phạm vi tính năng đã chọn trừ khi có sự cố chặn cần sửa hỗ trợ hẹp.
-- Không thay đổi ngầm các quy tắc xác minh trong khi triển khai.
-- Ưu tiên các artifact repo lâu bền hơn tóm tắt chat.
+- 一度に 1 つの機能だけに取り組みます。
+- コードを追加しただけで機能完了にしません。
+- 選んだ機能の範囲外には変更を広げません。ただし、狭い範囲の支援修正が必要な blocker は例外です。
+- 実装中に検証ルールを暗黙に変えません。
+- chat の要約よりも、repo に永続化される artifact を優先します。
 
-## Artifact Bắt buộc
+## 必須 Artifact
 
-- `feature_list.json`: nguồn sự thật cho trạng thái tính năng
-- `claude-progress.md`: nhật ký phiên và trạng thái đã xác minh hiện tại
-- `init.sh`: đường dẫn khởi động và xác minh chuẩn
-- `session-handoff.md`: bàn giao ngắn gọn tùy chọn cho các phiên lớn hơn
+- `feature_list.json`: 機能状態の truth source
+- `claude-progress.md`: セッションログと現在の検証済み状態
+- `init.sh`: 標準の起動・検証パス
+- `session-handoff.md`: 大きめのセッション向けの任意の簡潔な引き継ぎ
 
-## Định nghĩa Hoàn thành
+## 完了定義
 
-Một tính năng chỉ xong khi tất cả những điều sau đây là đúng:
+機能が完了といえるのは、次のすべてが満たされたときだけです:
 
-- hành vi mục tiêu đã được triển khai
-- xác minh cần thiết đã thực sự chạy
-- bằng chứng được ghi lại trong `feature_list.json` hoặc `claude-progress.md`
-- kho lưu trữ vẫn có thể khởi động lại từ đường dẫn khởi động chuẩn
+- 目的の挙動が実装されている
+- 必要な検証が実際に実行されている
+- 証跡が `feature_list.json` または `claude-progress.md` に記録されている
+- repo が標準の起動パスから再度起動できる状態のままである
 
-## Cuối Phiên
+## セッション終了時
 
-Trước khi kết thúc phiên:
+セッションを終える前に:
 
-1. Cập nhật `claude-progress.md`.
-2. Cập nhật `feature_list.json`.
-3. Ghi lại bất kỳ rủi ro hoặc sự cố chặn chưa được giải quyết nào.
-4. Commit với thông điệp mô tả khi công việc ở trạng thái an toàn.
-5. Để repo đủ sạch để phiên tiếp theo có thể chạy `./init.sh` ngay lập tức.
+1. `claude-progress.md` を更新します。
+2. `feature_list.json` を更新します。
+3. 未解決のリスクや blocker があれば記録します。
+4. 作業が安全な状態にあるときに、説明的なメッセージで commit します。
+5. 次のセッションがすぐに `./init.sh` を実行できるよう、repo を十分にクリーンな状態に保ちます。

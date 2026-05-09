@@ -1,49 +1,49 @@
 # Skills
 
-This directory contains the bundled AI agent skills that ship with this course. Skills are self-contained prompt templates that can be loaded by AI coding agents (Claude Code, Codex, Cursor, Windsurf, etc.) to perform specialized tasks.
+このディレクトリには、このコースに同梱されている AI エージェント用の skills が含まれています。Skills は自己完結したプロンプトテンプレートであり、AI コーディングエージェント（Claude Code、Codex、Cursor、Windsurf など）に読み込ませて、特定の作業を実行するために使えます。
 
 ## harness-creator
 
-A production-grade harness engineering skill for AI coding agents. It helps you create, assess, and improve the five core harness subsystems: instructions, state, verification, scope, and session lifecycle.
+AI コーディングエージェント向けの、本番運用レベルの harness engineering skill です。instructions、state、verification、scope、session lifecycle という 5 つの中核サブシステムを作成・評価・改善するのに役立ちます。
 
-### What It Does
+### できること
 
-- **Create harnesses from scratch** — AGENTS.md, feature lists, verification workflows
-- **Improve existing harnesses** — Five-subsystem assessment with prioritized improvements
-- **Design session continuity** — Memory persistence, progress tracking, handoff procedures
-- **Apply production patterns** — Memory, context engineering, tool safety, multi-agent coordination
+- **harness をゼロから作成する** — AGENTS.md、機能一覧、検証ワークフロー
+- **既存の harness を改善する** — 5 サブシステムを評価し、優先度付きで改善する
+- **セッションの継続性を設計する** — メモリの永続化、進捗追跡、引き継ぎ手順
+- **本番向けパターンを適用する** — メモリ、コンテキストエンジニアリング、ツール安全性、マルチエージェント協調
 
-### Quick Start
+### クイックスタート
 
-The skill files live in the repository at [`skills/harness-creator/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/skills/harness-creator).
+skill ファイルはリポジトリ内の [`skills/harness-creator/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/skills/harness-creator) にあります。
 
-To use it with Claude Code, copy the `harness-creator/` directory into your project's skill path, or point your agent at the SKILL.md file.
+Claude Code で使うには、`harness-creator/` ディレクトリをプロジェクトの skill パスにコピーするか、エージェントに SKILL.md ファイルを参照させてください。
 
-### Reference Patterns
+### 参照パターン
 
-The skill includes 6 deep-dive reference documents:
+この skill には、6 つの詳細な参照ドキュメントが含まれています。
 
 | Pattern | When to Use |
 |---------|-------------|
-| Memory Persistence | Agent forgets between sessions |
-| Context Engineering | Context budget management, JIT loading |
-| Tool Registry | Tool safety, concurrency control |
-| Multi-Agent Coordination | Parallelism, specialization workflows |
-| Lifecycle & Bootstrap | Hooks, background tasks, initialization |
-| Gotchas | 15 non-obvious failure modes with fixes |
+| Memory Persistence | セッション間でエージェントが記憶を失う場合 |
+| Context Engineering | コンテキスト予算の管理、JIT ロード |
+| Tool Registry | ツールの安全性、同時実行制御 |
+| Multi-Agent Coordination | 並列処理、専門化したワークフロー |
+| Lifecycle & Bootstrap | フック、バックグラウンドタスク、初期化 |
+| Gotchas | 目立ちにくい 15 の失敗モードと対策 |
 
-### Templates
+### テンプレート
 
-The skill bundles ready-to-use templates:
+この skill には、すぐに使えるテンプレートが同梱されています。
 
-- `agents.md` — AGENTS.md scaffold with working rules
-- `feature-list.json` — JSON Schema + example feature list
-- `init.sh` — Standard initialization script
-- `progress.md` — Session progress log template
+- `agents.md` — 実運用ルールを備えた AGENTS.md のひな形
+- `feature-list.json` — JSON Schema + 機能一覧の例
+- `init.sh` — 標準初期化スクリプト
+- `progress.md` — セッション進捗ログのテンプレート
 
-### How This Skill Was Built
+### この Skill の作り方
 
-`harness-creator` was developed using the **skill-creator** methodology — Anthropic's official meta-skill for creating, testing, and iterating on agent skills. The skill-creator provides a structured workflow (draft → test → evaluate → iterate) with built-in eval runners, graders, and a benchmark viewer.
+`harness-creator` は、**skill-creator** 手法を使って開発されました。これは、エージェント skill を作成・テスト・反復改善するための Anthropic 公式のメタ skill です。skill-creator は、組み込みの eval 実行器、採点器、ベンチマークビューアを備えた、構造化されたワークフロー（draft → test → evaluate → iterate）を提供します。
 
 - **skill-creator source**: [anthropics/skills — skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator)
 - **Claude Code skills docs**: [anthropics/claude-code — plugin-dev/skills](https://github.com/anthropics/claude-code/tree/main/plugins/plugin-dev/skills)

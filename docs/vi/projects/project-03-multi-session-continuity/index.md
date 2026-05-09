@@ -1,22 +1,22 @@
-[English Version →](../../../en/projects/project-03-multi-session-continuity/) | [中文版本 →](../../../zh/projects/project-03-multi-session-continuity/)
+[英語版 →](../../../en/projects/project-03-multi-session-continuity/) | [中国語版 →](../../../zh/projects/project-03-multi-session-continuity/)
 
-> Bài giảng liên quan: [Bài 05. Duy trì ngữ cảnh qua các phiên](./../../lectures/lecture-05-why-long-running-tasks-lose-continuity/index.md) · [Bài 06. Khởi tạo trước mỗi phiên agent](./../../lectures/lecture-06-why-initialization-needs-its-own-phase/index.md)
-> Tệp mẫu: [templates/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/vi/resources/templates/)
+> 関連講義: [講義 05. セッションをまたいで文脈を維持する](./../../lectures/lecture-05-why-long-running-tasks-lose-continuity/index.md) · [講義 06. 各 agent セッション前の初期化](./../../lectures/lecture-06-why-initialization-needs-its-own-phase/index.md)
+> テンプレート: [templates/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/vi/resources/templates/)
 
-# Dự án 03. Giữ cho Agent Tiếp tục Làm việc Qua Các Lần Khởi động Lại Phiên
+# プロジェクト 03. セッション再起動をまたいで Agent に作業を継続させる
 
-## Bạn Làm Gì
+## あなたが行うこと
 
-Thêm kiểm soát phạm vi và cổng xác minh vào agent. Triển khai document chunking, metadata extraction, hiển thị tiến độ indexing, và luồng Q&A dựa trên trích dẫn. Sử dụng `feature_list.json` để theo dõi trạng thái tính năng — mỗi lần một tính năng, không đánh dấu là "pass" mà không có bằng chứng xác minh.
+agent に範囲制御と検証ゲートを追加します。ドキュメントのチャンク分割、メタデータ抽出、インデックス作成の進捗表示、引用ベースの Q&A フローを実装してください。`feature_list.json` を使って機能の状態を追跡します。1 回につき 1 機能だけを扱い、検証の証拠がないまま "pass" にしないでください。
 
-Bạn chạy hai lần: lần đầu không có ràng buộc, lần hai với thực thi nghiêm ngặt.
+実行は 2 回行います。1 回目は制約なし、2 回目は厳格な実行で行います。
 
-## Công cụ
+## ツール
 
-- Claude Code hoặc Codex
+- Claude Code または Codex
 - Git
 - Node.js + Electron
 
-## Cơ chế Harness
+## Harness の仕組み
 
-Nhật ký tiến độ + bàn giao phiên + tính liên tục đa phiên
+進捗ログ + セッション引き継ぎ + マルチセッション継続性

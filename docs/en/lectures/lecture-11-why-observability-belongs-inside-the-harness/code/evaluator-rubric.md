@@ -1,8 +1,8 @@
-# Evaluator Rubric Example
+# 評価ルーブリックの例
 
-Use 1-5 scoring for each dimension:
+各観点を 1〜5 点で評価します。
 
-- Grounding: are answers clearly tied to imported sources?
-- Citation quality: are the source references visible and specific?
-- Functionality: can the user complete the question-answer flow?
-- Product coherence: does the workflow feel integrated?
+- Grounding: 回答は取り込んだソースに明確に結びついているか?
+- Citation quality: ソース参照は見える形で、かつ具体的か?
+- Functionality: ユーザーは質問応答の流れを最後まで完了できるか?
+- Product coherence: ワークフローは一体感のあるものに感じられるか?

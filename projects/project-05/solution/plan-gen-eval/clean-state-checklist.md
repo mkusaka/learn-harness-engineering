@@ -1,36 +1,36 @@
-# Clean State Checklist
+# クリーン状態チェックリスト
 
-Run this checklist before committing and at the end of each session.
+このチェックリストは、コミット前と各セッションの最後に実行してください。
 
-## Build
+## ビルド
 
-- [ ] `npm run check` passes with no type errors
-- [ ] `npm run build` completes successfully
+- [ ] `npm run check` が型エラーなしで通る
+- [ ] `npm run build` が正常に完了する
 
-## Architecture
+## アーキテクチャ
 
-- [ ] `bash scripts/check-architecture.sh` passes with no violations
-- [ ] No `fs` or `path` imports in renderer code
-- [ ] No Electron IPC in service code
-- [ ] No React imports in services or main process
+- [ ] `bash scripts/check-architecture.sh` が違反なしで通る
+- [ ] renderer コードに `fs` または `path` の import がない
+- [ ] service コードに Electron IPC がない
+- [ ] services または main process に React の import がない
 
-## Runtime
+## 実行時
 
-- [ ] Application starts without errors (`npm run dev`)
-- [ ] Structured log output appears in console at startup
-- [ ] Document import works (check logs for IMPORT_DOCUMENT event)
-- [ ] Indexing works for documents of all sizes
-- [ ] Q&A returns answers with citations (check logs for ASK_QUESTION event)
+- [ ] アプリケーションがエラーなく起動する（`npm run dev`）
+- [ ] 起動時に構造化ログがコンソールへ出力される
+- [ ] ドキュメントのインポートが動作する（`IMPORT_DOCUMENT` イベントのログを確認）
+- [ ] あらゆるサイズのドキュメントでインデックス作成が動作する
+- [ ] Q&A が引用付きで回答を返す（`ASK_QUESTION` イベントのログを確認）
 
-## Data Integrity
+## データ整合性
 
-- [ ] No empty chunks in indexed documents (verify with GET_CHUNKS)
-- [ ] Q&A history persists across restarts
-- [ ] Document metadata is consistent with actual files
+- [ ] インデックス済みドキュメントに空の chunk がない（`GET_CHUNKS` で確認）
+- [ ] Q&A 履歴が再起動後も保持される
+- [ ] ドキュメントの metadata が実際のファイルと一致している
 
-## Repository
+## リポジトリ
 
-- [ ] No unintended files in git status
-- [ ] No sensitive data (.env, credentials) staged
-- [ ] `claude-progress.md` updated with current state
-- [ ] `feature_list.json` reflects actual feature status
+- [ ] `git status` に意図しないファイルがない
+- [ ] 機密情報（`.env`、credentials）が stage されていない
+- [ ] `claude-progress.md` が現在の状態に更新されている
+- [ ] `feature_list.json` が実際の機能状態を反映している

@@ -1,8 +1,8 @@
-# Code for Lecture 07
+# Lecture 07 のコード
 
-Use this folder for examples of:
+このフォルダには、次のような例を入れてください:
 
-- one-shot failures
-- oversized task prompts
-- incremental task shaping
-- structured feature surfaces
+- 一発で終わらせようとして失敗するケース
+- 過大なタスクプロンプト
+- 段階的なタスクの組み立て
+- 構造化された機能の表面

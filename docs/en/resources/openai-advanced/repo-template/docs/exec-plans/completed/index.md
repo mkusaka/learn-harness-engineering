@@ -1,5 +1,5 @@
-# Completed Plans
+# 完了済みプラン
 
-Move finished plans here instead of deleting them. Completed plans are part of
-the repository memory surface and help later agent runs understand why the code
-looks the way it does.
+完了したプランは削除せず、ここに移動してください。完了済みプランは
+リポジトリのメモリ面の一部であり、後続のエージェント実行がコードの
+見た目になっている理由を理解する助けになります。

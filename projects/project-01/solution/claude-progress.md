@@ -1,27 +1,27 @@
-# claude-progress.md -- Session Log
+# claude-progress.md -- セッションログ
 
-## Project 01: Baseline vs Minimal Harness
+## Project 01: ベースライン vs 最小ハーネス
 
-### Session 1 -- 2026-03-30
+### セッション 1 -- 2026-03-30
 
 **Duration**: ~45 minutes
-**Goal**: Establish baseline Electron app with proper harness
+**Goal**: 適切なハーネスを備えたベースラインの Electron アプリを確立する
 
 **What was done**:
-- Verified Electron window launches at 1200x800 with correct webPreferences
-- Confirmed document list panel renders with empty state message
-- Confirmed question panel accepts input and submits via IPC
-- Verified PersistenceService creates data directories under userData
-- Updated feature_list.json with all 4 features at status "pass"
-- Wrote AGENTS.md with startup rules and layer boundaries
-- Wrote docs/ARCHITECTURE.md describing Electron layer structure
-- Wrote docs/PRODUCT.md describing knowledge base requirements
+- Electron ウィンドウが 1200x800 で起動し、正しい `webPreferences` が設定されていることを確認した
+- ドキュメント一覧パネルが空状態メッセージを表示することを確認した
+- 質問パネルが入力を受け付け、IPC 経由で送信できることを確認した
+- `PersistenceService` が `userData` 配下にデータディレクトリを作成することを確認した
+- `feature_list.json` を更新し、4 つすべての機能のステータスを `"pass"` にした
+- 起動ルールとレイヤー境界を記した `AGENTS.md` を作成した
+- Electron のレイヤー構成を説明する `docs/ARCHITECTURE.md` を作成した
+- ナレッジベース要件を説明する `docs/PRODUCT.md` を作成した
 
 **Decisions**:
-- Used constructor injection for PersistenceService to keep services testable
-- Kept all IPC channel names in a single const object in types.ts
-- Window title set to "Knowledge Base" for consistency
+- サービスをテストしやすく保つため、`PersistenceService` にはコンストラクタインジェクションを使った
+- すべての IPC チャンネル名は `types.ts` の 1 つの `const` オブジェクトにまとめた
+- 一貫性のため、ウィンドウタイトルは `"Knowledge Base"` に設定した
 
 **Issues**: None
 
-**Next session**: Proceed to Project 02 to add import, detail view, and persistence features.
+**Next session**: Project 02 に進み、import、detail view、persistence 機能を追加する。

@@ -1,25 +1,25 @@
 # OpenAI Advanced SOPs
 
-These SOPs translate the article's operating patterns into concrete execution
-playbooks you can follow or adapt.
+これらの SOP は、記事にある運用パターンを、実際に従ったり
+応用したりできる具体的な実行用プレイブックへと落とし込んだものです。
 
-## Included SOPs
+## 含まれる SOP
 
 - [`layered-domain-architecture.md`](./layered-domain-architecture.md):
-  establish explicit layers and cross-cutting boundaries
+  明示的なレイヤーと横断的な境界を定義する
 - [`encode-knowledge-into-repo.md`](./encode-knowledge-into-repo.md):
-  move invisible knowledge from chat, docs, and memory into repo-local files
+  チャット、ドキュメント、記憶の中にある見えない知識を repo ローカルのファイルへ移す
 - [`observability-feedback-loop.md`](./observability-feedback-loop.md):
-  give agents logs, metrics, traces, and a repeatable debug loop
+  エージェントにログ、メトリクス、トレース、そして再現可能なデバッグループを与える
 - [`chrome-devtools-validation-loop.md`](./chrome-devtools-validation-loop.md):
-  use browser automation and snapshots to validate UI behavior until clean
+  ブラウザ自動化とスナップショットを使って、UI の挙動が問題なくなるまで検証する
 
-## How To Use Them
+## 使い方
 
-1. Pick the SOP that matches your current bottleneck.
-2. Use the checklist to set up the missing artifacts or tooling.
-3. Encode the resulting rules into your copied `repo-template/` docs.
-4. Convert repeated review comments into checks, scripts, or guardrails.
+1. 現在のボトルネックに合う SOP を選びます。
+2. チェックリストを使って、不足している成果物やツールを整えます。
+3. その結果得られたルールを、コピーした `repo-template/` のドキュメントに反映します。
+4. 繰り返し出るレビューコメントを、チェック、スクリプト、ガードレールに変換します。
 
-These are not meant to be followed blindly. They are meant to make the harness
-more legible, enforceable, and repeatable.
+これらは盲目的に従うためのものではありません。ハーネスをより
+読みやすく、強制しやすく、再現しやすくするためのものです。

@@ -1,8 +1,8 @@
-# Code for Lecture 11
+# レクチャー 11 のコード
 
-Use this folder for examples of:
+このフォルダでは、次の例を扱います:
 
-- planner outputs
-- evaluator rubrics
-- generator/evaluator loops
-- single-agent vs multi-role comparisons
+- planner の出力
+- evaluator の評価基準
+- generator/evaluator のループ
+- single-agent と multi-role の比較

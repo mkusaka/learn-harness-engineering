@@ -1,22 +1,22 @@
-[English Version →](../../../en/projects/project-05-grounded-qa-verification/) | [中文版本 →](../../../zh/projects/project-05-grounded-qa-verification/)
+[英語版 →](../../../en/projects/project-05-grounded-qa-verification/) | [中国語版 →](../../../zh/projects/project-05-grounded-qa-verification/)
 
-> Bài giảng liên quan: [Bài 09. Ngăn agent tuyên bố hoàn thành quá sớm](./../../lectures/lecture-09-why-agents-declare-victory-too-early/index.md) · [Bài 10. Chỉ testing end-to-end mới là xác minh thực sự](./../../lectures/lecture-10-why-end-to-end-testing-changes-results/index.md)
-> Tệp mẫu: [templates/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/vi/resources/templates/)
+> 関連講義: [第09講. エージェントが完了を早々に宣言するのを防ぐ](./../../lectures/lecture-09-why-agents-declare-victory-too-early/index.md) · [第10講. 真の検証は end-to-end testing だけである](./../../lectures/lecture-10-why-end-to-end-testing-changes-results/index.md)
+> テンプレート: [templates/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/vi/resources/templates/)
 
-# Dự án 05. Để Agent Xác minh Công việc của Chính nó
+# プロジェクト 05. エージェントに自分の作業を検証させる
 
-## Bạn Làm Gì
+## やること
 
-Triển khai phân tách vai trò — một generator thực hiện, một evaluator review, và tùy chọn một planner. Chạy ba lần để đo lường tác động của mỗi vai trò được thêm vào.
+役割分担を実装します。つまり、実行する generator、レビューする evaluator、そして任意で planner を用意します。3 回実行し、役割を追加するたびの影響を測定します。
 
-Chọn một tính năng nâng cấp thực chất (hội thoại đa lượt, thiết kế lại citation panel, hoặc lọc tài liệu) và giữ nó nhất quán qua tất cả các lần chạy.
+実質的な機能改善を 1 つ選びます。たとえば、複数ターンの会話、citation panel の再設計、または文書フィルタリングです。そして、それをすべての実行で一貫して適用します。
 
-## Công cụ
+## ツール
 
-- Claude Code hoặc Codex
+- Claude Code または Codex
 - Git
 - Node.js + Electron
 
-## Cơ chế Harness
+## Harness の仕組み
 
-Tự xác minh + Q&A có grounding + hoàn thành dựa trên bằng chứng
+自己検証 + grounding ありの Q&A + 証拠に基づく完了

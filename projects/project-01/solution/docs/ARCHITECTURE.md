@@ -1,10 +1,10 @@
-# Architecture -- Knowledge Base Electron App
+# アーキテクチャ -- Knowledge Base Electron App
 
-## System Overview
+## システム概要
 
-The Knowledge Base is an Electron desktop application built with TypeScript and React. It provides document import, text indexing with chunking, and grounded question answering with citations.
+Knowledge Base は、TypeScript と React で構築された Electron デスクトップアプリケーションです。ドキュメントの取り込み、チャンク分割を伴うテキストインデックス化、そして引用付きの根拠に基づく質問応答を提供します。
 
-## Layer Diagram
+## レイヤー図
 
 ```
 +-----------------------------------------------------------+
@@ -12,9 +12,9 @@ The Knowledge Base is an Electron desktop application built with TypeScript and 
 |  App.tsx -> DocumentList, DocumentDetail, QuestionPanel,  |
 |             StatusBar, ImportPanel                         |
 +-----------------------------------------------------------+
-         |  window.knowledgeBase.* (typed IPC bridge)
+         |  window.knowledgeBase.*（型付き IPC ブリッジ）
 +-----------------------------------------------------------+
-|                     Preload Script                         |
+|                     Preload スクリプト                    |
 |  contextBridge.exposeInMainWorld -> documents, indexing, qa|
 +-----------------------------------------------------------+
          |  ipcRenderer.invoke(IPC_CHANNELS.*)
@@ -23,29 +23,29 @@ The Knowledge Base is an Electron desktop application built with TypeScript and 
 |  main.ts -> createWindow(), initializeServices()          |
 |  ipc-handlers.ts -> registerIpcHandlers()                  |
 +-----------------------------------------------------------+
-         |  Service method calls
+         |  サービスメソッド呼び出し
 +-----------------------------------------------------------+
-|                     Services Layer                         |
+|                     Services レイヤー                    |
 |  DocumentService | IndexingService | QaService             |
-|  PersistenceService (filesystem I/O)                       |
+|  PersistenceService（filesystem I/O）                     |
 +-----------------------------------------------------------+
 ```
 
-## Electron Layers
+## Electron のレイヤー
 
 ### Main Process (`src/main/`)
 
-The main process is the Node.js process that manages the application lifecycle. Responsibilities:
+Main Process は、アプリケーションのライフサイクルを管理する Node.js プロセスです。責務は次のとおりです。
 
-- **Window management**: Creates `BrowserWindow` instances with secure web preferences (`contextIsolation: true`, `nodeIntegration: false`).
-- **IPC registration**: Maps IPC channel names to service methods via `registerIpcHandlers()`.
-- **Service initialization**: Constructs `PersistenceService`, `DocumentService`, `IndexingService`, and `QaService` with dependency injection.
+- **Window management**: `contextIsolation: true` と `nodeIntegration: false` を指定した安全な web preferences で `BrowserWindow` インスタンスを作成します。
+- **IPC registration**: `registerIpcHandlers()` を通じて IPC チャネル名をサービスメソッドに対応付けます。
+- **Service initialization**: 依存性注入を使って `PersistenceService`、`DocumentService`、`IndexingService`、`QaService` を構築します。
 
-**Key invariant**: The main process never imports React or renderer code.
+**重要な不変条件**: Main Process は React や renderer のコードを一切 import しません。
 
 ### Preload (`src/preload/`)
 
-The preload script runs in the renderer context before any page scripts load. It uses Electron's `contextBridge` to expose a limited, typed API:
+Preload スクリプトは、ページのスクリプトが読み込まれる前に renderer コンテキストで実行されます。Electron の `contextBridge` を使って、制限された型付き API を公開します。
 
 ```typescript
 window.knowledgeBase = {
@@ -55,60 +55,60 @@ window.knowledgeBase = {
 }
 ```
 
-**Key invariant**: The preload bridge is the only communication channel between renderer and main. No Node.js modules are accessible from the renderer.
+**重要な不変条件**: Preload ブリッジは、renderer と main の唯一の通信経路です。renderer からは Node.js モジュールにアクセスできません。
 
 ### Renderer (`src/renderer/`)
 
-The renderer is a React 18 application bundled by Vite. Components:
+Renderer は、Vite によってバンドルされる React 18 アプリケーションです。コンポーネントは次のとおりです。
 
-- `App.tsx` -- Root layout with header, sidebar, main panel, and status bar.
-- `DocumentList` -- Sidebar listing of imported documents.
-- `DocumentDetail` -- Shows document metadata, chunks, and indexing controls.
-- `ImportPanel` -- File input for importing .txt and .md documents.
-- `QuestionPanel` -- Text input for asking questions.
-- `StatusBar` -- Shows index status and document count.
+- `App.tsx` -- ヘッダー、サイドバー、メインパネル、ステータスバーを備えたルートレイアウト。
+- `DocumentList` -- 取り込んだドキュメントのサイドバー一覧。
+- `DocumentDetail` -- ドキュメントのメタデータ、チャンク、インデックス操作を表示します。
+- `ImportPanel` -- .txt と .md ドキュメントを取り込むためのファイル入力。
+- `QuestionPanel` -- 質問を入力するためのテキスト入力欄。
+- `StatusBar` -- インデックス状態とドキュメント数を表示します。
 
-**Key invariant**: Renderer code never imports `fs`, `path`, `electron`, or any Node.js module.
+**重要な不変条件**: Renderer のコードは `fs`、`path`、`electron`、その他いかなる Node.js モジュールも import しません。
 
 ### Services (`src/services/`)
 
-Business logic classes running in the main process:
+Main Process で動作するビジネスロジックのクラス群です。
 
-- `PersistenceService` -- Low-level JSON/text file I/O with atomic writes.
-- `DocumentService` -- Document CRUD operations (import, list, get, update, delete).
-- `IndexingService` -- Paragraph-aware chunking (~500 chars per chunk) and index management.
-- `QaService` -- Mock question answering with keyword-based retrieval and citation generation.
+- `PersistenceService` -- 原子的な書き込みを伴う低レベルの JSON/テキストファイル I/O。
+- `DocumentService` -- ドキュメントの CRUD 操作（import, list, get, update, delete）。
+- `IndexingService` -- 段落を考慮したチャンク分割（1チャンクあたり約 500 文字）とインデックス管理。
+- `QaService` -- キーワードベースの検索と引用生成を行うモックの質問応答。
 
-**Key invariant**: Services may import shared types but never renderer code.
+**重要な不変条件**: Services は共有型のみ import でき、renderer コードは決して import しません。
 
-## Data Flow
+## データフロー
 
-1. User interacts with a React component (e.g., clicks "Ask").
-2. Component calls `window.knowledgeBase.qa.ask(question)`.
-3. Preload bridge invokes `ipcRenderer.invoke('qa:ask', question)`.
-4. Main process IPC handler delegates to `QaService.ask()`.
-5. QaService retrieves chunks, scores by keyword overlap, generates answer.
-6. Response flows back through IPC to the renderer.
-7. React component updates state and re-renders.
+1. ユーザーが React コンポーネントとやり取りします（例: "Ask" をクリックする）。
+2. コンポーネントが `window.knowledgeBase.qa.ask(question)` を呼び出します。
+3. Preload ブリッジが `ipcRenderer.invoke('qa:ask', question)` を実行します。
+4. Main Process の IPC ハンドラが `QaService.ask()` に処理を委譲します。
+5. QaService がチャンクを取得し、キーワードの重なりでスコアを付け、回答を生成します。
+6. 応答は IPC を通じて renderer に戻ります。
+7. React コンポーネントが state を更新し、再レンダリングします。
 
-## Build Pipeline
+## ビルドパイプライン
 
-1. `tsc -p tsconfig.node.json` compiles main, preload, shared, and services to `dist/`.
-2. `vite build` bundles the renderer React app to `dist/renderer/`.
-3. Electron loads `dist/main/main.js` as the entry point.
+1. `tsc -p tsconfig.node.json` が main、preload、shared、services を `dist/` にコンパイルします。
+2. `vite build` が renderer の React アプリを `dist/renderer/` にバンドルします。
+3. Electron が `dist/main/main.js` をエントリーポイントとして読み込みます。
 
-## Data Storage
+## データ保存
 
-All user data is stored under `app.getPath('userData')/knowledge-base-data/`:
+すべてのユーザーデータは `app.getPath('userData')/knowledge-base-data/` 以下に保存されます。
 
 ```
 knowledge-base-data/
-  documents-meta.json     # Document metadata array
+  documents-meta.json     # ドキュメントのメタデータ配列
   content/
-    <doc-id>.txt          # Extracted text content per document
+    <doc-id>.txt          # 各ドキュメントから抽出したテキスト内容
   chunks/
-    <doc-id>.json         # Chunk array per document
+    <doc-id>.json         # 各ドキュメントごとのチャンク配列
   index/
-    index-meta.json       # Mapping of document IDs to chunk IDs
-  qa-history.json         # Q&A interaction log
+    index-meta.json       # ドキュメント ID とチャンク ID の対応表
+  qa-history.json         # Q&A の対話ログ
 ```

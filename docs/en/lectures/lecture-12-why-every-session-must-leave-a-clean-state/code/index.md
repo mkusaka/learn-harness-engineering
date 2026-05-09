@@ -1,8 +1,8 @@
-# Code for Lecture 12
+# Lecture 12 のコード
 
-Use this folder for examples of:
+このフォルダには、次のような例を入れてください:
 
-- benchmark slices
-- cleanup tasks
-- entropy reduction examples
-- repeatable harness runs
+- ベンチマークの分割例
+- クリーンアップタスク
+- エントロピー削減の例
+- 再現可能なハーネス実行

@@ -1,22 +1,22 @@
-[中文版本 →](../../../zh/projects/project-02-agent-readable-workspace/)
+[中国語版 →](../../../zh/projects/project-02-agent-readable-workspace/)
 
-> Связанные лекции: [Лекция 03. Сделайте репозиторий единственным источником истины](./../../lectures/lecture-03-why-the-repository-must-become-the-system-of-record/index.md) · [Лекция 04. Разделите инструкции по файлам](./../../lectures/lecture-04-why-one-giant-instruction-file-fails/index.md)
-> Файлы шаблонов: [templates/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/en/resources/templates/)
+> 関連講義: [講義 03. リポジトリを唯一の真実の源にする](./../../lectures/lecture-03-why-the-repository-must-become-the-system-of-record/index.md) · [講義 04. 指示をファイルごとに分割する](./../../lectures/lecture-04-why-one-giant-instruction-file-fails/index.md)
+> テンプレートファイル: [templates/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/en/resources/templates/)
 
-# Проект 02. Сделайте проект читаемым и продолжите с того места, где остановились
+# プロジェクト 02. プロジェクトを読みやすくして、中断したところから再開する
 
-## Что вы делаете
+## 何をするか
 
-Добавьте «читаемость» в репозиторий, чтобы новый агент мог быстро понять структуру проекта, узнать текущий прогресс и продолжить работу. Конкретно: реализуйте импорт документов, просмотр деталей документа и локальное хранение, выполнив всё за две сессии.
+リポジトリに「読みやすさ」を備えさせ、新しいエージェントがプロジェクト構造をすばやく理解し、現在の進捗を把握して、そのまま作業を引き継げるようにします。具体的には、ドキュメントの取り込み、ドキュメント詳細の表示、ローカル保存を実装し、それを 2 回のセッションで完了させます。
 
-Вы запускаете задачу дважды: первый раз — без какой-либо помощи, второй — с заранее размещёнными в репозитории `ARCHITECTURE.md`, `PRODUCT.md` и `session-handoff.md`.
+この課題は 2 回実行します。1 回目は何の補助もない状態で、2 回目はあらかじめリポジトリ内に `ARCHITECTURE.md`、`PRODUCT.md`、`session-handoff.md` が置かれた状態で実行します。
 
-## Инструменты
+## ツール
 
-- Claude Code или Codex
+- Claude Code または Codex
 - Git
 - Node.js + Electron
 
-## Механизм harness
+## harness の仕組み
 
-Воркспейс, читаемый агентом + персистентные файлы состояния
+エージェントが読み取れるワークスペースと、永続化された状態ファイル

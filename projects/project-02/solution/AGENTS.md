@@ -1,68 +1,68 @@
-# AGENTS.md -- Project 02: Agent-Readable Workspace
+# AGENTS.md -- Project 02: エージェント向けワークスペース
 
-## Startup Rules
+## 起動時のルール
 
-Before writing any code, complete these steps in order:
+コードを書く前に、次の手順を順番に実行してください。
 
-1. **Read this file completely.** It defines the boundaries and conventions for this project.
-2. **Read `docs/ARCHITECTURE.md`** to understand the Electron layer structure and import flow.
-3. **Read `docs/PRODUCT.md`** to understand the feature requirements.
-4. **Run `npm install && npm run check`** to verify the project builds cleanly.
-5. **Read `feature_list.json`** to see the current state of all features.
+1. **このファイルを最後まで読む。** このプロジェクトの境界と規約が定義されています。
+2. **`docs/ARCHITECTURE.md` を読む。** Electron のレイヤー構成と import の流れを理解するためです。
+3. **`docs/PRODUCT.md` を読む。** 機能要件を理解するためです。
+4. **`npm install && npm run check` を実行する。** プロジェクトが問題なくビルドできることを確認するためです。
+5. **`feature_list.json` を読む。** すべての機能の現在の状態を確認するためです。
 
-## Docs Hierarchy
+## ドキュメント階層
 
-The `docs/` directory is organized for agent readability:
+`docs/` ディレクトリは、エージェントが読みやすいように整理されています。
 
 ```
 docs/
-  ARCHITECTURE.md   -- Electron layers, data flow, import pipeline
-  PRODUCT.md        -- Feature requirements and user-facing behavior
+  ARCHITECTURE.md   -- Electron のレイヤー、データフロー、import パイプライン
+  PRODUCT.md        -- 機能要件とユーザー向けの挙動
 ```
 
-When adding new features, update the relevant doc before writing code. This helps agents understand what has changed between sessions.
+新しい機能を追加するときは、コードを書く前に該当するドキュメントを更新してください。これにより、セッション間で何が変わったのかをエージェントが把握しやすくなります。
 
-## Electron Layer Boundaries
+## Electron レイヤーの境界
 
 ### Main Process (`src/main/`)
-- Owns BrowserWindow lifecycle and IPC registration.
-- All filesystem access happens here via services.
+- `BrowserWindow` のライフサイクルと IPC 登録を担当します。
+- すべてのファイルシステムアクセスは、サービス経由でここで行われます。
 
 ### Preload (`src/preload/`)
-- The ONLY bridge between main and renderer.
-- Uses `contextBridge.exposeInMainWorld` to expose typed APIs.
+- main と renderer をつなぐ、唯一のブリッジです。
+- `contextBridge.exposeInMainWorld` を使って型付き API を公開します。
 
 ### Renderer (`src/renderer/`)
-- React + TypeScript UI layer.
-- Communicates exclusively through `window.knowledgeBase` API.
-- Never imports Node.js modules.
+- React + TypeScript の UI レイヤーです。
+- 通信は `window.knowledgeBase` API を通じてのみ行います。
+- Node.js モジュールを直接 import してはいけません。
 
 ### Services (`src/services/`)
-- Pure TypeScript business logic in the main process.
-- Constructor-injected `PersistenceService`.
+- main process 内の純粋な TypeScript ビジネスロジックです。
+- `PersistenceService` はコンストラクタ注入します。
 
-## Conventions
+## 規約
 
-- TypeScript strict mode. No `any` without a comment explaining why.
+- TypeScript は strict mode を使います。理由を説明するコメントなしに `any` を使ってはいけません。
 - Named exports only.
-- IPC channels defined once in `src/shared/types.ts`.
-- New IPC channels follow the pattern: `namespace:action` (e.g., `documents:get-content`).
+- IPC チャンネルは `src/shared/types.ts` で一度だけ定義します。
+- 新しい IPC チャンネルは `namespace:action` の形式に従います（例: `documents:get-content`）。
 
-## Definition of Done
+## 完了条件
 
-A feature is "done" when:
+機能が「完了」とみなされるのは、次の条件を満たしたときです。
 
-1. TypeScript compiles without errors (`npm run check`).
-2. The app launches and the window is visible.
-3. The feature appears in `feature_list.json` with status `"pass"` and evidence.
-4. The code respects Electron layer boundaries.
-5. `docs/ARCHITECTURE.md` and/or `docs/PRODUCT.md` are updated to reflect the change.
+1. TypeScript がエラーなくコンパイルできる（`npm run check`）。
+2. アプリが起動し、ウィンドウが表示される。
+3. 機能が `feature_list.json` に `status` `"pass"` と証跡つきで記載される。
+4. コードが Electron のレイヤー境界を守っている。
+5. 変更内容を反映して `docs/ARCHITECTURE.md` および/または `docs/PRODUCT.md` が更新されている。
 
-## Session Handoff
+## セッション引き継ぎ
 
-When resuming work, read `session-handoff.md` for context from the previous session. When finishing a session, update it with:
+作業を再開するときは、前回セッションの文脈を確認するために `session-handoff.md` を読んでください。セッションを終えるときは、次の内容を更新してください。
 
-- What was accomplished
-- What remains
-- Any blockers or decisions made
-- Files that were modified
+- 何を達成したか
+- 何が残っているか
+- 発生したブロッカーや下した判断
+- 変更したファイル

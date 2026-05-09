@@ -1,21 +1,21 @@
-# Design Docs Index
+# デザインドキュメント索引
 
-Use this index as the discoverable map of design history.
+この索引を、設計の履歴をたどるための発見可能な地図として使ってください。
 
-## Accepted
+## 採用済み
 
-- `core-beliefs.md`: agent-first operating beliefs and durable project norms
+- `core-beliefs.md`: agent-first の運用方針と、長く使えるプロジェクト規範
 
-## Proposed
+## 提案中
 
 - `[add new design doc paths here]`
 
-## Deprecated
+## 廃止済み
 
 - `[move old or superseded design docs here with replacement links]`
 
-## Maintenance Rules
+## 保守ルール
 
-- Every design doc should have an owner or update trigger.
-- Remove stale docs or mark them deprecated instead of letting them drift.
-- Link active execution plans to the design docs they depend on.
+- すべてのデザインドキュメントには、担当者または更新のトリガーを設定してください。
+- 期限切れのドキュメントは放置せず、削除するか廃止扱いにしてください。
+- 実行中の計画は、依拠しているデザインドキュメントへリンクしてください。

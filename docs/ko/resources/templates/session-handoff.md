@@ -1,32 +1,32 @@
-# 세션 핸드오프 (Session Handoff)
+# セッション引き継ぎ (Session Handoff)
 
-세션이 종료되고 다음 세션이 빠르게 이어 받기 위한 간결한 핸드오프(handoff) 노트입니다. 에이전트(agent)가 세션 종료 시 이 파일을 채우도록 하거나, 사람이 직접 채울 수 있습니다. 세션이 길거나 프로젝트에 여러 활성 영역이 있을 때 특히 중요합니다.
+このセッションが終了したあと、次のセッションがすばやく引き継げるようにするための簡潔な handoff ノートです。エージェント(agent)がセッション終了時にこのファイルを埋めることも、人が直接埋めることもできます。セッションが長い場合や、プロジェクトに複数の進行中領域がある場合に特に重要です。
 
-## 현재 검증된 것 (Verified Now)
+## 現時点で検証済みのこと (Verified Now)
 
-- What is currently working:
-- What verification actually ran:
+- 現在うまく動いているもの:
+- 実際に実行した検証:
 
-## 이번 세션의 변경 사항 (Changed This Session)
+## 今回のセッションでの変更点 (Changed This Session)
 
-- Code or behavior added:
-- Infrastructure or harness changes:
+- 追加したコードや挙動:
+- インフラやハーネスの変更:
 
-## 손상되거나 미검증된 것 (Broken Or Unverified)
+## 壊れているもの、または未検証のもの (Broken Or Unverified)
 
-- Known defect:
-- Unverified path:
-- Risk for the next session:
+- 既知の不具合:
+- 未検証の経路:
+- 次のセッションへのリスク:
 
-## 다음으로 최선의 행동 (Next Best Step)
+## 次に取るべき最善の手 (Next Best Step)
 
-- Highest-priority unfinished feature:
-- Why it is next:
-- What counts as passing:
-- What must not change during that step:
+- 最優先の未完了機能:
+- それが次である理由:
+- 合格とみなす条件:
+- その手順の間に変えてはいけないもの:
 
-## 명령어 (Commands)
+## コマンド (Commands)
 
-- Startup:
-- Verification:
-- Focused debug command:
+- 起動:
+- 検証:
+- 集中的なデバッグ用コマンド:

@@ -1,90 +1,90 @@
-# Multi-Agent Coordination Pattern
+# マルチエージェント協調パターン
 
-## Problem
+## 問題
 
-Single agents hit limits:
-- **Context limits** — Can't hold full research + implementation in one session
-- **Specialization** — Need separate researchers, implementers, reviewers
-- **Parallelism** — Want to explore multiple approaches simultaneously
+単一エージェントには限界があります:
+- **コンテキストの制約** — 1 回のセッションで、調査と実装の全体を保持できない
+- **専門化** — 調査担当、実装担当、レビュー担当を分ける必要がある
+- **並列性** — 複数のアプローチを同時に検討したい
 
-But multi-agent systems introduce chaos:
-- Workers duplicate each other's research
-- Coordinators delegate understanding instead of synthesizing
-- Context inheritance explodes exponentially
+しかし、マルチエージェントシステムは混乱も生みます:
+- 作業者同士が同じ調査を重複して行う
+- コーディネーターが理解を統合せず、そのまま委任してしまう
+- コンテキスト継承が指数関数的に膨らむ
 
-## Golden Rules
+## 基本原則
 
-### The Coordinator Must Synthesize, Not Delegate Understanding
+### コーディネーターは理解を委任せず、統合する
 
-**Anti-pattern:**
+**アンチパターン:**
 > "Based on your findings, fix the authentication system."
 
-**Pattern:**
+**パターン:**
 > "Research identified 3 auth flows: login, logout, token refresh. Implement ONLY the token refresh handler using the JWT strategy documented in [research output]. Return: implementation diff + test results."
 
-The coordinator (orchestrator) adds value by digesting worker results into precise specs before dispatching implementation.
+コーディネーター（オーケストレーター）の価値は、作業者の結果を要約して正確な仕様に落とし込み、それから実装を割り振ることにあります。
 
-### Three Delegation Patterns
+### 3 つの委任パターン
 
-| Pattern | Context Sharing | Best For | Constraints |
+| パターン | コンテキスト共有 | 適している用途 | 制約 |
 |---------|----------------|----------|-------------|
-| **Coordinator** | None — workers start fresh | Complex multi-phase tasks (research → synthesize → implement → verify) | Slowest but safest |
-| **Fork** | Full — child inherits parent history | Quick parallel splits sharing loaded context | **Single-level only** — recursive forks multiply context cost |
-| **Swarm** | Peer-to-peer via shared task list | Long-running independent workstreams | **Flat roster** — teammates can't spawn other teammates |
+| **Coordinator** | なし — 作業者は新規状態から開始 | 複数段階の複雑なタスク（調査 → 統合 → 実装 → 検証） | 最も遅いが最も安全 |
+| **Fork** | 完全 — 子は親の履歴を継承する | 読み込んだコンテキストを共有した、手早い並列分割 | **1 階層のみ** — 再帰的な fork はコンテキストコストを増大させる |
+| **Swarm** | 共有タスクリストを介したピアツーピア | 長時間にわたる独立した作業ストリーム | **フラットな名簿** — メンバーは他のメンバーを spawn できない |
 
-### Results Arrive Asynchronously; Fire-and-Forget Registration Returns ID Immediately
+### 結果は非同期で届く; fire-and-forget の登録は ID を即座に返す
 
 ```typescript
-// Example: Spawn worker, get ID back immediately
+// 例: 作業者を spawn すると、ID がすぐに返る
 const taskId = await coordinator.spawn({
   type: 'research',
   prompt: 'Analyze auth flows...',
-  toolFilter: ['read', 'search'], // Restrict tools
+  toolFilter: ['read', 'search'], // ツールを制限する
 });
 
-// Parent can continue working while worker runs
-// Results arrive via callback or polling
+// 作業者が動いている間も、親は作業を続けられる
+// 結果は callback か polling で届く
 ```
 
-## When To Use
+## 使いどころ
 
-- Task too large for single agent session
-- Need parallel exploration (e.g., prototype multiple approaches)
-- Want persistent specialized teammates (researcher, implementer, reviewer)
-- Complex multi-phase workflows
+- タスクが単一エージェントのセッションには大きすぎる
+- 並列探索が必要なとき（例: 複数のアプローチを試作する）
+- 専門化されたチームメンバーを持続的に使いたいとき（researcher、implementer、reviewer）
+- 複雑な多段階ワークフロー
 
-## Tradeoffs
+## トレードオフ
 
-| Pattern | Speed | Safety | Context Cost |
+| パターン | 速度 | 安全性 | コンテキストコスト |
 |---------|-------|--------|--------------|
-| **Coordinator** | Slowest | Safest | Lowest (zero inheritance) |
-| **Fork** | Fastest | Medium | Highest (full inheritance) |
-| **Swarm** | Medium | Medium | Medium (shared state only) |
+| **Coordinator** | 最も遅い | 最も安全 | 最小（継承なし） |
+| **Fork** | 最速 | 中 | 最大（完全継承） |
+| **Swarm** | 中 | 中 | 中（共有状態のみ） |
 
-## Implementation Patterns
+## 実装パターン
 
-### Coordinator Pattern (Recommended for Complex Tasks)
+### Coordinator パターン（複雑なタスクに推奨）
 
-Phased workflow:
+段階的なワークフロー:
 
 ```
-Phase 1: Research
-  ↓ (synthesize findings)
-Phase 2: Plan  
-  ↓ (precise specs)
-Phase 3: Implement
-  ↓ (verify)
-Phase 4: Review
+フェーズ 1: 調査
+  ↓ (発見を統合)
+フェーズ 2: 計画
+  ↓ (正確な仕様)
+フェーズ 3: 実装
+  ↓ (検証)
+フェーズ 4: レビュー
 ```
 
 ```typescript
-// Example: Coordinator workflow
+// 例: Coordinator ワークフロー
 const research = await coordinator.spawn({
   role: 'researcher',
   prompt: `Analyze existing authentication in ${authDir}.
   Find: login flow, logout flow, token handling.
   Return: structured findings only. NO implementation suggestions.`,
-  toolFilter: ['read', 'search', 'glob'], // Can't write
+  toolFilter: ['read', 'search', 'glob'], // 書き込み不可
 });
 
 await coordinator.synthesize(research.results);
@@ -94,18 +94,18 @@ const implement = await coordinator.spawn({
   prompt: `Implement token refresh handler using the JWT strategy
   from [Phase 2 findings]. 
   Constraints: Use existing AuthService patterns, add tests.`,
-  toolFilter: ['read', 'search', 'edit', 'test'], // Can write
+  toolFilter: ['read', 'search', 'edit', 'test'], // 書き込み可
 });
 ```
 
-### Fork Pattern (Single-Level Only)
+### Fork パターン（1 階層のみ）
 
 ```typescript
-// Parent spawns children for parallel work
+// 親が子を spawn して並列作業を行う
 const forks = await Promise.all([
   coordinator.fork({
     prompt: 'Implement login handler',
-    inheritContext: true, // Full parent history
+    inheritContext: true, // 親の履歴をすべて継承
   }),
   coordinator.fork({
     prompt: 'Implement logout handler',
@@ -113,81 +113,81 @@ const forks = await Promise.all([
   }),
 ]);
 
-// CRITICAL: Children must not fork recursively
-// If allowed, context cost multiplies: parent + child1 + child2 + ...
+// 重要: 子は再帰的に fork してはいけない
+// 許すとコンテキストコストが親 + child1 + child2 + ... のように増える
 ```
 
-### Swarm Pattern (Flat Roster)
+### Swarm パターン（フラットな名簿）
 
 ```typescript
-// Swarm: persistent team with shared task list
+// Swarm: 共有タスクリストを持つ永続的なチーム
 const swarm = new Swarm([
   { id: 'researcher', specialty: 'research' },
   { id: 'implementer', specialty: 'implementation' },
   { id: 'reviewer', specialty: 'verification' },
 ]);
 
-// Agents pick tasks from shared queue
-// Results posted back to shared state
+// エージェントは共有キューからタスクを拾う
+// 結果は共有状態に書き戻される
 await swarm.dispatch({
   taskId: 'feat-001',
   pickedBy: 'implementer',
 });
 ```
 
-## Gotchas
+## 注意点
 
-1. **Fork children must not fork** — Recursive guard preserves single-level invariant. Keep fork tool in child's pool (for prompt cache sharing) but block at call time.
-2. **Coordinator workers start with zero context** — Only explicit prompt is passed. Don't assume child sees parent's accumulated research.
-3. **Swarm teammates cannot spawn other teammates** — Roster is flat to prevent uncontrolled growth.
-4. **Write self-contained prompts** — "Based on your findings" is an anti-pattern. Coordinator must digest first.
-5. **Filter each worker's tool set** — Researcher doesn't need write; implementer doesn't need broad search.
+1. **Fork の子は fork してはいけない** — 再帰ガードにより 1 階層の不変条件を保つ。fork ツールは子のプールに残しておく（プロンプトキャッシュ共有のため）が、呼び出し時にブロックする。
+2. **Coordinator の作業者はコンテキスト 0 から始まる** — 明示的に渡したプロンプトだけが使われる。子が親の蓄積した調査結果を見ていると仮定しないこと。
+3. **Swarm のメンバーは他のメンバーを spawn できない** — 制御不能な増殖を防ぐため、名簿はフラットにする。
+4. **自己完結したプロンプトを書く** — "Based on your findings" はアンチパターン。コーディネーターが先に要約しなければならない。
+5. **各作業者のツールセットを絞る** — researcher に write は不要、implementer に広範な search は不要。
 
-## Related Patterns
+## 関連パターン
 
-- [Context Engineering](context-engineering-pattern.md) — Isolation patterns for delegation
-- [Lifecycle & Bootstrap](lifecycle-bootstrap-pattern.md) — How agents are spawned at init
+- [Context Engineering](context-engineering-pattern.md) — 委任のための分離パターン
+- [Lifecycle & Bootstrap](lifecycle-bootstrap-pattern.md) — エージェントが init 時にどう spawn されるか
 
-## Template: Worker Prompt Structure
+## テンプレート: Worker Prompt Structure
 
 ```markdown
-# Self-Contained Worker Prompt
+# 自己完結した Worker Prompt
 
-## Context (Copied from Coordinator Synthesis)
+## Context (Coordinator の統合結果をコピー)
 
-**Task**: Implement token refresh handler
-**Background**: Research identified JWT-based auth with 24h access tokens.
-**Decision**: Use refresh token rotation (new refresh token on each refresh).
+**Task**: トークン更新ハンドラを実装する
+**Background**: 調査の結果、JWT ベースの認証で 24h の access token を使っていることが分かった。
+**Decision**: refresh token rotation を使う（refresh のたびに新しい refresh token を発行する）。
 
 ## Your Role
 
-You are an **implementer**. Your job is to write production code following the specs above.
+あなたは **implementer** です。上記の仕様に従って本番コードを書くのがあなたの役割です。
 
 ## Constraints
 
-- Use existing patterns from `${authServicePath}`
-- Add tests for success and failure cases
-- Do NOT modify login/logout handlers (separate task)
+- `${authServicePath}` の既存パターンを使う
+- 成功ケースと失敗ケースのテストを追加する
+- login/logout ハンドラは変更しない（別タスク）
 
 ## Your Tools
 
 - read, search, edit, test
-- Shell: npm test, npm run check only
+- Shell: npm test, npm run check のみ
 
 ## Deliverable
 
 Return:
-1. Implementation diff (files changed)
-2. Test results (pass/fail)
-3. Any blockers or clarifications needed
+1. 実装 diff（変更したファイル）
+2. テスト結果（pass/fail）
+3. 必要なブロッカーまたは確認事項
 
-**Do NOT return**: Research findings, architectural debates, alternative designs.
+**Do NOT return**: 調査結果、アーキテクチャ上の議論、代替設計。
 ```
 
-## Evidence
+## 根拠
 
-Multi-agent coordination patterns are observed in production systems where:
-- Coordinator workers start with zero context inheritance
-- Fork is restricted to single-level to control context explosion
-- Swarm agents communicate through shared task lists, not direct prompts
-- Results arrive asynchronously with fire-and-forget registration
+マルチエージェントの協調パターンは、次のような本番システムで確認されています:
+- Coordinator の作業者はコンテキスト継承が 0 の状態から始まる
+- コンテキスト爆発を抑えるため、fork は 1 階層に制限される
+- Swarm のエージェントは、直接プロンプトではなく共有タスクリストを通じて通信する
+- 結果は fire-and-forget の登録とともに非同期で届く

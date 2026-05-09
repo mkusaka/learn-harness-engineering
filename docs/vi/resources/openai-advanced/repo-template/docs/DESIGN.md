@@ -1,25 +1,25 @@
 # DESIGN.md
 
-Tệp này là điểm đầu vào thiết kế. Giữ nó ngắn gọn và sử dụng nó để định tuyến vào các tệp chi tiết hơn trong `docs/design-docs/`.
+このファイルは設計の入口です。簡潔に保ち、`docs/design-docs/` 内のより詳細なファイルへ振り分けるために使ってください。
 
-## Mục đích
+## 目的
 
-Ghi lại các quyết định thiết kế sản phẩm và hệ thống lâu bền nên tồn tại vượt ra ngoài một chat, sprint, hoặc bộ nhớ reviewer đơn lẻ.
+チャット1回分、1スプリント、あるいは単一のレビュー担当者の記憶を超えて残るべき、永続的な製品およびシステム設計上の決定を記録します。
 
-## Đọc Điều này Khi
+## こんなときに読む
 
-- bạn cần triết lý thiết kế hiện tại
-- bạn sắp giới thiệu một mẫu mới
-- bạn cần biết quyết định thiết kế nào đã được giải quyết so với vẫn đang mở
+- 現在の設計方針を知りたいとき
+- 新しいパターンを導入しようとしているとき
+- どの設計上の決定が確定済みで、どれがまだ未解決かを知りたいとき
 
-## Tài liệu Thiết kế Chuẩn
+## 標準設計ドキュメント
 
-- `docs/design-docs/index.md`: chỉ mục các tài liệu đã được chấp nhận, đề xuất và không dùng nữa
-- `docs/design-docs/core-beliefs.md`: niềm tin agent-first toàn dự án
+- `docs/design-docs/index.md`: 承認済み、提案中、廃止済みの文書の索引
+- `docs/design-docs/core-beliefs.md`: プロジェクト全体の agent-first の信念
 
-## Quy tắc Thiết kế
+## 設計ルール
 
-- Giữ các tài liệu thiết kế nhỏ và hiện tại.
-- Ưu tiên một tài liệu cho mỗi khu vực quyết định.
-- Liên kết tài liệu thiết kế từ các kế hoạch và spec khi một thay đổi phụ thuộc vào chúng.
-- Nếu một quy tắc thiết kế trở nên quan trọng về mặt vận hành, hãy thúc đẩy nó thành một kiểm tra tự động hoặc cập nhật `ARCHITECTURE.md`.
+- 設計ドキュメントは小さく、最新の状態に保つ。
+- 1つの決定領域につき1つのドキュメントを優先する。
+- 変更がそれらに依存する場合は、計画書や spec から設計ドキュメントへリンクする。
+- 設計ルールが運用上重要になったら、自動チェックに昇格させるか、`ARCHITECTURE.md` を更新する。

@@ -1,30 +1,30 @@
-# Session Handoff
+# セッション引き継ぎ
 
-## Verified Now
+## 現時点で確認済み
 
-- What is currently working:
-- What verification actually ran:
+- 現在動作しているもの:
+- 実際に実行した検証:
 
-## Changed This Session
+## このセッションで変更した内容
 
-- Code or behavior added:
-- Infrastructure or harness changes:
+- 追加したコードや挙動:
+- インフラまたはハーネスの変更:
 
-## Broken Or Unverified
+## 壊れている、または未検証
 
-- Known defect:
-- Unverified path:
-- Risk for the next session:
+- 既知の不具合:
+- 未検証の経路:
+- 次のセッションでのリスク:
 
-## Next Best Step
+## 次に取るべき最善手
 
-- Highest-priority unfinished feature:
-- Why it is next:
-- What counts as passing:
-- What must not change during that step:
+- 最優先の未完了機能:
+- これが次になる理由:
+- 何を満たせば合格か:
+- その手順中に変えてはいけないもの:
 
-## Commands
+## コマンド
 
-- Startup:
-- Verification:
-- Focused debug command:
+- 起動:
+- 検証:
+- 絞り込んだデバッグコマンド:

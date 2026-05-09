@@ -1,8 +1,8 @@
-# Code for Lecture 10
+# 第10講のコード
 
-Use this folder for examples of:
+このフォルダには、次のような例を置いてください:
 
-- architecture constraints
-- structural tests
+- アーキテクチャ上の制約
+- 構造テスト
 - taste invariants
 - remediation-oriented lint messages

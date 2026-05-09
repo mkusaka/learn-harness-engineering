@@ -1,6 +1,6 @@
-# Code for Lecture 08
+# レクチャー 08 のコード
 
-Use this folder for examples of:
+このフォルダは、次の例に使います:
 
 - pass-state gating
 - end-to-end verification

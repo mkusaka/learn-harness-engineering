@@ -1,8 +1,8 @@
-# Chính sách Pass Gate
+# Pass Gate のポリシー
 
-Một tính năng chỉ có thể chuyển từ `passes: false` sang `passes: true` khi:
+ある機能が `passes: false` から `passes: true` に移行できるのは、次の条件を満たしたときだけです。
 
-- workflow được kỳ vọng đã được thực thi
-- bằng chứng thành công đã được ghi lại
-- không có lỗi chặn nào trong đường dẫn đã được test
-- triển khai không để lại ứng dụng ở trạng thái bị hỏng hoặc mơ hồ
+- 期待される workflow が実行された
+- 成功の証拠が記録された
+- テストした経路にブロッキングなエラーがない
+- デプロイ後もアプリケーションが壊れた状態や曖昧な状態のままにならない

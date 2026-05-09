@@ -1,8 +1,8 @@
-# Ví dụ Rubric Evaluator
+# 評価ルーブリックの例
 
-Sử dụng tính điểm 1-5 cho mỗi chiều:
+各観点を 1-5 で採点します。
 
-- Grounding: câu trả lời có được gắn rõ ràng với các nguồn đã import không?
-- Chất lượng trích dẫn: các tham chiếu nguồn có hiển thị và cụ thể không?
-- Chức năng: người dùng có thể hoàn thành luồng hỏi-đáp không?
-- Sự nhất quán sản phẩm: workflow có cảm giác tích hợp không?
+- Grounding: 回答は、import したソースに明確に結び付いていますか?
+- 引用の質: ソース参照は、見える形で具体的ですか?
+- 機能性: ユーザーは、Q&A の流れを最後まで完了できますか?
+- プロダクトの一貫性: workflow は、統合されたものとして自然に感じられますか?

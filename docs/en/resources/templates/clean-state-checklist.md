@@ -1,8 +1,8 @@
-# Clean State Checklist
+# クリーン状態チェックリスト
 
-- [ ] The standard startup path still works.
-- [ ] The standard verification path still runs.
-- [ ] Current progress is recorded in the progress log.
-- [ ] Feature state reflects what is actually passing versus unverified.
-- [ ] No half-finished step is left undocumented.
-- [ ] The next session can continue without manual repair.
+- [ ] 標準の起動手順が引き続き動作する。
+- [ ] 標準の検証手順が引き続き実行できる。
+- [ ] 現在の進捗が progress log に記録されている。
+- [ ] feature state が、実際に通過したものと未検証のものを正しく反映している。
+- [ ] 中途半端なままの手順が記録漏れになっていない。
+- [ ] 次のセッションが手作業での修復なしに続行できる。

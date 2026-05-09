@@ -1,16 +1,16 @@
-# Bản đồ Phương pháp
+# メソッドマップ
 
-Bảng này ánh xạ các chế độ lỗi coding-agent chạy lâu phổ biến nhất sang artifact hoặc quy tắc vận hành thường sửa chúng đầu tiên.
+この表は、長時間動作する coding-agent でよく見られる障害モードを、最初に対処すべき artifact または運用ルールに対応付けたものです。
 
-| Chế độ lỗi | Trông như thế nào trong thực tế | Sửa chữa chính | Artifact hỗ trợ |
+| 障害モード | 実際にはどう見えるか | 主な対処法 | 支援する artifact |
 | --- | --- | --- | --- |
-| Nhầm lẫn cold-start | Một phiên mới dành hầu hết thời gian để khám phá lại cài đặt và trạng thái | Biến kho lưu trữ thành hệ thống ghi chép | `claude-progress.md` |
-| Phình phạm vi | Agent bắt đầu nhiều tính năng và không hoàn thành sạch cái nào | Giới hạn phạm vi active | `feature_list.json` |
-| Hoàn thành sớm | Agent tuyên bố xong sau khi chỉnh sửa mã nhưng trước khi có bằng chứng có thể chạy | Ràng buộc hoàn thành với bằng chứng | `clean-state-checklist.md` |
-| Khởi động dễ vỡ | Mỗi phiên học lại cách khởi động dự án | Chuẩn hóa cài đặt và xác minh | `init.sh` |
-| Bàn giao yếu | Phiên tiếp theo không thể biết những gì đã được xác minh, bị hỏng, hoặc là tiếp theo | Kết thúc với bàn giao rõ ràng | `session-handoff.md` |
-| Review chủ quan | Chất lượng review phụ thuộc vào sở thích hoặc trí nhớ | Tính điểm đầu ra bằng các hạng mục cố định | `evaluator-rubric.md` |
+| cold-start の混乱 | 新しいセッションの大半が、設定や状態を再度探し直すことに費やされる | リポジトリを記録システムに変える | `claude-progress.md` |
+| スコープの肥大化 | Agent が複数の機能に着手し、どれもきれいに完了しない | アクティブな範囲を制限する | `feature_list.json` |
+| 早すぎる完了 | コードを修正しただけで、実行可能な証拠が出る前に完了したと主張する | 完了条件を証拠に結びつける | `clean-state-checklist.md` |
+| 壊れやすい起動 | すべてのセッションが、プロジェクトの起動方法を毎回学び直す | セットアップと検証を標準化する | `init.sh` |
+| 弱い引き継ぎ | 次のセッションが、何が検証済みで、何が壊れていて、次に何をすべきかを把握できない | 明確な引き継ぎで終える | `session-handoff.md` |
+| 主観的なレビュー | レビュー品質が好みや記憶に左右される | 固定の項目で出力を採点する | `evaluator-rubric.md` |
 
-## Nguyên tắc Vận hành
+## 運用原則
 
-Thêm artifact nhỏ nhất giải quyết trực tiếp chế độ lỗi đã quan sát. Tránh giải quyết mọi vấn đề độ tin cậy bằng cách đổ thêm văn bản vào một tệp hướng dẫn toàn cục.
+観測された障害モードに直接効く、最小限の artifact を追加します。すべての信頼性問題を、グローバルなガイドファイルに文書を足すことで解決しようとしないでください。

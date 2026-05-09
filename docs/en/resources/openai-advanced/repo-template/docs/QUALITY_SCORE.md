@@ -1,40 +1,39 @@
 # QUALITY_SCORE.md
 
-This document tracks whether the repository is getting stronger or weaker over
-time.
+このドキュメントは、リポジトリが時間の経過とともに強くなっているか、弱くなっているかを追跡します。
 
-## Grading Scale
+## 評価基準
 
-- `A`: verified, legible, stable, boundaries enforced
-- `B`: working with minor gaps
-- `C`: partially working, notable confusion or instability
-- `D`: broken, unsafe, or structurally unclear
+- `A`: 検証済み、読みやすい、安定している、境界が守られている
+- `B`: 概ね動作しているが、わずかな抜けがある
+- `C`: 部分的には動作するが、混乱や不安定さが目立つ
+- `D`: 壊れている、安全でない、または構造が不明確
 
-## Product Domains
+## プロダクト領域
 
-| Domain | Grade | Verification | Agent Legibility | Test Stability | Key Gaps | Last Updated |
+| 領域 | 評価 | 検証 | エージェントにとっての読みやすさ | テストの安定性 | 主なギャップ | 最終更新 |
 |--------|-------|-------------|-----------------|---------------|----------|-------------|
 | `[domain-a]` | - | - | - | - | - | - |
 | `[domain-b]` | - | - | - | - | - | - |
 | `[domain-c]` | - | - | - | - | - | - |
 
-## Architectural Layers
+## アーキテクチャ層
 
-| Layer | Grade | Boundary Enforcement | Agent Legibility | Key Gaps | Last Updated |
+| 層 | 評価 | 境界の強制 | エージェントにとっての読みやすさ | 主なギャップ | 最終更新 |
 |-------|-------|---------------------|-----------------|----------|-------------|
 | Types | - | - | - | - | - |
 | Services | - | - | - | - | - |
 | Runtime | - | - | - | - | - |
 | UI | - | - | - | - | - |
 
-## Benchmark Snapshots
+## ベンチマークのスナップショット
 
-| Date | Harness Variant | Completion Rate | Retries | Defects Before Review | Notes |
+| 日付 | Harness のバリアント | 完了率 | 再試行回数 | レビュー前の欠陥数 | 備考 |
 |------|-----------------|----------------|--------|-----------------------|------|
 | YYYY-MM-DD | `[baseline / improved / simplified]` | - | - | - | - |
 
-## Simplification Log
+## 簡素化ログ
 
-| Date | Component Removed | Outcome | Decision |
+| 日付 | 削除したコンポーネント | 結果 | 判断 |
 |------|-------------------|---------|----------|
 | YYYY-MM-DD | `[component]` | `[degraded / unchanged]` | `[restore / keep removed]` |

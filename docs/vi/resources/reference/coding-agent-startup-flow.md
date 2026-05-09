@@ -1,33 +1,33 @@
-# Luồng Khởi động Coding Agent
+# Coding Agent の起動フロー
 
-Sử dụng cái này ở đầu mỗi phiên sau khi khởi tạo hoàn thành.
+初期化が完了したら、各セッションの冒頭でこれを使ってください。
 
-## Mẫu Khởi động Cố định
+## 固定の起動手順
 
-1. Chạy `pwd` và xác nhận thư mục gốc kho lưu trữ.
-2. Đọc `claude-progress.md`.
-3. Đọc `feature_list.json`.
-4. Xem lại các commit gần đây bằng `git log --oneline -5`.
-5. Chạy `./init.sh`.
-6. Chạy một đường dẫn smoke hoặc end-to-end baseline.
-7. Nếu baseline bị hỏng, hãy sửa điều đó trước.
-8. Chọn tính năng chưa hoàn thành có mức ưu tiên cao nhất.
-9. Chỉ làm việc trên tính năng đó cho đến khi nó được xác minh hoặc bị chặn rõ ràng.
+1. `pwd` を実行して、リポジトリのルートディレクトリを確認する。
+2. `claude-progress.md` を読む。
+3. `feature_list.json` を読む。
+4. `git log --oneline -5` で最近のコミットを確認する。
+5. `./init.sh` を実行する。
+6. smoke パスまたは end-to-end の baseline を実行する。
+7. baseline が壊れている場合は、まずそれを修正する。
+8. 未完了の機能のうち、優先度が最も高いものを選ぶ。
+9. その機能が検証されるか、明確にブロックされるまで、その機能だけに取り組む。
 
-## Tại sao Thứ tự này Quan trọng
+## この順序が重要な理由
 
-- `pwd` ngăn chặn việc vô tình làm việc trong thư mục sai.
-- các tệp tiến độ và tính năng khôi phục trạng thái lâu bền trước khi bắt đầu chỉnh sửa mới.
-- các commit gần đây giải thích những gì đã thay đổi gần đây nhất.
-- `init.sh` chuẩn hóa khởi động thay vì dựa vào bộ nhớ.
-- xác minh baseline bắt các trạng thái khởi đầu bị hỏng trước khi công việc mới che giấu chúng.
+- `pwd` は、誤って別のディレクトリで作業してしまうのを防ぐ。
+- 進捗ファイルと機能一覧は、新しい修正を始める前に永続的な状態を復元する。
+- 最近のコミットは、直近で何が変わったかを示してくれる。
+- `init.sh` は、記憶に頼らず起動手順を標準化する。
+- baseline の検証は、新しい作業に隠れる前に、起動時点で壊れている状態を見つける。
 
-## Gương Cuối Phiên
+## セッション終了時の流れ
 
-Cùng một phiên nên kết thúc bằng cách:
+同じセッションは、次の手順で終えるべきです。
 
-1. ghi lại tiến độ
-2. cập nhật trạng thái tính năng
-3. viết bàn giao nếu cần
-4. commit công việc an toàn
-5. để lại đường dẫn khởi động lại sạch sẽ
+1. 進捗を記録する
+2. 機能の状態を更新する
+3. 必要なら引き継ぎを書く
+4. 安全にコミットする
+5. 再開しやすいきれいな状態を残す

@@ -2,79 +2,77 @@
 
 ## Component: ConversationHistory
 
-**Planner:** Scoped requirements and acceptance criteria before implementation
-**Generator:** Implemented based on planner specification
-**Evaluator:** Reviewed against acceptance criteria and rubric
+**Planner:** 実装前に要件範囲と受け入れ基準を整理した
+**Generator:** Planner の仕様に基づいて実装した
+**Evaluator:** 受け入れ基準とルーブリックに照らしてレビューした
 **Date:** 2026-03-30
 
-### Scoring (1-5 scale)
+### スコアリング（1-5 段階）
 
-| Criterion | Score | Notes |
+| 評価項目 | スコア | 備考 |
 |-----------|-------|-------|
-| **Functional completeness** | 5 | Full history display with all data fields. No truncation of answers. All features working. |
-| **Visual design** | 5 | Chat bubbles with clear role distinction. Date separators. Compact timestamps. Consistent with app theme. |
-| **Timestamps** | 5 | Compact HH:MM format. Date separators for multi-day conversations. |
-| **Citation display** | 5 | Expandable citation sections with document title, chunk index, and excerpt. Toggle animation. |
-| **Interactivity** | 5 | Click to select history items. Copy-to-clipboard with feedback. Follow-up question suggestions. |
-| **Edge cases** | 5 | Empty state with helpful guidance. Handles long answers via scroll. Confidence percentage display. |
-| **Accessibility** | 4 | Semantic structure. Button elements for actions. Could improve with ARIA labels. |
-| **Code quality** | 5 | Well-structured component with clean prop types. Helper function for suggestions. State management for expanded citations. |
+| **機能の完成度** | 5 | 履歴を全データ項目付きで完全に表示している。回答の省略なし。すべての機能が動作している。 |
+| **ビジュアルデザイン** | 5 | 役割の違いが明確なチャットバブル。日付区切り。コンパクトなタイムスタンプ。アプリのテーマと整合している。 |
+| **タイムスタンプ** | 5 | HH:MM のコンパクトな形式。複数日にまたがる会話では日付区切りを表示。 |
+| **引用表示** | 5 | 展開可能な引用セクションに、文書タイトル、チャンク index、抜粋を表示。トグルアニメーションあり。 |
+| **インタラクティブ性** | 5 | 履歴項目をクリックして選択できる。コピー操作にフィードバックあり。フォローアップ質問の提案あり。 |
+| **エッジケース** | 5 | 役立つ案内付きの空状態。長い回答はスクロールで扱える。信頼度の割合を表示。 |
+| **アクセシビリティ** | 4 | セマンティックな構造。操作には button 要素を使用。ARIA ラベルでさらに改善できる。 |
+| **コード品質** | 5 | prop types が整理された、構造のよいコンポーネント。提案用のヘルパー関数あり。展開済み引用の状態管理も適切。 |
 
 ### Overall: 4.9 / 5
 
-### Summary
+### 要約
 
-The planner + generator + evaluator pattern produced the highest quality output.
-The planner's upfront specification ensured that all features were scoped before
-implementation began. Three revision cycles were performed:
+planner + generator + evaluator パターンによって、最も高品質な出力が得られた。
+Planner による事前の仕様化により、実装開始前にすべての機能範囲が明確になっていた。3 回の改訂サイクルが行われた:
 
-**Revision 0 (Planner):** Created acceptance criteria:
-1. Chat bubbles with distinct user/assistant styling
-2. Timestamps in compact format with date separators
-3. Expandable citation sections with full details
-4. Copy-to-clipboard for answers
-5. Follow-up question suggestions based on context
-6. Empty state with helpful guidance
+**Revision 0 (Planner):** 受け入れ基準を作成:
+1. ユーザー/アシスタントで見た目が異なるチャットバブル
+2. 日付区切り付きのコンパクトなタイムスタンプ
+3. 詳細をすべて表示できる展開可能な引用セクション
+4. 回答をクリップボードへコピー
+5. 文脈に基づくフォローアップ質問の提案
+6. 役立つ案内付きの空状態
 
-**Revision 1:** Initial implementation met 5 of 6 criteria. Evaluator found
-missing date separators and inconsistent citation styling.
+**Revision 1:** 初期実装は 6 項目中 5 項目を満たしていた。Evaluator は
+日付区切りの不足と引用スタイルの不統一を指摘した。
 
-**Revision 2:** Added date separators between conversation days. Standardized
-citation expand/collapse with smooth toggle.
+**Revision 2:** 会話の日ごとの間に日付区切りを追加。引用の展開/折りたたみを
+スムーズなトグルで統一した。
 
-**Revision 3:** Added confidence percentage display and copy-to-clipboard with
-visual feedback ("Copied!" indicator). Final evaluator pass confirmed all
-criteria met.
+**Revision 3:** 信頼度の割合表示と、視覚的フィードバック付きの
+コピー操作（"Copied!" インジケーター）を追加。最終の Evaluator
+確認で、すべての基準を満たしていることが確認された。
 
-### Revision Evidence
+### 改訂の根拠
 
-- Initial score: 4.2/5 (core features working, missing date separators)
-- After revision 1: 4.6/5 (date separators added)
-- After revision 2: 4.8/5 (copy feedback improved, citation styling refined)
-- After revision 3: 4.9/5 (confidence display, minor polish)
+- 初期スコア: 4.2/5（主要機能は動作、日付区切りが不足）
+- Revision 1 後: 4.6/5（日付区切りを追加）
+- Revision 2 後: 4.8/5（コピー時のフィードバックを改善、引用スタイルを調整）
+- Revision 3 後: 4.9/5（信頼度表示と細かな仕上げ）
 
-### Feature Inventory
+### 機能一覧
 
-1. Chat bubbles with right-aligned user messages (purple) and left-aligned
-   assistant responses (dark blue)
-2. Date separators showing month and day
-3. Compact timestamps (HH:MM) below each exchange
-4. Expandable citations with document title, chunk index, and excerpt
-5. Copy-to-clipboard button with "Copied!" feedback
-6. Confidence score percentage display
-7. Follow-up question suggestions on the most recent exchange
-8. Empty state with icon and guidance text
-9. Context-aware suggestion generation based on question keywords
+1. 右寄せのユーザーメッセージ（紫）と左寄せのアシスタント応答（濃紺）を持つチャットバブル
+2. 月日を示す日付区切り
+3. 各やり取りの下に表示されるコンパクトなタイムスタンプ（HH:MM）
+4. 文書タイトル、チャンク index、抜粋を備えた展開可能な引用
+5. "Copied!" フィードバック付きのコピー用ボタン
+6. 信頼度スコアの割合表示
+7. 最新のやり取りに対するフォローアップ質問の提案
+8. アイコンと案内文付きの空状態
+9. 質問キーワードに基づく文脈対応の提案生成
 
-### Comparison with Other Variants
+### 他の Variant との比較
 
-| Feature | Single-Role | Gen-Eval | Plan-Gen-Eval |
+| 機能 | Single-Role | Gen-Eval | Plan-Gen-Eval |
 |---------|-------------|----------|---------------|
-| Chat bubbles | No | Yes | Yes |
-| Timestamps | Full | Compact | Compact + dates |
-| Citations | None | Count only | Full expandable |
-| Copy | No | No | Yes |
-| Follow-ups | No | No | Yes |
-| Confidence | No | No | Yes |
-| Empty state | Basic | With icon | Full guidance |
-| Score | 1.6/5 | 3.3/5 | 4.9/5 |
+| チャットバブル | なし | あり | あり |
+| タイムスタンプ | 全表示 | コンパクト | コンパクト + 日付 |
+| 引用 | なし | 件数のみ | 完全な展開表示 |
+| コピー | なし | なし | あり |
+| フォローアップ | なし | なし | あり |
+| 信頼度 | なし | なし | あり |
+| 空状態 | 基本表示 | アイコン付き | 完全な案内付き |
+| スコア | 1.6/5 | 3.3/5 | 4.9/5 |

@@ -1,42 +1,42 @@
-# Evaluator Rubric - Single Role Variant
+# 評価ルーブリック - 単一ロール版
 
-## Component: ConversationHistory
+## コンポーネント: ConversationHistory
 
-**Evaluator:** Self (single agent performed generation and evaluation)
-**Date:** 2026-03-30
+**評価者:** Self（単一エージェントが生成と評価を担当）
+**日付:** 2026-03-30
 
-### Scoring (1-5 scale)
+### 採点（1〜5段階）
 
 | Criterion | Score | Notes |
 |-----------|-------|-------|
-| **Functional completeness** | 2 | Displays history but truncates answers at 100 chars. No way to see full answer. |
-| **Visual design** | 2 | Basic list layout. No chat bubble styling. Does not distinguish user/assistant visually. |
-| **Timestamps** | 2 | Shows timestamp but in long format. No time-only compact view. |
-| **Citation display** | 1 | Citations are not shown at all. The component ignores citation data. |
-| **Interactivity** | 1 | No interactivity. Cannot click items, expand citations, or ask follow-ups. |
-| **Edge cases** | 2 | Handles empty state. Does not handle very long questions or answers gracefully. |
-| **Accessibility** | 1 | No keyboard navigation. No screen reader considerations. |
-| **Code quality** | 2 | Component is simple but has inline styles scattered throughout. No reuse. |
+| **Functional completeness** | 2 | 履歴は表示されるが、回答が 100 文字で切り詰められる。全文を確認する方法がない。 |
+| **Visual design** | 2 | 基本的なリスト表示のみ。チャットバブルの見た目がなく、ユーザーとアシスタントを視覚的に区別できない。 |
+| **Timestamps** | 2 | タイムスタンプは表示されるが、長い形式になっている。時刻のみの簡潔な表示がない。 |
+| **Citation display** | 1 | 引用はまったく表示されない。コンポーネントが citation データを無視している。 |
+| **Interactivity** | 1 | インタラクティブ性がない。項目をクリックしたり、引用を展開したり、追加質問を投げたりできない。 |
+| **Edge cases** | 2 | 空状態には対応しているが、非常に長い質問や回答をうまく扱えない。 |
+| **Accessibility** | 1 | キーボード操作に対応していない。スクリーンリーダーへの配慮もない。 |
+| **Code quality** | 2 | コンポーネントはシンプルだが、インラインスタイルがあちこちに散らばっている。再利用性がない。 |
 
-### Overall: 1.6 / 5
+### 総合: 1.6 / 5
 
-### Summary
+### 要約
 
-The component provides a minimal viable display of conversation history but
-lacks polish, interactivity, and citation support. A single agent working
-without external review produced functional but low-quality output. The
-truncation of answers at 100 characters is a significant usability issue.
+このコンポーネントは会話履歴の最小限の表示はできるものの、
+洗練さ、インタラクティブ性、引用サポートが不足している。外部レビューなしで
+単一エージェントが作成したため、機能はあるが品質は低い出力になっている。
+回答が 100 文字で切り詰められる点は、重大な使い勝手の問題である。
 
-### Defects Found
+### 見つかった不具合
 
-1. Answer text is truncated at 100 characters with no way to expand
-2. Citation data from QAResponse is completely ignored
-3. No visual distinction between user questions and assistant answers
-4. No follow-up question capability
+1. 回答テキストが 100 文字で切り詰められ、展開する方法がない
+2. QAResponse の citation データが完全に無視されている
+3. ユーザーの質問とアシスタントの回答に視覚的な違いがない
+4. 追加質問を行う機能がない
 
-### Recommended Improvements
+### 推奨される改善
 
-1. Show full answers with a toggle or scroll
-2. Display citations as expandable sections
-3. Add chat bubble styling to distinguish roles
-4. Add follow-up question suggestions
+1. トグルまたはスクロールで回答全文を表示する
+2. 引用を展開可能なセクションとして表示する
+3. 役割を区別できるようにチャットバブルのスタイルを追加する
+4. 追加質問の候補を表示する

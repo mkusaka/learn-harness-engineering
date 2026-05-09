@@ -1,150 +1,150 @@
-# Context Engineering Pattern
+# コンテキスト・エンジニアリング・パターン
 
-## Problem
+## 問題
 
-Agents fail when context is managed poorly:
-- **Too much context** → Session startup is slow, token costs explode, model gets lost in details
-- **Too little context** → Agent makes wrong assumptions, reinvents wheels, violates conventions
-- **Wrong context** → Agent focuses on low-level details, misses architectural constraints
+コンテキストの管理が不適切だと、エージェントは失敗します。
+- **コンテキストが多すぎる** → セッション開始が遅くなり、トークンコストが膨らみ、モデルが細部に埋もれる
+- **コンテキストが少なすぎる** → エージェントが誤った仮定を置き、車輪の再発明をし、慣習を破る
+- **コンテキストがずれている** → エージェントが低レベルの詳細に集中し、アーキテクチャ上の制約を見落とす
 
-Context is not a dump. It's a budget that must be managed with explicit operations.
+コンテキストは単なる投げ込み場所ではありません。明示的な操作で管理すべき予算です。
 
-## Golden Rules
+## 基本ルール
 
-### Four Context Operations
+### 4つのコンテキスト操作
 
-Every token in the window should earn its place through one of four operations:
+ウィンドウ内のすべてのトークンは、次の4つの操作のいずれかによって存在理由を持つべきです。
 
-1. **SELECT** — Load context just-in-time, not all-at-once
-2. **WRITE** — Agent writes back to persistent storage (memory, state, rules)
-3. **COMPRESS** — Reactive compaction of older turns mid-session
-4. **ISOLATE** — Delegated work must not pollute parent context
+1. **SELECT** — コンテキストは一括ではなく、必要になった時点で読み込む
+2. **WRITE** — エージェントが永続ストレージ（memory、state、rules）へ書き戻す
+3. **COMPRESS** — セッション途中で古いターンを反応的に圧縮する
+4. **ISOLATE** — 委譲した作業が親コンテキストを汚染しないようにする
 
-### Progressive Disclosure
+### 段階的開示
 
-Three-tier loading:
+3段階の読み込み:
 
 ```
-Tier 1: Metadata (always present, cheap)
-  → Feature list, memory index, session status
+Tier 1: メタデータ（常時存在し、コストが低い）
+  → feature list、memory index、session status
   
-Tier 2: Instructions (loaded on activation)
+Tier 2: 指示（有効化時に読み込む）
   → AGENTS.md, skill bodies, style guides
   
-Tier 3: Resources (loaded on demand)
-  → Architecture docs, API references, examples
+Tier 3: リソース（必要時に読み込む）
+  → アーキテクチャ文書、API リファレンス、例
 ```
 
-### Memoize Expensive Builders, Invalidate Explicitly
+### 高コストなビルダーはメモ化し、無効化は明示する
 
-Context builders (e.g., "load all recent git commits") should be memoized to avoid redundant work, but **must** be invalidated at known mutation points — not reactively. Every mutation point must clear its corresponding cache.
+コンテキストビルダー（たとえば「最近の git commit をすべて読み込む」）は、重複作業を避けるためにメモ化すべきですが、**必ず**既知の変更点で無効化してください。反応的にではありません。変更点ごとに、対応するキャッシュを必ずクリアする必要があります。
 
-## When To Use
+## 使いどころ
 
-- Agent performance degrades in long sessions
-- Startup is slow due to eager context loading
-- Delegated work pollutes the parent context
-- Token costs are unpredictable
+- 長いセッションでエージェントの性能が落ちる
+- コンテキストを先読みして読み込むため起動が遅い
+- 委譲した作業が親コンテキストを汚染する
+- トークンコストが予測しづらい
 
-## Tradeoffs
+## トレードオフ
 
-| Decision | Benefit | Cost |
+| 判断 | 利点 | コスト |
 |---|---|---|
-| JIT loading | Fast startup, low idle cost | Agent can't reason about skills until activated |
-| Hard caps per block | Predictable token budget | May truncate useful context |
-| Manual cache invalidation | No reactive staleness | Developer must add invalidation at each mutation |
-| Isolation for delegation | Clean parent context | Child can't see parent's accumulated context |
+| JIT読み込み | 起動が速く、待機時のコストが低い | 有効化されるまでエージェントは skill について推論できない |
+| ブロックごとのハードキャップ | トークン予算が予測しやすい | 有用なコンテキストが切り詰められる可能性がある |
+| 手動のキャッシュ無効化 | 反応的な古さが発生しない | 開発者が各変更点で無効化を追加しなければならない |
+| 委譲のための分離 | 親コンテキストがきれいに保たれる | 子は親が蓄積したコンテキストを見られない |
 
-## Implementation Patterns
+## 実装パターン
 
-### Select Pattern
+### Select パターン
 
 ```markdown
-## Startup Context (Loaded Immediately)
+## 起動時コンテキスト（即時読み込み）
 
-- Repository root path
-- Tech stack (one line)
-- Active feature ID from feature_list.json
+- リポジトリのルートパス
+- 技術スタック（1行）
+- `feature_list.json` からのアクティブな feature ID
 
-## On-Demand Context (Loaded When Triggered)
+## オンデマンド・コンテキスト（トリガー時に読み込み）
 
-- Skill: Read when skill activates
-- Architecture docs: Read when implementing new feature
-- API reference: Read when calling external services
+- スキル: skill が有効になったら読む
+- アーキテクチャ文書: 新しい機能を実装するときに読む
+- API リファレンス: 外部サービスを呼び出すときに読む
 ```
 
-**Key moves:**
-- Audit current context cost per turn
-- Apply hard caps to every variable-length block
-- Add truncation recovery pointers ("call list_files for full output")
+**重要な動き:**
+- 現在のターンごとのコンテキストコストを監査する
+- 可変長ブロックすべてにハードキャップを適用する
+- 切り詰め復旧用の案内を追加する（"call list_files for full output"）
 
-### Compress Pattern
+### Compress パターン
 
-Long sessions exhaust the window. Reactive compaction:
+長いセッションではウィンドウを使い切ってしまいます。反応的な圧縮:
 
-1. **Trigger**: Context usage exceeds threshold (e.g., 80%)
-2. **Summarize**: Older turns (first 50% by token count)
-3. **Preserve**: Recent context (last 20% of turns)
-4. **Label**: Mark snapshot as "compacted at turn N"
+1. **トリガー**: コンテキスト使用量がしきい値を超える（例: 80%）
+2. **要約**: 古いターン（トークン数で最初の50%）
+3. **保持**: 直近のコンテキスト（最後の20%のターン）
+4. **ラベル付け**: スナップショットに "compacted at turn N" と付ける
 
 ```markdown
-## Session Summary (Turns 1-15, compacted)
+## セッション要約（ターン 1-15、圧縮済み）
 
-**Goal**: Implement Q&A feature with citations
-**Decisions made**:
-- Use streaming response for UX
-- Citation format: [doc:chunk] inline references
-**Key files created**:
+**目標**: 引用付きの Q&A 機能を実装する
+**決定事項**:
+- UX のためにストリーミング応答を使う
+- 引用形式: `[doc:chunk]` のインライン参照
+**作成した主要ファイル**:
 - src/services/QaService.ts
-- src/shared/types.ts (extended with QaResult)
+- src/shared/types.ts（`QaResult` を追加して拡張）
 ```
 
-### Isolate Pattern
+### Isolate パターン
 
-Delegated work must not pollute parent context:
+委譲した作業が親コンテキストを汚染してはいけません。
 
-| Pattern | Context Sharing | Best For |
+| パターン | コンテキスト共有 | 向いている用途 |
 |---|---|---|
-| **Coordinator** (zero inheritance) | None — workers start fresh | Complex multi-phase tasks |
-| **Fork** (full inheritance) | Full — single-level only | Quick parallel splits |
-| **Swarm** (peer-to-peer) | Shared task list | Long-running independent work |
+| **Coordinator**（継承なし） | なし — worker は新規に開始する | 複雑で複数段階のタスク |
+| **Fork**（完全継承） | 完全 — ただし 1 階層のみ | 手早い並列分割 |
+| **Swarm**（peer-to-peer） | 共有タスクリスト | 長時間続く独立作業 |
 
-**Key constraint**: Fork is single-level only — recursive forks multiply context cost exponentially.
+**重要な制約**: Fork は 1 階層のみです。再帰的な fork はコンテキストコストを指数関数的に増やします。
 
-## Gotchas
+## 注意点
 
-1. **Most async work skips "pending" state** — work units register directly as "running"
-2. **Context builders are memoized but manually invalidated** — add invalidation or face staleness
-3. **Truncation is silent until it fires** — hard caps enforced at read time
-4. **Isolation boundary must be enforced at call time** — don't just remove tools from prompt
+1. **ほとんどの非同期処理は "pending" 状態を飛ばす** — 作業単位は直接 "running" として登録される
+2. **コンテキストビルダーはメモ化されるが、無効化は手動** — 無効化を追加しないと古さが発生する
+3. **切り詰めは発生するまで静かに進む** — ハードキャップは読み込み時に強制される
+4. **分離境界は呼び出し時に必ず強制する** — 単にプロンプトからツールを外すだけでは不十分
 
-## Related Patterns
+## 関連パターン
 
-- [Memory Persistence](memory-persistence-pattern.md) — How memory layers interact with context
-- [Multi-agent Coordination](multi-agent-pattern.md) — Context sharing across agents
+- [Memory Persistence](memory-persistence-pattern.md) — memory レイヤーがコンテキストとどう相互作用するか
+- [Multi-agent Coordination](multi-agent-pattern.md) — エージェント間でのコンテキスト共有
 
-## Template: Context Budget
+## テンプレート: コンテキスト予算
 
 ```markdown
-## Context Budget (Session)
+## コンテキスト予算（セッション）
 
-| Category | Budget | Current | Status |
+| カテゴリ | 予算 | 現在値 | 状態 |
 |----------|--------|---------|--------|
-| System prompt | 2,000 | 1,850 | ✓ |
-| Instruction files | 3,000 | 2,400 | ✓ |
-| Memory index | 1,000 | 600 | ✓ |
-| Session history | 10,000 | 4,200 | ✓ |
-| Working context | 15,000 | 3,100 | ✓ |
-| **Total** | **31,000** | **12,150** | 39% used |
+| システムプロンプト | 2,000 | 1,850 | ✓ |
+| 指示ファイル | 3,000 | 2,400 | ✓ |
+| メモリインデックス | 1,000 | 600 | ✓ |
+| セッション履歴 | 10,000 | 4,200 | ✓ |
+| 作業コンテキスト | 15,000 | 3,100 | ✓ |
+| **合計** | **31,000** | **12,150** | 39% 使用 |
 
-**Compaction trigger**: 80% (24,800 tokens)
-**Next action**: Trigger compaction at 24,800 tokens
+**圧縮トリガー**: 80%（24,800 tokens）
+**次のアクション**: 24,800 tokens で圧縮を開始する
 ```
 
-## Evidence
+## 根拠
 
-Context engineering patterns are observed in production agent runtimes where:
-- Context budgets are explicit, not implicit
-- Progressive disclosure reduces startup latency by 60-80%
-- Manual cache invalidation prevents subtle staleness bugs
-- Isolation patterns enable reliable multi-agent coordination
+コンテキスト・エンジニアリングのパターンは、本番のエージェントランタイムで観測されています。そこでは次が成り立っています。
+- コンテキスト予算は暗黙ではなく明示的である
+- 段階的開示により起動レイテンシが 60-80% 短縮される
+- 手動のキャッシュ無効化により、微妙な古さのバグを防げる
+- 分離パターンにより、信頼性の高いマルチエージェント協調が可能になる

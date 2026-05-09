@@ -1,186 +1,187 @@
 ---
 name: harness-creator
 description: >-
-  Harness engineering for AI coding agents — five subsystems, memory persistence,
-  session continuity, verification workflows, scope control, lifecycle management.
+  AI コーディングエージェントのための harness エンジニアリング。5 つのサブシステム、
+  メモリ永続化、セッション継続性、検証ワークフロー、スコープ制御、ライフサイクル管理。
 when_to_use: >-
-  Use whenever: building harness from scratch, improving agent reliability, agent forgets
-  between sessions, agent overreach or scope creep, broken tests after agent work,
-  multi-session continuity needed, verification gaps, audit harness quality, benchmark
-  effectiveness, create AGENTS.md/CLAUDE.md, design feature tracking, session handoff.
+  次のような場合に使う: harness をゼロから構築する、エージェントの信頼性を改善する、
+  セッション間でエージェントが忘れる、エージェントの過剰行動やスコープ逸脱、
+  エージェント作業後のテスト破損、複数セッションでの継続性が必要、検証ギャップの確認、
+  harness 品質の監査、ベンチマーク効果測定、AGENTS.md/CLAUDE.md の作成、
+  機能追跡設計、セッション引き継ぎ。
 license: MIT
 ---
 
 # Harness Creator
 
-Production harness engineering for AI coding agents.
+AI コーディングエージェントのための本番向け harness エンジニアリング。
 
-**For:** Engineers building or extending coding-agent runtimes, custom agents, multi-session workflows, or anyone who wants their agent to work reliably across sessions.
+**対象:** コーディングエージェントのランタイム、カスタムエージェント、複数セッションのワークフローを構築または拡張するエンジニア、あるいはエージェントをセッションをまたいで安定して動かしたい人。
 
-**Not for:** Prompt engineering, model selection, generic software architecture, or one-off agent tasks.
+**対象外:** プロンプトエンジニアリング、モデル選定、一般的なソフトウェアアーキテクチャ、一回限りのエージェントタスク。
 
-All principles are grounded in the Learn Harness Engineering framework and production agent runtime decisions.
+すべての原則は Learn Harness Engineering フレームワークと、本番向けエージェントランタイムの設計判断に基づいています。
 
 ---
 
-## Choose Your Problem
+## 問題の選び方
 
-| If you want to... | Read |
+| こうしたい場合 | 読む内容 |
 |---|---|
-| Make the agent remember corrections and project rules between sessions | [Memory Persistence](references/memory-persistence-pattern.md) |
-| Package reusable workflows and domain knowledge | [Skill Runtime](references/skill-runtime-pattern.md) |
-| Let the agent work powerfully but not dangerously | [Tool Registry & Safety](references/tool-registry-pattern.md) |
-| Give the agent the right context at the right cost | [Context Engineering](references/context-engineering-pattern.md) |
-| Split work across multiple agents without chaos | [Multi-agent Coordination](references/multi-agent-pattern.md) |
-| Extend behavior with hooks, background tasks, startup logic | [Lifecycle & Bootstrap](references/lifecycle-bootstrap-pattern.md) |
-| Build the complete 5-subsystem harness | [Five Subsystems Guide](#the-five-subsystem-harness-framework) |
+| セッションをまたいで、修正内容やプロジェクトルールをエージェントに覚えさせたい | [Memory Persistence](references/memory-persistence-pattern.md) |
+| 再利用可能なワークフローとドメイン知識をパッケージ化したい | [Skill Runtime](references/skill-runtime-pattern.md) |
+| エージェントに強力に働かせつつ、危険にはしたくない | [Tool Registry & Safety](references/tool-registry-pattern.md) |
+| 適切なコストで、適切なコンテキストをエージェントに与えたい | [Context Engineering](references/context-engineering-pattern.md) |
+| 混乱なく複数エージェントに仕事を分担させたい | [Multi-agent Coordination](references/multi-agent-pattern.md) |
+| フック、バックグラウンドタスク、起動ロジックで動作を拡張したい | [Lifecycle & Bootstrap](references/lifecycle-bootstrap-pattern.md) |
+| 完全な 5 サブシステムの harness を構築したい | [Five Subsystems Guide](#the-five-subsystem-harness-framework) |
 
-**Before you start building:** Read the [Gotchas](#gotchas) — these are the non-obvious failure modes that cost the most time.
-
----
-
-## The Five-Subsystem Harness Framework
-
-**Every harness consists of five subsystems:**
-
-1. **Instructions (Recipe Shelf)**: AGENTS.md, CLAUDE.md, docs/ hierarchy
-2. **State (Prep Station)**: feature_list.json, progress.md, session-handoff.md
-3. **Verification (Quality Check Window)**: Verification commands, test suites, type checks
-4. **Scope (Task Boundaries)**: One-feature-at-a-time policies, definition of done
-5. **Lifecycle (Session Management)**: init.sh, clean-state checklists, handoff procedures
-
-**When creating or improving a harness, systematically address each subsystem.**
+**構築を始める前に:** [Gotchas](#gotchas) を読んでください。これは、最も時間を失いやすい、非自明な失敗モードです。
 
 ---
 
-## Creating a Harness
+## 5 サブシステムの Harness フレームワーク
 
-### Phase 1: Context Gathering
+**すべての harness は 5 つのサブシステムで構成されます:**
 
-Start by understanding the user's situation:
+1. **Instructions (Recipe Shelf)**: AGENTS.md、CLAUDE.md、docs/ 階層
+2. **State (Prep Station)**: feature_list.json、progress.md、session-handoff.md
+3. **Verification (Quality Check Window)**: 検証コマンド、テストスイート、型チェック
+4. **Scope (Task Boundaries)**: 一度に 1 機能ずつ進める方針、完了条件の定義
+5. **Lifecycle (Session Management)**: init.sh、クリーン状態のチェックリスト、引き継ぎ手順
 
-1. **What project is this for?** (tech stack, size, complexity)
-2. **What agent tool are they using?** (Claude Code, Codex, Cursor, etc.)
-3. **What exists already?** (any AGENTS.md, progress tracking, verification?)
-4. **What problems are they experiencing?** (agent overreach, lost context, broken tests?)
-5. **What's the team's tolerance for structure?** (minimal vs. comprehensive)
+**harness を作るときや改善するときは、各サブシステムを体系的に扱ってください。**
 
-If the user hasn't provided this context, ask before proceeding.
+---
 
-### Phase 2: Harness Assessment (Existing Projects)
+## Harness の作成
 
-If the user has an existing harness, assess it using the five-tuple framework:
+### フェーズ 1: コンテキスト収集
 
-For each subsystem, score 1-5:
-- **5**: Exemplary, documented, consistently followed
-- **4**: Good, mostly complete, occasional gaps
-- **3**: Adequate, covers basics, missing polish
-- **2**: Weak, incomplete, inconsistently applied
-- **1**: Missing or actively harmful
+まず、ユーザーの状況を理解します。
 
-Identify the lowest-scoring subsystem — that's the bottleneck. Focus improvement efforts there first.
+1. **これはどのプロジェクト向けか?**（技術スタック、規模、複雑さ）
+2. **どのエージェントツールを使っているか?**（Claude Code、Codex、Cursor など）
+3. **既に何があるか?**（AGENTS.md、進捗追跡、検証など）
+4. **どんな問題が起きているか?**（エージェントの過剰行動、コンテキスト消失、テスト破損など）
+5. **チームの構造化に対する許容度はどのくらいか?**（最小限か、包括的か）
 
-### Phase 3: Design
+ユーザーがこのコンテキストを提供していない場合は、先に確認してから進めてください。
 
-Based on the assessment, design the harness components:
+### フェーズ 2: Harness の評価（既存プロジェクト）
+
+既存の harness がある場合は、5 要素フレームワークで評価します。
+
+各サブシステムを 1〜5 で採点します:
+- **5**: 模範的。文書化され、一貫して守られている
+- **4**: 良好。おおむね整っているが、少し抜けがある
+- **3**: 一通りはあるが、仕上げが足りない
+- **2**: 弱い。不完全で、適用が一貫していない
+- **1**: 存在しないか、積極的に有害
+
+最も点数の低いサブシステムを特定してください。それがボトルネックです。改善作業はそこから始めます。
+
+### フェーズ 3: 設計
+
+評価に基づいて、harness の構成要素を設計します。
 
 **Instructions:**
-- Create a short AGENTS.md (~50-100 lines) as the routing layer
-- Link to detailed docs in docs/ directory (ARCHITECTURE.md, PRODUCT.md, etc.)
-- Define startup workflow: what the agent reads before coding
+- 短い AGENTS.md（約 50〜100 行）をルーティング層として作成する
+- 詳細ドキュメントを docs/ ディレクトリ（ARCHITECTURE.md、PRODUCT.md など）にリンクする
+- 起動時のワークフローを定義する: コーディング前にエージェントが読む内容
 
 **State:**
-- Create feature_list.json with feature definitions and status tracking
-- Create or update progress.md for session continuity
-- Design session-handoff.md template if needed
+- 機能定義と状態追跡のために feature_list.json を作成する
+- セッション継続のために progress.md を作成または更新する
+- 必要なら session-handoff.md のテンプレートを設計する
 
 **Verification:**
-- List explicit verification commands in AGENTS.md
-- Ensure init.sh runs verification
-- Design quality score tracking if appropriate
+- AGENTS.md に明示的な検証コマンドを列挙する
+- init.sh が検証を実行するようにする
+- 必要であれば品質スコア追跡を設計する
 
 **Scope:**
-- Define one-feature-at-a-time policy
-- Document feature dependencies
-- Create definition of done checklist
+- 一度に 1 機能ずつ進める方針を定義する
+- 機能依存関係を文書化する
+- 完了条件のチェックリストを作成する
 
 **Lifecycle:**
-- Create init.sh for initialization
-- Design clean-state checklist
-- Document session handoff procedure
+- 初期化用に init.sh を作成する
+- クリーン状態のチェックリストを設計する
+- セッション引き継ぎ手順を文書化する
 
-### Phase 4: Implementation
+### フェーズ 4: 実装
 
-Create the harness files. Use bundled scripts where available:
+harness のファイルを作成します。利用可能なら、同梱スクリプトを使ってください:
 
 ```bash
-# Use bundled scripts from scripts/ directory
-# (See scripts/ section for available tools)
+# scripts/ ディレクトリにある同梱スクリプトを使う
+# （利用可能なツールは scripts/ セクションを参照）
 ```
 
-### Phase 5: Testing and Benchmarking
+### フェーズ 5: テストとベンチマーク
 
-Test the harness with real agent sessions:
+実際のエージェントセッションで harness をテストします。
 
-1. **Baseline**: Run a representative task without the harness
-2. **With Harness**: Run the same task with the harness
-3. **Measure**: Success rate, time, token usage, rework
-4. **Compare**: Quantify the improvement
+1. **Baseline**: harness なしで代表的なタスクを実行する
+2. **With Harness**: 同じタスクを harness ありで実行する
+3. **Measure**: 成功率、所要時間、トークン使用量、手戻り
+4. **Compare**: 改善を定量化する
 
-For rigorous benchmarking, see the "Running Benchmarks" section below.
+厳密なベンチマークについては、下の「ベンチマークの実行」セクションを参照してください。
 
 ---
 
-## Harness File Templates
+## Harness ファイルのテンプレート
 
-### AGENTS.md Structure
+### AGENTS.md の構成
 
-A minimal AGENTS.md should include:
+最小限の AGENTS.md には次の内容を含めます:
 
 ```markdown
 # AGENTS.md
 
-[One-sentence project purpose]
+[プロジェクトの目的を 1 文で]
 
-## Startup Workflow
+## 起動ワークフロー
 
-Before writing code:
-1. [Step 1: e.g., Read this file]
-2. [Step 2: e.g., Read ARCHITECTURE.md]
-3. [Step 3: e.g., Run ./init.sh]
-4. [Step 4: e.g., Read feature_list.json]
+コードを書く前に:
+1. [ステップ 1: 例 このファイルを読む]
+2. [ステップ 2: 例 ARCHITECTURE.md を読む]
+3. [ステップ 3: 例 ./init.sh を実行する]
+4. [ステップ 4: 例 feature_list.json を読む]
 
-## Working Rules
+## 作業ルール
 
-- [Rule 1: e.g., One feature at a time]
-- [Rule 2: e.g., Verification required before claiming done]
-- [Rule 3: e.g., Update progress before ending session]
+- [ルール 1: 例 一度に 1 機能]
+- [ルール 2: 例 完了を主張する前に検証が必要]
+- [ルール 3: 例 セッション終了前に進捗を更新する]
 
-## Required Artifacts
+## 必須成果物
 
-- `feature_list.json`: Feature state tracker
-- `progress.md`: Session continuity log
-- `init.sh`: Standard startup and verification
+- `feature_list.json`: 機能状態トラッカー
+- `progress.md`: セッション継続ログ
+- `init.sh`: 標準の起動および検証
 
-## Definition of Done
+## 完了条件
 
-A feature is done when:
-- [ ] Implementation complete
-- [ ] Verification passed
-- [ ] Evidence recorded
-- [ ] Repository restartable
+機能が完了するのは次のとき:
+- [ ] 実装が完了している
+- [ ] 検証に通っている
+- [ ] 証跡が記録されている
+- [ ] リポジトリを再起動できる
 
-## End of Session
+## セッション終了時
 
-Before ending:
-1. Update progress.md
-2. Update feature_list.json
-3. Record blockers/risks
-4. Commit with descriptive message
-5. Leave clean restart path
+終了前に:
+1. progress.md を更新する
+2. feature_list.json を更新する
+3. ブロッカー/リスクを記録する
+4. 説明的なコミットメッセージでコミットする
+5. クリーンに再開できる状態を残す
 ```
 
-### feature_list.json Structure
+### feature_list.json の構成
 
 ```json
 {
@@ -205,187 +206,187 @@ Before ending:
 }
 ```
 
-### init.sh Structure
+### init.sh の構成
 
 ```bash
 #!/bin/bash
 set -e
 
-echo "=== Installing dependencies ==="
+echo "=== 依存関係をインストールしています ==="
 npm install
 
-echo "=== Running type check ==="
+echo "=== 型チェックを実行しています ==="
 npm run check
 
-echo "=== Running tests ==="
+echo "=== テストを実行しています ==="
 npm test
 
-echo "=== Building application ==="
+echo "=== アプリケーションをビルドしています ==="
 npm run build
 
-echo "=== Verification complete ==="
+echo "=== 検証完了 ==="
 ```
 
 ---
 
-## Running Benchmarks
+## ベンチマークの実行
 
-To measure harness effectiveness:
+harness の効果を測定するには:
 
-### Step 1: Define Representative Tasks
+### ステップ 1: 代表的なタスクを定義する
 
-Pick 2-3 tasks that are:
-- Real work the user would actually do
-- Challenging enough to fail without proper harness
-- Verifiable (clear success criteria)
+次の条件を満たす 2〜3 個のタスクを選びます:
+- ユーザーが実際に行う現実的な作業
+- 適切な harness がないと失敗しうる程度に難しい
+- 検証可能であること（成功条件が明確）
 
-### Step 2: Run Comparative Sessions
+### ステップ 2: 比較セッションを実行する
 
-For each task:
-- **Without Harness**: Run the task on a clean repo copy
-- **With Harness**: Run the same task with the harness in place
+各タスクについて:
+- **Without Harness**: クリーンなリポジトリコピーでタスクを実行する
+- **With Harness**: harness を入れた状態で同じタスクを実行する
 
-Record:
-- Success/failure
-- Time taken
-- Token usage
-- Rework required
-- Session restarts needed
+記録する項目:
+- 成功/失敗
+- 所要時間
+- トークン使用量
+- 必要だった手戻り
+- 必要だったセッション再起動数
 
-### Step 3: Aggregate Results
+### ステップ 3: 結果を集計する
 
-Calculate:
-- Success rate improvement
-- Time efficiency change
-- Token efficiency change
-- Qualitative feedback
+次を計算します:
+- 成功率の改善
+- 時間効率の変化
+- トークン効率の変化
+- 定性的なフィードバック
 
-### Step 4: Iterate
+### ステップ 4: 反復する
 
-Use results to identify:
-- Which harness components add most value
-- Which components are over-engineered
-- Where to focus improvement efforts
+結果から次を特定します:
+- どの harness コンポーネントが最も価値を生むか
+- どのコンポーネントが過剰設計か
+- 改善作業をどこに集中させるべきか
 
 ---
 
-## Bundled Resources
+## 同梱リソース
 
-### References (Deep-Dive Patterns)
+### 参考資料（詳細パターン）
 
-| Document | Covers |
-|----------|--------|
-| [Memory Persistence](references/memory-persistence-pattern.md) | Four-level instruction hierarchy, auto-memory taxonomy, background extraction |
-| [Context Engineering](references/context-engineering-pattern.md) | Select / Compress / Isolate / Write operations, budget management |
-| [Tool Registry](references/tool-registry-pattern.md) | Fail-closed registration, per-call concurrency, permission pipeline |
-| [Multi-Agent](references/multi-agent-pattern.md) | Coordinator / Fork / Swarm patterns, context sharing |
-| [Lifecycle & Bootstrap](references/lifecycle-bootstrap-pattern.md) | Hook system, long-running tasks, dependency-ordered init |
-| [Gotchas](references/gotchas.md) | 15 non-obvious failure modes with fixes |
+| Document | 内容 |
+|----------|------|
+| [Memory Persistence](references/memory-persistence-pattern.md) | 4 層の命令階層、自動メモリ分類、バックグラウンド抽出 |
+| [Context Engineering](references/context-engineering-pattern.md) | Select / Compress / Isolate / Write 操作、バジェット管理 |
+| [Tool Registry](references/tool-registry-pattern.md) | フェイルクローズな登録、呼び出しごとの並列性、権限パイプライン |
+| [Multi-Agent](references/multi-agent-pattern.md) | Coordinator / Fork / Swarm パターン、コンテキスト共有 |
+| [Lifecycle & Bootstrap](references/lifecycle-bootstrap-pattern.md) | フックシステム、長時間実行タスク、依存順の初期化 |
+| [Gotchas](references/gotchas.md) | 修正付きの、非自明な失敗モード 15 個 |
 
-### Templates
+### テンプレート
 
-- `templates/agents.md` — AGENTS.md / CLAUDE.md skeleton
-- `templates/feature-list.json` — Feature state tracker
-- `templates/init.sh` — Standard initialization script
-- `templates/progress.md` — Session progress log
-- `templates/session-handoff.md` — Session handoff template
+- `templates/agents.md` — AGENTS.md / CLAUDE.md の雛形
+- `templates/feature-list.json` — 機能状態トラッカー
+- `templates/init.sh` — 標準初期化スクリプト
+- `templates/progress.md` — セッション進捗ログ
+- `templates/session-handoff.md` — セッション引き継ぎテンプレート
 
-### Scripts (Optional)
+### スクリプト（任意）
 
-- `scripts/create-harness.ts` — Generate harness files from templates
-- `scripts/validate-harness.ts` — Check harness completeness
-- `scripts/run-benchmark.ts` — Execute harness effectiveness comparison
+- `scripts/create-harness.ts` — テンプレートから harness ファイルを生成する
+- `scripts/validate-harness.ts` — harness の完全性を確認する
+- `scripts/run-benchmark.ts` — harness の有効性を比較実行する
 
 ---
 
 ## Gotchas
 
-Non-obvious principles that will cause bugs if you violate them:
+ルールを破るとバグの原因になる、非自明な原則です:
 
-1. **Memory index caps fire silently** — Long entries invisible once cap hit. Keep hooks to one line.
-2. **Priority ordering counterintuitive** — Local beats project beats user beats org. Test full stack.
-3. **Extraction timing creates race window** — User can start next turn before background extraction completes.
-4. **Derivable content doesn't belong in memory** — Architecture and code patterns are in the repo already.
-5. **Concurrent classification is per-call, not per-tool** — Same tool safe for some inputs, unsafe for others.
-6. **Permission evaluation has side effects** — Tracks denials, transforms modes, updates state.
-7. **Most async work skips "pending" state** — Work units register directly as "running".
-8. **Fork children must not fork** — Recursive guard preserves single-level invariant.
-9. **Context builders memoized but manually invalidated** — Add invalidation or face staleness.
-10. **Hook trust all-or-nothing** — One untrusted hook disables entire extension system.
-11. **Eviction requires notification** — Terminal work unit only GC-eligible after parent notified.
-12. **Skill listing budgets tight** — Front-load distinctive trigger language, tails get cut.
+1. **Memory index caps fire silently** — 長いエントリは、上限に達すると見えなくなる。フックは 1 行に保つ。
+2. **Priority ordering counterintuitive** — ローカルがプロジェクトより優先、プロジェクトがユーザーより優先、ユーザーが組織より優先。フルスタックでテストする。
+3. **Extraction timing creates race window** — バックグラウンド抽出が終わる前に、ユーザーが次のターンを始められる。
+4. **Derivable content doesn't belong in memory** — アーキテクチャやコードパターンは、すでにリポジトリ内にある。
+5. **Concurrent classification is per-call, not per-tool** — 同じツールでも、入力によって安全な場合と危険な場合がある。
+6. **Permission evaluation has side effects** — 拒否の記録、モード変換、状態更新が行われる。
+7. **Most async work skips "pending" state** — 作業単位は "running" で直接登録されることが多い。
+8. **Fork children must not fork** — 再帰ガードが単一レベル不変条件を守る。
+9. **Context builders memoized but manually invalidated** — 無効化を追加しないと、古いままになる。
+10. **Hook trust all-or-nothing** — 1 つでも信頼できないフックがあると、拡張システム全体が無効になる。
+11. **Eviction requires notification** — 終端の作業単位は、親へ通知されて初めて GC 対象になる。
+12. **Skill listing budgets tight** — 固有のトリガー語を先頭に置く。後半は切り落とされる。
 
-**Full guide**: [Gotchas](references/gotchas.md) — 15 failure modes with fixes.
-
----
-
-## When to Use This Skill
-
-Use this skill when:
-
-- User says "I need to set up AGENTS.md for my project"
-- User wants to improve their agent's reliability
-- User is experiencing agent failures, lost context, or broken work
-- User asks "how do I make my agent work better?"
-- User wants to benchmark harness effectiveness
-- User needs templates for harness files
-- User is following the Learn Harness Engineering course
+**完全ガイド**: [Gotchas](references/gotchas.md) — 修正付きの 15 の失敗モード。
 
 ---
 
-## Communication Style
+## この Skill を使う場面
 
-- Explain harness concepts in practical terms (kitchen analogy works well)
-- Focus on measurable outcomes, not theoretical perfection
-- Start minimal, add structure as needed
-- Show before/after comparisons to build confidence
-- Acknowledge tradeoffs (more structure = more reliability but more upfront work)
+次のような場合にこの skill を使います:
 
----
-
-## Getting Started
-
-### If the user is new to harness engineering:
-
-1. **Start with assessment**: Run the five-tuple assessment on their current setup
-2. **Pick lowest-scoring subsystem**: Focus improvement efforts there first
-3. **Create minimal viable harness**: AGENTS.md + init.sh + feature_list.json
-4. **Test with real task**: Measure before/after improvement
-
-### If the user is experienced:
-
-1. **Ask what specific problem**: Don't assume — let them describe the pain point
-2. **Understand harness maturity**: What exists already? What's working?
-3. **Design targeted improvements**: Use reference patterns for guidance
-4. **Optionally run benchmarks**: Quantify impact with before/after comparison
+- ユーザーが「自分のプロジェクトに AGENTS.md を設定したい」と言っている
+- ユーザーがエージェントの信頼性を改善したい
+- ユーザーがエージェントの失敗、コンテキスト喪失、作業破損に悩んでいる
+- ユーザーが「どうすればエージェントをもっと良く動かせるか?」と聞いている
+- ユーザーが harness の効果をベンチマークしたい
+- ユーザーが harness ファイルのテンプレートを必要としている
+- ユーザーが Learn Harness Engineering コースに沿って進めている
 
 ---
 
-## When NOT to Use This Skill
+## コミュニケーションスタイル
 
-This skill is about the **harness** around an agent, not:
-- Prompt engineering or system prompt design
-- Model selection or fine-tuning
-- Generic software architecture (MVC, microservices)
-- Chat UIs or conversational interfaces
-- LLM API integration basics
-
-If your question is about the model itself rather than the system around it, this skill does not apply.
+- harness の概念は実務的に説明する（キッチンのたとえは有効）
+- 理論的な完璧さではなく、測定可能な成果に焦点を当てる
+- 最小構成から始め、必要に応じて構造を追加する
+- 変更前後を比較して、納得感を高める
+- トレードオフを明示する（構造が増えるほど信頼性は上がるが、初期作業も増える）
 
 ---
 
-## Further Resources
+## はじめ方
+
+### ユーザーが harness エンジニアリング初心者なら:
+
+1. **まず評価する**: 現在の構成に対して 5 要素評価を実施する
+2. **最も低い項目を優先する**: 改善作業はそこから始める
+3. **最小実用 harness を作る**: AGENTS.md + init.sh + feature_list.json
+4. **実タスクで試す**: 改善前後を測定する
+
+### ユーザーが経験者なら:
+
+1. **具体的な問題を聞く**: 決めつけない。痛点を説明してもらう
+2. **harness の成熟度を把握する**: 何が既にあり、何が機能しているか
+3. **的を絞った改善を設計する**: 参考パターンを手がかりにする
+4. **必要ならベンチマークする**: 前後比較で効果を定量化する
+
+---
+
+## この Skill を使わない場面
+
+この skill は、エージェントの周辺にある **harness** に関するものであり、次の用途ではありません:
+- プロンプトエンジニアリングや system prompt 設計
+- モデル選定や fine-tuning
+- 一般的なソフトウェアアーキテクチャ（MVC、マイクロサービス）
+- Chat UI や会話インターフェース
+- LLM API 統合の基礎
+
+質問がモデルそのものではなく、その周辺システムについてのものである場合に、この skill が適用されます。
+
+---
+
+## 追加リソース
 
 - [Learn Harness Engineering Documentation](https://walkinglabs.github.io/learn-harness-engineering/)
 - [OpenAI: Harness Engineering](https://openai.com/index/harness-engineering/)
 - [Anthropic: Effective Harnesses for Long-Running Agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents/)
 - [Anthropic: Harness Design for Long-Running Apps](https://www.anthropic.com/engineering/harness-design-long-running-apps)
 - [Awesome Harness Engineering](https://github.com/walkinglabs/awesome-harness-engineering)
-- [Agentic Harness Patterns Skill](https://github.com/keli-wen/agentic-harness-patterns-skill) — Reference implementation for pattern extraction
+- [Agentic Harness Patterns Skill](https://github.com/keli-wen/agentic-harness-patterns-skill) — パターン抽出の参考実装
 
 ---
 
-## Further Resources
+## 追加リソース
 
 - [Learn Harness Engineering Documentation](https://walkinglabs.github.io/learn-harness-engineering/)
 - [OpenAI: Harness Engineering](https://openai.com/index/harness-engineering/)

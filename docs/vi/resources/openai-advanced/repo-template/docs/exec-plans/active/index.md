@@ -1,9 +1,9 @@
-# Kế hoạch Active
+# アクティブな計画
 
-Giữ một tệp markdown cho mỗi kế hoạch thực thi active trong thư mục này.
+このディレクトリには、アクティブな実行計画ごとに Markdown ファイルを1つずつ置いてください。
 
-Mẫu tên tệp đề xuất:
+推奨するファイル名の形式:
 
 - `YYYY-MM-DD-chu-de-ngan.md`
 
-Mỗi kế hoạch active nên đủ hiện tại để một phiên agent mới có thể tiếp tục công việc chỉ từ kho lưu trữ.
+各アクティブな計画は、新しい agent セッションがリポジトリ内の情報だけで作業を引き継げる程度に、十分に最新の状態である必要があります。

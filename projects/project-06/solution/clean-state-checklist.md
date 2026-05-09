@@ -1,68 +1,68 @@
-# Clean State Checklist
+# クリーン状態チェックリスト
 
-Run this checklist before committing and at the end of each session.
+このチェックリストは、コミット前と各セッションの最後に実行してください。
 
-## Build
+## ビルド
 
-- [ ] `npm run check` passes with no type errors
-- [ ] `npm run build` completes successfully
-- [ ] No TypeScript warnings about unused variables or imports
+- [ ] `npm run check` が型エラーなしで通る
+- [ ] `npm run build` が正常に完了する
+- [ ] 未使用の変数や import に関する TypeScript 警告がない
 
-## Architecture
+## アーキテクチャ
 
-- [ ] No `fs` or `path` imports in renderer code (`src/renderer/`)
-- [ ] No Electron IPC in service code (`src/services/`)
-- [ ] No React imports in services or main process
-- [ ] All IPC channels defined in `src/shared/types.ts`
-- [ ] All new APIs exposed in `src/preload/preload.ts`
+- [ ] レンダラーコード (`src/renderer/`) に `fs` または `path` の import がない
+- [ ] サービスコード (`src/services/`) に Electron IPC がない
+- [ ] services や main process に React の import がない
+- [ ] すべての IPC チャネルが `src/shared/types.ts` に定義されている
+- [ ] 新しい API はすべて `src/preload/preload.ts` で公開されている
 
-## Runtime
+## 実行時
 
-- [ ] Application starts without errors (`npm run dev`)
-- [ ] Structured JSON log output appears in console at startup
-- [ ] Document import works (check logs for "Document imported" event)
-- [ ] Batch indexing works (check logs for "Batch indexing complete" event)
-- [ ] Q&A returns answers with citations (check logs for "Answer generated" event)
-- [ ] Conversation history displays in chat-style layout
-- [ ] Feedback buttons appear on Q&A responses
-- [ ] Reset button clears all data with confirmation dialog
-- [ ] Status bar shows correct document count and index status
+- [ ] アプリケーションがエラーなく起動する (`npm run dev`)
+- [ ] 起動時に構造化された JSON ログがコンソールに出力される
+- [ ] ドキュメントのインポートが動作する (`"Document imported"` イベントをログで確認)
+- [ ] バッチインデックス作成が動作する (`"Batch indexing complete"` イベントをログで確認)
+- [ ] Q&A が引用付きの回答を返す (`"Answer generated"` イベントをログで確認)
+- [ ] 会話履歴がチャット風のレイアウトで表示される
+- [ ] Q&A 応答にフィードバックボタンが表示される
+- [ ] リセットボタンが確認ダイアログ付きで全データを消去する
+- [ ] ステータスバーに正しいドキュメント数とインデックス状態が表示される
 
-## Logging
+## ロギング
 
-- [ ] All log entries are valid JSON (parseable)
-- [ ] Log entries include timestamp, level, service, and message
-- [ ] Document import emits INFO log with documentId, filename, size
-- [ ] Indexing emits INFO log with chunkCount, durationMs
-- [ ] Q&A emits INFO log with confidence, citationCount, durationMs
-- [ ] IPC handlers log channel invocations
+- [ ] すべてのログエントリが有効な JSON である（解析可能）
+- [ ] ログエントリに timestamp, level, service, message が含まれている
+- [ ] ドキュメントのインポートで documentId, filename, size を含む INFO ログが出る
+- [ ] インデックス作成で chunkCount, durationMs を含む INFO ログが出る
+- [ ] Q&A で confidence, citationCount, durationMs を含む INFO ログが出る
+- [ ] IPC ハンドラがチャネル呼び出しをログ出力する
 
-## Data Integrity
+## データ整合性
 
-- [ ] No empty chunks in indexed documents (verify with GET_CHUNKS)
-- [ ] Q&A history persists across restarts
-- [ ] Feedback entries persist across restarts
-- [ ] Document metadata is consistent with actual files
-- [ ] Clean state reset removes all data files
+- [ ] インデックス済みドキュメントに空のチャンクがない（`GET_CHUNKS` で確認）
+- [ ] Q&A 履歴が再起動後も保持される
+- [ ] フィードバックの記録が再起動後も保持される
+- [ ] ドキュメントのメタデータが実ファイルと一致している
+- [ ] クリーン状態へのリセットで全データファイルが削除される
 
-## Performance
+## パフォーマンス
 
-- [ ] `bash scripts/benchmark.sh` runs without errors
-- [ ] Import throughput is reasonable (3 files under 1 second)
-- [ ] Indexing completes for sample data (under 1 second)
-- [ ] Query latency is under 1 second per question
+- [ ] `bash scripts/benchmark.sh` がエラーなく実行できる
+- [ ] インポートのスループットが妥当である（3 ファイルで 1 秒未満）
+- [ ] サンプルデータのインデックス作成が 1 秒未満で完了する
+- [ ] クエリのレイテンシが質問あたり 1 秒未満である
 
-## Repository
+## リポジトリ
 
-- [ ] No unintended files in git status
-- [ ] No sensitive data (.env, credentials) staged
-- [ ] No files in `dist/` committed
-- [ ] `claude-progress.md` updated with current state
-- [ ] `feature_list.json` reflects actual feature status
-- [ ] `session-handoff.md` updated if session is ending
+- [ ] `git status` に意図しないファイルがない
+- [ ] 機密データ（`.env`、認証情報）がステージされていない
+- [ ] `dist/` 配下のファイルがコミットされていない
+- [ ] `claude-progress.md` が現在の状態で更新されている
+- [ ] `feature_list.json` が実際の機能状態を反映している
+- [ ] セッション終了時は `session-handoff.md` が更新されている
 
-## Scripts
+## スクリプト
 
-- [ ] `bash scripts/cleanup-scanner.sh` reports no stale artifacts
-- [ ] `bash scripts/benchmark.sh` completes the full task suite
-- [ ] `bash init.sh` passes all verification steps
+- [ ] `bash scripts/cleanup-scanner.sh` で古い成果物が検出されない
+- [ ] `bash scripts/benchmark.sh` が全タスクスイートを完了する
+- [ ] `bash init.sh` がすべての検証ステップを通過する

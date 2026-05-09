@@ -1,48 +1,48 @@
-# Clean State Checklist -- Project 03
+# クリーン状態チェックリスト -- Project 03
 
-## Build Verification
+## ビルド確認
 
-- [x] `npm install` completes without errors
-- [x] `npm run check` passes with zero TypeScript errors
-- [x] `npm run build` produces dist/ output
+- [x] `npm install` がエラーなく完了する
+- [x] `npm run check` が TypeScript エラーなしで通る
+- [x] `npm run build` により `dist/` 出力が生成される
 
-## Feature Verification
+## 機能確認
 
-- [x] Window launches with correct dimensions and dark theme
-- [x] Document list shows imported documents with empty state
-- [x] Import button opens file picker, imports .txt and .md files
-- [x] Document detail shows metadata: title, filename, size, import date, word count, line count, file type
-- [x] "View Content" button loads and displays full document text
-- [x] "Show Chunks" button displays chunked content with metadata
-- [x] "Index Document" button triggers chunking and updates status
-- [x] StatusBar shows index status with color-coded indicator
-- [x] StatusBar shows indexed document count and total chunk count
-- [x] Question panel accepts questions and returns answers
-- [x] Answers include citations with document title, chunk index, and excerpt
-- [x] Answers include confidence scores (0.85 with citations, 0.30 without)
-- [x] Documents persist across app restarts
-- [x] Delete button removes document and associated data
+- [x] ウィンドウが正しいサイズと dark theme で起動する
+- [x] ドキュメント一覧に、インポート済みドキュメントが空の状態として表示される
+- [x] Import ボタンでファイルピッカーが開き、`.txt` と `.md` ファイルをインポートできる
+- [x] ドキュメント詳細に metadata として、title、filename、size、import date、word count、line count、file type が表示される
+- [x] "View Content" ボタンでドキュメント全文を読み込み、表示できる
+- [x] "Show Chunks" ボタンで chunk 化された内容と metadata を表示できる
+- [x] "Index Document" ボタンで chunking が実行され、status が更新される
+- [x] StatusBar が色分けされた indicator 付きで index status を表示する
+- [x] StatusBar が index 済みドキュメント数と total chunk count を表示する
+- [x] 質問パネルが質問を受け付け、回答を返す
+- [x] 回答に、document title、chunk index、excerpt を含む citation が付く
+- [x] 回答に confidence score が含まれる（citation ありは 0.85、なしは 0.30）
+- [x] ドキュメントが app の再起動後も保持される
+- [x] Delete ボタンでドキュメントと関連データが削除される
 
-## Scope Control Verification
+## スコープ管理確認
 
-- [x] feature_list.json shows all features at "pass"
-- [x] Each feature has evidence describing what was implemented
-- [x] No feature has status "fail" or "not-started"
-- [x] AGENTS.md contains one-feature-at-a-time policy
-- [x] Feature dependencies are documented and respected
+- [x] feature_list.json で全 feature が "pass" になっている
+- [x] 各 feature に、実装内容を示す evidence がある
+- [x] status が "fail" または "not-started" の feature がない
+- [x] AGENTS.md に one-feature-at-a-time の方針が記載されている
+- [x] feature の依存関係が文書化され、順守されている
 
-## Code Quality
+## コード品質
 
-- [x] No `any` types without explanatory comments
-- [x] All exports are named exports
-- [x] IPC channels defined in src/shared/types.ts only
-- [x] Renderer never imports Node.js modules
-- [x] Services never import renderer code
-- [x] All new files follow existing conventions
+- [x] 説明コメントのない `any` 型がない
+- [x] すべての export が named export である
+- [x] IPC channel は `src/shared/types.ts` でのみ定義されている
+- [x] renderer が Node.js modules を import しない
+- [x] service が renderer code を import しない
+- [x] すべての新規ファイルが既存の conventions に従っている
 
-## Documentation
+## ドキュメント
 
-- [x] docs/ARCHITECTURE.md updated with chunking pipeline and Q&A flow
-- [x] docs/PRODUCT.md updated with new features
-- [x] session-handoff.md filled out
-- [x] claude-progress.md has session logs
+- [x] docs/ARCHITECTURE.md に chunking pipeline と Q&A flow を追記した
+- [x] docs/PRODUCT.md を新機能に合わせて更新した
+- [x] session-handoff.md を記入した
+- [x] claude-progress.md に session log がある

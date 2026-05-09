@@ -1,69 +1,69 @@
-# Sprint Contract - ConversationHistory Feature
+# Sprint Contract - ConversationHistory 機能
 
-## Sprint Overview
+## Sprint 概要
 
 **Sprint:** P05-03 (Planner + Generator + Evaluator)
-**Feature:** Multi-turn Q&A conversation history
+**Feature:** マルチターン Q&A の会話履歴
 **Duration:** 1 sprint
 
-## Scope
+## スコープ
 
-### In Scope
+### 対象範囲
 
-- ConversationHistory component with chat bubble layout
-- Timestamps and date separators
-- Citation display with expand/collapse
-- Copy-to-clipboard for assistant answers
-- Follow-up question suggestions
-- Empty state with guidance
+- チャット吹き出しレイアウトを持つ `ConversationHistory` コンポーネント
+- タイムスタンプと日付区切り
+- 折りたたみ可能な引用表示
+- アシスタント回答のクリップボードへのコピー
+- フォローアップ質問の候補表示
+- ガイド付きの空状態表示
 
-### Out of Scope
+### 対象外
 
-- Persistent conversation sessions across app restarts (separate feature)
-- Conversation search/filter (separate feature)
-- Conversation export (separate feature)
+- アプリ再起動をまたいで会話セッションを永続化する機能（別機能）
+- 会話の検索/フィルタ（別機能）
+- 会話のエクスポート（別機能）
 
-## Roles
+## 役割
 
 | Role | Responsibility |
 |------|---------------|
-| **Planner** | Define acceptance criteria, scope boundaries, and rubric before implementation |
-| **Generator** | Implement the component based on planner specification |
-| **Evaluator** | Review implementation against acceptance criteria and rubric |
+| **Planner** | 実装前に受け入れ基準、スコープ境界、ルーブリックを定義する |
+| **Generator** | Planner の仕様に基づいてコンポーネントを実装する |
+| **Evaluator** | 実装を受け入れ基準とルーブリックに照らしてレビューする |
 
-## Acceptance Criteria
+## 受け入れ基準
 
-1. Component renders a list of Q&A exchanges as chat bubbles
-2. User messages appear right-aligned in purple
-3. Assistant messages appear left-aligned in dark blue
-4. Each exchange shows a compact timestamp (HH:MM)
-5. Date separators appear between exchanges on different days
-6. Citations are shown as expandable sections with full detail
-7. Copy-to-clipboard button works and shows visual feedback
-8. Follow-up suggestions appear for the most recent exchange
-9. Empty state displays guidance text with icon
-10. Component handles edge cases (empty history, long text)
+1. コンポーネントは Q&A のやり取りをチャット吹き出しとして一覧表示する
+2. ユーザーメッセージは右寄せで紫色に表示される
+3. アシスタントメッセージは左寄せで濃い青に表示される
+4. 各やり取りに簡潔なタイムスタンプ（HH:MM）が表示される
+5. 異なる日にまたがるやり取りの間には日付区切りが表示される
+6. 引用は詳細を展開できるセクションとして表示される
+7. クリップボードへのコピー ボタンが動作し、視覚的なフィードバックを表示する
+8. 最新のやり取りにはフォローアップ候補が表示される
+9. 空状態ではアイコン付きの案内文を表示する
+10. コンポーネントは例外的なケース（履歴が空、長文）を適切に処理する
 
-## Verification Plan
+## 検証計画
 
-1. Visual inspection of chat bubble layout and alignment
-2. Verify timestamps render correctly in HH:MM format
-3. Test citation expand/collapse behavior
-4. Test copy-to-clipboard with paste verification
-5. Test follow-up suggestion click triggers onFollowUp callback
-6. Test empty state with no history data
-7. Verify component does not crash with malformed data
+1. チャット吹き出しのレイアウトと配置を目視確認する
+2. タイムスタンプが HH:MM 形式で正しく表示されることを確認する
+3. 引用の展開/折りたたみ動作をテストする
+4. クリップボードへのコピーを貼り付け確認付きでテストする
+5. フォローアップ候補のクリックで `onFollowUp` コールバックが発火することをテストする
+6. 履歴データがない場合の空状態をテストする
+7. 不正なデータがあってもコンポーネントがクラッシュしないことを確認する
 
-## Sprint Log
+## Sprint ログ
 
 | Phase | Agent | Outcome |
 |-------|-------|---------|
-| Planning | Planner | Acceptance criteria defined, 10 items |
-| Implementation | Generator | Initial implementation, 5/6 core features |
-| Review 1 | Evaluator | Score 4.2/5, missing date separators |
-| Revision 1 | Generator | Date separators added |
-| Review 2 | Evaluator | Score 4.6/5, copy feedback needs improvement |
-| Revision 2 | Generator | Copy feedback and citation styling refined |
-| Review 3 | Evaluator | Score 4.8/5, confidence display suggested |
-| Revision 3 | Generator | Confidence percentage added |
-| Final Review | Evaluator | Score 4.9/5, all criteria met |
+| Planning | Planner | 受け入れ基準を定義、10項目 |
+| Implementation | Generator | 初期実装、6つの主要機能のうち 5 つ完了 |
+| Review 1 | Evaluator | 4.2/5 点、日付区切りが不足 |
+| Revision 1 | Generator | 日付区切りを追加 |
+| Review 2 | Evaluator | 4.6/5 点、コピー時フィードバックの改善が必要 |
+| Revision 2 | Generator | コピー時フィードバックと引用のスタイルを調整 |
+| Review 3 | Evaluator | 4.8/5 点、自信度表示の提案 |
+| Revision 3 | Generator | 自信度のパーセンテージを追加 |
+| Final Review | Evaluator | 4.9/5 点、すべての基準を満たす |

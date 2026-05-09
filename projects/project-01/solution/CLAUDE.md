@@ -1,49 +1,49 @@
-# CLAUDE.md -- Quick Reference for Claude Code
+# CLAUDE.md -- Claude Code の簡易リファレンス
 
 ## Project Overview
 
-This is an Electron + TypeScript + React knowledge base application. The codebase is structured into four layers: main process, preload, renderer, and services.
+これは Electron + TypeScript + React で構成されたナレッジベースアプリケーションです。コードベースは main process、preload、renderer、services の 4 層で構成されています。
 
 ## Build & Run
 
 ```bash
-npm install        # Install dependencies
-npm run check      # Type-check without emitting
-npm run build      # Compile main/preload + bundle renderer
-npm run dev        # Build + launch Electron
+npm install        # 依存関係をインストールする
+npm run check      # 出力せずに型チェックする
+npm run build      # main/preload をコンパイルし、renderer をバンドルする
+npm run dev        # ビルドして Electron を起動する
 ```
 
 ## Key Files
 
 | File | Purpose |
 |------|---------|
-| `src/main/main.ts` | Electron entry point, window creation, service wiring |
-| `src/main/ipc-handlers.ts` | IPC channel registration |
-| `src/preload/preload.ts` | contextBridge API exposure |
-| `src/renderer/App.tsx` | Root React component |
-| `src/services/*.ts` | Business logic (document, indexing, QA, persistence) |
-| `src/shared/types.ts` | Shared types and IPC channel constants |
-| `feature_list.json` | Feature tracking with pass/fail status |
+| `src/main/main.ts` | Electron のエントリポイント、ウィンドウ生成、サービスの配線 |
+| `src/main/ipc-handlers.ts` | IPC チャネルの登録 |
+| `src/preload/preload.ts` | contextBridge API の公開 |
+| `src/renderer/App.tsx` | ルート React コンポーネント |
+| `src/services/*.ts` | ビジネスロジック（document、indexing、QA、persistence） |
+| `src/shared/types.ts` | 共有型と IPC チャネル定数 |
+| `feature_list.json` | pass/fail 状態付きの機能追跡 |
 
 ## Architecture Rules
 
-- Renderer never imports Node.js modules.
-- All main-renderer communication goes through IPC.
-- Services use constructor-injected `PersistenceService`.
-- IPC channel names live in `src/shared/types.ts`.
+- renderer は Node.js モジュールを import しない。
+- main と renderer の通信はすべて IPC 経由で行う。
+- services はコンストラクタ注入された `PersistenceService` を使う。
+- IPC チャネル名は `src/shared/types.ts` に置く。
 
 ## How to Add a Feature
 
-1. Define the IPC channel in `src/shared/types.ts`.
-2. Add the handler in `src/main/ipc-handlers.ts`.
-3. Expose the API in `src/preload/preload.ts`.
-4. Add the type declaration in `src/renderer/types.d.ts`.
-5. Build the UI in `src/renderer/components/`.
-6. Update `feature_list.json` with the result.
+1. `src/shared/types.ts` で IPC チャネルを定義する。
+2. `src/main/ipc-handlers.ts` にハンドラを追加する。
+3. `src/preload/preload.ts` で API を公開する。
+4. `src/renderer/types.d.ts` に型宣言を追加する。
+5. `src/renderer/components/` で UI を作成する。
+6. 結果を `feature_list.json` に反映する。
 
 ## Testing
 
 ```bash
-npm test           # Run vitest suite
-npm run test:watch # Run tests in watch mode
+npm test           # vitest のテストスイートを実行する
+npm run test:watch # watch モードでテストを実行する
 ```

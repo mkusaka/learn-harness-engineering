@@ -1,7 +1,7 @@
-# Code for Lecture 04
+# Lecture 04 のコード
 
-Use this folder for examples of:
+このフォルダは、次の例に使います。
 
-- monolithic instruction files
-- short entrypoints
-- progressive disclosure patterns
+- 巨大な instruction file
+- 短いエントリポイント
+- progressive disclosure のパターン

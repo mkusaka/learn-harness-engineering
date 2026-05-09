@@ -1,18 +1,18 @@
-# Ví dụ Tác vụ Không được Chỉ định Rõ ràng
+# 指示が不十分なタスクの例
 
-Xây dựng ứng dụng desktop cơ sở kiến thức với hỏi đáp AI.
+AI による Q&A 機能を備えたナレッジベースのデスクトップアプリを作成する。
 
-Ràng buộc:
+制約:
 
-- Không có ràng buộc nào được chỉ định
-- Không có lệnh khởi động được cung cấp
-- Không có hướng dẫn cấu trúc thư mục
-- Không có data model được định nghĩa
-- Không có tiêu chí hoàn thành rõ ràng
+- 指定された制約はない
+- 起動コマンドは提供されていない
+- ディレクトリ構成の指示はない
+- data model は定義されていない
+- 明確な完了基準がない
 
-Kết quả điển hình từ loại prompt này:
+この種の prompt で典型的に起こること:
 
-- agent tự phát minh ra cấu trúc một cách tùy tiện
-- ứng dụng có thể biên dịch nhưng không khởi động nhất quán
-- UI có thể xuất hiện trước khi có bất kỳ đường dẫn ingest/query nào có thể sử dụng được
-- agent thường dừng lại sau thành công về mặt thẩm mỹ
+- agent が構造を勝手に作り上げてしまう
+- アプリはビルドできても、安定して起動しないことがある
+- 使える ingest/query の経路がないまま UI だけ先に表示されることがある
+- agent は見た目の成功だけで止まりがち

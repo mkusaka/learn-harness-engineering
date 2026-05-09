@@ -1,126 +1,126 @@
-[English Version →](../../../en/lectures/lecture-03-why-the-repository-must-become-the-system-of-record/) | [中文版本 →](../../../zh/lectures/lecture-03-why-the-repository-must-become-the-system-of-record/)
+[英語版 →](../../../en/lectures/lecture-03-why-the-repository-must-become-the-system-of-record/) | [中国語版 →](../../../zh/lectures/lecture-03-why-the-repository-must-become-the-system-of-record/)
 
-> Ví dụ mã nguồn: [code/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/vi/lectures/lecture-03-why-the-repository-must-become-the-system-of-record/code/)
-> Dự án thực hành: [Dự án 02. Không gian làm việc Agent đọc được](./../../projects/project-02-agent-readable-workspace/index.md)
+> ソースコードの例: [code/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/vi/lectures/lecture-03-why-the-repository-must-become-the-system-of-record/code/)
+> 実践プロジェクト: [プロジェクト 02. Agent が読めるワークスペース](./../../projects/project-02-agent-readable-workspace/index.md)
 
-# Bài 03. Biến Kho lưu trữ Thành Nguồn Sự thật Duy nhất
+# 講義 03. リポジトリを唯一の正本にする
 
-Các quyết định kiến trúc của nhóm bạn rải rác khắp Confluence, Slack, Jira, và một vài cái đầu của các kỹ sư cấp cao. Đối với con người, điều này hoạt động gượng gạo — bạn có thể hỏi đồng nghiệp, tìm kiếm lịch sử chat, đào qua tài liệu. Nếu thất bại, bạn có thể chặn ai đó ở căng tin. Nhưng đối với AI agent, thông tin không có trong kho lưu trữ đơn giản là không tồn tại.
+あなたのチームのアーキテクチャ上の意思決定は、Confluence、Slack、Jira、そして一部の上級エンジニアの頭の中に散らばっています。人間にとっては、それでもなんとか回ります。同僚に聞く、チャット履歴を探す、資料を掘り返す。それでも見つからなければ、食堂で誰かを捕まえて聞くこともできるでしょう。ですが AI agent にとって、リポジトリにない情報は、最初から存在しないのと同じです。
 
-Đây không phải phóng đại. Hãy nghĩ về các đầu vào thực sự của agent là gì: system prompt và mô tả tác vụ, nội dung tệp từ kho lưu trữ, và kết quả thực thi công cụ. Chỉ vậy thôi. Lịch sử Slack, ticket Jira, trang Confluence, và quyết định kiến trúc bạn thảo luận với đồng nghiệp qua cà phê vào chiều thứ Sáu — agent không thể thấy bất cứ điều nào trong số này. Nó không thể "đi hỏi ai đó" hoặc "tìm kiếm lịch sử chat." Nó là một kỹ sư bị nhốt bên trong kho lưu trữ — tất cả những gì bên ngoài, nó không biết gì cả.
+これは大げさではありません。agent に実際に与えられるものを考えてみてください。system prompt とタスク説明、リポジトリから読み込んだファイルの内容、そしてツール実行の結果。これだけです。Slack の履歴も、Jira のチケットも、Confluence のページも、金曜の午後に同僚とコーヒーを飲みながら話したアーキテクチャ判断も、agent には見えません。agent は誰かに「聞く」ことも、チャット履歴を「検索する」こともできません。リポジトリの中に閉じ込められたエンジニアであり、外側のことは何も知りません。
 
-Vậy câu hỏi trở thành: bạn có định đưa cho kỹ sư này một bản đồ tốt không?
+では、問いはこうなります。このエンジニアに、きちんとした地図を渡すつもりはありますか。
 
-## Những Gì Thuộc Về Bản Đồ
+## 地図に含まれるもの
 
-OpenAI nói thẳng: **thông tin không tồn tại trong repo, không tồn tại với agent.** Họ gọi đây là nguyên tắc "repo là spec" — bản thân kho lưu trữ là tài liệu đặc tả có thẩm quyền cao nhất.
+OpenAI は明確に述べています。**repo にない情報は、agent にとって存在しません。** これを「repo is spec」という原則と呼び、リポジトリそのものを最も権威ある仕様書として扱います。
 
-Tài liệu về agent chạy lâu của Anthropic phản ánh điều này: trạng thái liên tục là điều kiện cần thiết cho tính liên tục của tác vụ dài. Khả năng phục hồi kiến thức xuyên phiên trực tiếp xác định tỷ lệ thành công của tác vụ. Và trạng thái này phải tồn tại trong kho lưu trữ — vì đó là bộ lưu trữ ổn định, có thể truy cập duy nhất mà agent có.
+Anthropic の長時間稼働 agent に関する資料も、これと一致しています。継続的な状態は、長いタスクを続けるうえで不可欠です。セッションをまたいで知識を復元できるかどうかが、タスク成功率を直接左右します。そして、その状態はリポジトリに存在していなければなりません。agent が安定してアクセスできる、唯一の保存先だからです。
 
-Bạn có thể nghĩ: "Nhóm chúng tôi nhỏ, kiến thức nằm trong đầu mọi người, và nó vẫn hoạt động tốt." Chắc chắn, đối với con người. Nhưng nếu bạn đang sử dụng agent, hãy chấp nhận sự thật này: agent không thể hỏi người. Mọi thứ nó cần biết phải được viết xuống và đặt ở nơi nó có thể tìm thấy.
+「うちは小さいチームだし、知識はみんなの頭の中にある。それでうまく回っている」と思うかもしれません。人間相手なら、その通りでしょう。ですが agent を使うなら、この事実を受け入れる必要があります。agent は人に聞けません。必要なことはすべて書き下し、見つけられる場所に置かなければなりません。
 
-Đây không phải về "viết nhiều tài liệu hơn." Mà là về "đặt thông tin quyết định vào đúng chỗ." Một `ARCHITECTURE.md` 50 dòng trong thư mục `src/api/` hữu ích hơn mười nghìn lần so với một tài liệu thiết kế 500 trang trong Confluence mà không ai bảo trì. Giống như bản đồ văn phòng vẽ tay dán trên bàn làm việc của bạn so với bản vẽ kiến trúc đẹp bị khóa trong tủ hồ sơ — cái trước có sẵn ngay khi bạn cần; cái sau về mặt kỹ thuật ưu việt hơn nhưng vô dụng trong thời điểm đó.
+これは「もっとたくさん文書を書く」ことではありません。「判断に必要な情報を、正しい場所に置く」ことです。`src/api/` に置かれた 50 行の `ARCHITECTURE.md` は、Confluence にある 500 ページの設計資料より、保守されているかぎりはるかに役立ちます。手元の机に貼った手描きの社内地図と、ファイリングキャビネットにしまわれた美しい建築図面の違いに似ています。前者は必要なときにすぐ使えます。後者は見た目は立派でも、その瞬間には役に立ちません。
 
-## Khả năng Hiển thị Kiến thức
+## 知識の可視性
 
 ```mermaid
 flowchart LR
-    Slack["Quy tắc trong Slack"] --> Write["Viết vào tệp repo<br/>AGENTS.md / ARCHITECTURE.md / PROGRESS.md"]
-    Confluence["Quy tắc trong Confluence"] --> Write
-    Heads["Quy tắc trong đầu người"] --> Write
-    Jira["Quy tắc trong Jira ticket"] --> Write
-    Write --> Repo["Tệp kho lưu trữ"]
-    Repo --> Agent["Phiên agent mới<br/>đọc trực tiếp từ repo"]
-    Warning["Nếu một quy tắc không có trong repo,<br/>agent không thể nhìn thấy nó"] --> Agent
+    Slack["Slack にあるルール"] --> Write["repo のファイルへ書き込む<br/>AGENTS.md / ARCHITECTURE.md / PROGRESS.md"]
+    Confluence["Confluence にあるルール"] --> Write
+    Heads["人の頭の中にあるルール"] --> Write
+    Jira["Jira チケットにあるルール"] --> Write
+    Write --> Repo["リポジトリ内のファイル"]
+    Repo --> Agent["新しい agent セッション<br/>repo から直接読む"]
+    Warning["あるルールが repo になければ、<br/>agent には見えない"] --> Agent
 ```
 
-Làm thế nào để kiểm tra xem bản đồ của bạn có đủ tốt không? Chạy "bài kiểm tra khởi động lạnh (cold-start test)": mở một phiên agent hoàn toàn mới chỉ sử dụng nội dung repo, và xem nó có thể trả lời năm câu hỏi cơ bản không:
+地図が十分かどうかは、どう確認すればよいのでしょうか。`cold-start test` を実行します。つまり、repo の内容だけを使って完全に新しい agent セッションを開き、次の 5 つの基本質問に答えられるかを確認するのです。
 
 ```mermaid
 flowchart TB
-    Q1["Hệ thống này là gì?"] --> A1["AGENTS.md / README"]
-    Q2["Nó được tổ chức như thế nào?"] --> A2["ARCHITECTURE.md / tài liệu module"]
-    Q3["Làm thế nào để chạy nó?"] --> A3["Makefile / init.sh / package scripts"]
-    Q4["Làm thế nào để xác minh nó?"] --> A4["Lệnh test, lint và check"]
-    Q5["Chúng ta đang ở đâu bây giờ?"] --> A5["PROGRESS.md / feature list / git history"]
+    Q1["このシステムは何か"] --> A1["AGENTS.md / README"]
+    Q2["どう構成されているか"] --> A2["ARCHITECTURE.md / モジュール文書"]
+    Q3["どうやって起動するか"] --> A3["Makefile / init.sh / package scripts"]
+    Q4["どうやって検証するか"] --> A4["test, lint, check のコマンド"]
+    Q5["いまどこにいるか"] --> A5["PROGRESS.md / feature list / git history"]
 
-    A1 --> Ready["Một phiên mới có thể bắt đầu làm việc<br/>mà không cần hỏi con người"]
+    A1 --> Ready["新しいセッションが<br/>人間に聞かずに作業を始められる"]
     A2 --> Ready
     A3 --> Ready
     A4 --> Ready
     A5 --> Ready
 ```
 
-Nếu nó không thể trả lời, bản đồ có những chỗ trống. Nơi bản đồ trống, agent đoán — đoán sai trở thành lỗi, đoán quá nhiều lãng phí ngữ cảnh. Và mỗi phiên mới lại đoán lại. Chi phí đoán luôn cao hơn chi phí vẽ bản đồ đúng cách ngay từ đầu.
+答えられないなら、地図に穴があります。空白のある場所では、agent は推測します。推測が外れればバグになり、推測しすぎればコンテキストを浪費します。そして新しいセッションが始まるたびに、また同じ推測を繰り返します。最初から正しく地図を描くコストより、推測にかかるコストのほうが、常に高くつきます。
 
-## Các Khái niệm Cốt lõi
+## 重要な概念
 
-- **Khoảng cách Hiển thị Kiến thức (Knowledge Visibility Gap)**: Tỷ lệ tổng kiến thức dự án KHÔNG có trong kho lưu trữ. Khoảng cách càng lớn, tỷ lệ thất bại của agent càng cao. Bao nhiêu kiến thức ẩn về dự án này sống trong đầu bạn? Đếm tất cả, sau đó xem bao nhiêu đã vào repo — sự khác biệt là khoảng cách hiển thị của bạn.
-- **Hệ thống Ghi chép (System of Record)**: Kho lưu trữ mã là nguồn có thẩm quyền cho các quyết định dự án, ràng buộc kiến trúc, trạng thái thực thi và tiêu chuẩn xác minh. Repo có tiếng nói cuối cùng, không nơi nào khác có giá trị. Giống như bản đồ có ghi "đường đóng cửa" — bạn sẽ không đi theo con đường đó. Nhưng nếu thông tin đó chỉ tồn tại trong đầu của Anh Nam, bạn phải hỏi Anh Nam mỗi lần.
-- **Bài kiểm tra Khởi động Lạnh (Cold-Start Test)**: Năm câu hỏi ở trên. Nó có thể trả lời bao nhiêu thì bản đồ của bạn hoàn chỉnh bấy nhiêu.
-- **Chi phí Khám phá (Discovery Cost)**: Ngân sách ngữ cảnh agent đốt cháy để tìm một thông tin quan trọng trong repo. Thông tin càng ẩn, chi phí khám phá càng cao, và ngân sách còn lại cho tác vụ thực tế càng ít. Ẩn thông tin quan trọng trong README sâu mười cấp thư mục giống như khóa bình chữa cháy trong két an toàn tầng hầm — nó tồn tại, nhưng bạn không thể tìm thấy khi cần.
-- **Tốc độ Suy giảm Kiến thức (Knowledge Decay Rate)**: Tỷ lệ các mục kiến thức trở nên lỗi thời theo đơn vị thời gian. Tài liệu không đồng bộ với mã là kẻ thù lớn nhất — tệ hơn không có tài liệu nào cả.
-- **Phép loại suy ACID**: Áp dụng các nguyên tắc giao dịch cơ sở dữ liệu (Tính nguyên tử, Nhất quán, Cô lập, Bền vững) vào quản lý trạng thái agent. Chúng ta sẽ mở rộng điều này dưới đây.
+- **知識可視性ギャップ（Knowledge Visibility Gap）**: プロジェクト全体の知識のうち、リポジトリに入っていない割合です。ギャップが大きいほど、agent の失敗率は高くなります。このプロジェクトについて、あなたの頭の中にある知識はどれくらいあるでしょうか。すべて数え、そのうち repo に入っているものを数えれば、その差が可視性ギャップです。
+- **正本（System of Record）**: コードリポジトリは、プロジェクトの意思決定、アーキテクチャ制約、実行状態、検証基準における権威ある情報源です。repo が最終判断を持ち、他のどこにも同じ効力はありません。たとえば地図に「通行止め」と書いてあれば、その道は使いません。ですが、その情報が Anh Nam の頭の中にしかないなら、毎回 Anh Nam に聞くしかありません。
+- **コールドスタートテスト（Cold-Start Test）**: 上の 5 つの質問です。何問答えられるかが、地図の完成度を示します。
+- **探索コスト（Discovery Cost）**: agent が repo 内で重要情報を見つけるために消費するコンテキスト予算です。情報が隠れているほど探索コストは高くなり、実際の作業に使える予算は少なくなります。重要情報を 10 階層深い README に隠すのは、地下の金庫に消火器をしまうようなものです。存在はしていても、必要なときに見つけられません。
+- **知識劣化率（Knowledge Decay Rate）**: 知識項目が時間とともに古くなる割合です。コードと同期していない文書は最大の敵であり、文書がないより悪いことさえあります。
+- **ACID の類推**: データベースのトランザクション原則（原子性、一貫性、独立性、永続性）を agent の状態管理に当てはめる考え方です。これについては後で詳しく説明します。
 
-## Cách Vẽ Bản Đồ Tốt
+## よい地図の描き方
 
-**Nguyên tắc 1: Kiến thức sống gần mã.** Một quy tắc về xác thực API endpoint thuộc về gần mã API, không bị chôn vùi trong một tài liệu toàn cục khổng lồ. Đặt một tài liệu ngắn trong mỗi thư mục module giải thích trách nhiệm, giao diện và các ràng buộc đặc biệt của module đó. Giống như nhãn kệ thư viện — bạn muốn sách lịch sử, đi thẳng đến kệ ghi nhãn "Lịch sử." Không cần tìm kiếm toàn bộ thư viện.
+**原則 1: 知識はコードの近くに置く。** API エンドポイントの認証に関するルールは、API コードの近くに置くべきであり、巨大な全体文書に埋もれさせるべきではありません。各モジュールのディレクトリに短い文書を置き、そのモジュールの責務、インターフェース、特有の制約を説明しましょう。図書館の棚ラベルのようなものです。歴史書が欲しければ、「歴史」と書かれた棚にまっすぐ向かえばよいのです。図書館全体を探し回る必要はありません。
 
-**Nguyên tắc 2: Sử dụng tệp đầu vào được chuẩn hóa.** `AGENTS.md` (hoặc `CLAUDE.md`) là "trang đích" của agent. Nó không cần chứa tất cả thông tin, nhưng phải để agent nhanh chóng trả lời ba câu hỏi: "Dự án này là gì," "Làm thế nào để chạy nó," và "Làm thế nào để xác minh nó." 50-100 dòng là đủ.
+**原則 2: 標準化された入力ファイルを使う。** `AGENTS.md`（または `CLAUDE.md`）は agent の「着地ページ」です。すべての情報を入れる必要はありませんが、「このプロジェクトは何か」「どう起動するか」「どう検証するか」の 3 つにすぐ答えられる必要があります。50〜100 行あれば十分です。
 
-**Nguyên tắc 3: Tối giản nhưng đầy đủ.** Mỗi mảnh kiến thức nên có trường hợp sử dụng rõ ràng. Nếu xóa một quy tắc không ảnh hưởng đến chất lượng quyết định của agent, quy tắc đó không nên tồn tại. Nhưng mỗi câu hỏi từ bài kiểm tra khởi động lạnh phải có câu trả lời. Đây là sự cân bằng tế nhị — không quá nhiều, không quá ít, vừa đủ.
+**原則 3: 最小限で、しかし十分に。** 各知識項目には、明確な用途が必要です。あるルールを削除しても agent の判断品質が変わらないなら、そのルールは存在すべきではありません。ですが、コールドスタートテストの質問にはすべて答えが必要です。これは微妙なバランスです。多すぎず、少なすぎず、ちょうどよく。
 
-**Nguyên tắc 4: Cập nhật cùng mã.** Ràng buộc cập nhật kiến thức với thay đổi mã. Cách tiếp cận đơn giản nhất: đặt tài liệu kiến trúc trong thư mục module tương ứng. Khi bạn sửa đổi mã, bạn tự nhiên nhìn thấy tài liệu. Sau khi thay đổi mã, CI có thể nhắc nhở bạn kiểm tra xem tài liệu có cần cập nhật không.
+**原則 4: コードと一緒に更新する。** 知識の更新をコード変更に結びつけます。最も単純な方法は、アーキテクチャ文書を対応するモジュールのディレクトリに置くことです。コードを変更すると、自然と文書が目に入ります。コード変更の後で、CI が文書更新の必要性を思い出させてくれることもあります。
 
-**Cấu trúc repo cụ thể**:
+**repo 固有の構成**:
 
 ```
 project/
-├── AGENTS.md              # Đầu vào: tổng quan dự án, lệnh chạy, ràng buộc cứng
+├── AGENTS.md              # 入力: プロジェクト概要、起動コマンド、厳格な制約
 ├── src/
 │   ├── api/
-│   │   ├── ARCHITECTURE.md  # Quyết định kiến trúc lớp API
+│   │   ├── ARCHITECTURE.md  # API 層のアーキテクチャ判断
 │   │   └── ...
 │   ├── db/
-│   │   ├── CONSTRAINTS.md   # Ràng buộc cứng của hoạt động cơ sở dữ liệu
+│   │   ├── CONSTRAINTS.md   # データベース操作の厳格な制約
 │   │   └── ...
 │   └── ...
-├── PROGRESS.md             # Tiến độ hiện tại: xong, đang thực hiện, bị chặn
-└── Makefile                # Lệnh chuẩn hóa: setup, test, lint, check
+├── PROGRESS.md             # 現在の進捗: 完了、進行中、保留中
+└── Makefile                # 標準化されたコマンド: setup, test, lint, check
 ```
 
-## Quản lý Trạng thái Agent với Nguyên tắc ACID
+## ACID 原則で agent の状態を管理する
 
-Phép loại suy này đến từ quản lý giao dịch cơ sở dữ liệu — bạn có thể nghĩ nó đang phức tạp hóa quá mức, nhưng nó thực sự cung cấp cho bạn một khung rất thực tế:
+この類推はデータベースのトランザクション管理に由来します。大げさに見えるかもしれませんが、実際にはとても実践的な枠組みを与えてくれます。
 
-- **Tính nguyên tử (Atomicity)**: Mỗi "hoạt động logic" (ví dụ: "thêm endpoint mới và cập nhật test") nhận một git commit. Nếu thất bại giữa chừng, `git stash` để khôi phục. Tất cả hoặc không có gì — không có "làm được một nửa."
-- **Nhất quán (Consistency)**: Xác định các vị từ xác minh "trạng thái nhất quán" — tất cả test qua, lint báo cáo không có lỗi. Agent chạy xác minh sau mỗi hoạt động; các trạng thái trung gian không nhất quán không được commit. Giống như chuyển khoản ngân hàng — bạn không thể ghi nợ mà không ghi có.
-- **Cô lập (Isolation)**: Khi nhiều agent hoạt động đồng thời, thiết kế các tệp trạng thái để tránh race condition. Cách tiếp cận đơn giản: mỗi agent sử dụng tệp tiến độ riêng, hoặc sử dụng git branch để cô lập. Hai đầu bếp không thể nêm cùng một nồi đồng thời — ai chịu trách nhiệm khi bị mặn quá?
-- **Bền vững (Durability)**: Kiến thức dự án quan trọng sống trong các tệp được theo dõi bởi git. Trạng thái tạm thời có thể ở lại trong bộ nhớ phiên, nhưng kiến thức xuyên phiên phải được lưu trữ vào tệp. Những gì trong đầu bạn không tính — chỉ những gì trên giấy mới tính.
+- **原子性（Atomicity）**: 各「論理的な作業単位」（例: 「新しい endpoint を追加し、test を更新する」）は 1 つの git commit にします。途中で失敗したら `git stash` で復元します。やるなら全部、やらないなら全部なし。中途半端はありません。
+- **一貫性（Consistency）**: 「一貫した状態」を表す検証述語を定義します。たとえば、すべての test が通り、lint にエラーがないことです。agent は各作業の後に検証を実行し、一貫しない中間状態は commit しません。銀行振込と同じで、借方だけを書いて貸方を書かないことはできません。
+- **独立性（Isolation）**: 複数の agent が同時に動くときは、状態ファイルを工夫して競合を避けます。単純な方法は、各 agent に独自の進捗ファイルを使わせるか、git branch で分離することです。2 人の料理人が同じ鍋を同時に味付けすることはできません。しょっぱくなったら誰の責任でしょうか。
+- **永続性（Durability）**: 重要なプロジェクト知識は git で追跡されるファイルに置きます。一時状態はセッションメモリに置いてもよいですが、セッションをまたぐ知識はファイルへ保存しなければなりません。頭の中にあるだけでは数えません。紙に残っていてこそ数に入ります。
 
-## Câu chuyện Chuyển đổi Thực tế
+## 実際の移行事例
 
-Một nhóm duy trì một nền tảng thương mại điện tử với ~30 microservices. Các quyết định kiến trúc (giao thức giao tiếp giữa các dịch vụ, chiến lược nhất quán dữ liệu, quy tắc phiên bản API) bị rải rác khắp: Confluence (một phần lỗi thời), Slack (khó tìm kiếm), một vài đầu của các kỹ sư cấp cao (không có khả năng mở rộng), và các chú thích mã rải rác (không có hệ thống).
+あるチームは、約 30 の microservices を持つ e-commerce 基盤を運用していました。アーキテクチャ上の意思決定（サービス間通信プロトコル、データ整合性戦略、API バージョニング規則）は、Confluence（一部は古い）、Slack（検索しづらい）、少数の上級エンジニアの頭の中（スケールしない）、そして散在するコードコメント（体系化されていない）にばらばらに存在していました。
 
-Sau khi giới thiệu AI agent, 70% tác vụ yêu cầu can thiệp của con người. Gần như mọi lỗi đều liên quan đến agent vi phạm một số ràng buộc ẩn "mọi người biết nhưng không ai viết xuống." Giống như nhân viên mới mà không ai nói với họ "bạn cần đăng lệnh ăn trưa trong nhóm chat" — họ đoán sai, bị mắng, nhưng sau khi bị mắng vẫn không ai nói với họ quy tắc.
+AI agent を導入した後、70% のタスクで人間の介入が必要になりました。ほとんどのバグは、agent が「みんな知っているが誰も書いていない」隠れた制約を破ったことに起因していました。これは、新人に「昼食の注文はチャットに投稿しないといけない」と誰も教えないのと同じです。新人は推測して外し、叱られても、叱ったあとでさえルールは教えられません。
 
-Nhóm đã thực hiện một cuộc chuyển đổi:
-1. Tạo `AGENTS.md` trong thư mục gốc repo với tổng quan dự án, phiên bản tech stack và các ràng buộc cứng toàn cục
-2. Thêm `ARCHITECTURE.md` trong mỗi thư mục microservice mô tả trách nhiệm, giao diện và phụ thuộc
-3. Tạo `CONSTRAINTS.md` tập trung với các ràng buộc cứng bằng ngôn ngữ "PHẢI/KHÔNG ĐƯỢC" rõ ràng
-4. Thêm `PROGRESS.md` trong mỗi thư mục dịch vụ theo dõi trạng thái công việc hiện tại
+チームは次のように移行しました。
+1. `AGENTS.md` を repo ルートに作成し、プロジェクト概要、tech stack のバージョン、グローバルな厳格制約を記載した
+2. 各 microservice ディレクトリに `ARCHITECTURE.md` を追加し、責務、インターフェース、依存関係を説明した
+3. 明確な「MUST/MUST NOT」表現で、厳格な制約をまとめた `CONSTRAINTS.md` を作成した
+4. 各サービスディレクトリに `PROGRESS.md` を追加し、現在の作業状態を追跡した
 
-Sau chuyển đổi: cùng agent có thể trả lời tất cả các câu hỏi dự án quan trọng khi khởi động lạnh, và chất lượng hoàn thành tác vụ cải thiện đáng kể.
+移行後は、同じ agent がコールドスタート時に重要なプロジェクト質問すべてに答えられるようになり、タスク完了の品質も大きく改善しました。
 
-## Những Điểm chính cần Nhớ
+## 要点のまとめ
 
-- Kiến thức không có trong repo không tồn tại với agent. Đặt các quyết định quan trọng vào repo là đầu tư harness cơ bản nhất — vẽ bản đồ tốt để không bị lạc.
-- Sử dụng "bài kiểm tra khởi động lạnh" để đánh giá chất lượng repo: một phiên mới có thể trả lời năm câu hỏi cơ bản chỉ sử dụng nội dung repo không?
-- Kiến thức phải ở gần mã, tối giản nhưng đầy đủ, và cập nhật cùng mã. Không phải về viết nhiều tài liệu hơn — mà là đặt thông tin vào đúng chỗ.
-- Sử dụng nguyên tắc ACID cho trạng thái agent: commit nguyên tử, xác minh nhất quán, cô lập đồng thời, kiến thức quan trọng bền vững.
-- Suy giảm kiến thức là kẻ thù lớn nhất. Tài liệu không đồng bộ với mã nguy hiểm hơn không có tài liệu — nó đưa agent đi theo hướng sai trong khi nghĩ rằng mình đúng.
+- repo にない知識は、agent にとって存在しません。重要な判断を repo に置くことは、最も基本的な harness 投資です。迷わないように、まず地図を整えましょう。
+- `cold-start test` を使って repo の質を評価します。新しいセッションが、repo の内容だけで 5 つの基本質問に答えられるかを確認してください。
+- 知識はコードの近くに、最小限だが十分な形で、コードと一緒に更新されるべきです。重要なのは文書を増やすことではなく、情報を正しい場所に置くことです。
+- agent の状態には ACID の原則を適用します。原子的に commit し、一貫性を検証し、同時実行を分離し、重要な知識を永続化します。
+- 知識の劣化は最大の敵です。コードと同期していない文書は、文書がないより危険です。agent を「正しいと思い込んだまま誤った方向」に導いてしまうからです。
 
-## Đọc thêm
+## 参考資料
 
 - [OpenAI: Harness Engineering](https://openai.com/index/harness-engineering/)
 - [Anthropic: Effective Harnesses for Long-Running Agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
@@ -128,10 +128,10 @@ Sau chuyển đổi: cùng agent có thể trả lời tất cả các câu hỏ
 - [ADR: Architecture Decision Records](https://adr.github.io/)
 - [The Twelve-Factor App](https://12factor.net/)
 
-## Bài tập
+## 演習
 
-1. **Bài kiểm tra khởi động lạnh**: Mở một phiên agent hoàn toàn mới trong dự án của bạn (không có ngữ cảnh lời nói, chỉ nội dung repo). Hỏi nó năm câu hỏi: Hệ thống này là gì? Nó được tổ chức như thế nào? Làm thế nào để chạy nó? Làm thế nào để xác minh nó? Tiến độ hiện tại là gì? Ghi lại những gì nó không thể trả lời, sau đó cải thiện repo cho đến khi nó có thể.
+1. **コールドスタートテスト**: あなたのプロジェクトで、完全に新しい agent セッションを開きます（会話コンテキストはなし、repo の内容のみ）。次の 5 問を投げてください。これは何のシステムか。どう構成されているか。どうやって起動するか。どうやって検証するか。現在の進捗は何か。答えられなかった内容を記録し、答えられるようになるまで repo を改善してください。
 
-2. **Định lượng ngoại hóa kiến thức**: Liệt kê tất cả các quyết định và ràng buộc quan trọng cho công việc phát triển trong dự án của bạn. Đánh dấu mỗi cái là có trong hoặc ngoài repo. Tính khoảng cách hiển thị kiến thức của bạn (tỷ lệ ngoài repo). Lập kế hoạch để đưa nó xuống dưới 10%.
+2. **知識の外部化を定量化する**: あなたのプロジェクト開発に必要な重要な判断と制約をすべて列挙します。それぞれについて、repo 内か repo 外かをマークします。知識可視性ギャップ（repo 外の割合）を計算し、10% 未満にする計画を立てます。
 
-3. **Đánh giá ACID**: Đánh giá quản lý trạng thái dự án của bạn bằng phép loại suy ACID của bài giảng này. Tính nguyên tử — các hoạt động agent có thể được khôi phục sạch không? Nhất quán — có xác minh "trạng thái nhất quán" không? Cô lập — các agent đồng thời có giẫm lên nhau không? Bền vững — tất cả kiến thức xuyên phiên có được lưu trữ không?
+3. **ACID の評価**: この講義の ACID 類推を使って、プロジェクトの状態管理を評価してください。原子性 - agent の作業はきれいにロールバックできるか。一貫性 - 「一貫した状態」を検証できるか。独立性 - 同時実行する agent が互いに干渉しないか。永続性 - セッションをまたぐ知識はすべて保存されているか。

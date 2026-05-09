@@ -1,22 +1,22 @@
-[中文版本 →](../../../zh/projects/project-05-grounded-qa-verification/)
+[中国語版 →](../../../zh/projects/project-05-grounded-qa-verification/)
 
-> Связанные лекции: [Лекция 09. Не давайте агентам объявлять победу слишком рано](./../../lectures/lecture-09-why-agents-declare-victory-too-early/index.md) · [Лекция 10. Только полный прогон пайплайна считается настоящей верификацией](./../../lectures/lecture-10-why-end-to-end-testing-changes-results/index.md)
-> Файлы шаблонов: [templates/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/en/resources/templates/)
+> 関連講義: [Lecture 09. エージェントに勝利宣言を急がせない](./../../lectures/lecture-09-why-agents-declare-victory-too-early/index.md) · [Lecture 10. 本当の検証といえるのは、パイプライン全体を最後まで実行したときだけ](./../../lectures/lecture-10-why-end-to-end-testing-changes-results/index.md)
+> テンプレート: [templates/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/en/resources/templates/)
 
-# Проект 05. Заставьте агента самостоятельно проверять свою работу
+# Project 05. エージェントに自分の作業を自分で検証させる
 
-## Что вы делаете
+## やること
 
-Реализуйте разделение ролей — генератор, который пишет код, evaluator, который ревьюит, и опционально планировщик. Запустите трижды, чтобы измерить эффект каждой добавленной роли.
+コードを書く generator、レビューする evaluator、必要に応じて planner を分離して実装します。3回実行して、追加した各ロールの効果を測定してください。
 
-Выберите содержательную фичу-апгрейд (многоходовой диалог, редизайн панели цитирования или фильтрация документов) и удерживайте её одинаковой во всех запусках.
+多段階の対話、引用パネルの再設計、文書フィルタリングのいずれかを含む、意味のある機能アップグレードを選び、すべての実行で同じ内容を維持してください。
 
-## Инструменты
+## ツール
 
-- Claude Code или Codex
+- Claude Code または Codex
 - Git
 - Node.js + Electron
 
-## Механизм harness
+## harness の仕組み
 
-Самопроверка + Q&A с обоснованием + завершение по доказательствам
+自己検証 + 根拠付き Q&A + 証拠ベースの終了判定

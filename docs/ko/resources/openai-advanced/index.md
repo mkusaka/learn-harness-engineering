@@ -1,20 +1,20 @@
-# OpenAI 고급 팩(Advanced Pack)
+# OpenAI 高度パック(Advanced Pack)
 
-이 폴더는 OpenAI의 "Harness engineering: leveraging Codex in an agent-first world" 문서에서 설명하는 보다 견고한 저장소(repository) 구조를 복사해서 바로 사용할 수 있는 스타터 파일로 패키징한 것입니다.
+このフォルダは、OpenAI の "Harness engineering: leveraging Codex in an agent-first world" で説明されている、より堅牢な repository 構成をそのまま使えるスターターファイルとしてまとめたものです。
 
-기본적인 하네스(harness)가 더 이상 충분하지 않고 다음과 같은 것들이 필요할 때 이 팩을 사용하십시오.
+基本的な harness だけでは不十分で、次のようなものが必要になったときにこのパックを使ってください。
 
-- 라우팅 스타일의 간결한 `AGENTS.md`
-- 저장소 내 지속형 시스템 오브 레코드(system-of-record) 문서
-- 활성 및 완료된 실행 계획(execution plan)
-- 명시적인 제품, 신뢰성(reliability), 보안(security), 프론트엔드 정책 파일
-- 제품 도메인과 아키텍처 계층별 품질 점수 관리
-- 에이전트(agent) 친화적 참고 자료 폴더
-- 아키텍처, 지식 포착(knowledge capture), 런타임 검증을 위한 표준 작업 절차(SOP)
+- ルーティング用の簡潔な `AGENTS.md`
+- リポジトリ内で永続的な system-of-record 文書
+- 有効中と完了済みの execution plan
+- product、reliability、security、frontend の明示的なポリシーファイル
+- 製品ドメインとアーキテクチャ層ごとの品質スコア管理
+- agent に優しい参考資料フォルダ
+- アーキテクチャ、knowledge capture、runtime 検証のための標準作業手順(SOP)
 
-## 포함된 스타터 레이아웃
+## 含まれるスターターレイアウト
 
-[`repo-template/`](./repo-template/index.md) 아래에 있는 스타터 팩은 아래와 같은 구조를 반영합니다.
+[`repo-template/`](./repo-template/index.md) 配下のスターターパックは、次の構成を反映しています。
 
 ```text
 AGENTS.md
@@ -45,29 +45,29 @@ docs/
 └── SECURITY.md
 ```
 
-## 도입 방법
+## 導入方法
 
-1. 저장소가 아직 작다면 최소 팩(minimal pack)부터 시작하십시오.
-2. 더 강한 구조가 필요해지면 [`repo-template/`](./repo-template/index.md)의 파일들을 자신의 저장소에 복사하십시오.
-3. `AGENTS.md`는 짧게 유지하십시오. 이 파일을 깊이 있는 문서들로의 라우터로 취급하되, 백과사전처럼 쓰지 마십시오.
-4. 품질·신뢰성·계획 문서는 별도의 정리 날을 따로 잡지 말고 일상적인 작업의 일부로 업데이트하십시오.
-5. 생성된 산출물(artifact)과 외부 참고 자료를 명시적으로 관리하여 에이전트가 채팅 기록에 의존하지 않고 찾을 수 있도록 하십시오.
+1. リポジトリがまだ小さいなら、まず minimal pack から始めてください。
+2. さらに強い構成が必要になったら、[`repo-template/`](./repo-template/index.md) のファイルを自分のリポジトリにコピーしてください。
+3. `AGENTS.md` は短く保ってください。このファイルは詳細な文書へのルーターとして扱い、百科事典のようには使わないでください。
+4. quality、reliability、plan の文書は、特別な整理日を設けず、日常作業の一部として更新してください。
+5. 生成済みの artifact と外部参考資料を明示的に管理し、agent がチャット履歴に頼らず見つけられるようにしてください。
 
-## SOP 라이브러리
+## SOP ライブラリ
 
-[`sops/`](./sops/index.md) 폴더는 원문 문서의 다이어그램을 단계별 운영 절차(표준 작업 절차, SOP)로 변환한 것입니다.
+[`sops/`](./sops/index.md) フォルダは、原文の図解を段階的な運用手順(standard operating procedure, SOP)に変換したものです。
 
-- 계층형 도메인 아키텍처(layered domain architecture) 설정
-- 보이지 않는 지식을 저장소에 인코딩하기
-- 로컬 관측 가능성(observability) 스택과 피드백 루프(feedback loop) 워크플로우
-- UI 작업을 위한 Chrome DevTools 검증 루프(validation loop)
+- layered domain architecture の設定
+- 暗黙の知識をリポジトリにエンコードすること
+- ローカル observability スタックと feedback loop のワークフロー
+- UI 作業のための Chrome DevTools 検証ループ
 
-## 설계 원칙
+## 設計原則
 
-- 짧은 진입점, 더 깊이 연결된 문서들
-- 시스템 오브 레코드로서의 저장소
-- 기계적 검사가 기억에 의존하는 규칙보다 낫다
-- 계획과 품질 이력은 코드 옆에 존재한다
-- 정리와 단순화는 일급(first-class) 책임이다
+- 短い入口と、そこから深くつながる文書
+- system-of-record としてのリポジトリ
+- 機械的な検査は、記憶に頼るルールより優れている
+- plan と quality の履歴はコードの隣に置く
+- 整理と単純化は first-class の責務である
 
-이 팩은 의도적으로 견해가 담겨 있지만, 그럼에도 맹목적으로 복사하지 않고 자신의 프로젝트에 맞게 조정해서 사용해야 합니다.
+このパックには意図的に見解が含まれていますが、それでも盲目的にコピーせず、自分のプロジェクトに合わせて調整して使うべきです。

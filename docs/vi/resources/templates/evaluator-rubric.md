@@ -1,24 +1,24 @@
 # Rubric Evaluator
 
-Sử dụng rubric này sau khi triển khai và trước khi chấp nhận cuối cùng.
+この rubric は、実装後かつ最終承認の前に使用してください。
 
-| Hạng mục | Câu hỏi | Điểm (0-2) | Ghi chú |
+| 項目 | 質問 | 点数 (0-2) | 備考 |
 | --- | --- | --- | --- |
-| Tính đúng đắn | Hành vi đã triển khai có khớp với tính năng được yêu cầu không? |  |  |
-| Xác minh | Các kiểm tra bắt buộc có thực sự chạy, với bằng chứng không? |  |  |
-| Kỷ luật phạm vi | Phiên có ở trong phạm vi tính năng đã chọn không? |  |  |
-| Độ tin cậy | Kết quả có tồn tại qua khởi động lại hoặc chạy lại mà không cần sửa chữa không? |  |  |
-| Khả năng bảo trì | Mã và tài liệu có đủ rõ ràng cho phiên tiếp theo không? |  |  |
-| Sẵn sàng bàn giao | Một phiên mới có thể tiếp tục công việc chỉ từ các artifact repo không? |  |  |
+| 正確性 | 実装された動作は要求された機能と一致していますか? |  |  |
+| 検証 | 必須のテストは実際に実行され、証拠がありますか? |  |  |
+| 範囲の厳守 | セッションは選択した機能の範囲内に収まっていますか? |  |  |
+| 信頼性 | 結果は、再起動や再実行をしても修正なしで維持されますか? |  |  |
+| 保守性 | 次のセッションに向けて、コードとドキュメントは十分に分かりやすいですか? |  |  |
+| 引き継ぎ準備 | 新しいセッションは、repo の artifact だけで作業を続けられますか? |  |  |
 
-## Kết luận
+## 結論
 
-- Chấp nhận
-- Sửa đổi
-- Chặn
+- 承認
+- 要修正
+- 保留
 
-## Hành động Tiếp theo Bắt buộc
+## 必須の次のアクション
 
-- Bằng chứng còn thiếu:
-- Sửa chữa bắt buộc:
-- Kích hoạt review tiếp theo:
+- 不足している証拠:
+- 必須の修正:
+- 次回レビューの起動:

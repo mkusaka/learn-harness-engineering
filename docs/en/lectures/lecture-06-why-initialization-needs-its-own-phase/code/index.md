@@ -1,8 +1,8 @@
-# Code for Lecture 06
+# Lecture 06 のコード
 
-Use this folder for examples of:
+このフォルダには、次の例を入れてください:
 
-- initializer outputs
-- init scripts
-- progress files
-- first-run scaffolding
+- initializer の出力
+- init スクリプト
+- progress ファイル
+- 初回実行用の scaffolding

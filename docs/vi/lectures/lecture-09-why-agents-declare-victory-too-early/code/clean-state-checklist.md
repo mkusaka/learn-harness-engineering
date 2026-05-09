@@ -1,6 +1,6 @@
-# Danh sách Kiểm tra Trạng thái Sạch
+# クリーンな状態のチェックリスト
 
-- Ứng dụng khởi động mà không cần sửa chữa thủ công
-- Tiến độ hiện tại được ghi lại
-- Không có bước import hoặc indexing làm dở nào còn chưa được ghi lại
-- Agent tiếp theo có thể chạy đường dẫn khởi động và xác minh chuẩn ngay lập tức
+- アプリケーションが手動の修正なしで起動する
+- 現在の進捗が記録されている
+- import や indexing の途中段階が記録漏れのまま残っていない
+- 次の agent が起動手順を実行し、すぐに正常性を確認できる

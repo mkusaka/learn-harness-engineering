@@ -1,8 +1,8 @@
-# Mã cho Bài 12
+# 第12講のコード
 
-Sử dụng thư mục này cho các ví dụ về:
+このディレクトリは、次の例に使います。
 
-- các slice benchmark
-- tác vụ dọn dẹp
-- các ví dụ giảm entropy
-- các lần chạy harness có thể lặp lại
+- slice benchmark
+- クリーンアップ作業
+- entropy を減らす例
+- 再現可能な harness 実行

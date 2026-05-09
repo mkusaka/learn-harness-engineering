@@ -1,54 +1,54 @@
-# Claude Progress -- Project 03
+# Claude の進捗 -- Project 03
 
-## Session Log
+## セッション記録
 
-### Session 1: 2026-03-30 (10:00 - 13:00)
+### セッション 1: 2026-03-30 (10:00 - 13:00)
 
-**Goal**: Implement all four P3 features following one-feature-at-a-time policy.
+**目的**: 1度に1つの機能を進める方針に従い、P3 の4つの機能をすべて実装する。
 
-#### Feature: metadata-extraction (10:00 - 10:45)
+#### 機能: metadata-extraction (10:00 - 10:45)
 
-- Added `DocumentMetadata` interface to `src/shared/types.ts` with wordCount, lineCount, fileType, paragraphCount, charCount fields.
-- Added `metadata?: DocumentMetadata` field to the `Document` interface.
-- Implemented `DocumentService.extractMetadata(content: string, filename: string): DocumentMetadata` -- computes all five metrics from raw content.
-- Updated `DocumentService.importDocument()` to call `extractMetadata()` and attach metadata to the new document.
-- Updated `DocumentDetail` component to display metadata section (word count, line count, file type, paragraph count, char count).
-- Verified: `npm run check` passes. Imported a document and confirmed metadata appears in detail view.
-- Updated `feature_list.json`: metadata-extraction -> pass.
+- `src/shared/types.ts` に `DocumentMetadata` インターフェースを追加し、`wordCount`、`lineCount`、`fileType`、`paragraphCount`、`charCount` フィールドを定義した。
+- `Document` インターフェースに `metadata?: DocumentMetadata` フィールドを追加した。
+- `DocumentService.extractMetadata(content: string, filename: string): DocumentMetadata` を実装し、生のコンテンツから5つの指標をすべて算出するようにした。
+- `DocumentService.importDocument()` を更新し、`extractMetadata()` を呼び出して新しいドキュメントにメタデータを付与するようにした。
+- `DocumentDetail` コンポーネントを更新し、メタデータのセクション（単語数、行数、ファイル種類、段落数、文字数）を表示するようにした。
+- 確認: `npm run check` は通過した。ドキュメントをインポートし、詳細ビューにメタデータが表示されることを確認した。
+- `feature_list.json` を更新: metadata-extraction -> pass。
 
-#### Feature: document-chunking (10:45 - 11:30)
+#### 機能: document-chunking (10:45 - 11:30)
 
-- Confirmed `IndexingService.chunkDocument()` was already implemented in shared code -- splits on paragraph boundaries, merges until ~500 chars.
-- Verified chunk creation stores to `chunks/<docId>.json` via PersistenceService.
-- Updated `IndexingService.startIndexing()` to update document status from 'imported' to 'indexed' after successful chunking.
-- Verified: indexed a document and confirmed `chunks/` directory contains the chunk file.
-- Updated `feature_list.json`: document-chunking -> pass.
+- 共有コード内で `IndexingService.chunkDocument()` はすでに実装済みであることを確認した。段落境界で分割し、約500文字になるまで結合する。
+- チャンクの作成が PersistenceService 経由で `chunks/<docId>.json` に保存されることを確認した。
+- `IndexingService.startIndexing()` を更新し、チャンク化が成功したあとにドキュメントのステータスを 'imported' から 'indexed' に更新するようにした。
+- ドキュメントをインデックス化し、`chunks/` ディレクトリにチャンクファイルが存在することを確認した。
+- `feature_list.json` を更新: document-chunking -> pass。
 
-#### Feature: indexing-status-ui (11:30 - 12:15)
+#### 機能: indexing-status-ui (11:30 - 12:15)
 
-- Extended `AppStatus` interface in `src/shared/types.ts` with `indexedCount: number` and `totalChunks: number`.
-- Updated `IndexingService.getStatus()` to return indexedCount and totalChunks.
-- Enhanced `StatusBar` component to display indexed document count (e.g., "2/3 indexed") and total chunk count.
-- Added color-coded status dot: gray for idle, yellow for indexing, green for ready, red for error.
-- App.tsx refreshes status after document import and indexing operations.
-- Verified: StatusBar updates correctly after importing and indexing documents.
-- Updated `feature_list.json`: indexing-status-ui -> pass.
+- `src/shared/types.ts` の `AppStatus` インターフェースを拡張し、`indexedCount: number` と `totalChunks: number` を追加した。
+- `IndexingService.getStatus()` を更新し、`indexedCount` と `totalChunks` を返すようにした。
+- `StatusBar` コンポーネントを強化し、インデックス化済みドキュメント数（例: "2/3 indexed"）と総チャンク数を表示するようにした。
+- 色分けされたステータスドットを追加した。待機中はグレー、インデックス化中は黄色、準備完了は緑、エラーは赤。
+- `App.tsx` は、ドキュメントのインポートとインデックス化操作のあとにステータスを再取得する。
+- 確認: ドキュメントのインポートとインデックス化のあとに、`StatusBar` が正しく更新されることを確認した。
+- `feature_list.json` を更新: indexing-status-ui -> pass。
 
-#### Feature: grounded-qa (12:15 - 13:00)
+#### 機能: grounded-qa (12:15 - 13:00)
 
-- Confirmed `QaService.ask()` retrieves chunks via `IndexingService.getAllChunks()`.
-- Verified keyword-based scoring: tokenizes question, filters short words, scores chunks by overlap.
-- Top 2 chunks returned as citations with documentId, documentTitle, chunkIndex, excerpt (first 200 chars).
-- Mock answer patterns generate contextual responses for common topics.
-- Confidence scores: 0.85 with citations, 0.30 without.
-- Updated `main.ts` to pass `indexingService` reference to `QaService` constructor.
-- Verified: asked questions about imported documents and received grounded answers with citations.
-- Updated `feature_list.json`: grounded-qa -> pass.
+- `QaService.ask()` が `IndexingService.getAllChunks()` 経由でチャンクを取得することを確認した。
+- キーワードベースのスコアリングを確認した。質問をトークン化し、短い単語を除外して、重なり具合でチャンクを採点する。
+- 上位2件のチャンクが、`documentId`、`documentTitle`、`chunkIndex`、`excerpt`（先頭200文字）付きの引用として返される。
+- モックの回答パターンにより、一般的なトピックに対する文脈に沿った応答が生成される。
+- 信頼度スコアは、引用ありで 0.85、引用なしで 0.30。
+- `main.ts` を更新し、`indexingService` の参照を `QaService` のコンストラクタに渡すようにした。
+- 確認: インポートしたドキュメントについて質問し、引用付きの根拠ある回答が返ることを確認した。
+- `feature_list.json` を更新: grounded-qa -> pass。
 
-#### Wrap-up
+#### まとめ
 
-- Updated `docs/ARCHITECTURE.md` with chunking pipeline and Q&A flow sections.
-- Updated `docs/PRODUCT.md` with metadata extraction and enhanced Q&A descriptions.
-- Filled out `session-handoff.md`.
-- Verified `clean-state-checklist.md` -- all items checked.
-- All 11 features at status "pass".
+- `docs/ARCHITECTURE.md` に、チャンク化パイプラインと Q&A フローのセクションを追加した。
+- `docs/PRODUCT.md` に、メタデータ抽出と強化された Q&A の説明を追加した。
+- `session-handoff.md` を記入した。
+- `clean-state-checklist.md` を確認し、すべての項目にチェックが入っていることを確認した。
+- 11個すべての機能のステータスが "pass" になった。

@@ -46,6 +46,6 @@ if (typeof window !== 'undefined') {
 <div class="redirecting-wrapper">
   <div style="text-align: center;">
     <div class="spinner"></div>
-    <p>Loading...</p>
+    <p>読み込み中...</p>
   </div>
 </div>

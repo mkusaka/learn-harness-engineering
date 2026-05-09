@@ -1,24 +1,24 @@
-[English Version →](../../../en/projects/project-05-grounded-qa-verification/)
+[英語版 →](../../../en/projects/project-05-grounded-qa-verification/)
 
-> 관련 강의: [강의 09. 에이전트가 섣불리 완료를 선언하지 않도록 막기](./../../lectures/lecture-09-why-agents-declare-victory-too-early/index.md) · [강의 10. 완전한 파이프라인 실행만이 진정한 검증으로 인정됩니다](./../../lectures/lecture-10-why-end-to-end-testing-changes-results/index.md)
-> 템플릿 파일: [templates/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/en/resources/templates/)
+> 関連講義: [講義 09. エージェントが早まって完了を宣言しないようにする](./../../lectures/lecture-09-why-agents-declare-victory-too-early/index.md) · [講義 10. 完全なパイプライン実行だけが真の検証として認められる](./../../lectures/lecture-10-why-end-to-end-testing-changes-results/index.md)
+> テンプレートファイル: [templates/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/en/resources/templates/)
 
-# 프로젝트 05. 에이전트가 자신의 작업을 검증하도록 만들기
+# プロジェクト 05. エージェントに自分の作業を検証させる
 
-## 해야 할 일
+## やること
 
-역할 분리(role separation)를 구현합니다. 구현을 담당하는 생성자(generator), 검토를 담당하는 평가자(evaluator), 그리고 선택적으로 플래너(planner)를 만듭니다. 각 역할이 추가될 때마다 효과를 측정하기 위해 세 번 실행합니다.
+役割分担(role separation)を実装します。実装を担当する generator、レビューを担当する evaluator、そして必要に応じて planner を作成します。各役割を追加するたびに、効果を測定するために3回実行します。
 
-에이전트가 구현과 검증을 동시에 담당하면 자신의 오류를 스스로 발견하기 어렵습니다. 독립된 평가자 역할을 분리하면 환각(hallucination)과 섣부른 완료 선언을 방지하고, 근거 기반(grounded) Q&A의 정확도를 높일 수 있습니다.
+エージェントが実装と検証を同時に担うと、自分の誤りを自力で見つけにくくなります。独立した evaluator の役割を分離すれば、hallucination や早すぎる完了宣言を防ぎ、grounded Q&A の精度を高められます。
 
-실질적인 기능 업그레이드(멀티턴 대화, 인용 패널 재설계, 또는 문서 필터링)를 선택하고 모든 실행에서 동일하게 유지합니다.
+実質的な機能アップグレード（マルチターン対話、引用パネルの再設計、またはドキュメントフィルタリング）を選び、すべての実行で同じ内容を維持します。
 
-## 도구
+## ツール
 
-- Claude Code 또는 Codex
+- Claude Code または Codex
 - Git
 - Node.js + Electron
 
-## 하네스 메커니즘
+## ハーネスメカニズム
 
-자기 검증(self-verification) + 근거 기반 Q&A + 증거 기반 완료(evidence-based completion)
+自己検証(self-verification) + grounded Q&A + evidence-based completion

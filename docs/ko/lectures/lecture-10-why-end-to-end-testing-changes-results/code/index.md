@@ -1,8 +1,8 @@
-# 강의 10 코드
+# 講義 10 コード
 
-이 폴더는 다음 항목의 예제에 사용합니다.
+このフォルダは、次の項目の例として使用します。
 
-- 아키텍처 제약(architecture constraints)
-- 구조적 테스트(structural tests)
-- 불변성 검사(taste invariants)
-- 수정 지향 린트 메시지(remediation-oriented lint messages)
+- アーキテクチャ制約(architecture constraints)
+- 構造的テスト(structural tests)
+- 不変性チェック(taste invariants)
+- 修正指向の lint メッセージ(remediation-oriented lint messages)

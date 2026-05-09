@@ -1,14 +1,14 @@
-# Reliability -- Observability, Clean State, and Benchmarking
+# 信頼性 -- 可観測性、クリーン状態、ベンチマーク
 
-## Structured Logging
+## 構造化ログ
 
-### Overview
+### 概要
 
-All services in the application emit structured JSON log entries. This enables runtime debugging, post-hoc analysis, and automated monitoring of application behavior.
+アプリケーション内のすべてのサービスは、構造化された JSON ログエントリを出力します。これにより、実行時のデバッグ、事後分析、アプリケーション挙動の自動監視が可能になります。
 
-### Log Format
+### ログ形式
 
-Every log entry is a single-line JSON object:
+各ログエントリは 1 行の JSON オブジェクトです。
 
 ```json
 {
@@ -24,109 +24,109 @@ Every log entry is a single-line JSON object:
 }
 ```
 
-### Log Levels
+### ログレベル
 
-| Level | When to Use | Example |
+| レベル | 使用場面 | 例 |
 |-------|-------------|---------|
-| DEBUG | Routine data access, file reads | "Retrieved chunks for document" |
-| INFO | Significant events | "Document imported", "Batch indexing complete" |
-| WARN | Missing but non-critical data | "Content not found for document" |
-| ERROR | Failures | "File not found during import" |
+| DEBUG | 日常的なデータアクセス、ファイル読み込み | "Document の chunk を取得しました" |
+| INFO | 重要なイベント | "Document imported", "Batch indexing complete" |
+| WARN | 欠落しているが致命的ではないデータ | "Content not found for document" |
+| ERROR | 失敗 | "File not found during import" |
 
-### Service Logging Points
+### サービスごとのログ出力箇所
 
 **PersistenceService:**
-- Directory initialization
-- File read/write operations (DEBUG)
-- Clean state reset (WARN)
+- ディレクトリの初期化
+- ファイルの読み書き操作（DEBUG）
+- クリーン状態へのリセット（WARN）
 
 **DocumentService:**
-- Document import with size and metadata
-- Document deletion with remaining count
-- Document metadata updates
-- File not found errors
-- Size limit violations
+- サイズとメタデータを伴う Document の import
+- 残り件数を伴う Document の削除
+- Document メタデータの更新
+- ファイルが見つからないエラー
+- サイズ制限違反
 
 **IndexingService:**
-- Single and batch indexing start
-- Per-document indexing progress
-- Batch completion with throughput metrics
-- Content not found warnings
+- 単一およびバッチ indexing の開始
+- Document ごとの indexing 進捗
+- スループット指標を伴うバッチ完了
+- Content が見つからない警告
 
 **QaService:**
-- Question processing start
-- Answer generation with confidence and duration
-- Feedback submission
-- History clear
+- 質問処理の開始
+- confidence と duration を伴う回答生成
+- フィードバック送信
+- 履歴の消去
 
 **IPC Handlers:**
-- Every channel invocation (INFO for mutations, DEBUG for reads)
-- All registered channels at startup
+- すべてのチャネル呼び出し（変更系は INFO、読み取り系は DEBUG）
+- 起動時に登録されているすべてのチャネル
 
-### Configuring Log Level
+### ログレベルの設定
 
-Set the `LOG_LEVEL` environment variable:
+`LOG_LEVEL` 環境変数を設定します。
 ```bash
-LOG_LEVEL=INFO npm run dev  # Only INFO, WARN, ERROR
-LOG_LEVEL=WARN npm run dev  # Only WARN and ERROR
-LOG_LEVEL=ERROR npm run dev # Only ERROR
+LOG_LEVEL=INFO npm run dev  # INFO, WARN, ERROR のみ
+LOG_LEVEL=WARN npm run dev  # WARN と ERROR のみ
+LOG_LEVEL=ERROR npm run dev # ERROR のみ
 ```
 
-Default: `DEBUG` (all messages).
+デフォルト: `DEBUG`（すべてのメッセージ）。
 
-## Clean State Management
+## クリーン状態の管理
 
-### Purpose
+### 目的
 
-Clean state management ensures that testing and benchmarking start from a known, empty state. This prevents accumulated data from affecting test results or causing unexpected behavior.
+クリーン状態の管理は、テストとベンチマークを既知の空の状態から開始できるようにします。これにより、蓄積したデータがテスト結果に影響したり、予期しない挙動を引き起こしたりするのを防げます。
 
-### Reset Mechanism
+### リセットの仕組み
 
-The application provides a `RESET_DATA` IPC channel that:
+アプリケーションには、次の処理を行う `RESET_DATA` IPC チャネルがあります。
 
-1. Removes the entire data directory (`knowledge-base-data/`)
-2. Recreates the directory structure
-3. Returns a success response
-4. The renderer clears all React state and refreshes
+1. データディレクトリ全体（`knowledge-base-data/`）を削除する
+2. ディレクトリ構造を再作成する
+3. 成功レスポンスを返す
+4. renderer 側で React の state をすべてクリアして再読み込みする
 
-### When to Use Clean State
+### クリーン状態を使う場面
 
-- Before running benchmarks
-- After a debugging session
-- Before testing a new feature
-- When the data directory becomes corrupted
+- ベンチマークを実行する前
+- デバッグ作業の後
+- 新機能をテストする前
+- データディレクトリが破損したとき
 
-### Clean State Verification
+### クリーン状態の確認
 
-Use the `clean-state-checklist.md` to verify:
+`clean-state-checklist.md` を使って、次を確認します。
 - Build passes without errors
-- Architecture boundaries are respected
-- Runtime behavior is correct
-- Logging output is as expected
-- Data integrity is maintained
+- アーキテクチャの境界が守られている
+- 実行時の挙動が正しい
+- ログ出力が期待どおりである
+- データの整合性が維持されている
 
-## Benchmarking
+## ベンチマーク
 
-### Overview
+### 概要
 
-The `scripts/benchmark.sh` script measures application performance across key operations. It uses file-based simulation to test the services layer without launching the Electron window.
+`scripts/benchmark.sh` スクリプトは、主要な操作にわたってアプリケーションの性能を測定します。Electron ウィンドウを起動せず、ファイルベースのシミュレーションで services 層をテストします。
 
-### Benchmark Tasks
+### ベンチマーク対象
 
-| Task | What It Measures | Target |
+| タスク | 測定内容 | 目標 |
 |------|------------------|--------|
-| `import` | Document import throughput | 3 files in <1s |
-| `index` | Batch indexing speed | 14 chunks in <1s |
-| `query` | Q&A response latency | <500ms per question |
-| `verify` | Data integrity checks | 0 errors |
+| `import` | Document import のスループット | 3 ファイルを 1 秒未満 |
+| `index` | バッチ indexing 速度 | 14 chunks を 1 秒未満 |
+| `query` | Q&A の応答レイテンシ | 1 問あたり 500ms 未満 |
+| `verify` | データ整合性チェック | エラー 0 件 |
 
-### Running Benchmarks
+### ベンチマークの実行
 
 ```bash
 bash scripts/benchmark.sh
 ```
 
-Output example:
+出力例:
 ```
 === Benchmark Results ===
 [import] 3 files: 120ms (25.0 files/sec)
@@ -136,37 +136,37 @@ Output example:
 === Summary: 4/4 tasks passed ===
 ```
 
-### Interpreting Results
+### 結果の見方
 
-- If import is slow: check file size and disk I/O.
-- If indexing is slow: check chunk size and paragraph boundaries.
-- If query is slow: check number of chunks and keyword matching.
-- If verify fails: run `scripts/cleanup-scanner.sh` to identify issues.
+- import が遅い場合は、ファイルサイズとディスク I/O を確認します。
+- indexing が遅い場合は、chunk サイズと段落の境界を確認します。
+- query が遅い場合は、chunk 数とキーワード一致を確認します。
+- verify に失敗した場合は、`scripts/cleanup-scanner.sh` を実行して問題箇所を特定します。
 
-## Cleanup Scanner
+## クリーンアップスキャナ
 
-### Overview
+### 概要
 
-The `scripts/cleanup-scanner.sh` script checks the data directory for stale or inconsistent artifacts.
+`scripts/cleanup-scanner.sh` スクリプトは、古い、または不整合な成果物がないかデータディレクトリを確認します。
 
-### Checks Performed
+### チェック内容
 
-| Check | Description |
+| チェック | 説明 |
 |-------|-------------|
-| Orphaned content files | Content files without a matching document in metadata |
-| Dangling chunk files | Chunk files without a matching index entry |
-| Missing content files | Documents in metadata without a content file |
-| Inconsistent metadata | Documents marked as indexed without chunk files |
-| Empty data files | JSON files with empty arrays that should have data |
-| Stale Q&A history | History entries referencing deleted documents |
+| 孤立した content ファイル | メタデータに対応する document がない content ファイル |
+| ぶら下がった chunk ファイル | 対応する index エントリがない chunk ファイル |
+| 不足している content ファイル | content ファイルがないメタデータ上の document |
+| 不整合なメタデータ | chunk ファイルがないのに indexed とマークされている document |
+| 空のデータファイル | 本来データがあるはずなのに空配列になっている JSON ファイル |
+| 古い Q&A 履歴 | 削除済み document を参照している履歴エントリ |
 
-### Running the Scanner
+### スキャナの実行
 
 ```bash
 bash scripts/cleanup-scanner.sh
 ```
 
-Output example:
+出力例:
 ```
 === Cleanup Scanner ===
 [OK] No orphaned content files

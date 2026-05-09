@@ -1,15 +1,14 @@
 # AGENTS.md
 
-## Bắt đầu Tại đây
+## まず最初に
 
-- Đọc `docs/ARCHITECTURE.md`
-- Đọc `docs/PRODUCT.md`
-- Sử dụng `npm run dev` để khởi động ứng dụng
-- Sử dụng `npm run check` trước khi đánh dấu công việc hoàn thành
+- `docs/ARCHITECTURE.md` を読む
+- `docs/PRODUCT.md` を読む
+- `npm run dev` を使ってアプリケーションを起動する
+- 作業完了と見なす前に `npm run check` を実行する
 
-## Quy tắc Cứng
+## 厳格なルール
 
-- Không thay đổi ranh giới Electron main/preload/renderer mà không đọc
-  `docs/ARCHITECTURE.md`
-- Không đánh dấu tính năng hoàn thành mà không có xác minh
-- Để lại trạng thái sạch cho phiên tiếp theo
+- `docs/ARCHITECTURE.md` を読まずに Electron の main/preload/renderer の境界を変更しない
+- 検証なしに機能完了を宣言しない
+- 次のセッションのためにクリーンな状態を残す

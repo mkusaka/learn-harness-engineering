@@ -1,41 +1,41 @@
-# SOP: Vòng lặp Phản hồi Observability
+# SOP: Observability フィードバックループ
 
-Sử dụng SOP này khi debug chậm, agent tiếp tục tuyên bố thành công mà không có bằng chứng, hoặc hành vi runtime khó kiểm tra hơn bản thân mã.
+デバッグが遅いとき、agent が証拠なしに成功を主張し続けるとき、あるいは runtime の挙動がコード自体よりも検証しづらいときに、この SOP を使います。
 
-## Mục tiêu
+## 目的
 
-Cung cấp cho agent một vòng lặp phản hồi cục bộ qua log, metrics, trace và workload có thể chạy để nó có thể lý luận từ thực thi, không chỉ từ kiểm tra mã.
+log、metrics、trace、そして実行可能な workload を通じて、agent にローカルなフィードバックループを与え、コードの確認だけでなく実行結果からも推論できるようにします。
 
-## Stack Tối thiểu
+## 最小限のスタック
 
-- ứng dụng phát ra các log có cấu trúc
-- ứng dụng phát ra metrics và trace khi khả thi
-- lớp fan-out hoặc thu thập cục bộ
-- giao diện truy vấn cho log, metrics và trace
-- workload hoặc user journey có thể lặp lại để chạy lại sau mỗi thay đổi
+- 構造化 log を出力するアプリケーション
+- 可能であれば metrics と trace を出力するアプリケーション
+- ローカルの fan-out 層または収集層
+- log、metrics、trace を問い合わせるための interface
+- 各変更後に再実行できる、再現可能な workload または user journey
 
-## SOP Thực thi
+## 実行 SOP
 
-1. Định nghĩa các journey runtime vàng quan trọng nhất.
-2. Thêm các log có cấu trúc vào khởi động và đường dẫn quan trọng.
-3. Thêm metrics cho độ trễ, số lần thất bại hoặc độ sâu hàng đợi khi hữu ích.
-4. Thêm trace hoặc marker timing cho các luồng chậm hoặc nhiều bước.
-5. Làm cho các tín hiệu có thể truy vấn từ môi trường dev cục bộ.
-6. Cung cấp cho agent một workload hoặc kịch bản có thể lặp lại để chạy lại.
-7. Yêu cầu vòng lặp: truy vấn -> tương quan -> lý luận -> triển khai -> khởi động lại -> chạy lại -> xác minh.
+1. 重要な golden runtime journey を定義します。
+2. 起動処理と重要な path に構造化 log を追加します。
+3. 有用な場合は、latency、failure count、queue depth の metrics を追加します。
+4. 遅い処理や複数段階の flow には trace または timing marker を追加します。
+5. これらの signal をローカルの dev 環境から問い合わせ可能にします。
+6. 各変更後に再実行できる workload または scenario を agent に用意します。
+7. ループを要求します: query -> correlate -> reason -> implement -> restart -> rerun -> verify。
 
-## Danh sách Kiểm tra Phiên Debug
+## Debug セッションのチェックリスト
 
-- Điều gì đã thất bại?
-- Tín hiệu nào chứng minh sự thất bại?
-- Lớp nào sở hữu sự thất bại?
-- Điều gì thay đổi sau khi sửa?
-- Ứng dụng có khởi động lại sạch sẽ không?
-- Cùng workload có vượt qua sau khi chạy lại không?
+- 何が失敗しましたか?
+- 失敗を裏付ける signal はどれですか?
+- どの layer がその失敗の責任を持っていますか?
+- 修正後に何が変わりましたか?
+- application は clean に再起動できましたか?
+- 同じ workload は rerun 後に成功しましたか?
 
-## Định nghĩa Hoàn thành
+## 完了条件
 
-- Agent có thể giải thích một chế độ thất bại từ bằng chứng runtime.
-- Cùng workload có thể được chạy lại sau mỗi thay đổi.
-- Khởi động lại và chạy lại là một phần của vòng lặp tác vụ bình thường.
-- Các tín hiệu độ tin cậy được ghi lại trong `docs/RELIABILITY.md`.
+- agent が runtime の evidence に基づいて failure mode を説明できる。
+- 同じ workload を各変更後に再実行できる。
+- restart と rerun が通常の task loop の一部になっている。
+- reliability signal が `docs/RELIABILITY.md` に記録されている。

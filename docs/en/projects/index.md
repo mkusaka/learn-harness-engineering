@@ -1,23 +1,23 @@
-# Welcome to Projects
+# Projects へようこそ
 
-This is the hands-on section of Learn Harness Engineering. Reading the lectures isn't enough—you need to build the environments yourself and observe how Codex, Claude Code, or other AI agents behave under different rules.
+ここは Learn Harness Engineering の実践編です。講義を読むだけでは不十分で、自分で環境を構築し、Codex、Claude Code、その他の AI エージェントがさまざまなルールのもとでどう振る舞うかを観察する必要があります。
 
-## Project Overview
+## プロジェクト概要
 
-This course features 6 progressive, hands-on projects that teach you how to build a reliable agentic working environment from scratch:
+このコースには、信頼できる agentic な作業環境をゼロから構築する方法を学べる、段階的な 6 つの実践プロジェクトがあります。
 
-1. **Prompt-Only vs. Rules-First**: Compare how an agent performs with just a prompt versus a basic harness.
-2. **Agent-Readable Workspace**: Learn how to structure your repository to make it AI-friendly and establish handoff mechanisms.
-3. **Multi-Session Continuity**: Design state files and initialization scripts so your agent can resume work seamlessly across sessions.
-4. **Runtime Feedback and Scope Control**: Introduce tools that allow the agent to test its own code and correct errors during execution.
-5. **Self-Verification and Role Separation**: Build an independent review mechanism to prevent hallucinations and early declarations of victory.
-6. **Complete Harness (Capstone)**: Assemble a final, observable, end-to-end agent working environment.
+1. **Prompt-Only vs. Rules-First**: プロンプトだけの場合と、基本的なハーネスを使った場合で、エージェントの挙動を比較します。
+2. **Agent-Readable Workspace**: リポジトリを AI にとって扱いやすい形に整理し、引き継ぎの仕組みを作る方法を学びます。
+3. **Multi-Session Continuity**: ステートファイルと初期化スクリプトを設計し、エージェントがセッションをまたいでシームレスに作業を再開できるようにします。
+4. **Runtime Feedback and Scope Control**: エージェントが自分のコードをテストし、実行中にエラーを修正できるツールを導入します。
+5. **Self-Verification and Role Separation**: 幻覚や、早すぎる完了宣言を防ぐための独立したレビュー機構を構築します。
+6. **Complete Harness (Capstone)**: 最終的な、可観測でエンドツーエンドのエージェント作業環境を組み上げます。
 
-## How to Proceed
+## 進め方
 
-Each project folder typically contains:
-- `starter/`: Your starting workspace.
-- `solution/`: A reference implementation (if you get stuck).
-- Task instructions detailing your background and specific goals.
+各プロジェクトフォルダには通常、次のものが含まれます。
+- `starter/`: 作業を始めるためのワークスペースです。
+- `solution/`: 行き詰まったときのための参考実装です。
+- 背景と具体的な目標を説明するタスク指示書です。
 
-Use your preferred AI Coding Agent (e.g., Claude Code, Cursor, Trae) to complete the tasks inside the `starter/` directory.
+お好みの AI コーディングエージェント（たとえば Claude Code、Cursor、Trae）を使って、`starter/` ディレクトリ内のタスクを完了してください。

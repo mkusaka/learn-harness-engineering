@@ -1,56 +1,56 @@
-# Software Design Notes
+# ソフトウェア設計メモ
 
-## Architecture Overview
+## アーキテクチャ概要
 
-The knowledge base application follows a layered architecture pattern with clear separation of concerns. The system is divided into four primary layers: the main process, preload scripts, the renderer layer, and services.
+このナレッジベースアプリケーションは、責務が明確に分離されたレイヤードアーキテクチャを採用しています。システムは主に4つのレイヤー、つまり main process、preload scripts、renderer layer、services に分かれています。
 
 ## Main Process
 
-The main process is responsible for window management, IPC handler registration, and lifecycle management. It serves as the entry point for the Electron application and coordinates between the operating system and the renderer process.
+main process は、ウィンドウ管理、IPC ハンドラの登録、ライフサイクル管理を担当します。Electron アプリケーションのエントリポイントとして機能し、オペレーティングシステムと renderer process の間を調整します。
 
-Key responsibilities:
-- BrowserWindow creation and configuration
-- IPC channel registration
-- Service initialization and dependency injection
-- Application lifecycle events (ready, window-all-closed, activate)
+主な責務:
+- `BrowserWindow` の作成と設定
+- IPC チャネルの登録
+- サービスの初期化と依存性注入
+- アプリケーションのライフサイクルイベント (`ready`, `window-all-closed`, `activate`)
 
 ## Preload Layer
 
-The preload script acts as a secure bridge between the main and renderer processes. It uses Electron's contextBridge to expose a typed API to the renderer without granting full Node.js access.
+preload script は、main process と renderer process の間にある安全な橋渡し役です。Electron の `contextBridge` を使って、Node.js への完全なアクセス権を与えずに型付き API を renderer に公開します。
 
-The exposed API is organized into three namespaces:
-- `documents` - CRUD operations for document management
-- `indexing` - Document chunking and index management
-- `qa` - Question answering with citations
+公開される API は3つの名前空間に整理されています:
+- `documents` - ドキュメント管理の CRUD 操作
+- `indexing` - ドキュメントの分割とインデックス管理
+- `qa` - 引用付きの質問応答
 
 ## Renderer Layer
 
-The renderer uses React with TypeScript to build the user interface. Components communicate exclusively through the preload bridge API, never directly accessing Node.js APIs or the filesystem.
+renderer は、React と TypeScript を使ってユーザーインターフェースを構築します。コンポーネントは preload bridge API を通じてのみ通信し、Node.js API やファイルシステムへ直接アクセスすることはありません。
 
 ## Services Layer
 
-Business logic lives in service classes that run in the main process:
-- `PersistenceService` - Filesystem read/write operations
-- `DocumentService` - Document import, storage, and retrieval
-- `IndexingService` - Text chunking and index building
-- `QaService` - Mock Q&A with citation support
-- `Logger` - Structured JSON logging for runtime observability
+ビジネスロジックは、main process で動作する service クラスに実装されています:
+- `PersistenceService` - ファイルシステムの読み書き
+- `DocumentService` - ドキュメントの取り込み、保存、取得
+- `IndexingService` - テキストの分割とインデックス作成
+- `QaService` - 引用対応のモック Q&A
+- `Logger` - ランタイムの可観測性のための構造化 JSON ロギング
 
 ## Data Flow
 
-1. User action in renderer triggers IPC call via preload bridge
-2. IPC handler in main process delegates to appropriate service
-3. Service performs business logic using persistence layer
-4. Result flows back through IPC to renderer for display
-5. Each step is logged with structured JSON output for debugging
+1. renderer でのユーザー操作が、preload bridge 経由で IPC 呼び出しを発生させます
+2. main process の IPC ハンドラが、適切な service に処理を委譲します
+3. service が persistence layer を使ってビジネスロジックを実行します
+4. 結果は IPC を通じて renderer に戻され、画面に表示されます
+5. 各ステップは、デバッグ用に構造化 JSON でログ出力されます
 
 ## Observability
 
-All services emit structured log entries with:
-- ISO 8601 timestamps
-- Log level (DEBUG, INFO, WARN, ERROR)
-- Service name tag
-- Human-readable message
-- Optional structured data payload
+すべての service は、次の項目を含む構造化ログエントリを出力します:
+- ISO 8601 形式のタイムスタンプ
+- ログレベル (`DEBUG`, `INFO`, `WARN`, `ERROR`)
+- service 名タグ
+- 人間が読めるメッセージ
+- 任意の構造化データペイロード
 
-This enables runtime debugging and post-hoc analysis of application behavior.
+これにより、実行時のデバッグと、後からのアプリケーション動作分析が可能になります。

@@ -1,24 +1,24 @@
 # FRONTEND.md
 
-This file defines stable frontend expectations so agents do not invent UI
-patterns unpredictably.
+このファイルは、エージェントが UI パターンを勝手に
+不安定に発明しないようにするための、安定したフロントエンド要件を定義します。
 
 ## UI Principles
 
-- Optimize for clarity before novelty.
-- Keep interaction flows discoverable and restartable.
-- Prefer a small number of reusable components over one-off variants.
-- Accessibility checks are part of normal verification, not polish work.
+- 新規性よりも、まず分かりやすさを優先してください。
+- 操作フローは見つけやすく、やり直しやすい状態を保ってください。
+- その場限りの派生より、再利用可能な少数のコンポーネントを優先してください。
+- アクセシビリティ確認は、仕上げ作業ではなく通常の検証の一部です。
 
 ## Guardrails
 
-- Document the design system or component library in `docs/references/`.
-- Record key user-facing states: empty, loading, success, error, retry.
-- Keep copy, keyboard behavior, and visual hierarchy consistent across flows.
-- When a UI bug is fixed, add or update the matching validation step.
+- デザインシステムまたはコンポーネントライブラリは `docs/references/` に記録してください。
+- 空、読み込み中、成功、エラー、再試行といった、主要なユーザー向け状態を記録してください。
+- 文言、キーボード操作、視覚的な階層は、フロー全体で一貫性を保ってください。
+- UI の不具合を修正したら、対応する検証手順を追加または更新してください。
 
 ## Verification Expectations
 
-- Capture evidence for critical user journeys.
-- Record browser or runtime validation steps in the relevant plan.
-- If visual regressions are common, standardize screenshot or DOM checks.
+- 重要なユーザージャーニーについては、証跡を残してください。
+- ブラウザまたは実行時の検証手順は、該当する plan に記録してください。
+- 視覚的な回帰が起こりやすい場合は、スクリーンショット検証や DOM 検証を標準化してください。

@@ -1,23 +1,23 @@
 # FRONTEND.md
 
-Tệp này định nghĩa các kỳ vọng frontend ổn định để agent không phát minh ra các mẫu UI một cách không thể đoán trước.
+このファイルは、エージェントが予測不能に UI パターンをでっち上げないようにするための、安定した frontend の期待値を定義します。
 
-## Nguyên tắc UI
+## UI 原則
 
-- Tối ưu hóa cho sự rõ ràng trước sự mới lạ.
-- Giữ các luồng tương tác có thể khám phá và khởi động lại được.
-- Ưu tiên một số ít component tái sử dụng thay vì các biến thể một lần.
-- Kiểm tra accessibility là một phần của xác minh thông thường, không phải công việc đánh bóng.
+- 目新しさよりも、まず分かりやすさを優先します。
+- インタラクションの流れは、見つけやすく、やり直しやすい状態を保ちます。
+- 使い捨てのバリエーションよりも、少数の再利用可能な component を優先します。
+- accessibility の確認は、仕上げ作業ではなく通常の検証の一部として扱います。
 
-## Guardrail
+## ガードレール
 
-- Ghi lại design system hoặc thư viện component trong `docs/references/`.
-- Ghi lại các trạng thái quan trọng dành cho người dùng: trống, đang tải, thành công, lỗi, thử lại.
-- Giữ copy, hành vi bàn phím và hệ thống phân cấp trực quan nhất quán qua các luồng.
-- Khi một lỗi UI được sửa, hãy thêm hoặc cập nhật bước xác minh phù hợp.
+- design system や component library は `docs/references/` に記録します。
+- ユーザー向けの重要な状態を記録します。空、読み込み中、成功、エラー、再試行。
+- copy、キーボード操作、視覚的な階層は、各フローで一貫性を保ちます。
+- UI の不具合を修正したら、適切な検証手順を追加または更新します。
 
-## Kỳ vọng Xác minh
+## 検証の期待値
 
-- Ghi lại bằng chứng cho các user journey quan trọng.
-- Ghi lại các bước xác minh browser hoặc runtime trong kế hoạch liên quan.
-- Nếu các hồi quy trực quan phổ biến, hãy chuẩn hóa kiểm tra screenshot hoặc DOM.
+- 重要な user journey の証跡を記録します。
+- 関連する計画には、browser または runtime の検証手順を記録します。
+- 視覚的な回帰が起きやすい場合は、screenshot か DOM のチェックを標準化します。

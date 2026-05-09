@@ -1,66 +1,66 @@
-# Software Design Notes
+# ソフトウェア設計メモ
 
-## Architecture Overview
+## アーキテクチャ概要
 
-The knowledge base application follows a layered architecture pattern with clear separation of concerns. The system is divided into four primary layers: the main process, preload scripts, the renderer layer, and services.
+このナレッジベースアプリケーションは、責務が明確に分離されたレイヤードアーキテクチャのパターンに従っています。システムは、main process、preload scripts、renderer layer、services の4つの主要レイヤーに分かれています。
 
 ## Main Process
 
-The main process is responsible for window management, IPC handler registration, and lifecycle management. It serves as the entry point for the Electron application and coordinates between the operating system and the renderer process.
+main process は、ウィンドウ管理、IPC ハンドラーの登録、ライフサイクル管理を担当します。Electron アプリケーションのエントリポイントとして機能し、OS と renderer process の間を調整します。
 
-Key responsibilities:
-- BrowserWindow creation and configuration
-- IPC channel registration
-- Service initialization and dependency injection
-- Application lifecycle events (ready, window-all-closed, activate)
+主な責務:
+- `BrowserWindow` の作成と設定
+- IPC チャネルの登録
+- service の初期化と dependency injection
+- アプリケーションのライフサイクルイベント (`ready`, `window-all-closed`, `activate`)
 
 ## Preload Layer
 
-The preload script acts as a secure bridge between the main and renderer processes. It uses Electron's contextBridge to expose a typed API to the renderer without granting full Node.js access.
+preload script は、main process と renderer process の間にある安全なブリッジとして機能します。Electron の `contextBridge` を使って、完全な Node.js アクセスを与えることなく、型付き API を renderer に公開します。
 
-The exposed API is organized into namespaces:
-- `documents` - CRUD operations for document management
-- `indexing` - Document chunking and index management
-- `qa` - Question answering with citations
-- `feedback` - Q&A response rating
-- `app` - Application-level operations (reset data)
+公開される API は namespace ごとに整理されています:
+- `documents` - 文書管理の CRUD 操作
+- `indexing` - 文書のチャンク化と index 管理
+- `qa` - 引用付きの質問応答
+- `feedback` - Q&A 応答の評価
+- `app` - アプリケーションレベルの操作 (`reset data`)
 
 ## Renderer Layer
 
-The renderer uses React with TypeScript to build the user interface. Components communicate exclusively through the preload bridge API, never directly accessing Node.js APIs or the filesystem.
+renderer は、React と TypeScript を使ってユーザーインターフェースを構築します。コンポーネントは preload bridge API を通じてのみ通信し、Node.js API や filesystem に直接アクセスすることはありません。
 
-Key components:
-- `App.tsx` - Root layout with view mode switching
-- `DocumentList` - Sidebar with document browsing
-- `DocumentDetail` - Document viewer with indexing controls
-- `ConversationHistory` - Chat-style Q&A history with feedback
-- `QuestionPanel` - Question input
-- `StatusBar` - Index status and metrics
+主なコンポーネント:
+- `App.tsx` - 表示モード切り替えを備えたルートレイアウト
+- `DocumentList` - 文書を閲覧するためのサイドバー
+- `DocumentDetail` - index 操作用コントロールを備えた文書ビューア
+- `ConversationHistory` - フィードバック付きのチャット形式 Q&A 履歴
+- `QuestionPanel` - 質問入力欄
+- `StatusBar` - index 状態とメトリクス
 
 ## Services Layer
 
-Business logic lives in service classes that run in the main process:
-- `PersistenceService` - Filesystem read/write operations with JSON and text support
-- `DocumentService` - Document import, storage, retrieval, and deletion
-- `IndexingService` - Text chunking, index building, and status tracking
-- `QaService` - Mock Q&A with keyword retrieval, citations, and feedback
-- `Logger` - Structured JSON logging for runtime observability
+ビジネスロジックは、main process 上で動作する service class に実装されています:
+- `PersistenceService` - JSON とテキストを扱う filesystem の読み書き操作
+- `DocumentService` - 文書の取り込み、保存、取得、削除
+- `IndexingService` - テキストのチャンク化、index の構築、状態追跡
+- `QaService` - キーワード検索、引用、フィードバックを伴うモック Q&A
+- `Logger` - 実行時の可観測性のための構造化 JSON ログ
 
 ## Data Flow
 
-1. User action in renderer triggers IPC call via preload bridge
-2. IPC handler in main process delegates to appropriate service
-3. Service performs business logic using persistence layer
-4. Each service logs structured events with timestamps and data
-5. Result flows back through IPC to renderer for display
+1. renderer でのユーザー操作が、preload bridge を通じて IPC 呼び出しを発生させる
+2. main process の IPC ハンドラーが適切な service に処理を委譲する
+3. service が persistence layer を使ってビジネスロジックを実行する
+4. 各 service が、タイムスタンプとデータを含む構造化イベントをログに記録する
+5. 結果が IPC を通じて renderer に戻り、画面に表示される
 
 ## Observability
 
-All services emit structured JSON log entries with:
-- ISO 8601 timestamps
-- Log level (DEBUG, INFO, WARN, ERROR)
-- Service name tag
-- Human-readable message
-- Optional structured data payload
+すべての service は、次の情報を含む構造化 JSON ログエントリを出力します:
+- ISO 8601 形式のタイムスタンプ
+- ログレベル (`DEBUG`, `INFO`, `WARN`, `ERROR`)
+- service 名のタグ
+- 人間が読めるメッセージ
+- 任意の構造化データペイロード
 
-This enables runtime debugging and post-hoc analysis of application behavior.
+これにより、実行時デバッグとアプリケーション動作の事後分析が可能になります。

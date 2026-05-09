@@ -1,17 +1,17 @@
-# Ví dụ Bề mặt Phạm vi
+# スコープの表面積の例
 
-Tác vụ:
+タスク:
 
-- Thêm indexing vào ứng dụng kiến thức Electron
+- Electron のナレッジアプリに indexing を追加する
 
-Hình dạng phạm vi xấu:
+よくないスコープの切り方:
 
-- "Triển khai indexing"
+- 「indexing を実装する」
 
-Hình dạng phạm vi tốt hơn:
+よりよいスコープの切り方:
 
-- Parse các tài liệu đã import
-- Chia tài liệu thành các chunk
-- Lưu trữ chunk metadata
-- Hiển thị trạng thái indexing trong UI
-- Thêm hành động reindex
+- import されたドキュメントを parse する
+- ドキュメントを chunk に分割する
+- chunk の metadata を保存する
+- UI に indexing の状態を表示する
+- reindex アクションを追加する

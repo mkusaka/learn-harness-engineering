@@ -1,8 +1,8 @@
 # Code for Lecture 10
 
-Use this folder for examples of:
+このフォルダは、次の例に使います。
 
-- architecture constraints
-- structural tests
-- taste invariants
-- remediation-oriented lint messages
+- アーキテクチャ上の制約
+- 構造テスト
+- taste の不変条件
+- remediation を意識した lint メッセージ

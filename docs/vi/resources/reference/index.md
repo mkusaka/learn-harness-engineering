@@ -1,17 +1,17 @@
-[English Version →](../../../en/resources/reference/) | [中文版本 →](../../../zh/resources/reference/)
+[英語版 →](../../../en/resources/reference/) | [中国語版 →](../../../zh/resources/reference/)
 
-# Tài liệu Tham khảo Tiếng Việt
+# ベトナム語版リファレンス
 
-Các ghi chú này giải thích cách sử dụng các mẫu như một harness làm việc thực thụ thay vì một đống tệp rời rạc.
+このノートでは、テンプレートを単なる個別ファイルの寄せ集めではなく、実際に機能するハーネスとして使う方法を説明します。
 
-## Ghi chú Tham khảo
+## 参考ノート
 
-- [`method-map.md`](./method-map.md): ánh xạ các chế độ lỗi chạy lâu phổ biến sang artifact hoặc chính sách giải quyết chúng đầu tiên
-- [`initializer-agent-playbook.md`](./initializer-agent-playbook.md): những gì initializer nên để lại trước khi công việc tính năng bắt đầu
-- [`coding-agent-startup-flow.md`](./coding-agent-startup-flow.md): luồng bắt đầu phiên cố định cho các lần chạy coding sau
-- [`prompt-calibration.md`](./prompt-calibration.md): cách giữ cho hướng dẫn gốc sắc nét mà không làm chúng phình to và dễ vỡ
+- [`method-map.md`](./method-map.md): よくある長時間実行の失敗モードを、最初に対応すべき成果物やポリシーに対応付ける
+- [`initializer-agent-playbook.md`](./initializer-agent-playbook.md): 機能作業を始める前に initializer が残すべきもの
+- [`coding-agent-startup-flow.md`](./coding-agent-startup-flow.md): 以降の coding 実行における固定のセッション開始フロー
+- [`prompt-calibration.md`](./prompt-calibration.md): 元の指示の鋭さを保ち、肥大化させたり壊れやすくしたりしない方法
 
-## Thứ tự Đọc Đề nghị
+## 推奨の読み順
 
 1. `method-map.md`
 2. `initializer-agent-playbook.md`

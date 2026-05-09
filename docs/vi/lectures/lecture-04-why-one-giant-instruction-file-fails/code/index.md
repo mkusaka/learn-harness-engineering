@@ -1,7 +1,7 @@
-# Mã cho Bài 04
+# 第04講のコード
 
-Sử dụng thư mục này cho các ví dụ về:
+このディレクトリは、次の例に使用します:
 
-- tệp hướng dẫn nguyên khối
-- tệp đầu vào ngắn
-- các mẫu tiết lộ tiến triển
+- 巨大な指示ファイル
+- 短い入力ファイル
+- 段階的開示のパターン

@@ -1,7 +1,7 @@
-# Tech Debt Tracker
+# 技術的負債トラッカー
 
-Use this file for debt that is real, acknowledged, and intentionally deferred.
+このファイルは、実在し、認識されていて、意図的に先送りしている負債を記録するために使います。
 
-| Date | Area | Debt | Why Deferred | Risk | Next Trigger |
+| 日付 | 範囲 | 負債 | 先送りする理由 | リスク | 次に見直す条件 |
 |------|------|------|--------------|------|--------------|
 | YYYY-MM-DD | `[area]` | `[debt]` | `[reason]` | `[risk]` | `[when to revisit]` |

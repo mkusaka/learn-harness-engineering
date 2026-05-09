@@ -1,26 +1,26 @@
-# Onboarding Người dùng Mới
+# 新規ユーザーオンボーディング
 
-## Mục tiêu
+## 目的
 
-Mô tả trải nghiệm lần chạy đầu tiên mà người dùng mới nên có.
+新規ユーザーが初回起動時に得るべき体験を説明します。
 
-## Điều kiện Đầu vào
+## 前提条件
 
-- `[trạng thái trước khi luồng bắt đầu]`
+- `[フロー開始前の状態]`
 
-## Luồng Người dùng
+## ユーザーフロー
 
-1. `[bước một]`
-2. `[bước hai]`
-3. `[bước ba]`
+1. `[手順 1]`
+2. `[手順 2]`
+3. `[手順 3]`
 
-## Tiêu chí Chấp nhận
+## 受け入れ条件
 
-- `[kết quả có thể quan sát]`
-- `[kết quả có thể quan sát]`
-- `[kết quả có thể quan sát]`
+- `[観測可能な結果]`
+- `[観測可能な結果]`
+- `[観測可能な結果]`
 
-## Trạng thái Lỗi
+## エラー状態
 
-- `[lỗi có thể phục hồi và phản hồi người dùng]`
-- `[trạng thái bị chặn và phương án dự phòng]`
+- `[回復可能なエラーとユーザーへの通知]`
+- `[ブロックされた状態と代替手段]`

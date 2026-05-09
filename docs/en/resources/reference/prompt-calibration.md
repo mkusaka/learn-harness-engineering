@@ -1,25 +1,23 @@
-# Prompt Calibration
+# プロンプト調整
 
-Root instructions should define the operating frame, not every possible move.
+ルートの指示は、取りうるすべての手順ではなく、運用の枠組みを定義するべきです。
 
-## Keep In The Root File
+## ルートファイルに残すもの
 
-- repository purpose and scope
-- startup path
-- verification path
-- non-negotiable constraints
-- required state artifacts
-- end-of-session rules
+- リポジトリの目的と範囲
+- 起動手順
+- 検証手順
+- 変更できない制約
+- 必要な状態アーティファクト
+- セッション終了時のルール
 
-## Move Out Of The Root File
+## ルートファイルから移すもの
 
-- long historical edge cases
-- topic-specific implementation details
-- local architecture notes that belong near the code
-- examples that only apply to one subsystem
+- 長い歴史的なエッジケース
+- 特定のトピックに固有の実装詳細
+- コードの近くに置くべきローカルなアーキテクチャメモ
+- 1つのサブシステムにしか当てはまらない例
 
-## Working Rule
+## 作業ルール
 
-The root file should help a fresh session orient itself quickly. If the file is
-becoming a dumping ground for every past failure, split the detail into smaller
-documents and link to them instead.
+ルートファイルは、新しいセッションがすばやく状況を把握できるようにするべきです。もしこのファイルが過去の失敗を何でも詰め込む場所になりつつあるなら、詳細を小さな文書に分割し、代わりにそれらへリンクしてください。

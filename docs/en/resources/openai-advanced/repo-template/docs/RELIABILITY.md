@@ -1,33 +1,32 @@
 # RELIABILITY.md
 
-This file defines how the system proves it is healthy and restartable.
+このファイルは、システムが正常であり、再起動可能であることをどのように証明するかを定義します。
 
-## Standard Paths
+## 標準パス
 
-- Bootstrap: `[command]`
-- Verification: `[command]`
-- Start app or service: `[command]`
-- Debug or inspect runtime: `[command]`
+- 初期化: `[command]`
+- 検証: `[command]`
+- アプリまたはサービスを起動: `[command]`
+- 実行時のデバッグまたは調査: `[command]`
 
-## Required Runtime Signals
+## 必須の実行時シグナル
 
-- structured logs for startup and critical flows
-- health checks for key services
-- trace or timing data for slow paths when available
-- user-visible error states for recoverable failures
+- 起動時および重要なフローの構造化ログ
+- 主要サービスのヘルスチェック
+- 利用可能な場合は、遅い経路のトレースまたはタイミングデータ
+- 回復可能な障害に対する、ユーザーに見えるエラー状態
 
-## Golden Journeys
+## ゴールデンジャーニー
 
 - `[journey 1]`
 - `[journey 2]`
 - `[journey 3]`
 
-Each golden journey should have a repeatable verification path and clear failure
-signals.
+各ゴールデンジャーニーには、再現可能な検証手順と明確な失敗シグナルが必要です。
 
-## Reliability Rules
+## 信頼性のルール
 
-- No feature is complete if the system cannot restart cleanly afterward.
-- Runtime failures should be diagnosable from repo-local signals.
-- If a repeated failure mode appears, add a benchmark or guardrail for it.
-- Cleanup is part of reliability, not a separate concern.
+- システムがその後にきれいに再起動できないなら、どの機能も完成とは見なしません。
+- 実行時の障害は、リポジトリ内のシグナルだけで診断できる必要があります。
+- 繰り返し発生する障害パターンが現れたら、そのためのベンチマークまたはガードレールを追加します。
+- クリーンアップは信頼性の一部であり、別個の関心事ではありません。

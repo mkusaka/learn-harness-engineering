@@ -1,23 +1,23 @@
-# Chào mừng đến với Dự án
+# プロジェクトへようこそ
 
-Đây là phần thực hành của Learn Harness Engineering. Chỉ đọc các bài giảng là không đủ—bạn cần phải tự mình xây dựng các môi trường và quan sát cách Codex, Claude Code hoặc các AI agent khác hoạt động dưới các quy tắc khác nhau.
+これは Learn Harness Engineering の実践編です。講義を読むだけでは不十分で、実際に環境を構築し、Codex や Claude Code、その他の AI エージェントがさまざまなルールの下でどのように動くかを自分の目で確かめる必要があります。
 
-## Tổng quan về Dự án
+## プロジェクト概要
 
-Khóa học này bao gồm 6 dự án thực hành tiến triển dần, dạy bạn cách xây dựng một môi trường làm việc agent đáng tin cậy từ đầu:
+このコースは、信頼できるエージェント環境をゼロから構築する方法を学ぶ、段階的に進む 6 つの実践プロジェクトで構成されています。
 
-1. **Chỉ Prompt vs. Ưu tiên Quy tắc**: So sánh cách agent hoạt động chỉ với prompt so với một harness cơ bản.
-2. **Không gian làm việc Agent đọc được**: Tìm hiểu cách cấu trúc kho lưu trữ của bạn để thân thiện với AI và thiết lập cơ chế bàn giao.
-3. **Tính liên tục đa phiên**: Thiết kế các tệp trạng thái và kịch bản khởi tạo để agent của bạn có thể tiếp tục công việc một cách liền mạch qua nhiều phiên.
-4. **Phản hồi Runtime và Kiểm soát Phạm vi**: Giới thiệu các công cụ cho phép agent tự kiểm tra mã của mình và sửa lỗi trong quá trình thực thi.
-5. **Tự xác minh và Phân tách Vai trò**: Xây dựng một cơ chế đánh giá độc lập để ngăn chặn ảo giác (hallucinations) và việc tuyên bố thành công sớm.
-6. **Harness Hoàn chỉnh (Đồ án)**: Lắp ráp một môi trường làm việc agent hoàn chỉnh, có thể quan sát được từ đầu đến cuối.
+1. **Prompt のみ vs. ルール優先**: prompt のみの場合と、基本的な harness を使った場合でエージェントの挙動がどう変わるかを比較します。
+2. **エージェントが読みやすい作業空間**: リポジトリを AI にとって扱いやすい形に構造化し、引き継ぎの仕組みを整える方法を学びます。
+3. **マルチセッションの継続性**: エージェントが複数セッションをまたいで途切れなく作業を続けられるように、状態ファイルと初期化スクリプトを設計します。
+4. **実行時フィードバックとスコープ制御**: エージェントが自分のコードを自己検証し、実行中に修正できるツールを導入します。
+5. **自己検証と役割分離**: 幻覚や早すぎる成功宣言を防ぐために、独立した評価メカニズムを構築します。
+6. **完全版 Harness（卒業制作）**: 観測可能性のある、エンドツーエンドの完全なエージェント作業環境を組み立てます。
 
-## Cách Thực hiện
+## 進め方
 
-Mỗi thư mục dự án thường chứa:
-- `starter/`: Không gian làm việc bắt đầu của bạn.
-- `solution/`: Cách triển khai tham khảo (nếu bạn bị mắc kẹt).
-- Các hướng dẫn tác vụ nêu chi tiết bối cảnh của bạn và các mục tiêu cụ thể.
+各プロジェクトのディレクトリには通常、次の内容が含まれています。
+- `starter/`: あなたが作業を始めるためのワークスペースです。
+- `solution/`: 行き詰まったときの参考実装です。
+- タスクの指示書: 背景と具体的な目標を詳しく示しています。
 
-Sử dụng AI Coding Agent ưa thích của bạn (ví dụ: Claude Code, Cursor, Trae) để hoàn thành các tác vụ bên trong thư mục `starter/`.
+お好みの AI Coding Agent（たとえば Claude Code、Cursor、Trae など）を使って、`starter/` ディレクトリ内のタスクを完了してください。

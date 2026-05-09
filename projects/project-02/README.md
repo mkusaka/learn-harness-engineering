@@ -1,35 +1,35 @@
-# Project 02: Agent-Readable Workspace
+# Project 02: エージェントが読みやすいワークスペース
 
-Demonstrate how repository readability and explicit continuity artifacts reduce context loss during multi-session development.
+リポジトリの読みやすさと、明示的な継続用アーティファクトが、複数セッションにまたがる開発でのコンテキスト喪失をどのように減らすかを示します。
 
-## Directory Guide
+## ディレクトリガイド
 
 | Directory | Meaning |
 |------|------|
-| `starter/` | **Starting point**: based on the P1 solution, with document import, detail view, and persistence still to implement. The harness is weak: AGENTS.md is minimal and there is no session handoff. |
-| `solution/` | **Reference implementation**: all new features are implemented, with complete workspace documentation (ARCHITECTURE.md, PRODUCT.md, session-handoff.md). |
+| `starter/` | **開始地点**: P1 のソリューションをベースにしており、ドキュメントの取り込み、詳細ビュー、永続化はまだ実装されていません。ハーネスは弱く、AGENTS.md は最小限で、セッション引き継ぎもありません。 |
+| `solution/` | **参照実装**: すべての新機能が実装済みで、ワークスペースのドキュメント (ARCHITECTURE.md, PRODUCT.md, session-handoff.md) も揃っています。 |
 
-## How to Use
+## 使い方
 
 ```sh
-# Requires at least 2 agent sessions to complete
+# 完了には少なくとも 2 回のエージェントセッションが必要です
 cd starter
 npm install
-# Session A: implement document import and the detail view
-# Session B: implement persistence (observe whether the agent quickly regains context)
+# セッション A: ドキュメントの取り込みと詳細ビューを実装する
+# セッション B: 永続化を実装する（エージェントがすばやくコンテキストを取り戻せるか確認する）
 
 cd ../solution
 npm install
-# Rerun with the complete harness and compare session recovery speed
+# 完成版のハーネスで再実行し、セッション復帰速度を比較する
 ```
 
-## Features Covered
+## 対象機能
 
-- Document import flow (file picker plus IPC transfer)
-- Document detail view (metadata plus content display)
-- Basic persistence (imported documents remain after restart)
+- ドキュメント取り込みフロー（ファイルピッカーと IPC 転送）
+- ドキュメント詳細ビュー（メタデータと内容の表示）
+- 基本的な永続化（取り込んだドキュメントが再起動後も残る）
 
-## Related Lectures
+## 関連講義
 
 - [Lecture 03: Why the Repository Must Become the System of Record](../../docs/en/lectures/lecture-03-why-the-repository-must-become-the-system-of-record/index.md)
 - [Lecture 04: Why One Giant Instruction File Fails](../../docs/en/lectures/lecture-04-why-one-giant-instruction-file-fails/index.md)

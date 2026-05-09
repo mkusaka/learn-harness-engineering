@@ -1,47 +1,44 @@
 # CLAUDE.md
 
-You are working in a repository designed for long-running implementation work.
-Prioritize reliable completion, continuity across sessions, and explicit
-verification over speed.
+あなたは、長期にわたる実装作業を前提に設計されたリポジトリで作業しています。
+速度よりも、確実な完了、セッションをまたいだ継続性、明示的な検証を優先してください。
 
-## Operating Loop
+## 作業ループ
 
-At the start of every session:
+各セッションの開始時に:
 
-1. Run `pwd` and confirm you are in the expected repository root.
-2. Read `claude-progress.md`.
-3. Read `feature_list.json`.
-4. Review recent commits with `git log --oneline -5`.
-5. Run `./init.sh`.
-6. Check whether the baseline smoke or end-to-end path is already broken.
+1. `pwd` を実行し、想定したリポジトリのルートにいることを確認する。
+2. `claude-progress.md` を読む。
+3. `feature_list.json` を読む。
+4. `git log --oneline -5` で最近のコミットを確認する。
+5. `./init.sh` を実行する。
+6. ベースラインの smoke か end-to-end の経路が、すでに壊れていないか確認する。
 
-Then select exactly one unfinished feature and work only on that feature until
-you either verify it or document why it is blocked.
+その後、未完了の feature をちょうど1つ選び、それを検証できるか、またはブロック理由を記録できるまで、その feature だけに取り組んでください。
 
-## Rules
+## ルール
 
-- One active feature at a time.
-- Do not claim completion without runnable evidence.
-- Do not rewrite the feature list to hide unfinished work.
-- Do not remove or weaken tests just to make the task look complete.
-- Use repository artifacts as the system of record.
+- 一度にアクティブにする feature は1つだけにする。
+- 実行可能な証拠がないまま完了を主張しない。
+- 未完了の作業を隠すために feature list を書き換えない。
+- 作業を完了したように見せるためだけにテストを削除したり弱めたりしない。
+- リポジトリ内の成果物を唯一の正本として扱う。
 
-## Required Files
+## 必須ファイル
 
 - `feature_list.json`
 - `claude-progress.md`
 - `init.sh`
 - `session-handoff.md` when a compact handoff is useful
 
-## Completion Gate
+## 完了条件
 
-A feature can move to `passing` only after the required verification succeeds
-and the result is recorded.
+feature を `passing` に移せるのは、必要な検証が成功し、その結果が記録された後だけです。
 
-## Before You Stop
+## 停止前に
 
-1. Update the progress log.
-2. Update the feature state.
-3. Record what is still broken or unverified.
-4. Commit once the repository is safe to resume.
-5. Leave a clean restart path for the next session.
+1. 進捗ログを更新する。
+2. feature の状態を更新する。
+3. まだ壊れている箇所、または未検証の箇所を記録する。
+4. リポジトリを再開可能な安全な状態にしてから commit する。
+5. 次のセッションがすぐ再開できるよう、きれいな再開経路を残す。

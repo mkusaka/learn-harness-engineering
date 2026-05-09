@@ -1,104 +1,104 @@
 # AGENTS.md -- Project 06: Runtime Observability and Debugging (Capstone)
 
-## Startup Rules
+## 起動時のルール
 
-Before writing any code, complete these steps in order:
+コードを書く前に、次の手順を順番に完了してください。
 
-1. **Read this file completely.** It defines the boundaries and conventions for this project.
-2. **Read `CLAUDE.md`** for the quick reference if using Claude Code.
-3. **Read `docs/ARCHITECTURE.md`** to understand the full Electron layer structure and data flow.
-4. **Read `docs/PRODUCT.md`** to understand the complete feature requirements.
-5. **Read `docs/RELIABILITY.md`** to understand logging, observability, and clean state requirements.
-6. **Run `bash init.sh`** to verify the project builds and initializes cleanly.
-7. **Read `feature_list.json`** to see the current state of all features.
+1. **このファイルを最後まで読む。** このプロジェクトの境界と慣例が定義されています。
+2. Claude Code を使う場合は、簡易参照として **`CLAUDE.md` を読む。**
+3. Electron レイヤーの全体構造とデータフローを理解するために **`docs/ARCHITECTURE.md` を読む。**
+4. 完全な機能要件を理解するために **`docs/PRODUCT.md` を読む。**
+5. ロギング、可観測性、クリーンな状態に関する要件を理解するために **`docs/RELIABILITY.md` を読む。**
+6. プロジェクトが正しくビルドされ、初期化されることを確認するために **`bash init.sh` を実行する。**
+7. すべての機能の現在の状態を確認するために **`feature_list.json` を読む。**
 
-## Project Context
+## プロジェクトの位置づけ
 
-This is the **capstone project** for the Learn Harness Engineering course. It combines all features from Projects 01-05 into a single complete product:
+これは Learn Harness Engineering コースの **キャップストーンプロジェクト** です。Projects 01-05 のすべての機能を 1 つの完成した製品に統合しています。
 
-- Document import with validation
-- Text indexing with progress tracking
-- Grounded Q&A with citations
-- Conversation history with chat-style display
-- Structured logging for runtime observability
-- Feedback collection on Q&A responses
-- Clean state reset for testing
-- Benchmark scripts for performance measurement
-- Cleanup scanner for detecting stale artifacts
+- 検証付きのドキュメント取り込み
+- 進捗追跡付きのテキスト索引化
+- 引用付きの根拠ある Q&A
+- チャット形式で表示される会話履歴
+- 実行時の可観測性のための構造化ロギング
+- Q&A 応答に対するフィードバック収集
+- テスト用のクリーン状態リセット
+- パフォーマンス測定用のベンチマークスクリプト
+- 古い成果物を検出するクリーンアップスキャナー
 
-## Docs Hierarchy
+## ドキュメント階層
 
-The `docs/` directory is organized for agent readability:
+`docs/` ディレクトリは、エージェントが読みやすいように整理されています。
 
 ```
 docs/
-  ARCHITECTURE.md   -- Electron layers, data flow, full pipeline
-  PRODUCT.md        -- Feature requirements and user-facing behavior
-  RELIABILITY.md    -- Logging, observability, clean state, benchmarking
+  ARCHITECTURE.md   -- Electron レイヤー、データフロー、全体パイプライン
+  PRODUCT.md        -- 機能要件とユーザー向けの振る舞い
+  RELIABILITY.md    -- ロギング、可観測性、クリーン状態、ベンチマーク
 ```
 
-When adding new features, update the relevant doc before writing code.
+新しい機能を追加する場合は、コードを書く前に関連するドキュメントを更新してください。
 
-## Electron Layer Boundaries
+## Electron レイヤーの境界
 
 ### Main Process (`src/main/`)
-- Owns BrowserWindow lifecycle and IPC registration.
-- All filesystem access happens here via services.
-- Structured logging for all IPC events.
+- `BrowserWindow` のライフサイクルと IPC 登録を担当します。
+- ファイルシステムへのアクセスはすべて、ここでサービス経由で行います。
+- すべての IPC イベントについて構造化ロギングを行います。
 
 ### Preload (`src/preload/`)
-- The ONLY bridge between main and renderer.
-- Uses `contextBridge.exposeInMainWorld` to expose typed APIs.
-- Exposes: documents, indexing, qa, feedback, app namespaces.
+- main と renderer をつなぐ唯一のブリッジです。
+- `contextBridge.exposeInMainWorld` を使って型付き API を公開します。
+- 公開するもの: documents, indexing, qa, feedback, app の各 namespace。
 
 ### Renderer (`src/renderer/`)
-- React + TypeScript UI layer.
-- Communicates exclusively through `window.knowledgeBase` API.
-- Never imports Node.js modules.
+- React + TypeScript の UI レイヤーです。
+- `window.knowledgeBase` API を通してのみ通信します。
+- Node.js モジュールは絶対に import しません。
 
 ### Services (`src/services/`)
-- Pure TypeScript business logic in the main process.
-- Constructor-injected `PersistenceService`.
-- All services use `logger.forService()` for structured JSON output.
+- main process 内の純粋な TypeScript ビジネスロジックです。
+- `PersistenceService` はコンストラクタ注入されます。
+- すべてのサービスは構造化 JSON 出力のために `logger.forService()` を使います。
 
-## Conventions
+## 慣例
 
-- TypeScript strict mode. No `any` without a comment explaining why.
-- Named exports only.
-- IPC channels defined once in `src/shared/types.ts`.
-- New IPC channels follow the pattern: `namespace:action`.
-- All service methods must log at INFO level for significant events.
-- DEBUG level for routine data access.
-- WARN for missing but non-critical data.
-- ERROR for failures.
+- TypeScript は strict mode を使用します。`any` を使う場合は、理由を説明するコメントが必要です。
+- export は named export のみです。
+- IPC チャンネルは `src/shared/types.ts` で一度だけ定義します。
+- 新しい IPC チャンネルは `namespace:action` の形式に従います。
+- すべての service メソッドは、重要なイベントで INFO レベルのログを出力しなければなりません。
+- 通常のデータアクセスは DEBUG レベルです。
+- 不足しているが重大ではないデータは WARN です。
+- 失敗は ERROR です。
 
-## Definition of Done
+## 完了条件
 
-A feature is "done" when:
+機能が「完了」と見なされるのは、次の条件を満たしたときです。
 
-1. TypeScript compiles without errors (`npm run check`).
-2. The app launches and the window is visible.
-3. The feature appears in `feature_list.json` with status `"pass"` and evidence.
-4. The code respects Electron layer boundaries.
-5. Structured logging covers all service operations.
-6. `docs/ARCHITECTURE.md` and/or `docs/PRODUCT.md` are updated.
-7. `clean-state-checklist.md` passes all checks.
+1. TypeScript がエラーなくコンパイルできること (`npm run check`)。
+2. アプリが起動し、ウィンドウが表示されること。
+3. `feature_list.json` に、その機能が `"pass"` ステータスと証拠付きで記載されること。
+4. コードが Electron レイヤーの境界を守っていること。
+5. 構造化ロギングがすべての service 操作をカバーしていること。
+6. `docs/ARCHITECTURE.md` および/または `docs/PRODUCT.md` が更新されていること。
+7. `clean-state-checklist.md` のすべてのチェックに通ること。
 
-## Session Handoff
+## セッション引き継ぎ
 
-When resuming work, read `session-handoff.md` for context from the previous session. When finishing a session, update it with:
+作業を再開するときは、前回のセッションの文脈として `session-handoff.md` を読んでください。セッションを終えるときは、次の内容で更新してください。
 
-- What was accomplished
-- What remains
-- Any blockers or decisions made
-- Files that were modified
-- Benchmark results if applicable
+- 実施した内容
+- 残っている内容
+- 発生したブロッカーや行った決定
+- 変更したファイル
+- 該当する場合はベンチマーク結果
 
-## Clean State
+## クリーン状態
 
-Before each major testing cycle:
+各主要テストサイクルの前に、次の手順を実行してください。
 
-1. Run `bash scripts/cleanup-scanner.sh` to check for stale artifacts.
-2. Use the in-app Reset button or `RESET_DATA` IPC to clear all data.
-3. Verify `clean-state-checklist.md` passes.
-4. Run `bash scripts/benchmark.sh` to measure performance.
+1. `bash scripts/cleanup-scanner.sh` を実行して、古い成果物がないか確認する。
+2. アプリ内の Reset ボタン、または `RESET_DATA` IPC を使ってすべてのデータを消去する。
+3. `clean-state-checklist.md` が通ることを確認する。
+4. `bash scripts/benchmark.sh` を実行してパフォーマンスを測定する。

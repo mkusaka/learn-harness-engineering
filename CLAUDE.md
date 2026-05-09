@@ -1,62 +1,62 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+このファイルは、このリポジトリでコードを扱う際の Claude Code (claude.ai/code) 向けガイドです。
 
-## Project Overview
+## プロジェクト概要
 
-Learn Harness Engineering is a project-based course on building reliable coding environments for AI agents. The repo contains a VitePress documentation site plus hands-on project code.
+Learn Harness Engineering は、AI エージェント向けの信頼性の高いコーディング環境を構築するための、プロジェクトベースの講座です。このリポジトリには、VitePress のドキュメントサイトと実践用のプロジェクトコードが含まれています。
 
-## Commands
+## コマンド
 
 ```sh
-# Documentation site
+# ドキュメントサイト
 npm install
-npm run docs:dev        # Dev server with hot reload (VitePress)
-npm run docs:build      # Production build
-npm run docs:preview    # Preview built site
+npm run docs:dev        # ホットリロード付きの開発サーバー (VitePress)
+npm run docs:build      # 本番ビルド
+npm run docs:preview    # ビルド済みサイトのプレビュー
 
-# Run lecture code examples
+# 講義のコード例を実行
 npx tsx docs/lectures/<lecture-dir>/code/<file>.ts
 
-# Project Electron apps (from each project directory)
+# プロジェクトの Electron アプリ（各プロジェクトディレクトリから）
 cd projects/project-NN/starter  # or solution/
 npm install
-npm run dev              # Build + launch Electron (via scripts/dev.js)
-npm run check            # Type-check both tsconfig.json and tsconfig.node.json
-npm run test             # Vitest run (single run)
-npm run test:watch       # Vitest watch mode
+npm run dev              # ビルドして Electron を起動 (scripts/dev.js 経由)
+npm run check            # tsconfig.json と tsconfig.node.json の両方を型チェック
+npm run test             # Vitest を 1 回実行
+npm run test:watch       # Vitest の watch モード
 ```
 
-## Repository Structure
+## リポジトリ構成
 
-- `docs/` — VitePress documentation site (lectures, projects, resources)
-- `docs/.vitepress/config.mts` — Nav/sidebar config for both EN and ZH locales
-- `docs/lectures/` — 12 lectures, each with `index.md` + `code/` examples
-- `docs/projects/` — 6 project descriptions
-- `docs/resources/` — Bilingual (en/zh) templates, references, OpenAI advanced pack
-- `projects/shared/` — Shared Electron + TypeScript + React foundation
-- `projects/project-NN/` — Per-project `starter/` and `solution/` directories
+- `docs/` — VitePress のドキュメントサイト (lectures, projects, resources)
+- `docs/.vitepress/config.mts` — EN/ZH 両ロケール向けのナビゲーション / サイドバー設定
+- `docs/lectures/` — 12 の講義。各講義に `index.md` と `code/` の例を含む
+- `docs/projects/` — 6 つのプロジェクト説明
+- `docs/resources/` — 英中バイリンガルのテンプレート、参考資料、OpenAI advanced pack
+- `projects/shared/` — 共有の Electron + TypeScript + React 基盤
+- `projects/project-NN/` — 各プロジェクトごとの `starter/` と `solution/` ディレクトリ
 
-## Architecture
+## アーキテクチャ
 
-The course revolves around an Electron knowledge-base desktop app that evolves across 6 projects:
-- **Main process** (`src/main/`): Window management, IPC handlers, service initialization
-- **Preload** (`src/preload/`): contextBridge exposing typed API to renderer
-- **Renderer** (`src/renderer/`): React UI with document list, Q&A panel, status bar
-- **Services** (`src/services/`): DocumentService, IndexingService, QaService, PersistenceService
-- **Shared types** (`src/shared/types.ts`): Cross-boundary interfaces and IPC channel constants
+講座は、6 つのプロジェクトを通じて進化していく Electron ベースのナレッジベースデスクトップアプリを中心に構成されています:
+- **Main process** (`src/main/`): ウィンドウ管理、IPC ハンドラー、サービス初期化
+- **Preload** (`src/preload/`): 型付き API を renderer に公開する contextBridge
+- **Renderer** (`src/renderer/`): ドキュメント一覧、Q&A パネル、ステータスバーを備えた React UI
+- **Services** (`src/services/`): DocumentService、IndexingService、QaService、PersistenceService
+- **Shared types** (`src/shared/types.ts`): 境界をまたぐインターフェースと IPC チャンネル定数
 
-Each project's starter/solution is a complete copy of the Electron app at that evolutionary stage. P(N+1) starter is derived from P(N) solution. The shared foundation is in `projects/shared/`.
+各プロジェクトの `starter/solution` は、その進化段階における Electron アプリの完全なコピーです。P(N+1) の starter は P(N) の solution から派生します。共通基盤は `projects/shared/` にあります。
 
-## Key Patterns
+## 主要パターン
 
-- IPC channels defined as constants in `src/shared/types.ts` (IPC_CHANNELS) — single source of truth
-- All data stored locally as JSON/text files (no database)
-- Mock Q&A returns structured answers with citations (no real LLM API)
-- Harness files in project roots: AGENTS.md, CLAUDE.md, feature_list.json, init.sh, claude-progress.md
-- Progressive disclosure: short AGENTS.md entrypoint linking to focused docs
-- Each project has two tsconfigs: `tsconfig.json` (renderer) and `tsconfig.node.json` (main/preload)
+- IPC チャンネルは `src/shared/types.ts` の定数 (`IPC_CHANNELS`) として定義し、単一の信頼できる情報源にする
+- すべてのデータは JSON / テキストファイルとしてローカル保存する（データベースは使わない）
+- モック Q&A は、引用付きの構造化された回答を返す（実際の LLM API は使わない）
+- プロジェクトルートのハーネスファイル: AGENTS.md, CLAUDE.md, feature_list.json, init.sh, claude-progress.md
+- 段階的開示: 短い AGENTS.md を起点に、必要な詳細ドキュメントへリンクする
+- 各プロジェクトには 2 つの tsconfig がある: `tsconfig.json` (renderer) と `tsconfig.node.json` (main/preload)
 
-## Bilingual Content
+## バイリンガルコンテンツ
 
-All content exists in both English and Chinese. Documentation lives in shared `docs/lectures/` and `docs/projects/` dirs (content is bilingual within each file). Resources have separate `docs/resources/en/` and `docs/resources/zh/` directories. Keep both in sync.
+すべてのコンテンツは英語と中国語の両方で存在します。ドキュメントは共有の `docs/lectures/` と `docs/projects/` ディレクトリにあります（各ファイル内でバイリンガルになっています）。リソースは `docs/resources/en/` と `docs/resources/zh/` に分かれています。両者を同期した状態に保ってください。

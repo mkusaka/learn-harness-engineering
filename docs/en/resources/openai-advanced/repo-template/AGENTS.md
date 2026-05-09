@@ -1,61 +1,57 @@
 # AGENTS.md
 
-This repository is optimized for long-running coding-agent work. Keep this file
-short. Use it as the routing layer into the system-of-record docs, not as a
-giant instruction dump.
+このリポジトリは、長時間にわたる coding-agent の作業に最適化されています。このファイルは
+短く保ってください。巨大な指示の塊にするのではなく、system-of-record の文書へ誘導する
+ルーティング層として使ってください。
 
-## Startup Workflow
+## 起動ワークフロー
 
-Before changing code:
+コードを変更する前に:
 
-1. Confirm the repo root with `pwd`.
-2. Read `ARCHITECTURE.md` for the current system map and hard dependency rules.
-3. Read `docs/QUALITY_SCORE.md` to see which domains or layers are weakest.
-4. Read `docs/PLANS.md`, then open the active plan you are working from.
-5. Read the relevant product spec in `docs/product-specs/`.
-6. Run the standard bootstrap and verification path for this repo.
-7. If baseline verification is failing, repair the baseline before adding scope.
+1. `pwd` でリポジトリのルートを確認する。
+2. `ARCHITECTURE.md` を読み、現在のシステム構成図と厳格な依存ルールを把握する。
+3. `docs/QUALITY_SCORE.md` を読み、どのドメインやレイヤーが最も弱いか確認する。
+4. `docs/PLANS.md` を読み、その後で作業中のアクティブな plan を開く。
+5. `docs/product-specs/` にある関連する product spec を読む。
+6. このリポジトリで標準の bootstrap と verification の手順を実行する。
+7. ベースラインの verification が失敗している場合は、スコープを追加する前にベースラインを修復する。
 
-## Routing Map
+## ルーティングマップ
 
-- `ARCHITECTURE.md`: domain map, layer model, dependency rules
-- `docs/design-docs/index.md`: design decisions and core beliefs
-- `docs/product-specs/index.md`: current product behaviors and acceptance targets
-- `docs/PLANS.md`: plan lifecycle and execution-plan policy
-- `docs/QUALITY_SCORE.md`: product-domain and layer health
-- `docs/RELIABILITY.md`: runtime signals, benchmarks, and restart expectations
-- `docs/SECURITY.md`: secrets, sandbox, data, and external-action rules
-- `docs/FRONTEND.md`: UI constraints, design system rules, accessibility checks
+- `ARCHITECTURE.md`: ドメインマップ、レイヤーモデル、依存ルール
+- `docs/design-docs/index.md`: 設計判断と基本方針
+- `docs/product-specs/index.md`: 現在の製品挙動と受け入れ基準
+- `docs/PLANS.md`: plan のライフサイクルと execution-plan ポリシー
+- `docs/QUALITY_SCORE.md`: 製品ドメインとレイヤーの健全性
+- `docs/RELIABILITY.md`: 実行時シグナル、ベンチマーク、再起動時の期待値
+- `docs/SECURITY.md`: secret、sandbox、データ、外部アクションのルール
+- `docs/FRONTEND.md`: UI 制約、デザインシステムのルール、アクセシビリティ確認
 
-## Working Contract
+## 作業契約
 
-- Work from one bounded plan or feature slice at a time.
-- Do not mark work done from code inspection alone; runnable evidence is
-  required.
-- If you change behavior, update the matching product, plan, or reliability
-  docs in the same session.
-- If you see repeated review feedback, promote it into a mechanical rule, check,
-  or linter instead of re-explaining it in chat.
-- Keep generated material in `docs/generated/` and source references in
-  `docs/references/`.
-- Prefer adding small, current docs over growing this file.
+- 1つの境界づけられた plan か feature slice を一度に1つずつ扱う。
+- コードを読むだけで完了扱いにしないこと。実行可能な証拠が必要です。
+- 挙動を変更した場合は、同じセッション内で対応する product、plan、または reliability の文書を更新する。
+- 同じ指摘がレビューで繰り返されるなら、チャットで言い直すのではなく、機械的なルール、チェック、または linter に落とし込む。
+- 生成物は `docs/generated/` に、ソース参照は `docs/references/` に置く。
+- このファイルを大きくするより、小さくて新しい文書を追加することを優先する。
 
-## Definition Of Done
+## 完了条件
 
-A change is done only when all of the following are true:
+変更が完了したとみなせるのは、次のすべてが真である場合だけです:
 
-- target behavior is implemented
-- required verification actually ran
-- evidence is linked from the relevant plan or quality document
-- affected docs remain current
-- the repository can restart cleanly from the standard startup path
+- 対象の挙動が実装されている
+- 必要な verification が実際に実行された
+- 証拠が関連する plan または quality document にリンクされている
+- 影響を受けた文書が最新の状態に保たれている
+- 標準の起動手順からリポジトリを問題なく再起動できる
 
-## End Of Session
+## セッション終了時
 
-Before ending a session:
+セッションを終える前に:
 
-1. Update the active execution plan.
-2. Update `docs/QUALITY_SCORE.md` if any domain or layer meaningfully changed.
-3. Record new debt in `docs/exec-plans/tech-debt-tracker.md` if you deferred it.
-4. Move finished plans to `docs/exec-plans/completed/` when appropriate.
-5. Leave the repo in a restartable state with a clear next action.
+1. アクティブな execution plan を更新する。
+2. どのドメインまたはレイヤーでも意味のある変更があったなら `docs/QUALITY_SCORE.md` を更新する。
+3. 保留にした技術的負債は `docs/exec-plans/tech-debt-tracker.md` に記録する。
+4. 該当する場合は、完了した plan を `docs/exec-plans/completed/` に移す。
+5. 次の明確なアクションが分かる、再起動可能な状態でリポジトリを残す。

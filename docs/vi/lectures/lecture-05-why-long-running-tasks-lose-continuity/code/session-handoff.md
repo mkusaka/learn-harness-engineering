@@ -1,17 +1,17 @@
-# Ví dụ Bàn giao Phiên
+# セッション引き継ぎの例
 
-## Đã Hoàn thành
+## 完了済み
 
-- Thêm hỗ trợ import markdown
-- Thêm danh sách tài liệu cơ bản trong renderer
+- markdown の import 対応を追加
+- renderer に基本的な資料一覧を追加
 
-## Bị Hỏng hoặc Chưa được Xác minh
+## 壊れている、または未確認
 
-- Import thành công với `.md` nhưng thất bại với các tệp `.txt` lớn
-- Ứng dụng khởi động, nhưng detail view chưa được kết nối
+- `.md` の import は成功するが、大きな `.txt` ファイルでは失敗する
+- アプリは起動するが、detail view はまだ接続されていない
 
-## Bước Tốt nhất Tiếp theo
+## 次に取るべき最善の手順
 
-- Sửa đường dẫn import `.txt`
-- Xác minh import end-to-end
-- Sau đó thêm panel chi tiết tài liệu
+- `.txt` の import パスを修正する
+- import を end-to-end で確認する
+- その後、ドキュメント詳細パネルを追加する

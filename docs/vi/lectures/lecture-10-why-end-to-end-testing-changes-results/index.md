@@ -1,158 +1,158 @@
-[English Version →](../../../en/lectures/lecture-10-why-end-to-end-testing-changes-results/) | [中文版本 →](../../../zh/lectures/lecture-10-why-end-to-end-testing-changes-results/)
+[英語版 →](../../../en/lectures/lecture-10-why-end-to-end-testing-changes-results/) | [中国語版 →](../../../zh/lectures/lecture-10-why-end-to-end-testing-changes-results/)
 
-> Ví dụ mã nguồn cho bài giảng này: [code/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/vi/lectures/lecture-10-why-end-to-end-testing-changes-results/code/)
-> Thực hành: [Dự án 05. Để agent xác minh công việc của chính nó](./../../projects/project-05-grounded-qa-verification/index.md)
+> この講義のコード例: [code/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/vi/lectures/lecture-10-why-end-to-end-testing-changes-results/code/)
+> 実践: [プロジェクト 05. agent に自分自身の作業を検証させる](./../../projects/project-05-grounded-qa-verification/index.md)
 
-# Bài 10. Chỉ Testing End-to-End mới là Xác minh Thực sự
+# 講義 10. エンドツーエンドテストは結果を変える
 
-Bạn yêu cầu agent thêm tính năng xuất tệp vào ứng dụng Electron. Nó viết component render process, preload script và logic lớp service. Unit test cho từng component vượt qua hoàn hảo. Agent nói, "Xong rồi." Khi bạn thực sự nhấp vào nút xuất — định dạng đường dẫn tệp sai, thanh tiến trình không cập nhật, và xuất tệp lớn gây rò rỉ bộ nhớ. Năm lỗi ranh giới component, và unit test không bắt được một cái nào.
+あなたは agent に、Electron アプリへファイル出力機能を追加するよう依頼しました。agent は render process のコンポーネント、preload script、service 層のロジックを書きます。各コンポーネントの unit test はすべて完璧に通ります。agent は「完了しました」と言います。ところが、実際にエクスポートボタンを押すと、ファイルパスの形式が間違っていて、進捗バーは更新されず、大きなファイルを出力するとメモリリークが起きます。コンポーネント境界に 5 つも問題がありましたが、unit test は 1 つも検出できませんでした。
 
-Giống như buổi tập hợp xướng — từng bè tiếng nghe hoàn hảo khi hát riêng, nhưng khi hát cùng nhau, bè soprano nhanh hơn nửa nhịp so với bè bass, và phần đệm lạc một nửa cung so với giai điệu chính. Từng phần "đúng" riêng lẻ, nhưng tổng thể lại không đồng điệu.
+これは合唱のリハーサルに似ています。各パートはそれぞれ単独で歌えば完璧に聞こえるのに、一緒に歌うと、ソプラノはバスより半拍速く、伴奏は主旋律から半音ずれてしまう。個々の部分は「正しい」のに、全体としてはかみ合っていないのです。
 
-Tháp kiểm thử của Google cho chúng ta biết: số lượng lớn unit test là nền tảng, nhưng nếu dừng lại ở đó, bạn sẽ bỏ lỡ có hệ thống các vấn đề tương tác component. Đối với AI coding agent, vấn đề này còn nghiêm trọng hơn — các agent có xu hướng chỉ chạy các test nhanh nhất và sau đó tuyên bố hoàn thành. **Chỉ testing end-to-end mới có thể chứng minh rằng các lỗi cấp hệ thống không tồn tại.**
+テストピラミッドは、unit test を大量に持つことが土台だと教えてくれます。しかし、そこで止まるとコンポーネント間の相互作用に起因する問題を体系的に見落とします。AI coding agent にとっては、この問題はさらに深刻です。agent は最速のテストだけを実行して、すぐに完了を宣言しがちだからです。**エンドツーエンドテストは、unit test や integration test では見えにくいシステムレベルのバグを露呈させることができる。しかし、どの層のテストも、バグが存在しないことを証明できない。**
 
-## Điểm Mù của Unit Testing
+## unit testing の盲点
 
-Triết lý thiết kế của unit testing là cô lập — mock các phụ thuộc và chỉ tập trung vào đơn vị đang được test. Triết lý này làm cho unit testing nhanh và chính xác, nhưng nó cũng tạo ra các điểm mù có hệ thống. Giống như từng bè tiếng tập với tai nghe trong buổi tập hợp xướng — nghe ổn với họ, nhưng các vấn đề chỉ xuất hiện khi họ hát cùng nhau:
+単体テストの設計思想は分離です。依存関係を mock し、テスト対象の単位だけに集中します。この考え方は unit testing を高速かつ正確にしますが、同時に体系的な盲点も生みます。合唱のリハーサルで、各パートがそれぞれイヤホンを付けて練習しているようなものです。本人たちには問題なく聞こえても、一緒に歌ったときにだけ問題が表面化します。
 
-**Không khớp giao diện**: Đường dẫn tệp được truyền bởi render process cho preload script là đường dẫn tương đối, nhưng preload script mong đợi đường dẫn tuyệt đối. Unit test tương ứng của chúng đều sử dụng mock và vượt qua. Vấn đề chỉ được phát hiện khi luồng end-to-end được thực thi — giống như hai bè tiếng tập độc lập và cảm thấy ổn, chỉ để nhận ra trong buổi hòa tấu rằng một bè đang hát nhịp 4/4 và cái kia nhịp 3/4.
+**インターフェース不整合**: render process から preload script に渡されたファイルパスは相対パスでしたが、preload script は絶対パスを期待していました。対応する unit test はどちらも mock を使っていたため通過しました。問題が見つかったのは、end-to-end の流れを実行したときだけです。これは、2 つのパートが別々に練習して問題ないと思っていたのに、本番の合奏で片方が 4/4 拍子、もう片方が 3/4 拍子で歌っていると気づくようなものです。
 
-**Lỗi Truyền trạng thái**: Một database migration thay đổi schema bảng, nhưng lớp caching ORM vẫn giữ các cache entry cho schema cũ. Unit test cung cấp một môi trường mock hoàn toàn mới mỗi lần, điều này sẽ không làm lộ ra sự không nhất quán trạng thái xuyên lớp này. Giống như thay lời bài hát, nhưng ai đó vẫn đang hát phiên bản cũ.
+**状態伝播のバグ**: database migration によりテーブル schema が変更されたのに、ORM の caching 層が古い schema の cache entry を保持したままでした。unit test は毎回完全に新しい mock 環境を用意するため、このような層をまたぐ状態の不整合は表面化しません。これは、歌詞を新しくしたのに、誰かが昔の版をまだ歌っているようなものです。
 
-**Vấn đề Vòng đời Tài nguyên**: Việc thu thập và giải phóng file handle, database connection và network socket trải dài trên nhiều component. Unit test tạo và hủy tài nguyên độc lập cho mỗi test, không thể làm lộ ra tranh chấp hoặc rò rỉ tài nguyên. Giống như từng bè tiếng lần lượt sử dụng microphone trong buổi tập, nhưng khi tất cả lên sân khấu cùng nhau, không đủ mic cho tất cả.
+**リソースのライフサイクル問題**: file handle、database connection、network socket の取得と解放は複数のコンポーネントにまたがります。unit test は各テストごとに独立してリソースを生成・破棄するため、競合やリークを露出できません。これは、リハーサルでは各パートが順番に microphone を使っているのに、舞台で全員が同時に出たら mic が足りなくなるのに似ています。
 
-**Phụ thuộc Môi trường**: Mã hoạt động đúng trong môi trường test (nơi mọi thứ được mock) nhưng thất bại trong môi trường thực do sự khác biệt cấu hình, độ trễ mạng, hoặc dịch vụ không khả dụng. Giống như hát hoàn hảo trong phòng tập, nhưng gặp phản hồi âm thanh và can thiệp gió ở một lễ hội ngoài trời.
+**環境依存**: test 環境では正しく動くコードが、本番環境では設定差、ネットワーク遅延、または利用不能なサービスのせいで失敗することがあります。すべてが mock された練習室では完璧に歌えるのに、屋外イベントでは音響の反響や風の影響を受けてしまうようなものです。
 
-## Testing End-to-End Không Chỉ Thay đổi Kết quả, Nó Thay đổi Hành vi
+## エンドツーエンドテストは結果を変えるだけでなく、行動も変える
 
-Đây là điều mà nhiều người không nhận ra: khi một agent biết công việc của nó sẽ được đưa qua testing end-to-end, hành vi lập trình của nó thay đổi.
+ここで重要なのは、多くの人が見落としている点です。agent が自分の仕事がエンドツーエンドテストを通ることを知っていると、プログラミング時の振る舞いそのものが変わります。
 
-1. **Cân nhắc Tương tác Component**: Trong khi viết mã, nó sẽ nghĩ về "cách giao diện này kết nối với upstream," thay vì chỉ tập trung vào một hàm duy nhất. Giống như biết cuối cùng bạn sẽ hát cùng nhau, bạn sẽ chú ý đến các bè khác trong khi tập.
-2. **Tôn trọng Ranh giới Kiến trúc**: Trong các hệ thống có ràng buộc kiến trúc, testing end-to-end buộc agent phải tuân thủ các quy tắc ranh giới. Giống như bản nhạc được ghi chú "tăng âm lượng ở đây," bạn phải tuân theo.
-3. **Xử lý Đường dẫn Lỗi**: Test end-to-end thường bao gồm các kịch bản thất bại, buộc agent phải xem xét xử lý ngoại lệ. Giống như mô phỏng "điều gì sẽ xảy ra nếu mic đột nhiên tắt" trong buổi tập, để bạn biết phải làm gì.
+1. **コンポーネント間の相互作用を考慮する**: コードを書くとき、単一の関数だけに集中するのではなく、「このインターフェースが upstream とどうつながるか」を考えるようになります。最終的に一緒に歌うと分かっていれば、練習中から他のパートの存在を意識するのと同じです。
+2. **アーキテクチャの境界を尊重する**: アーキテクチャ上の制約があるシステムでは、エンドツーエンドテストが agent に境界ルールの遵守を強制します。楽譜に「ここで音量を上げる」と書かれていれば、それに従うしかないのと同じです。
+3. **エラー経路を扱う**: エンドツーエンドテストには失敗シナリオが含まれることが多く、agent は例外処理を考慮せざるを得ません。これは、リハーサル中に「もし mic が突然切れたらどうするか」をシミュレーションするようなものです。そうしておけば、実際に起きても対応できます。
 
-## Tháp Kiểm thử và Đẩy Phản hồi Review Lên Cấp cao hơn
+## テストピラミッドと review フィードバックの上位層への押し上げ
 
 ```mermaid
 flowchart TB
-    subgraph Unit["Unit test chỉ kiểm tra các phần cô lập"]
+    subgraph Unit["unit test は分離された部分だけを検証する"]
     U1["Renderer tests"]
     U2["Preload tests"]
     U3["Service tests"]
     end
 
-    subgraph E2E["E2E chạy qua hệ thống thực"]
-    R["Nhấp nút renderer"] --> P["Preload bridge"]
-    P --> S["Lớp service"]
+    subgraph E2E["E2E は実システムを通して実行される"]
+    R["renderer のボタンをクリック"] --> P["preload bridge"]
+    P --> S["service 層"]
     S --> F["File System / OS"]
-    F --> Result["Tệp được xuất thực tế"]
+    F --> Result["実際に出力されたファイル"]
     end
 ```
 
 ```mermaid
 flowchart LR
-    Review["Phản hồi review:<br/>renderer không thể import fs trực tiếp"] --> Rule["Thêm kiểm tra import fs trực tiếp"]
-    Rule --> Message["Nói với agent trong thông báo lỗi<br/>để chuyển truy cập tệp sang preload"]
-    Message --> Harness["Thêm kiểm tra này vào harness"]
-    Harness --> Stronger["Sẽ thất bại ngay lập tức lần sau"]
+    Review["review フィードバック:<br/>renderer は fs を直接 import できない"] --> Rule["直接の fs import をチェックする"]
+    Rule --> Message["エラーメッセージで agent に伝える<br/>ファイルアクセスは preload に移すこと"]
+    Message --> Harness["このチェックを harness に追加する"]
+    Harness --> Stronger["次回から即座に失敗する"]
 ```
 
-Trong các thực hành kỹ thuật Codex, OpenAI nhấn mạnh: **các thông báo lỗi được viết cho agent phải bao gồm hướng dẫn sửa chữa.** Đừng chỉ viết `"Direct filesystem access in renderer"`; viết `"Direct filesystem access in renderer. All file operations must go through the preload bridge. Move this call to preload/file-ops.ts and invoke it via window.api."` Điều này biến các quy tắc kiến trúc thành một vòng lặp tự sửa chữa. Giống như người chỉ huy hợp xướng không chỉ nói "bạn hát sai rồi," mà còn nói "bạn nhanh hơn nửa nhịp ở đây, hãy nghe nhịp của bè alto, và vào ở nhịp 32."
+Codex の実践では、OpenAI は次のように強調しています。**agent 向けに書くエラーメッセージには、修正方法を含めるべきです。** 単に `"Direct filesystem access in renderer"` と書くのではなく、`"Direct filesystem access in renderer. All file operations must go through the preload bridge. Move this call to preload/file-ops.ts and invoke it via window.api."` と書いてください。これにより、アーキテクチャルールが自己修復ループに変わります。合唱の指揮者が「音程が違う」と言うだけでなく、「ここは半拍速いです。alto の拍を聞いて、32 小節目で入ってください」と具体的に指示するのと同じです。
 
-## Các Khái niệm Cốt lõi
+## 重要な概念
 
-- **Lỗi Ranh giới Component**: Component A và B đều vượt qua unit test của chúng, nhưng tương tác của chúng tạo ra hành vi không đúng. Đây là loại vấn đề mà testing end-to-end giỏi bắt nhất — giống như các bè hợp xướng đúng riêng lẻ nhưng không đồng điệu cùng nhau.
-- **Gradient Đủ kiểm thử (Testing Adequacy Gradient)**: Lỗi được bắt bởi unit test <= lỗi được bắt bởi integration test <= lỗi được bắt bởi test end-to-end. Mỗi lớp lên cao hơn tăng khả năng phát hiện.
-- **Quy tắc Thực thi Ranh giới Kiến trúc**: Biến các quy tắc từ tài liệu kiến trúc (như "render process không thể truy cập trực tiếp hệ thống tệp") thành các kiểm tra tự động có thể thực thi. Từ "viết trên giấy" thành "chạy trong CI."
-- **Đẩy Phản hồi Review (Review Feedback Promotion)**: Chuyển đổi các nhận xét review mã lặp đi lặp lại thành test tự động. Mỗi lần một vấn đề lặp lại được tìm thấy, thêm một quy tắc, và harness tự động trở nên mạnh hơn. Giống như người chỉ huy biến các lỗi tập phổ biến thành bài tập khởi động — lần sau khi mắc cùng lỗi, bài tập tự nó làm lộ ra mà người chỉ huy không cần nói gì.
-- **Thông báo Lỗi Hướng Agent**: Thông báo lỗi không chỉ nên nêu "điều gì đã sai," mà còn nói với agent chính xác cách sửa nó. Điều này biến lỗi test thành vòng phản hồi tự sửa chữa.
+- **コンポーネント境界のバグ**: component A と B はそれぞれの unit test を通るのに、相互作用すると誤った振る舞いを生みます。これは、合唱の各パートは正しいのに、一緒になると不協和になる問題です。エンドツーエンドテストが最も得意とする種類の不具合です。
+- **テスト適切性の組み合わせ**: unit test、integration test、end-to-end test は、それぞれ別の種類の欠陥を見つけやすいです。上位の層ほど実際のシステム挙動に近づきますが、下位の層を置き換えるものではありません。
+- **アーキテクチャ境界の実行可能な強制**: アーキテクチャ文書にあるルール（たとえば「render process はファイルシステムに直接アクセスできない」）を、実行可能な自動チェックに変えます。つまり、「紙に書いてある」状態から「CI で走る」状態にします。
+- **review フィードバックの昇格**: コード review で繰り返し指摘される内容を、自動テストに変換します。同じ問題が見つかるたびにルールを追加し、harness を自動的に強化していきます。合唱の指揮者が、よくあるミスをウォームアップ練習に変えるようなものです。次に同じミスをすると、指揮者が何も言わなくても練習自体が問題を露出します。
+- **agent 向けエラーメッセージ**: エラーメッセージは「何が悪かったか」だけでなく、「どう直すか」も agent に具体的に伝えるべきです。これにより、テスト失敗が自己修復のフィードバックループになります。
 
-## Cách Thực hiện
+## 実装方法
 
-### 0. Định nghĩa Ranh giới Kiến trúc Trước, Sau đó Viết Test E2E
+### 0. 先にアーキテクチャ境界を定義し、その後で E2E テストを書く
 
-Điều kiện tiên quyết để testing end-to-end là ranh giới hệ thống rõ ràng. Nếu kiến trúc là một đĩa mì spaghetti, testing end-to-end chỉ chứng minh "đĩa mì spaghetti này chạy được," nó sẽ không nói cho bạn biết ý định thiết kế ở đâu bị vi phạm. Giống như hợp xướng chưa thậm chí chia thành các bè — không có lượng tập nào sẽ làm cho nó nghe hay.
+エンドツーエンドテストの前提は、システム境界が明確であることです。アーキテクチャがスパゲッティ皿のようなら、エンドツーエンドテストが証明できるのは「このスパゲッティは動く」ということだけで、設計意図のどこが破られたのかは分かりません。合唱で言えば、まだパート分けすらしていない状態です。どれだけ練習しても、いい音にはなりません。
 
-Kinh nghiệm của OpenAI: **đối với các codebase được tạo bởi agent, ràng buộc kiến trúc phải là điều kiện tiên quyết ban đầu được thiết lập từ ngày đầu tiên, không phải điều gì đó cần xem xét khi nhóm lớn lên.** Lý do rất đơn giản — các agent sẽ sao chép các mẫu hiện có trong kho lưu trữ, ngay cả khi các mẫu đó không đồng đều hoặc tối ưu. Không có ràng buộc kiến trúc, agent sẽ giới thiệu thêm sai lệch trong mỗi phiên.
+OpenAI の経験則として、**agent によって作られる codebase では、アーキテクチャの制約はチームが大きくなってから検討するものではなく、最初の日から定める初期条件でなければなりません。** 理由は単純です。agent は、リポジトリ内の既存パターンを、そのパターンが不整合でも最適でなくても、繰り返してしまうからです。アーキテクチャ制約がなければ、agent はセッションごとに新しいズレを持ち込み続けます。
 
-OpenAI đã áp dụng "Kiến trúc Miền Phân lớp" — mỗi domain kinh doanh được chia thành các lớp cố định: Types → Config → Repo → Service → Runtime → UI. Các phụ thuộc chảy nghiêm ngặt theo hướng tiến, và các mối quan tâm xuyên domain đi vào qua các giao diện Provider rõ ràng. Bất kỳ phụ thuộc nào khác đều bị cấm và được thực thi cơ học qua linting tùy chỉnh.
+OpenAI は「レイヤード・ドメイン・アーキテクチャ」を採用しています。各業務ドメインは固定された層に分かれます: Types → Config → Repo → Service → Runtime → UI。依存は厳密に前方へ流れ、ドメインをまたぐ関心事は明示的な Provider インターフェース経由で入ります。それ以外の依存はすべて禁止され、カスタム lint によって機械的に強制されます。
 
-Nguyên tắc quan trọng: **Thực thi các bất biến, không vi quản lý triển khai.** Ví dụ, yêu cầu "dữ liệu được parse tại ranh giới," nhưng không chỉ định nên sử dụng thư viện nào. Thông báo lỗi phải bao gồm hướng dẫn sửa chữa — không chỉ nói "vi phạm," mà nói với agent chính xác cách thay đổi.
+重要な原則は、**不変条件を強制し、実装を細かく管理しないこと** です。たとえば「データは境界で parse されること」とは要求しますが、どのライブラリを使うかまでは指定しません。エラーメッセージには修正方法を含めるべきです。「違反している」と言うだけではなく、agent にどう変えるべきかを正確に伝えます。
 
-> Nguồn: [OpenAI: Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/)
+> 出典: [OpenAI: Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/)
 
-### 1. Harness Phải Bao gồm Một Lớp End-to-End
+### 1. harness には必ずエンドツーエンド層を含める
 
-Làm rõ ràng trong luồng xác minh của bạn: đối với các tác vụ liên quan đến thay đổi xuyên component, vượt qua test end-to-end là điều kiện tiên quyết cho hoàn thành:
+検証フローの中で明確にしてください。コンポーネントをまたぐ変更に関わるタスクでは、エンドツーエンドテストの通過が完了条件です:
 
-```
-## Thứ bậc Xác minh
-- Mức 1: Unit test (Bắt buộc vượt qua)
-- Mức 2: Integration test (Bắt buộc vượt qua)
-- Mức 3: Test End-to-end (Bắt buộc vượt qua khi có thay đổi xuyên component)
-- Bỏ qua bất kỳ mức nào bắt buộc = Chưa Hoàn thành
-```
+````
+## 検証の階層
+- レベル 1: unit test (通過必須)
+- レベル 2: integration test (通過必須)
+- レベル 3: end-to-end test (component をまたぐ変更がある場合は通過必須)
+- 必須レベルを 1 つでも飛ばす = 未完了
+````
 
-### 2. Biến Quy tắc Kiến trúc Thành Kiểm tra Có thể Thực thi
+### 2. アーキテクチャルールを実行可能なチェックに変える
 
-Mỗi ràng buộc kiến trúc nên có test hoặc quy tắc lint tương ứng:
+各アーキテクチャ制約には、対応する test か lint ルールが必要です:
 
 ```bash
-# Kiểm tra xem render process có gọi trực tiếp Node.js API không
+# render process が Node.js API を直接呼んでいないか確認する
 grep -r "require('fs')" src/renderer/ && exit 1 || echo "OK: no direct fs access in renderer"
 ```
 
-### 3. Thiết kế Thông báo Lỗi Hướng Agent
+### 3. agent 向けのエラーメッセージを設計する
 
-Thông báo lỗi nên chứa ba yếu tố: điều gì đã sai, tại sao, và cách sửa:
+エラーメッセージには 3 つの要素を含めるべきです。何が悪いのか、なぜそれが問題なのか、どう直すのかです:
 
-```
-LỖI: Tìm thấy import trực tiếp 'fs' trong src/renderer/App.tsx:12
-TẠI SAO: Render process không có quyền truy cập Node.js API vì lý do bảo mật
-CÁCH SỬA: Di chuyển các hoạt động tệp sang src/preload/file-ops.ts và gọi qua window.api.readFile()
-```
+````
+エラー: src/renderer/App.tsx:12 で 'fs' の直接 import が見つかりました
+理由: render process にはセキュリティ上の理由で Node.js API へのアクセス権がありません
+修正方法: ファイル操作を src/preload/file-ops.ts に移し、window.api.readFile() 経由で呼び出してください
+````
 
-### 4. Thiết lập Quy trình Đẩy Phản hồi Review
+### 4. review フィードバックの昇格プロセスを整える
 
-Mỗi khi tìm thấy một loại lỗi agent mới trong code review, biến nó thành kiểm tra tự động. Một tháng sau, harness của bạn sẽ mạnh hơn đáng kể so với lúc đầu tháng. Giống như ghi chú buổi tập cho hợp xướng — ghi lại các vấn đề được tìm thấy trong mỗi buổi tập để có thể kiểm tra trước buổi tiếp theo. Theo thời gian, các lỗi phổ biến giảm đi, và âm nhạc trở nên hài hòa hơn.
+code review で新しい種類の agent のバグが見つかるたび、それを自動チェックに変換します。1 か月後には、harness は月初よりかなり強くなっています。これは合唱のリハーサルノートのようなものです。各回で見つかった問題を書き留めておけば、次の本番前に確認できます。時間がたつにつれて、よくあるミスは減り、音楽はより調和していきます。
 
-## Trường hợp Thực tế
+## 実例
 
-**Tác vụ**: Triển khai tính năng xuất tệp trong ứng dụng Electron. Liên quan đến UI render process, proxy hệ thống tệp preload script, và chuyển đổi dữ liệu lớp service.
+**タスク**: Electron アプリにファイル出力機能を実装する。UI render process、preload script によるファイルシステムの proxy、service 層のデータ変換が関係します。
 
-**Hát từng bè riêng (Unit test vượt qua)**: Test component Render (vượt qua, file operations được mock), test preload script (vượt qua, filesystem được mock), test lớp service (vượt qua, data source được mock). Agent tuyên bố hoàn thành.
+**各パートを別々に歌う場合 (unit test は通過)**: Render component の test (通過、file operations は mock)、preload script の test (通過、filesystem は mock)、service 層の test (通過、data source は mock)。agent は完了を宣言しました。
 
-**Hát cùng nhau (Lỗi được Test End-to-End tiết lộ)**:
+**一緒に歌う場合 (end-to-end test が露呈した問題)**:
 
-| Lỗi | Mô tả | Unit Test | E2E |
+| 問題 | 説明 | Unit Test | E2E |
 |-----|-------|-----------|-----|
-| Không khớp giao diện | Định dạng đường dẫn tệp không nhất quán | Bỏ qua | Bắt được |
-| Truyền trạng thái | Tiến trình xuất không được gửi trở lại UI qua IPC | Bỏ qua | Bắt được |
-| Rò rỉ tài nguyên | File handle xuất tệp lớn không được giải phóng | Bỏ qua | Bắt được |
-| Vấn đề quyền | Quyền khác nhau trong môi trường đóng gói | Bỏ qua | Bắt được |
-| Truyền lỗi | Ngoại lệ lớp service không đến được lớp UI | Bỏ qua | Bắt được |
+| インターフェース不整合 | ファイルパスの形式が一貫していない | 見逃す | 検出 |
+| 状態伝播 | エクスポート進捗が IPC 経由で UI に戻されていない | 見逃す | 検出 |
+| リソースリーク | 大きなファイルの出力で file handle が解放されていない | 見逃す | 検出 |
+| 権限の問題 | パッケージ化環境では権限が異なる | 見逃す | 検出 |
+| エラー伝播 | service 層の例外が UI 層に届いていない | 見逃す | 検出 |
 
-Tất cả 5 lỗi đều được test end-to-end bắt được, trong khi unit test không bắt được cái nào. Chi phí là tăng thời gian test từ 2 giây lên 15 giây — hoàn toàn chấp nhận được trong quy trình agent. Dù từng bè hát tốt đến đâu, không thể so với một buổi tập hòa tấu đầy đủ.
+5 つすべてのバグを end-to-end test が検出し、unit test は 1 つも見つけられませんでした。代償は、テスト時間が 2 秒から 15 秒に増えたことです。agent のワークフローでは、これは十分に許容できます。各パートがどれだけ上手く歌えても、フル合奏のリハーサルには及びません。
 
-## Những Điểm chính cần Nhớ
+## 覚えておくべき要点
 
-- **Unit test mù có hệ thống với các lỗi ranh giới component** — thiết kế cô lập của chúng chính xác là điều ngăn chúng phát hiện các vấn đề tương tác. Mọi người đều hát đúng không có nghĩa là hợp xướng không lạc nhịp.
-- **Testing end-to-end không chỉ phát hiện lỗi, nó thay đổi hành vi lập trình của agent** — làm cho nó tập trung hơn vào tích hợp và ranh giới.
-- **Các quy tắc kiến trúc phải có thể thực thi** — không viết trong tài liệu để được đọc, mà được kiểm tra tự động trên mỗi commit.
-- **Thông báo lỗi phải được thiết kế cho agent** — bao gồm các bước cụ thể về "cách sửa nó" để tạo thành vòng lặp tự sửa chữa.
-- **Đẩy phản hồi review làm cho harness tự động mạnh hơn** — mỗi danh mục lỗi được bắt trở thành một tuyến phòng thủ vĩnh viễn.
+- **unit test は component 境界のバグに体系的に弱い**: 分離を前提とした設計そのものが、相互作用の問題を見つけにくくします。全員が正しく歌えても、合唱全体が外れていないとは限りません。
+- **エンドツーエンドテストは、バグを見つけるだけでなく agent の書き方も変える**: 統合と境界に、より注意を向けるようになります。
+- **アーキテクチャルールは実行可能でなければならない**: ドキュメントに書いて読ませるのではなく、すべての commit で自動的に検査される必要があります。
+- **エラーメッセージは agent 向けに設計する**: 自己修復ループを作るために、「どう直すか」の具体的手順を含めてください。
+- **review フィードバックの昇格は harness を自動的に強化する**: 捕捉したエラーの各カテゴリは、恒久的な防波堤になります。
 
-## Đọc thêm
+## 参考文献
 
-- [How Google Tests Software - Whittaker et al.](https://www.goodreads.com/book/show/13563030-how-google-tests-software) — Nguồn kinh điển của mô hình Tháp Kiểm thử
-- [Harness Engineering - OpenAI](https://openai.com/index/harness-engineering/) — Thực hành kỹ thuật để thực thi tự động các ràng buộc kiến trúc
-- [Chaos Engineering - Netflix (Basiri et al.)](https://ieeexplore.ieee.org/document/7466237) — Chủ động đưa vào lỗi để xác minh độ bền hệ thống
-- [QuickCheck - Claessen & Hughes](https://www.cs.tufts.edu/~nr/cs257/archive/john-hughes/quick.pdf) — Phương pháp property testing, nằm giữa example testing và kiểm chứng hình thức
+- [How Google Tests Software - Whittaker et al.](https://www.goodreads.com/book/show/13563030-how-google-tests-software) — テストピラミッドの古典的な出典
+- [Harness Engineering - OpenAI](https://openai.com/index/harness-engineering/) — アーキテクチャ制約を自動強制するための技術実践
+- [Chaos Engineering - Netflix (Basiri et al.)](https://ieeexplore.ieee.org/document/7466237) — システムの堅牢性を検証するために、意図的に障害を注入する手法
+- [QuickCheck - Claessen & Hughes](https://www.cs.tufts.edu/~nr/cs257/archive/john-hughes/quick.pdf) — 例ベーステストと形式検証の中間にある property testing の手法
 
-## Bài tập
+## 演習
 
-1. **Phát hiện Lỗi Xuyên Component**: Chọn một tác vụ sửa đổi liên quan đến ít nhất ba component. Đầu tiên, chỉ chạy unit test và ghi lại kết quả, sau đó chạy test end-to-end. Phân tích mỗi lỗi được phát hiện thêm thuộc loại vấn đề tương tác xuyên lớp nào.
+1. **component 間のバグを検出する**: 少なくとも 3 つの component をまたぐ変更タスクを 1 つ選びます。まず unit test だけを実行して結果を記録し、その後 end-to-end test を実行します。追加で検出された各バグが、どの種類の層をまたぐ相互作用問題かを分析してください。
 
-2. **Tự động hóa Quy tắc Kiến trúc**: Chọn một ràng buộc kiến trúc từ dự án của bạn và biến nó thành kiểm tra có thể thực thi (với thông báo lỗi hướng agent). Tích hợp nó vào harness và xác minh hiệu quả của nó với một tác vụ baseline.
+2. **アーキテクチャルールを自動化する**: 自分のプロジェクトからアーキテクチャ制約を 1 つ選び、agent 向けのエラーメッセージ付きで実行可能なチェックに変えます。それを harness に組み込み、ベースラインのタスクで有効性を確認してください。
 
-3. **Đẩy Phản hồi Review**: Tìm một loại nhận xét lặp lại từ lịch sử code review của bạn và chuyển đổi nó thành kiểm tra tự động bằng quy trình năm bước. So sánh tần suất của vấn đề trước và sau khi đẩy.
+3. **review フィードバックを昇格する**: code review の履歴から繰り返し出てくる指摘を 1 種類見つけ、5 段階のプロセスで自動チェックに変換します。昇格の前後で、その問題の発生頻度を比較してください。

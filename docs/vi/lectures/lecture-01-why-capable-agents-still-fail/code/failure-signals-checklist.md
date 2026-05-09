@@ -1,9 +1,9 @@
-# Danh sách Kiểm tra Tín hiệu Lỗi
+# 失敗シグナルのチェックリスト
 
-Sử dụng danh sách kiểm tra này khi xem xét một lần chạy harness yếu.
+ハーネスが弱い実行結果を見直すときは、このチェックリストを使ってください。
 
-- Agent có hỏi hoặc suy ra không chính xác cách khởi động ứng dụng không?
-- Nó có tạo ra các thư mục hoặc trừu tượng không khớp với sản phẩm dự định không?
-- Nó có dừng lại sau khi tạo ra một UI shell có thể nhìn thấy nhưng không có workflow hoàn chỉnh không?
-- Nó có để lại các ghi chú hoặc artifact giúp lần chạy tiếp theo tiếp tục không?
-- Một phiên mới có thể hiểu chuyện gì đã xảy ra trong vòng dưới năm phút không?
+- エージェントは、アプリの起動方法を誤って尋ねたり、誤って推測したりしていませんか？
+- 生成されたディレクトリや抽象化は、意図したプロダクトと一致していますか？
+- 目に見える UI シェルを作っただけで、完全なワークフローを実装しないまま止まっていませんか？
+- 次回の実行を助けるメモや artifact を残していますか？
+- 新しいセッションが、何が起きたのかを5分以内に理解できますか？

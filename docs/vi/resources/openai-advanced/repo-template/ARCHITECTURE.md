@@ -1,55 +1,55 @@
 # ARCHITECTURE.md
 
-Tệp này là bản đồ cấp cao nhất của hệ thống. Nó nên ngắn gọn và trỏ đến các tài liệu sâu hơn khi cần.
+このファイルはシステム全体の最上位マップです。簡潔に保ち、必要に応じてより詳細な資料へ参照を向けてください。
 
-## Hình dạng Hệ thống
+## システムの形
 
-- Sản phẩm: `[thay thế bằng tên sản phẩm]`
-- Workflow người dùng chính: `[thay thế bằng workflow chính]`
-- Bề mặt runtime: `[desktop / web / cli / services / workers]`
-- Nguồn sự thật cho hành vi sản phẩm: `docs/product-specs/`
+- 製品: `[製品名を差し替え]`
+- 主要なユーザーフロー: `[主要なワークフローを差し替え]`
+- 実行環境の表面: `[desktop / web / cli / services / workers]`
+- 製品挙動に関する唯一の正本: `docs/product-specs/`
 
-## Bản đồ Domain
+## ドメインマップ
 
-| Domain | Mục đích | Điểm đầu vào chính | Spec liên quan |
-|--------|---------|----------------------|----------------|
-| `[domain-a]` | `[những gì nó sở hữu]` | `[modules / routes / commands]` | `[đường dẫn spec]` |
-| `[domain-b]` | `[những gì nó sở hữu]` | `[modules / routes / commands]` | `[đường dẫn spec]` |
+| Domain | 目的 | 主な入口 | 関連 spec |
+|--------|------|----------|-----------|
+| `[domain-a]` | `[何を担当するか]` | `[modules / routes / commands]` | `[spec のパス]` |
+| `[domain-b]` | `[何を担当するか]` | `[modules / routes / commands]` | `[spec のパス]` |
 
-## Mô hình Lớp
+## レイヤーモデル
 
-Sử dụng mô hình định hướng cố định để agent không tự phát minh ra kiến trúc ad hoc:
+エージェントが ad hoc な構成を勝手に作らないよう、固定の方向性モデルを使ってください:
 
 `Types -> Config -> Repo -> Service -> Runtime -> UI`
 
-Các mối quan tâm xuyên suốt nên đi vào qua các ranh giới provider hoặc adapter rõ ràng thay vì tiếp cận trực tiếp qua các lớp.
+横断的な関心事は、明確な provider または adapter の境界を通して扱い、レイヤーを直接またがないでください。
 
-## Quy tắc Phụ thuộc Cứng
+## 厳格な依存ルール
 
-- Các lớp thấp hơn không được phụ thuộc vào các lớp cao hơn.
-- UI không được bỏ qua các hợp đồng runtime hoặc service.
-- Truy cập dữ liệu phải đi qua các repository hoặc adapter tương đương.
-- Các tiện ích dùng chung phải là chung chung và không được tích lũy logic domain.
-- Các phụ thuộc mới nên được chứng minh trong kế hoạch hoặc tài liệu thiết kế phù hợp.
+- 下位レイヤーは上位レイヤーに依存してはいけません。
+- UI は runtime や service の契約を飛ばしてはいけません。
+- データアクセスは repository または同等の adapter を経由しなければなりません。
+- 共有ユーティリティは汎用的であるべきで、domain ロジックを蓄積してはいけません。
+- 新しい依存関係は、適切な計画書または設計書で根拠を示す必要があります。
 
-## Giao diện Xuyên suốt
+## 横断的なインターフェース
 
-| Mối quan tâm | Ranh giới được phê duyệt | Ghi chú |
-|--------|-------------------|---------|
-| Logging và tracing | `[đường dẫn provider / utility]` | `[chỉ có cấu trúc, không sử dụng console ad hoc]` |
-| Auth | `[đường dẫn provider]` | `[quy tắc token/session]` |
-| External API | `[đường dẫn client hoặc provider]` | `[hướng dẫn rate limit / retry]` |
-| Feature flags | `[ranh giới flag]` | `[quyền sở hữu]` |
+| 関心事 | 承認済みの境界 | 注記 |
+|--------|----------------|------|
+| Logging と tracing | `[provider / utility のパス]` | `[構造化のみ。ad hoc な console は使わない]` |
+| Auth | `[provider のパス]` | `[token/session のルール]` |
+| External API | `[client または provider のパス]` | `[rate limit / retry の指針]` |
+| Feature flags | `[flag の境界]` | `[所有権]` |
 
-## Điểm Nóng Hiện tại
+## 現在のホットスポット
 
-- `[khu vực khó thay đổi an toàn nhất cho agent]`
-- `[khu vực có ranh giới yếu hoặc test dễ vỡ]`
+- `[agent にとって最も安全に変更しにくい領域]`
+- `[境界が弱い、またはテストが壊れやすい領域]`
 
-## Danh sách Kiểm tra Thay đổi
+## 変更チェックリスト
 
-Khi bạn chạm vào mã liên quan đến kiến trúc:
+アーキテクチャに関係するコードを触るときは:
 
-1. Cập nhật tệp này nếu bản đồ domain hoặc ranh giới được phép thay đổi.
-2. Cập nhật tài liệu thiết kế liên quan trong `docs/design-docs/` nếu lý luận thay đổi.
-3. Thêm hoặc cập nhật kiểm tra có thể thực thi nếu quy tắc nên được thực thi cơ học.
+1. domain マップまたは許可された境界が変わる場合は、このファイルを更新してください。
+2. 理由付けが変わる場合は、`docs/design-docs/` 内の関連設計資料を更新してください。
+3. ルールを機械的に強制すべきなら、実行可能なテストを追加または更新してください。

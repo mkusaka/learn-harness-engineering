@@ -1,121 +1,121 @@
-[English Version →](../../../en/lectures/lecture-04-why-one-giant-instruction-file-fails/) | [中文版本 →](../../../zh/lectures/lecture-04-why-one-giant-instruction-file-fails/)
+[英語版 →](../../../en/lectures/lecture-04-why-one-giant-instruction-file-fails/) | [中国語版 →](../../../zh/lectures/lecture-04-why-one-giant-instruction-file-fails/)
 
-> Ví dụ mã nguồn: [code/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/vi/lectures/lecture-04-why-one-giant-instruction-file-fails/code/)
-> Dự án thực hành: [Dự án 02. Không gian làm việc Agent đọc được](./../../projects/project-02-agent-readable-workspace/index.md)
+> コード例: [code/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/vi/lectures/lecture-04-why-one-giant-instruction-file-fails/code/)
+> 実践プロジェクト: [プロジェクト 02. Agent が読めるワークスペース](./../../projects/project-02-agent-readable-workspace/index.md)
 
-# Bài 04. Chia Hướng dẫn Ra Thành Nhiều Tệp
+# 講義 04. 1つの巨大な指示ファイルが失敗する理由
 
-Bạn đã nghiêm túc với harness engineering — tốt lắm. Bạn đã tạo `AGENTS.md` và nhét mọi quy tắc, ràng buộc và bài học kinh nghiệm mà bạn có thể nghĩ ra vào đó. Một tháng sau, tệp phình lên 300 dòng, hai tháng 450 dòng, ba tháng 600 dòng. Rồi bạn nhận ra hiệu suất của agent thực sự đang kém hơn — trên một sửa lỗi đơn giản, agent đốt cháy rất nhiều ngữ cảnh để xử lý các hướng dẫn triển khai không liên quan; một ràng buộc bảo mật quan trọng bị chôn ở dòng 300 bị bỏ qua hoàn toàn; ba quy tắc phong cách mã mâu thuẫn có nghĩa là agent chọn một cái ngẫu nhiên mỗi lần.
+harness engineering に真剣に取り組んできましたね。`AGENTS.md` を作り、思いつく限りのルール、制約、学びをそこに詰め込みました。1か月後には 300 行、2か月後には 450 行、3か月後には 600 行に膨らみます。すると、agent の実際の性能が下がっていることに気づきます。単純なバグ修正でさえ、agent は関係のない実装指示を処理するために大量のコンテキストを消費し、300 行目に埋もれた重要なセキュリティ制約は完全に見落とされ、相反する 3 つのコードスタイル規則のせいで、毎回どれかを適当に選ぶしかなくなります。
 
-Đây là bẫy "tệp hướng dẫn khổng lồ." Giống như nhồi quá nhiều vào vali — mọi thứ có vẻ hữu ích, vì vậy bạn nhét tất cả vào cho đến khi khóa kéo sắp nổ tung. Tìm đồ lót của bạn có nghĩa là đổ toàn bộ túi. Bạn mang một chiếc vali đầy, nhưng thực ra bạn chỉ dùng khoảng một phần ba những gì bên trong.
+これが「巨大な指示ファイル」の罠です。まるでスーツケースに詰め込みすぎるのと同じで、何でも役立ちそうに見えるので全部入れてしまい、ついにはファスナーがはち切れそうになります。下着を探すにはバッグを全部ひっくり返すしかありません。スーツケースはいっぱいなのに、実際に使うのは中身の 3 分の 1 ほどしかありません。
 
-## Vòng lặp Vicious Tại Gốc rễ
+## 悪循環の根っこ
 
-Vòng lặp vicious phổ biến nhất diễn ra như thế này: agent mắc lỗi, bạn nói "thêm quy tắc để ngăn điều này," thêm nó vào AGENTS.md, nó hoạt động tạm thời, agent mắc lỗi khác, thêm quy tắc khác, lặp lại, tệp phình ra ngoài tầm kiểm soát.
+もっともよくある悪循環は、次のように進みます。agent がミスをする。あなたは「これを防ぐルールを追加しよう」と考える。`AGENTS.md` に足す。一時的にはうまくいく。別のミスが起きる。別のルールを足す。これを繰り返す。結果、ファイルが制御不能なほど膨れ上がります。
 
-Đây không phải lỗi của bạn. Đây là một phản ứng rất tự nhiên — "thêm quy tắc" mỗi khi có sự cố cảm thấy hợp lý, giống như tống thêm thứ gì đó vào túi mỗi khi bạn ra khỏi nhà "đề phòng bất trắc." Nhưng hiệu ứng tích lũy là thảm khốc. Hãy xem cụ thể những gì đi sai.
+これはあなたのせいではありません。とても自然な反応です。何か問題が起きるたびに「ルールを足す」のは理にかなって見えますし、外出するたびに「念のため」で持ち物を増やすのと同じ感覚です。しかし、累積効果は壊滅的です。何がまずいのかを具体的に見ていきましょう。
 
-**Ngân sách ngữ cảnh bị ăn mòn.** Cửa sổ ngữ cảnh của agent là hữu hạn. Giả sử agent của bạn có cửa sổ 200K token (tiêu chuẩn của Claude). Một tệp hướng dẫn phình to có thể ăn 10-20K token. Có vẻ vẫn còn nhiều chỗ? Nhưng một tác vụ phức tạp có thể cần đọc hàng chục tệp nguồn, kết quả thực thi công cụ cũng chiếm ngữ cảnh, và lịch sử hội thoại tích lũy. Đến khi agent cần hiểu mã, ngân sách đã chật chội — giống như một chiếc vali quá đầy đến mức không còn chỗ cho laptop của bạn.
+**コンテキスト予算が侵食される。** agent のコンテキストウィンドウには上限があります。たとえば、200K token のウィンドウがあるとします。巨大な指示ファイルは 10K〜20K token を消費することがあります。まだ余裕があるように見えますか。ですが、複雑なタスクでは何十ものソースファイルを読む必要があり、ツール実行結果もコンテキストを食い、会話履歴も積み上がります。agent がコードを理解すべき時点では、予算はもう逼迫しています。まるで、ノート PC を入れる場所すらなくなるほど詰まったスーツケースのようです。
 
-**Lạc giữa đường.** Bài báo "Lost in the Middle" (Liu et al., 2023) đã chứng minh rõ ràng rằng LLM sử dụng thông tin ở giữa các văn bản dài kém hiệu quả hơn đáng kể so với đầu hoặc cuối. AGENTS.md của bạn có 600 dòng, và dòng 300 nói "tất cả các truy vấn cơ sở dữ liệu phải sử dụng truy vấn được tham số hóa" — đó là ràng buộc cứng bảo mật. Nhưng nó bị chôn ở giữa, và agent gần như chắc chắn sẽ bỏ qua nó. Giống như chai kem chống nắng ở đáy chiếc vali quá đầy của bạn — bạn biết nó ở đó, bạn đào ba lần, không tìm thấy, cuối cùng mua cái khác.
+**真ん中で迷子になる。** 2023 年の論文「Lost in the Middle」は、LLM が長文の中央にある情報を、先頭や末尾にある情報よりもかなりうまく使えないことを明確に示しました。600 行の `AGENTS.md` の 300 行目に「すべての DB クエリはパラメータ化クエリを使うこと」という重要なセキュリティ制約があったとしても、それは真ん中に埋もれているので、agent が見落とす可能性は非常に高くなります。ちょうど、詰め込みすぎたスーツケースの底にある日焼け止めのようなものです。そこにあるのは分かっていても、3 回探しても見つからず、結局別のものを買うことになります。
 
-**Xung đột ưu tiên.** Tệp trộn lẫn các ràng buộc cứng không thể thương lượng ("không bao giờ sử dụng eval()"), các hướng dẫn thiết kế quan trọng ("ưu tiên phong cách hàm"), và một bài học lịch sử cụ thể ("đã sửa rò rỉ bộ nhớ WebSocket tuần trước, chú ý đến các mẫu tương tự"). Ba quy tắc này có mức độ quan trọng hoàn toàn khác nhau, nhưng chúng trông giống hệt nhau trong tệp. Agent không có tín hiệu đáng tin cậy để phân biệt — giống như hộ chiếu và dây sạc bị lẫn lộn trong vali, không cách nào biết cái nào cấp bách hơn.
+**優先順位が衝突する。** ファイルの中には、譲れないハード制約（`eval()` を絶対に使わない）、重要な設計指針（関数型スタイルを優先する）、そして特定の過去の学び（先週 WebSocket のメモリリークを直したので似たパターンに注意する）が混在します。これら 3 つは重要度がまったく違いますが、ファイルの中では同じ見た目で並んでいます。agent には信頼できる判別材料がありません。まるで、スーツケースの中でパスポートと充電ケーブルが混ざってしまい、どちらを優先すべきか分からないのと同じです。
 
-**Suy giảm bảo trì.** Các tệp lớn vốn dĩ khó bảo trì. Các hướng dẫn lỗi thời hiếm khi bị xóa — vì hậu quả của việc xóa là không chắc chắn ("có lẽ thứ gì đó khác phụ thuộc vào quy tắc này?"), trong khi thêm hướng dẫn mới có vẻ miễn phí. Kết quả: tệp chỉ tăng, không bao giờ giảm, và tỷ lệ tín hiệu/nhiễu liên tục giảm. Đây chính xác giống như tích lũy nợ kỹ thuật trong phần mềm.
+**保守性が落ちる。** 巨大なファイルは、そもそも保守が難しいものです。古くなった指示はなかなか削除されません。削除すると何かが壊れるかもしれないという不確実さがある一方で、新しい指示を足すのは無料に見えるからです。その結果、ファイルは増える一方で減らず、シグナル対ノイズ比は下がり続けます。これは、ソフトウェアに技術的負債が溜まっていくのとまったく同じです。
 
-**Tích lũy mâu thuẫn.** Các hướng dẫn được thêm vào các thời điểm khác nhau bắt đầu mâu thuẫn nhau — một cái nói "sử dụng TypeScript strict mode," một cái khác nói "một số tệp legacy cho phép any types." Agent chọn ngẫu nhiên một cái để tuân theo mỗi lần. Giống như mẹ bạn nói "mặc thêm ấm" và bố bạn nói "đừng mặc quá nhiều," và bạn đứng ở cửa không biết lắng nghe ai.
+**矛盾が蓄積する。** さまざまな時点で追加された指示は、やがて互いに矛盾し始めます。ある指示は「TypeScript strict mode を使う」と言い、別の指示は「一部の legacy ファイルでは `any` を許可する」と言います。agent は毎回、どれに従うかをランダムに選ぶしかありません。ちょうど、母親には「もっと暖かくしなさい」と言われ、父親には「着込みすぎるな」と言われ、玄関で誰の言うことを聞くべきか分からなくなるようなものです。
 
-## Các Khái niệm Cốt lõi
+## 重要な概念
 
-- **Phình Hướng dẫn (Instruction Bloat)**: Khi một tệp hướng dẫn chiếm hơn 10-15% cửa sổ ngữ cảnh, nó bắt đầu lấn át ngân sách để đọc mã và lý luận tác vụ. Một `AGENTS.md` 600 dòng có thể tiêu thụ 10,000-20,000 token — đó là 8-15% cửa sổ 128K bị ăn hết trước khi agent thậm chí bắt đầu.
-- **Hiệu ứng Lạc Giữa Đường (Lost in the Middle Effect)**: Nghiên cứu năm 2023 của Liu et al. đã chứng minh rằng LLM sử dụng thông tin ở giữa các văn bản dài kém hiệu quả hơn đáng kể so với thông tin ở đầu hoặc cuối. Một ràng buộc quan trọng bị chôn ở dòng 300 của tệp 600 dòng có xác suất rất cao bị bỏ qua thực tế.
-- **Tỷ lệ Tín hiệu/Nhiễu Hướng dẫn (Instruction SNR)**: Tỷ lệ hướng dẫn trong một tệp liên quan đến tác vụ hiện tại. Bị buộc phải đọc 50 dòng hướng dẫn triển khai trong khi sửa lỗi — đó là SNR thấp.
-- **Tệp Định tuyến (Routing File)**: Một tệp đầu vào ngắn có chức năng cốt lõi là chỉ agent đến các tài liệu chi tiết hơn, không chứa tất cả mọi thứ trong chính nó. 50-200 dòng là đủ.
-- **Tiết lộ Tiến triển (Progressive Disclosure)**: Đưa thông tin tổng quan trước, thông tin chi tiết khi cần. Thiết kế harness tốt giống như thiết kế UI tốt — đừng đổ tất cả các tùy chọn lên người dùng cùng một lúc.
-- **Mơ hồ Ưu tiên (Priority Ambiguity)**: Khi tất cả hướng dẫn xuất hiện ở cùng định dạng và vị trí, agent không thể phân biệt các ràng buộc cứng không thể thương lượng với các hướng dẫn mềm mang tính gợi ý.
+- **Instruction Bloat（指示の肥大化）**: 指示ファイルがコンテキストウィンドウの 10〜15% を超えると、コードを読むための予算やタスク推論のための予算を圧迫し始めます。600 行の `AGENTS.md` は 10,000〜20,000 token を消費する可能性があり、128K ウィンドウの 8〜15% が、agent が作業を始める前に消えてしまいます。
+- **Lost in the Middle Effect（真ん中で迷子になる効果）**: Liu らによる 2023 年の研究は、LLM が長文の中央にある情報を、先頭や末尾の情報よりもかなりうまく使えないことを示しました。600 行のファイルの 300 行目に埋もれた重要な制約は、実際には見落とされる可能性が非常に高くなります。
+- **Instruction SNR（指示のシグナル対ノイズ比）**: 現在のタスクに対して関連する指示の割合です。バグ修正中に、実装手順の 50 行を読まされるなら、それは SNR が低いということです。
+- **ルーティングファイル**: より詳細な資料へ agent を案内することを主な役割とする、短い入力ファイルです。何でもかんでも 1 つに詰め込むのではありません。50〜200 行で十分です。
+- **Progressive Disclosure（段階的開示）**: まず全体像を示し、必要になったら詳細を出す設計です。良い harness 設計は良い UI 設計に似ています。すべての選択肢を一度にユーザーへ押し付けないでください。
+- **Priority Ambiguity（優先順位の曖昧さ）**: すべての指示が同じ形式、同じ場所にあると、agent は譲れないハード制約と、あくまで助言であるソフトな指示を見分けられません。
 
-## Kiến trúc Hướng dẫn
+## 指示アーキテクチャ
 
 ```mermaid
 flowchart LR
-    Mono["Một AGENTS.md 600 dòng"] --> MonoLoad["Ngay cả sửa lỗi nhỏ<br/>cũng phải đọc quy tắc triển khai và ghi chú cũ"]
-    MonoLoad --> MonoRisk["Quy tắc quan trọng bị chôn ở giữa<br/>dễ bỏ qua"]
+    Mono["1つの 600 行の AGENTS.md"] --> MonoLoad["小さなバグ修正でも<br/>実装ルールや古いメモを読む必要がある"]
+    MonoLoad --> MonoRisk["重要なルールが真ん中に埋もれており<br/>見落とされやすい"]
 
-    Router["AGENTS.md ngắn"] --> Topics["Chỉ tải tài liệu API / DB / testing<br/>khi tác vụ này cần chúng"]
-    Topics --> RoutedResult["Còn nhiều ngữ cảnh hơn cho việc đọc mã<br/>và xác minh"]
+    Router["短い AGENTS.md"] --> Topics["タスクに必要なときだけ<br/>API / DB / testing の資料を読む"]
+    Topics --> RoutedResult["コード読みと検証のために<br/>より多くのコンテキストが残る"]
 ```
 
 ```mermaid
 flowchart TB
-    File["Tệp hướng dẫn 600 dòng"] --> Top["Phần đầu<br/>khởi động nhanh + ràng buộc cứng"]
-    File --> Mid["Phần giữa<br/>quy tắc bảo mật quan trọng ở dòng 300"]
-    File --> Bot["Phần cuối<br/>danh sách kiểm tra cuối tệp rõ ràng"]
-    Top --> Seen["Khả năng nhớ lại cao"]
+    File["600 行の指示ファイル"] --> Top["先頭<br/>クイックスタート + ハード制約"]
+    File --> Mid["中央<br/>300 行目の重要なセキュリティ規則"]
+    File --> Bot["末尾<br/>明確な終端チェックリスト"]
+    Top --> Seen["高い想起率"]
     Bot --> Seen
-    Mid --> Missed["Khả năng cao bị loãng hoặc bỏ qua"]
+    Mid --> Missed["薄まりやすく、見落とされやすい"]
 ```
 
-## Cách Chia
+## 分割のやり方
 
-Nguyên tắc cốt lõi: giữ thông tin thường cần ở tầm tay, cất thông tin thỉnh thoảng cần, và bỏ lại những gì bạn sẽ không bao giờ dùng.
+核心となる原則は、よく使う情報は手元に置き、ときどき使う情報はしまい込み、二度と使わないものは手放すことです。
 
-Tệp đầu vào `AGENTS.md` duy trì ở 50-200 dòng, chỉ chứa các mục được sử dụng thường xuyên nhất — tổng quan dự án (một hoặc hai câu), lệnh chạy đầu tiên (`make setup && make test`), các ràng buộc cứng toàn cục (không quá 15 quy tắc không thể thương lượng), và liên kết đến các tài liệu chủ đề (mô tả một dòng + điều kiện áp dụng).
+入力ファイルである `AGENTS.md` は 50〜200 行に保ち、もっとも頻繁に使う項目だけを入れます。たとえば、プロジェクト概要（1〜2 文）、最初に実行するコマンド（`make setup && make test`）、全体共通のハード制約（譲れないルールは 15 個以内）、そして主題別ドキュメントへのリンク（1 行の説明 + 適用条件）です。
 
 ```markdown
 # AGENTS.md
 
-## Tổng quan Dự án
-Backend FastAPI Python 3.11, cơ sở dữ liệu PostgreSQL 15.
+## プロジェクト概要
+Backend FastAPI Python 3.11, PostgreSQL 15 データベース。
 
-## Khởi động Nhanh
-- Cài đặt: `make setup`
-- Test: `make test`
-- Xác minh đầy đủ: `make check`
+## クイックスタート
+- セットアップ: `make setup`
+- テスト: `make test`
+- 完全な検証: `make check`
 
-## Ràng buộc Cứng
-- Tất cả API phải sử dụng xác thực OAuth 2.0
-- Tất cả truy vấn cơ sở dữ liệu phải sử dụng cú pháp SQLAlchemy 2.0
-- Tất cả PR phải vượt qua pytest + mypy --strict + ruff check
+## ハード制約
+- すべての API は OAuth 2.0 認証を使用すること
+- すべてのデータベースクエリは SQLAlchemy 2.0 の構文を使用すること
+- すべての PR は pytest + mypy --strict + ruff check を通過すること
 
-## Tài liệu Chủ đề
-- [Mẫu Thiết kế API](docs/api-patterns.md) — Đọc bắt buộc khi thêm endpoint
-- [Quy tắc Cơ sở dữ liệu](docs/database-rules.md) — Bắt buộc khi sửa đổi hoạt động cơ sở dữ liệu
-- [Tiêu chuẩn Testing](docs/testing-standards.md) — Tham khảo khi viết test
+## 主題別ドキュメント
+- [API 設計パターン](docs/api-patterns.md) — エンドポイントを追加するときは必読
+- [データベース規則](docs/database-rules.md) — DB 操作を変更するときは必須
+- [Testing 標準](docs/testing-standards.md) — テストを書くときの参照
 ```
 
-Mỗi tài liệu chủ đề có 50-150 dòng, được tổ chức theo chủ đề trong thư mục `docs/` hoặc cạnh module tương ứng. Agent chỉ đọc chúng khi cần. Giống như túi đựng đồ trong vali — đồ lót một túi, đồ vệ sinh một túi, dây sạc một túi. Tìm đồ không cần đổ toàn bộ túi.
+各主題別ドキュメントは 50〜150 行程度にし、`docs/` 配下または対応するモジュールの近くに主題ごとに整理します。agent は必要なときだけそれらを読みます。まるでスーツケースの中のポーチのように、下着用、洗面用、充電ケーブル用に分けるのです。探し物のために全部をひっくり返す必要はありません。
 
-Một số thông tin được đặt tốt hơn trực tiếp trong mã — định nghĩa type, chú thích giao diện, giải thích trong tệp cấu hình. Agent tự nhiên thấy những điều này khi đọc mã, không cần sao chép trong hướng dẫn.
+一部の情報は、型定義、インターフェースのコメント、設定ファイル内の説明のように、コードの中に直接置く方が適しています。agent はコードを読むときに自然にそれらを目にするので、指示にまで重複させる必要はありません。
 
-Mỗi hướng dẫn nên có nguồn gốc ("tại sao quy tắc này được thêm?"), điều kiện áp dụng ("khi nào quy tắc này cần?"), và điều kiện hết hạn ("trong hoàn cảnh nào quy tắc này có thể được xóa?"). Kiểm tra thường xuyên, xóa các mục lỗi thời, dư thừa và mâu thuẫn. Quản lý hướng dẫn của bạn như bạn quản lý các phụ thuộc mã — các phụ thuộc không dùng nên được xóa, nếu không chúng chỉ làm chậm hệ thống.
+各指示には、由来（なぜこのルールが追加されたのか）、適用条件（いつこのルールが必要なのか）、期限切れ条件（どんな状況なら削除できるのか）を持たせるべきです。定期的に見直し、古いもの、重複しているもの、矛盾しているものを削除してください。指示もコードの依存関係と同じように管理しましょう。使われない依存関係は削除すべきで、放置するとシステムを遅くするだけです。
 
-Nếu một hướng dẫn phải có trong tệp đầu vào, hãy đặt nó ở đầu hoặc cuối — không bao giờ ở giữa. Hiệu ứng "lạc giữa đường" cho chúng ta biết rằng LLM sử dụng thông tin ở các cực đoan tốt hơn đáng kể so với trung tâm. Nhưng cách tiếp cận tốt hơn là di chuyển hướng dẫn sang các tài liệu chủ đề để tải theo yêu cầu.
+どうしても入力ファイルに残す必要がある指示は、中央ではなく先頭か末尾に置いてください。真ん中で迷子になる効果が示すように、LLM は中央よりも両端の情報をかなりうまく使います。とはいえ、さらに良いのは、その指示を主題別ドキュメントへ移し、必要なときだけ読み込む形にすることです。
 
-Cả OpenAI và Anthropic đều ngầm hỗ trợ cách tiếp cận chia nhỏ. OpenAI nói các tệp đầu vào nên "ngắn và hướng định tuyến," Anthropic nói thông tin kiểm soát agent chạy lâu nên "súc tích và ưu tiên cao." Cả hai đều nói cùng một điều: đừng nhồi nhét mọi thứ vào một tệp. Vali cần được tổ chức, không phải nhồi nhét thô bạo.
+OpenAI も Anthropic も、暗黙のうちにこの分割アプローチを支持しています。OpenAI は入力ファイルを「短く、ルーティング向け」にすべきだと言い、Anthropic は長時間動作する agent の制御情報は「簡潔で優先度が高い」べきだと言っています。どちらも同じことを言っています。つまり、すべてを 1 つのファイルに詰め込むな、ということです。スーツケースは整理すべきであって、力任せに押し込むものではありません。
 
-## Ví dụ Thực tế
+## 実例
 
-Một nhóm SaaS có `AGENTS.md` phình từ 50 dòng lên 600. Nội dung trộn lẫn phiên bản tech stack, tiêu chuẩn mã hóa, ghi chú sửa lỗi lịch sử, hướng dẫn sử dụng API, quy trình triển khai và sở thích cá nhân của các thành viên nhóm — toàn bộ chiếc vali sắp nổ tung.
+ある SaaS チームでは、`AGENTS.md` が 50 行から 600 行に膨れ上がりました。中身は、技術スタックのバージョン、コーディング標準、過去のバグ修正メモ、API の使い方、デプロイ手順、メンバーの個人的な好みまで混在しており、まさにスーツケースが今にも破裂しそうな状態でした。
 
-Hiệu suất agent bắt đầu giảm rõ rệt: trong khi sửa lỗi đơn giản, agent dành nhiều ngữ cảnh để xử lý các hướng dẫn triển khai không liên quan; ràng buộc bảo mật "tất cả truy vấn cơ sở dữ liệu phải sử dụng truy vấn được tham số hóa" bị chôn ở dòng 300 và thường xuyên bị bỏ qua; ba quy tắc phong cách mã mâu thuẫn gây ra hành vi agent ngẫu nhiên.
+agent の性能は明らかに低下し始めました。単純なバグ修正の最中に、関係のないデプロイ手順の扱いに大量のコンテキストを費やし、「すべてのデータベースクエリはパラメータ化クエリを使用すること」というセキュリティ制約は 300 行目に埋もれて頻繁に見落とされ、3 つの相反するコードスタイル規則が agent の挙動を不安定にしていました。
 
-Nhóm đã thực hiện "tái tổ chức vali":
-1. `AGENTS.md` được cắt xuống còn 80 dòng: chỉ tổng quan dự án, lệnh chạy và 15 ràng buộc cứng toàn cục
-2. Tạo các tài liệu chủ đề: `docs/api-patterns.md` (120 dòng), `docs/database-rules.md` (60 dòng), `docs/testing-standards.md` (80 dòng)
-3. Thêm liên kết tài liệu chủ đề trong tệp định tuyến
-4. Các ghi chú lịch sử được chuyển đổi thành test case hoặc bị xóa
+チームは「スーツケースの再整理」を実施しました。
+1. `AGENTS.md` を 80 行に削減し、プロジェクト概要、実行コマンド、15 個の全体ハード制約だけを残した
+2. 主題別ドキュメントを作成した: `docs/api-patterns.md` (120 行), `docs/database-rules.md` (60 行), `docs/testing-standards.md` (80 行)
+3. 主題別ドキュメントへのリンクをルーティングファイルに追加した
+4. 過去のメモはテストケースへ変換するか、削除した
 
-Sau tái cấu trúc: tỷ lệ thành công cùng bộ tác vụ tăng từ 45% lên 72%. Tuân thủ ràng buộc bảo mật tăng từ 60% lên 95% — vì nó di chuyển từ giữa tệp lên đầu tệp định tuyến, không còn "lạc giữa đường" nữa.
+再構成後、同じ種類のタスクに対する成功率は 45% から 72% に上がりました。セキュリティ制約の遵守率は 60% から 95% に向上しました。これは、その制約がファイルの中央からルーティングファイルの先頭へ移動し、もう「真ん中で迷子になる」ことがなくなったからです。
 
-## Những Điểm chính cần Nhớ
+## 覚えておくべき要点
 
-- "Thêm quy tắc" là giảm đau ngắn hạn, thuốc độc dài hạn. Trước khi thêm quy tắc, hãy hỏi: quy tắc này có tốt hơn trong một tài liệu chủ đề không? Đừng cứ tiếp tục nhồi nhét vào vali.
-- Tệp đầu vào là bộ định tuyến, không phải bách khoa toàn thư. 50-200 dòng chỉ với tổng quan, ràng buộc cứng và liên kết.
-- Tận dụng hiệu ứng "lạc giữa đường": thông tin quan trọng đặt ở đầu hoặc cuối; thông tin không quan trọng di chuyển sang tài liệu chủ đề.
-- Quản lý phình hướng dẫn như nợ kỹ thuật. Kiểm tra thường xuyên, mỗi hướng dẫn cần nguồn gốc, điều kiện áp dụng và điều kiện hết hạn.
-- Sau khi chia, SNR cải thiện và agent dành nhiều ngân sách ngữ cảnh hơn cho các tác vụ thực tế thay vì xử lý các hướng dẫn không liên quan.
+- 「ルールを足す」は短期的な痛み止めであり、長期的には毒です。ルールを追加する前に、そのルールは主題別ドキュメントに置いた方がよくないかを自問してください。スーツケースに詰め続けてはいけません。
+- 入力ファイルは百科事典ではなくルーターです。50〜200 行で、概要、ハード制約、リンクだけに絞ってください。
+- 「真ん中で迷子になる」効果を活用してください。重要な情報は先頭か末尾に置き、重要でない情報は主題別ドキュメントへ移してください。
+- 指示の肥大化は技術的負債のように管理してください。定期的に見直し、各指示には由来、適用条件、期限切れ条件を持たせてください。
+- 分割した後は SNR が改善し、agent は関係のない指示の処理ではなく、実際のタスクにもっと多くのコンテキスト予算を使えるようになります。
 
-## Đọc thêm
+## 参考文献
 
 - [OpenAI: Harness Engineering](https://openai.com/index/harness-engineering/)
 - [Anthropic: Effective Harnesses for Long-Running Agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
@@ -123,10 +123,10 @@ Sau tái cấu trúc: tỷ lệ thành công cùng bộ tác vụ tăng từ 45%
 - [HumanLayer: Harness Engineering for Coding Agents](https://humanlayer.dev/articles/harness-engineering-for-coding-agents/)
 - [Nielsen Norman Group: Progressive Disclosure](https://www.nngroup.com/articles/progressive-disclosure/)
 
-## Bài tập
+## 演習
 
-1. **Kiểm toán SNR**: Lấy tệp hướng dẫn đầu vào hiện tại của bạn và liệt kê tất cả các mục hướng dẫn. Chọn 5 loại tác vụ thông thường khác nhau và đánh dấu liệu mỗi hướng dẫn có liên quan đến tác vụ đó không. Tính SNR cho mỗi loại tác vụ. Các hướng dẫn là nhiễu cho hầu hết các tác vụ nên di chuyển sang tài liệu chủ đề.
+1. **SNR の監査**: 現在の入力指示ファイルを取り出し、すべての指示項目を列挙してください。よくある 5 種類のタスクを選び、各指示がそのタスクに関連するかどうかを記録してください。タスクごとに SNR を計算してください。ほとんどのタスクにとってノイズでしかない指示は、主題別ドキュメントへ移してください。
 
-2. **Tái cấu trúc tiết lộ tiến triển**: Nếu bạn có tệp hướng dẫn trên 300 dòng, hãy chia nó thành: (a) tệp định tuyến dưới 100 dòng, (b) 3-5 tài liệu chủ đề. Chạy cùng bộ tác vụ (ít nhất 5) trước và sau, so sánh tỷ lệ thành công.
+2. **段階的開示の再構成**: 300 行を超える指示ファイルがあるなら、これを (a) 100 行未満のルーティングファイル、(b) 3〜5 個の主題別ドキュメントに分割してください。同じタスクセットを分割前後で少なくとも 5 つ実行し、成功率を比較してください。
 
-3. **Xác minh lạc giữa đường**: Trong một tệp hướng dẫn dài, đặt một ràng buộc quan trọng ở đầu, giữa và cuối lần lượt, chạy cùng bộ tác vụ mỗi lần (ít nhất 5 lần mỗi vị trí). Xem có sự khác biệt về tỷ lệ tuân thủ không. Bạn có thể ngạc nhiên về mức độ mạnh của hiệu ứng vị trí.
+3. **真ん中で迷子になる効果の検証**: 長い指示ファイルの中で、重要な制約を先頭・中央・末尾にそれぞれ置いてみてください。各配置で同じタスクセットを実行し、各位置ごとに少なくとも 5 回試してください。遵守率に差が出るか確認してください。位置効果の強さに驚くかもしれません。

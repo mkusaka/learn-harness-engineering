@@ -1,22 +1,22 @@
-[English Version →](../../../en/projects/project-02-agent-readable-workspace/) | [中文版本 →](../../../zh/projects/project-02-agent-readable-workspace/)
+[英語版 →](../../../en/projects/project-02-agent-readable-workspace/) | [中国語版 →](../../../zh/projects/project-02-agent-readable-workspace/)
 
-> Bài giảng liên quan: [Bài 03. Biến kho lưu trữ thành nguồn sự thật duy nhất](./../../lectures/lecture-03-why-the-repository-must-become-the-system-of-record/index.md) · [Bài 04. Chia hướng dẫn ra thành nhiều tệp](./../../lectures/lecture-04-why-one-giant-instruction-file-fails/index.md)
-> Tệp mẫu: [templates/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/vi/resources/templates/)
+> 関連講義: [第03講. リポジトリを唯一の正しい情報源にする](./../../lectures/lecture-03-why-the-repository-must-become-the-system-of-record/index.md) · [第04講. 指示を複数のファイルに分割する](./../../lectures/lecture-04-why-one-giant-instruction-file-fails/index.md)
+> サンプルテンプレート: [templates/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/vi/resources/templates/)
 
-# Dự án 02. Làm cho Dự án Có thể Đọc Được và Tiếp tục từ Nơi Đã Dừng
+# プロジェクト 02. プロジェクトを読み取れるようにし、中断地点から再開できるようにする
 
-## Bạn Làm Gì
+## 何をするか
 
-Thêm "khả năng đọc được" vào repo để một agent mới có thể nhanh chóng hiểu cấu trúc dự án, biết tiến độ hiện tại, và tiếp tục công việc. Cụ thể: triển khai import tài liệu, document detail view, và local persistence, hoàn thành qua hai phiên.
+repo に「読みやすさ」を加えて、新しい agent がプロジェクト構造をすばやく理解し、現在の進捗を把握し、そのまま作業を続けられるようにします。具体的には、ドキュメントの import、document detail view、local persistence を実装し、2回のセッションで完了させます。
 
-Bạn chạy hai lần: lần đầu không có sự trợ giúp nào, lần hai với `ARCHITECTURE.md`, `PRODUCT.md`, và `session-handoff.md` được đặt sẵn trong repo.
+2回実行します。1回目は何の支援もなし、2回目は `ARCHITECTURE.md`、`PRODUCT.md`、`session-handoff.md` が repo にあらかじめ置かれた状態で行います。
 
-## Công cụ
+## 使用ツール
 
-- Claude Code hoặc Codex
+- Claude Code または Codex
 - Git
 - Node.js + Electron
 
-## Cơ chế Harness
+## ハーネスの仕組み
 
-Không gian làm việc agent có thể đọc được + tệp trạng thái liên tục
+エージェントが読み取れるワークスペースと、継続的に保持される状態ファイル

@@ -1,23 +1,23 @@
-# OpenAI 高级 SOP
+# OpenAI 高度な SOP
 
-这些 SOP 把文章里的工作方式翻成可以直接参考、执行、改造的操作手册。
+これらの SOP は、記事内の作業方法を、そのまま参照・実行・改変できる操作手順に落とし込んだものです。
 
-## 包含哪些 SOP
+## 含まれる SOP
 
 - [`layered-domain-architecture.md`](./layered-domain-architecture.md)：
-  搭建显式分层与跨领域边界
+  明示的な階層構造と、ドメインをまたぐ境界を構築する
 - [`encode-knowledge-into-repo.md`](./encode-knowledge-into-repo.md)：
-  把聊天、外部文档、脑内知识变成 repo-local 文档
+  会話、外部ドキュメント、頭の中の知識を repo-local な文書に変える
 - [`observability-feedback-loop.md`](./observability-feedback-loop.md)：
-  给 agent 提供 logs、metrics、traces 与可重复的调试闭环
+  agent に logs、metrics、traces と再現可能なデバッグループを提供する
 - [`chrome-devtools-validation-loop.md`](./chrome-devtools-validation-loop.md)：
-  用浏览器自动化和快照反复验证 UI，直到 clean
+  ブラウザ自動化とスナップショットで UI を繰り返し検証し、clean になるまで続ける
 
-## 怎么用
+## 使い方
 
-1. 先选和你当前瓶颈最匹配的 SOP。
-2. 按检查清单补齐缺失工件或工具。
-3. 把得到的规则编码回 `repo-template/` 里的文档。
-4. 把反复出现的 review 评论升级成检查、脚本或 guardrail。
+1. まず、今のボトルネックに最も合う SOP を選びます。
+2. チェックリストに従って、不足している成果物やツールを補います。
+3. 得られたルールを `repo-template/` 内の文書に再びコード化します。
+4. 何度も出てくる review コメントは、チェック、スクリプト、または guardrail に昇格させます。
 
-这些 SOP 不是让你机械照抄，而是为了让 harness 更可读、更可执行、更可复用。
+これらの SOP は機械的に書き写すためのものではなく、harness をより読みやすく、より実行しやすく、より再利用しやすくするためのものです。

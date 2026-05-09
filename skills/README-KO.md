@@ -1,71 +1,71 @@
-[English](./README.md) · [中文版](./README-CN.md) · **한국어**
+[英語版](./README.md) · [中国語版](./README-CN.md) · **韓国語版**
 
-# 스킬(Skills)
+# スキル(Skills)
 
-이 디렉터리에는 Learn Harness Engineering 프로젝트를 위한 재사용 가능한 AI 에이전트(agent) 스킬(skill)이 포함되어 있습니다. 각 스킬은 AI 코딩 에이전트(Claude Code, Codex, Cursor, Windsurf 등)가 로드하여 특화된 작업을 수행할 수 있는 독립적인 프롬프트(prompt) 템플릿입니다.
+このディレクトリには、Learn Harness Engineering プロジェクト向けの再利用可能な AI エージェント(agent)スキル(skill)が入っています。各スキルは、AI コーディングエージェント(Claude Code, Codex, Cursor, Windsurf など)が読み込み、特定の作業を実行できる独立したプロンプト(prompt)テンプレートです。
 
-스킬은 에이전트가 복잡한 작업 흐름을 모듈화된 방식으로 처리할 수 있게 해주는 하네스(harness)의 핵심 구성 요소입니다. SKILL.md 파일을 진입점으로 하는 구조화된 형식을 따릅니다.
+スキルは、エージェントが複雑な作業フローをモジュール化された形で処理できるようにするハーネス(harness)の中核要素です。`SKILL.md` ファイルをエントリポイントにする構造化された形式に従います。
 
-## 사용 가능한 스킬
+## 利用可能なスキル
 
 ### harness-creator
 
-AI 코딩 에이전트를 위한 프로덕션 하네스 엔지니어링 스킬입니다. 에이전트 하네스 파일(AGENTS.md, 기능 목록, 검증 워크플로우, 세션 연속성(session continuity) 메커니즘)을 생성하고 평가하며 개선하는 데 도움을 줍니다.
+AI コーディングエージェント向けのプロダクションハーネスエンジニアリングスキルです。エージェントハーネスファイル(AGENTS.md、機能一覧、検証ワークフロー、セッション継続性(session continuity)メカニズム)の作成、評価、改善を支援します。
 
-- **5가지 참고 패턴**: 메모리 영속성(Memory Persistence), 컨텍스트 엔지니어링(Context Engineering), 도구 레지스트리(Tool Registry), 다중 에이전트 조율(Multi-Agent Coordination), 라이프사이클 및 부트스트랩(Lifecycle & Bootstrap)
-- **템플릿**: AGENTS.md, feature-list.json, init.sh, progress.md
-- **5개의 내장 평가(eval) 테스트 케이스**
-- **이중 언어**: 영어 + 中文
+- **5つの参照パターン**: メモリ永続化(Memory Persistence)、コンテキストエンジニアリング(Context Engineering)、ツールレジストリ(Tool Registry)、マルチエージェント調整(Multi-Agent Coordination)、ライフサイクルおよびブートストラップ(Lifecycle & Bootstrap)
+- **テンプレート**: AGENTS.md, feature-list.json, init.sh, progress.md
+- **5つの組み込み評価(eval)テストケース**
+- **バイリンガル**: 英語 + 中文
 
-전체 문서는 [harness-creator/README.md](harness-creator/README.md)를 참조하십시오.
+詳細は [harness-creator/README.md](harness-creator/README.md) を参照してください。
 
-## harness-creator 구축 방법
+## harness-creator の構築方法
 
-`harness-creator` 스킬은 **skill-creator** 방법론을 사용하여 개발되었습니다. skill-creator는 에이전트 스킬을 생성하고 테스트하고 반복하기 위한 Anthropic의 공식 메타 스킬입니다. skill-creator는 내장된 평가 실행기, 채점기, 벤치마크 뷰어를 갖춘 구조화된 워크플로우(초안 → 테스트 → 평가 → 반복)를 제공합니다.
+`harness-creator` スキルは **skill-creator** 方法論を使って開発されました。skill-creator は、エージェントスキルを作成・テスト・反復するための Anthropic の公式メタスキルです。skill-creator は、組み込みの評価実行器、採点器、ベンチマークビューアを備えた構造化ワークフロー(ドラフト → テスト → 評価 → 反復)を提供します。
 
-이처럼 스킬 자체를 스킬로 만드는 접근 방식은 하네스 엔지니어링의 재귀적 특성을 보여줍니다. 에이전트를 위한 도구를 에이전트가 검증하는 구조입니다.
+このように、スキル自体をスキルとして扱うアプローチは、ハーネスエンジニアリングの再帰的な性質を示しています。エージェント向けのツールを、エージェントが検証する構造です。
 
-- **skill-creator 소스**: [anthropics/skills — skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator)
-- **Anthropic Claude Code 스킬 문서**: [anthropics/claude-code — plugin-dev/skills](https://github.com/anthropics/claude-code/tree/main/plugins/plugin-dev/skills)
+- **skill-creator ソース**: [anthropics/skills — skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator)
+- **Anthropic Claude Code スキル文書**: [anthropics/claude-code — plugin-dev/skills](https://github.com/anthropics/claude-code/tree/main/plugins/plugin-dev/skills)
 
-## 디렉터리 구조
+## ディレクトリ構成
 
 ```
 skills/
-├── README.md                    # 영어 버전 (이 파일의 원본)
-├── README-CN.md                 # 중국어 버전
-├── README-KO.md                 # 한국어 버전 (이 파일)
-└── harness-creator/             # 하네스 엔지니어링 스킬
-    ├── SKILL.md                 # 주요 스킬 정의 (이중 언어)
-    ├── SKILL.md.en              # 영어 전용 버전
-    ├── README.md                # 상세 문서
-    ├── metadata.json            # 스킬 메타데이터 및 트리거
-    ├── evals/                   # 테스트 케이스
-    ├── templates/               # 스캐폴드(scaffold) 템플릿
-    └── references/              # 심층 패턴 문서
+├── README.md                    # 英語版 (このファイルの原本)
+├── README-CN.md                 # 中国語版
+├── README-KO.md                 # 韓国語版 (このファイル)
+└── harness-creator/             # ハーネスエンジニアリングスキル
+    ├── SKILL.md                 # 主要なスキル定義 (バイリンガル)
+    ├── SKILL.md.en              # 英語のみの版
+    ├── README.md                # 詳細文書
+    ├── metadata.json            # スキルメタデータとトリガー
+    ├── evals/                   # テストケース
+    ├── templates/               # スキャフォールド(scaffold)テンプレート
+    └── references/              # 詳細なパターン文書
 ```
 
-## 스킬 동작 방식
+## スキルの動作方式
 
-각 스킬은 표준 구조를 따릅니다.
+各スキルは標準構造に従います。
 
-1. **SKILL.md** — 진입점. YAML 프론트매터(frontmatter)(이름, 트리거를 위한 설명)와 에이전트를 위한 마크다운 지시사항이 포함됩니다.
-2. **references/** — 필요에 따라 컨텍스트로 로드되는 추가 문서.
-3. **templates/** — 스킬이 사용자를 위해 생성할 수 있는 시작 템플릿.
+1. **SKILL.md** — エントリポイントです。YAML フロントマター(frontmatter)(名前、トリガー用の説明)と、エージェント向けの Markdown 指示が含まれています。
+2. **references/** — 必要に応じてコンテキストとして読み込まれる追加文書です。
+3. **templates/** — スキルがユーザー向けに生成できる開始テンプレートです。
 
-스킬은 점진적 공개(progressive disclosure)를 사용합니다. 에이전트는 처음에 이름과 설명만 보고, 트리거되면 전체 SKILL.md 본문을 로드하며, 필요할 때만 번들된 리소스를 읽습니다.
+スキルは段階的開示(progressive disclosure)を使用します。エージェントは最初に名前と説明だけを見て、トリガーされると `SKILL.md` の全文を読み込み、必要なときだけ同梱リソースを読みます。
 
-이 접근 방식은 컨텍스트 윈도(context window)를 효율적으로 사용하기 위한 것입니다. 에이전트가 항상 모든 정보를 가지고 시작하는 것이 아니라, 필요한 시점에 필요한 정보를 로드합니다.
+このアプローチは、コンテキストウィンドウ(context window)を効率的に使うためのものです。エージェントは常にすべての情報を持った状態で始めるのではなく、必要なタイミングで必要な情報を読み込みます。
 
-## 보안 감사
+## セキュリティ監査
 
-이 디렉터리의 모든 파일은 보안 감사를 마쳤습니다.
+このディレクトリ内のすべてのファイルはセキュリティ監査済みです。
 
-- 백도어, 숨겨진 URL, 인코딩된 페이로드 없음
-- 데이터 유출 또는 하드코딩된 자격 증명 없음
-- 명령 주입 취약점 없음
-- `init.sh`는 표준 npm 라이프사이클 명령만 실행
+- バックドア、隠し URL、エンコードされたペイロードはありません
+- データ漏えいまたはハードコードされた認証情報はありません
+- コマンドインジェクション脆弱性はありません
+- `init.sh` は標準の npm ライフサイクルコマンドのみを実行します
 
-## 라이선스
+## ライセンス
 
 MIT

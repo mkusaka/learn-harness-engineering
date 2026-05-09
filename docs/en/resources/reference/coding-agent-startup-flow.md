@@ -1,34 +1,33 @@
-# Coding Agent Startup Flow
+# コーディングエージェントの起動フロー
 
-Use this at the beginning of every session after initialization is complete.
+初期化が完了したら、毎回のセッションの最初にこれを実行してください。
 
-## Fixed Startup Template
+## 固定の起動テンプレート
 
-1. Run `pwd` and confirm the repository root.
-2. Read `claude-progress.md`.
-3. Read `feature_list.json`.
-4. Review recent commits with `git log --oneline -5`.
-5. Run `./init.sh`.
-6. Run a baseline smoke or end-to-end path.
-7. If the baseline is broken, fix that first.
-8. Select the highest-priority unfinished feature.
-9. Work only on that feature until it is verified or explicitly blocked.
+1. `pwd` を実行して、リポジトリのルートを確認する。
+2. `claude-progress.md` を読む。
+3. `feature_list.json` を読む。
+4. `git log --oneline -5` で直近のコミットを確認する。
+5. `./init.sh` を実行する。
+6. 基本のスモークパスまたはエンドツーエンドの経路を実行する。
+7. ベースラインが壊れている場合は、まずそれを修正する。
+8. 未完了の機能のうち、最優先のものを選ぶ。
+9. その機能が検証済みになるか、明示的にブロックされるまで、その機能だけに取り組む。
 
-## Why This Order Matters
+## この順序が重要な理由
 
-- `pwd` prevents accidental work in the wrong directory.
-- progress and feature files recover durable state before new edits begin.
-- recent commits explain what changed most recently.
-- `init.sh` standardizes startup instead of relying on memory.
-- baseline verification catches broken starting states before new work hides
-  them.
+- `pwd` は、誤ったディレクトリで作業してしまうのを防ぐ。
+- 進捗ファイルと機能ファイルは、新しい編集を始める前に永続状態を復元する。
+- 直近のコミットは、最近何が変わったかを示してくれる。
+- `init.sh` は、記憶に頼らず起動手順を標準化する。
+- ベースラインの検証は、新しい作業で問題のある初期状態が見えなくなる前に、それを見つける。
 
-## End-Of-Session Mirror
+## セッション終了時の対応
 
-The same session should end by:
+同じセッションは、次の順で終了してください。
 
-1. recording progress
-2. updating feature state
-3. writing a handoff if needed
-4. committing safe work
-5. leaving a clean restart path
+1. 進捗を記録する
+2. 機能の状態を更新する
+3. 必要なら引き継ぎを書き残す
+4. 安全な作業をコミットする
+5. きれいに再開できる状態を残す

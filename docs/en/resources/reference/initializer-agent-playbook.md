@@ -1,37 +1,35 @@
 # Initializer Agent Playbook
 
-Use this playbook for the first serious session in a repository, before
-incremental feature work begins.
+この playbook は、リポジトリで最初の本格的なセッションを行うとき、つまり段階的な機能作業を始める前に使います。
 
 ## Goal
 
-Create a stable operating surface so later sessions can implement behavior
-without re-deriving startup commands, current status, or task boundaries.
+あとからのセッションが、起動コマンド、現在の状態、作業境界を毎回推測し直さなくても実装できるように、安定した作業面を作ります。
 
 ## Required Outputs
 
-The initializer should leave behind at least these artifacts:
+initializer は、少なくとも次の成果物を残す必要があります。
 
-- a root instruction file such as `AGENTS.md` or `CLAUDE.md`
-- a machine-readable feature surface such as `feature_list.json`
-- a durable progress artifact such as `claude-progress.md`
-- a standard startup helper such as `init.sh`
-- an initial safe commit that captures the baseline scaffold
+- `AGENTS.md` や `CLAUDE.md` のようなルートの指示ファイル
+- `feature_list.json` のような機械可読な機能一覧
+- `claude-progress.md` のような永続的な進捗成果物
+- `init.sh` のような標準の起動補助
+- ベースラインのひな形を記録した最初の安全なコミット
 
 ## Checklist
 
-1. Define the standard startup path.
-2. Define the standard verification path.
-3. Create the progress log and record the starting state.
-4. Decompose the work into explicit features with statuses.
-5. Create the first clean baseline commit.
+1. 標準の起動手順を定義する。
+2. 標準の検証手順を定義する。
+3. 進捗ログを作成し、開始時点の状態を記録する。
+4. 作業を、状態付きの明示的な機能単位に分解する。
+5. 最初の、きれいなベースラインコミットを作成する。
 
 ## Success Test
 
-A fresh session with no prior chat context should be able to answer:
+過去のチャット文脈がない新しいセッションでも、次の内容に答えられること:
 
-- what this repository does
-- how to start it
-- how to verify it
-- what is unfinished
-- what the next best step is
+- このリポジトリが何をするものか
+- どう起動するか
+- どう検証するか
+- 何が未完了か
+- 次に取るべき最善の一手は何か

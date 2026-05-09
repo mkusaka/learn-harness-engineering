@@ -1,7 +1,7 @@
-# Danh sách Kiểm tra Kết quả Đầu ra của Khởi tạo
+# 初期化の出力チェックリスト
 
-- Có lệnh khởi động chuẩn không?
-- Có lệnh xác minh chuẩn không?
-- Có artifact tiến độ đầu tiên không?
-- Có commit ổn định đầu tiên không?
-- Có bề mặt tính năng có thể nhìn thấy cho các lần chạy sau không?
+- 標準の起動コマンドはあるか?
+- 標準の検証コマンドはあるか?
+- 最初の進捗アーティファクトはあるか?
+- 最初の安定したコミットはあるか?
+- 次回以降の実行で確認できる機能面はあるか?

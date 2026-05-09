@@ -1,8 +1,8 @@
-# Mã cho Bài 10
+# 第10回のコード
 
-Sử dụng thư mục này cho các ví dụ về:
+このディレクトリは、次の例に使用します。
 
-- ràng buộc kiến trúc
-- test có cấu trúc
-- bất biến về chất lượng
-- thông báo lint hướng đến giải pháp
+- アーキテクチャ上の制約
+- 構造化されたテスト
+- 品質に関する不変条件
+- 解決策を示す lint メッセージ

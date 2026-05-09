@@ -1,26 +1,26 @@
-# New User Onboarding
+# 新規ユーザーのオンボーディング
 
-## Goal
+## 目的
 
-Describe the first-run experience a new user should have.
+新規ユーザーが初回利用時に体験すべき内容を記述します。
 
-## Entry Conditions
+## 開始条件
 
 - `[state before the flow starts]`
 
-## User Flow
+## ユーザーフロー
 
 1. `[step one]`
 2. `[step two]`
 3. `[step three]`
 
-## Acceptance Criteria
+## 受け入れ基準
 
 - `[observable outcome]`
 - `[observable outcome]`
 - `[observable outcome]`
 
-## Failure States
+## 失敗時の状態
 
 - `[recoverable error and user feedback]`
 - `[blocked state and fallback]`

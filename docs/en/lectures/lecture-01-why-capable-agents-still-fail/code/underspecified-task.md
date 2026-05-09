@@ -1,18 +1,18 @@
-# Underspecified Task Example
+# 仕様が曖昧なタスクの例
 
-Build a desktop knowledge base app with AI question answering.
+AI による質問応答機能を備えたデスクトップのナレッジベースアプリを作成する。
 
-Constraints:
+制約:
 
-- None specified
-- No startup command given
-- No folder structure guidance
-- No data model defined
-- No explicit completion criteria
+- 指定なし
+- 起動コマンドの指定なし
+- フォルダ構成の指針なし
+- データモデル未定義
+- 明確な完了基準なし
 
-Typical outcomes from this kind of prompt:
+この種のプロンプトでよく起きる結果:
 
-- the agent invents a structure ad hoc
-- the app may compile but not start consistently
-- the UI may appear before there is any usable ingest/query path
-- the agent often stops after cosmetic success
+- エージェントがその場しのぎで構成を捏造する
+- アプリはコンパイルできても、安定して起動しない場合がある
+- 実用的な取り込み・検索の経路がないまま UI だけ先にできてしまう
+- エージェントは見た目だけ整った段階で止まりがち

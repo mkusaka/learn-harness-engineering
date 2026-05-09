@@ -1,35 +1,34 @@
 # PLANS.md
 
-This file defines how execution plans are created, updated, completed, and
-archived.
+このファイルでは、実行計画をどのように作成し、更新し、完了させ、アーカイブするかを定義します。
 
-## When A Plan Is Required
+## 計画が必要な場合
 
-Create an execution plan when work:
+次のいずれかに当てはまる作業では、実行計画を作成してください。
 
-- spans more than one session
-- changes more than one subsystem
-- has non-trivial verification or rollout risk
-- depends on open decisions that should be logged
+- 1回のセッションでは終わらない
+- 1つ以上のサブシステムに変更が及ぶ
+- 検証や段階的展開に無視できないリスクがある
+- 記録しておくべき未決定事項に依存している
 
-## Plan Locations
+## 計画の配置先
 
-- `docs/exec-plans/active/`: plans currently driving work
-- `docs/exec-plans/completed/`: finished plans kept for future agent context
-- `docs/exec-plans/tech-debt-tracker.md`: deferred work and follow-ups
+- `docs/exec-plans/active/`: 現在の作業を進めるための計画
+- `docs/exec-plans/completed/`: 将来のエージェント向けの文脈として残す完了済み計画
+- `docs/exec-plans/tech-debt-tracker.md`: 後回しにした作業とフォローアップ
 
-## Minimum Plan Sections
+## 最低限含める項目
 
-- objective
-- scope and out-of-scope
-- verification path
-- risks and blockers
-- progress log
-- open decisions
+- 目的
+- 対象範囲と対象外
+- 検証方法
+- リスクとブロッカー
+- 進捗ログ
+- 未決定事項
 
-## Operating Rules
+## 運用ルール
 
-- One active plan should have one clearly owned current step.
-- Update the plan as work progresses; do not treat it as static prose.
-- If a decision changes implementation direction, record it in the plan.
-- Move finished plans to `completed/` so agents can still discover prior context.
+- 1つのアクティブな計画には、責任者が明確な現在のステップを1つだけ持たせてください。
+- 作業の進行に合わせて計画を更新し、静的な文章として扱わないでください。
+- 判断によって実装方針が変わった場合は、その内容を計画に記録してください。
+- 完了した計画は `completed/` に移し、後からエージェントが以前の文脈を見つけられるようにしてください。
