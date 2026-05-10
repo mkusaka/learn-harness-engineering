@@ -22,7 +22,7 @@ Claude Code も Codex も、あなたが「終わり」と言ったときに、�
 ```
 新しい agent のセッションは、このメモだけで次の問いに答えられるでしょうか。「ほぼ完了」とは何を意味するのか。カートはどのテストに合格したのか。決済を妨げているものは何か。答えはすべて「誰にも分からない」です。医師に「お腹が痛いですが、最近は少しマシです」とだけ伝えるようなものです。そこから、何を処方できるでしょうか。
 
-その結果、新しいセッションはプロジェクト状態を推測するために 20 分を費やし、完了済みの機能を再実装することすらあります。Anthropic の技術データでは、良い進捗記録によってセッション開始時の診断時間が 60-80% 短縮されると示されています。
+その結果、新しいセッションはプロジェクト状態を推測するためにまとまった時間を費やし、完了済みの機能を再実装することすらあります。Anthropic の公開事例でも、progress file と git history を使って次の agent が状態を素早く理解できるようにする設計が紹介されています。
 
 ## Feature の状態機械
 
@@ -111,7 +111,7 @@ agent は feature の状態を直接 `passing` に変更できません。でき
 
 **背骨運用モード**: 各 feature に状態と明確な検証コマンドがあります。新しいセッションは feature list を読めば、3 分で F01-F05 は `passing`、F06 は `active`、F07-F10 は `not_started` だと分かります。F06 からそのまま続行し、やり直しはありません。
 
-定量的な結果として、構造化された feature list を使うプロジェクトは、自由形式の追跡に比べて feature 完了率が 45% 高く、重複実装はゼロでした。
+この比較で重要なのは、構造化された feature list では完了条件と現在状態が機械可読に残るため、自由形式の追跡よりも「次に何をやるべきか」「何が完了済みか」を判断しやすいことです。
 
 ## 覚えておくべき要点
 
@@ -126,7 +126,7 @@ agent は feature の状態を直接 `passing` に変更できません。でき
 - [Effective harnesses for long-running agents - Anthropic](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents) — feature list を使って、早すぎる完了宣言や scope drift を減らす方法を説明しています
 - [Harness Engineering - OpenAI](https://openai.com/index/harness-engineering/) — 「artifact の外部化」の原則を強調しています
 - [Design by Contract - Bertrand Meyer](https://www.goodreads.com/book/show/130439.Object_Oriented_Software_Construction) — contract 設計の原則であり、feature list の理論的基盤です
-- [How Google Tests Software](https://www.goodreads.com/book/show/13563030-how-google-tests-software) — テストピラミッドと振る舞い仕様の実践を扱っています
+- [The Practical Test Pyramid - Martin Fowler](https://martinfowler.com/articles/practical-test-pyramid.html) — テストピラミッドとユーザー視点の acceptance tests の実践
 
 ## 演習
 

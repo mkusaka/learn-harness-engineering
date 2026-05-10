@@ -144,7 +144,7 @@ code review で新しいタイプのエージェントの誤りが見つかる�
 
 ## 追加の読み物
 
-- [How Google Tests Software - Whittaker et al.](https://www.goodreads.com/book/show/13563030-how-google-tests-software) — テストピラミッドの古典的な資料
+- [The Practical Test Pyramid - Martin Fowler](https://martinfowler.com/articles/practical-test-pyramid.html) — テスト層を補完関係として扱う実践的整理
 - [Harness Engineering - OpenAI](https://openai.com/index/harness-engineering/) — アーキテクチャ制約を自動的に実行するための実践
 - [Chaos Engineering - Netflix (Basiri et al.)](https://ieeexplore.ieee.org/document/7466237) — システムの耐障害性を検証するための予防的な故障注入
 - [QuickCheck - Claessen & Hughes](https://www.cs.tufts.edu/~nr/cs257/archive/john-hughes/quick.pdf) — 例示ベースのテストと形式検証の中間にある property ベーステストの手法

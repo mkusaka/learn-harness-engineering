@@ -144,7 +144,7 @@ code review で新しい種類の agent のバグが見つかるたび、それ�
 
 ## 参考文献
 
-- [How Google Tests Software - Whittaker et al.](https://www.goodreads.com/book/show/13563030-how-google-tests-software) — テストピラミッドの古典的な出典
+- [The Practical Test Pyramid - Martin Fowler](https://martinfowler.com/articles/practical-test-pyramid.html) — テスト層を補完関係として扱う実践的整理
 - [Harness Engineering - OpenAI](https://openai.com/index/harness-engineering/) — アーキテクチャ制約を自動強制するための技術実践
 - [Chaos Engineering - Netflix (Basiri et al.)](https://ieeexplore.ieee.org/document/7466237) — システムの堅牢性を検証するために、意図的に障害を注入する手法
 - [QuickCheck - Claessen & Hughes](https://www.cs.tufts.edu/~nr/cs257/archive/john-hughes/quick.pdf) — 例ベーステストと形式検証の中間にある property testing の手法

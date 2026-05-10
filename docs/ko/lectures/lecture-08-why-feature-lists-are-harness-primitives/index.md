@@ -22,7 +22,7 @@ Claude Code も Codex も、「完了」が何を意味するのかを自動で�
 ```
 新しいエージェントセッションは、このメモから次の質問に答えられるでしょうか。「ほぼ完了」とは何を意味するのか。カートに対してどのテストが通ったのか。決済を妨げているものは何か。答えはすべて「誰にも分からない」です。医者に「お腹が痛いんですが、最近は大丈夫です」と言うようなものです。どんな薬を出せるでしょうか。
 
-その結果、新しいセッションはプロジェクトの状態推定に 20 分を費やし、すでに完了した機能を再実装してしまうことさえあります。Anthropic のエンジニアリングデータによれば、優れた進捗記録はセッション開始時の診断時間を 60〜80% 短縮します。
+その結果、新しいセッションはプロジェクトの状態推定にまとまった時間を費やし、すでに完了した機能を再実装してしまうことさえあります。Anthropic の公開事例でも、progress file と git history を使って次のエージェントが状態を素早く理解できるようにする設計が紹介されています。
 
 ## 機能状態マシン
 
@@ -111,7 +111,7 @@ flowchart LR
 
 **背骨モード**: すべての機能に明確な状態と検証コマンドがあります。新しいセッションは機能一覧を読めば 3 分で把握できます。F01-F05 は `passing`、F06 は `active`、F07-F10 は `not_started` です。F06 からそのまま引き継ぎ、手戻りなく進めます。
 
-定量的な結果として、構造化された機能一覧を使うプロジェクトは、自由形式の進捗管理と比べて機能完了率が 45% 高く、重複実装はゼロです。
+この比較で重要なのは、構造化された機能一覧では完了条件と現在状態が機械可読に残るため、自由形式の進捗管理よりも「次に何をやるべきか」「何が完了済みか」を判断しやすいことです。
 
 ## 要点
 
@@ -126,7 +126,7 @@ flowchart LR
 - [Effective harnesses for long-running agents - Anthropic](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents) — 機能一覧を premature completion や scope drift への対策として使う実例を示しています
 - [Harness Engineering - OpenAI](https://openai.com/index/harness-engineering/) — 「成果物の外部化」の原則を強調しています
 - [Design by Contract - Bertrand Meyer](https://www.goodreads.com/book/show/130439.Object_Oriented_Software_Construction) — 契約による設計の原則であり、機能一覧の理論的基盤です
-- [How Google Tests Software](https://www.goodreads.com/book/show/13563030-how-google-tests-software) — テストピラミッドと動作仕様のエンジニアリング実践
+- [The Practical Test Pyramid - Martin Fowler](https://martinfowler.com/articles/practical-test-pyramid.html) — テストピラミッドとユーザー視点の acceptance tests の実践
 
 ## 練習問題
 

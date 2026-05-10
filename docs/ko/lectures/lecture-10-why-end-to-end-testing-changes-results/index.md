@@ -144,7 +144,7 @@ FIX: Move file operations to src/preload/file-ops.ts and call via window.api.rea
 
 ## さらに読む
 
-- [How Google Tests Software - Whittaker et al.](https://www.goodreads.com/book/show/13563030-how-google-tests-software) — テスティングピラミッドモデルの古典的な出典
+- [The Practical Test Pyramid - Martin Fowler](https://martinfowler.com/articles/practical-test-pyramid.html) — テスト層を補完関係として扱う実践的整理
 - [Harness Engineering - OpenAI](https://openai.com/index/harness-engineering/) — アーキテクチャ制約を自動的に実行するためのエンジニアリング実践
 - [Chaos Engineering - Netflix (Basiri et al.)](https://ieeexplore.ieee.org/document/7466237) — システムの復元力を検証するための能動的な障害注入
 - [QuickCheck - Claessen & Hughes](https://www.cs.tufts.edu/~nr/cs257/archive/john-hughes/quick.pdf) — 例示テストと形式検証の間に位置するプロパティベーステストの手法

@@ -141,7 +141,7 @@ Anthropic が 2026 年 3 月に公開した研究では、context anxiety の具
 
 **リセット（Context Reset）**: コンテキストを完全に消去し、新しい会話を開いて、永続化された工件から再構築します。利点は、心理状態がきれいになることです。新しい会話には「もう時間がない」という不安がありません。欠点は、引き継ぎ工件の完全性に依存することです。日誌に重要な情報が抜けていれば、新しい会話は誤った方向で時間を浪費するかもしれません。
 
-Anthropic の実データでは、Sonnet 4.5 では context anxiety が十分に深刻で、圧縮だけでは不十分でした。そのため、コンテキスト reset が harness 設計の重要な要素になりました。一方で Opus 4.5 ではこの振る舞いが大幅に弱まり、reset に頼らずとも圧縮でコンテキスト管理が可能です。つまり、**harness の設計は対象モデルについて具体的に理解して行う必要があり、汎用テンプレートをそのまま当てはめるだけでは不十分** ということです。
+Anthropic の公開記事では、Sonnet 4.5 では context anxiety が十分に深刻で、圧縮だけでは不十分だったと説明されています。そのため、コンテキスト reset が harness 設計の重要な要素になりました。一方で Opus 4.5 ではこの振る舞いが大幅に弱まり、reset に頼らずとも圧縮でコンテキスト管理が可能だったとされています。つまり、**harness の設計は対象モデルについて具体的に理解して行う必要があり、汎用テンプレートをそのまま当てはめるだけでは不十分** ということです。
 
 > 出典：[Anthropic: Harness design for long-running application development](https://www.anthropic.com/engineering/harness-design-long-running-apps)
 

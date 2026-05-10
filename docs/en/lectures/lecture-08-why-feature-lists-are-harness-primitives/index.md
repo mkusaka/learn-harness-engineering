@@ -22,7 +22,7 @@ Did user auth, shopping cart mostly done, still need payments
 ```
 このメモだけで、新しい agent session は次の質問に答えられるでしょうか。`mostly done` とは何を意味するのでしょう。cart はどの test を通過したのでしょう。payment の何がブロックしているのでしょう。答えはすべて「誰にもわからない」です。医者に「胃が痛いです。最近はまあまあでした」とだけ伝えるようなものです。それで何の薬を出せるでしょうか。
 
-その結果、新しい session は project state の推測に 20 分を費やし、完了済みの feature を再実装してしまうこともあります。Anthropic の engineering data によれば、適切な progress record は session 起動時の診断時間を 60〜80% 短縮します。
+その結果、新しい session は project state の推測にまとまった時間を費やし、完了済みの feature を再実装してしまうこともあります。Anthropic の公開事例でも、progress file と git history を使って次の agent が状態を素早く理解できるようにする設計が紹介されています。
 
 ## Feature State Machine
 
@@ -111,7 +111,7 @@ agent は feature の state を直接 `passing` に変更できません。で�
 
 **Backbone mode**: すべての feature に明確な state と verification command があります。新しい session は feature list を読めば、3 分で F01-F05 が `passing`、F06 が `active`、F07-F10 が `not_started` だと把握できます。そのまま F06 から直接作業を再開でき、手戻りはゼロです。
 
-数値化した結果として、structured feature list を使う project は、free-form な tracking と比べて feature completion rate が 45% 高く、重複実装はゼロでした。
+この比較で重要なのは、structured feature list では完了条件と現在状態が機械可読に残るため、free-form な tracking よりも「何を次にやるべきか」「何が完了済みか」を判断しやすいことです。
 
 ## Key Takeaways
 
@@ -126,7 +126,7 @@ agent は feature の state を直接 `passing` に変更できません。で�
 - [Effective harnesses for long-running agents - Anthropic](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents) — feature list を premature completion や scope drift への対策として使う実例を示している
 - [Harness Engineering - OpenAI](https://openai.com/index/harness-engineering/) — 「artifacts を externalize する」原則を強調している
 - [Design by Contract - Bertrand Meyer](https://www.goodreads.com/book/show/130439.Object_Oriented_Software_Construction) — contract design の原則であり、feature list の理論的基盤
-- [How Google Tests Software](https://www.goodreads.com/book/show/13563030-how-google-tests-software) — test pyramid と behavior specification engineering の実践
+- [The Practical Test Pyramid - Martin Fowler](https://martinfowler.com/articles/practical-test-pyramid.html) — test pyramid と user-facing acceptance tests の実践
 
 ## Exercises
 

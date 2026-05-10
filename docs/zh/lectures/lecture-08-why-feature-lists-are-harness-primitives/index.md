@@ -25,7 +25,7 @@ Claude Code も Codex も、あなたが思い描く「完了」の意味を自�
 
 新しい agent セッションがこの記録を見て、次の問いに答えられるでしょうか。「ほぼ完了」とは具体的に何を指すのか。カートはどのテストに通っているのか。支払いのブロッカーは何か。答えはすべて「わかりません」です。体調不良を医師に「腹痛です。最近はまあまあです」とだけ伝えるようなもので、そこからどんな処方が出せるでしょうか。
 
-結果として、新しいセッションはプロジェクト状態の推測に20分も費やし、最後には完了済みの機能を再実装してしまうことがあります。Anthropic の実践データによれば、良質な進捗記録はセッション開始時の診断時間を60〜80%削減できます。
+結果として、新しいセッションはプロジェクト状態の推測にまとまった時間を費やし、最後には完了済みの機能を再実装してしまうことがあります。Anthropic の公開事例でも、progress file と git history を使って次の agent が状態を素早く理解できるようにする設計が紹介されています。
 
 ## 機能状態機械
 
@@ -116,7 +116,7 @@ EC プラットフォームの開発タスクに、10 個の機能項目があ�
 
 **背骨方式**: 各機能項目に明確な状態と検証コマンドがあります。新しいセッションが機能リストを読むと、3分以内に F01-F05 は `passing`、F06 は `active`（作業中）、F07-F10 は `not_started` だと分かります。そのまま F06 から続行でき、重複作業はゼロです。
 
-定量結果として、構造化された機能リストを使うプロジェクトは、自由形式の記録に比べて機能完了率が45%高く、再実装もゼロでした。
+この比較で重要なのは、構造化された機能リストでは完了条件と現在状態が機械可読に残るため、自由形式の記録よりも「次に何をやるべきか」「何が完了済みか」を判断しやすいことです。
 
 ## 重要ポイント
 
@@ -131,7 +131,7 @@ EC プラットフォームの開発タスクに、10 個の機能項目があ�
 - [Building Effective Agents - Anthropic](https://www.anthropic.com/research/building-effective-agents) — 機能リストを使って早すぎる完了宣言や scope drift を減らす方法を示しています
 - [Harness Engineering - OpenAI](https://openai.com/index/harness-engineering/) — 「成果物を外部化する」という原則を強調しています
 - [Design by Contract - Bertrand Meyer](https://www.goodreads.com/book/show/130439.Object_Oriented_Software_Construction) — 契約による設計原則であり、機能リストの理論的基盤です
-- [How Google Tests Software](https://www.goodreads.com/book/show/13563030-how-google-tests-software) — テストピラミッドと振る舞い仕様の実践的な工程管理を扱います
+- [The Practical Test Pyramid - Martin Fowler](https://martinfowler.com/articles/practical-test-pyramid.html) — テストピラミッドとユーザー視点の acceptance tests の実践
 
 ## 演習
 

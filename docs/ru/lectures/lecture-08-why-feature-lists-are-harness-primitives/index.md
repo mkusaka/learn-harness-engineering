@@ -22,7 +22,7 @@ Did user auth, shopping cart mostly done, still need payments
 ```
 新しいエージェントセッションは、この記録にどう返せばよいのでしょうか。「mostly done」とは何を意味するのでしょうか。カートはどのテストを通過したのでしょうか。決済を何が妨げているのでしょうか。答えはすべて、「誰にもわからない」です。これは医者に「最近はまあまあですが、腹が痛いです」とだけ伝えるようなものです。いったいどんな薬を出せばいいのでしょうか。
 
-その結果、新しいセッションは状態の復元に 20 分を費やし、すでに完了しているフィーチャーを再実装してしまうことがあります。Anthropic のエンジニアリングデータによれば、良い進捗記録はセッション開始時の診断時間を 60〜80% 短縮します。
+その結果、新しいセッションは状態の復元にまとまった時間を費やし、すでに完了しているフィーチャーを再実装してしまうことがあります。Anthropic の公開事例でも、progress file と git history を使って次のエージェントが状態を素早く理解できるようにする設計が紹介されています。
 
 ## フィーチャーの有限オートマトン
 
@@ -111,7 +111,7 @@ flowchart LR
 
 **背骨モード**: それぞれのフィーチャーに明確な状態と検証コマンドがあります。新しいセッションはフィーチャーリストを読んで、3 分で次のことを把握します。F01〜F05 は `passing`、F06 は `active`、F07〜F10 は `not_started`。すぐに F06 から引き継げるので、やり直しはありません。
 
-数値化すると、構造化されたフィーチャーリストを使うプロジェクトは、自由形式の記録と比べて完了率が 45% 高く、実装の重複はゼロです。
+この比較で重要なのは、構造化されたフィーチャーリストでは完了条件と現在状態が機械可読に残るため、自由形式の記録よりも「次に何をやるべきか」「何が完了済みか」を判断しやすいことです。
 
 ## 主要な結論
 
@@ -126,7 +126,7 @@ flowchart LR
 - [Effective harnesses for long-running agents - Anthropic](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents) — フィーチャーリストが、完了の早合点とスコープ逸脱をどう抑えるかを示しています
 - [Harness Engineering - OpenAI](https://openai.com/index/harness-engineering/) — 「アーティファクトを外に出す」という原則を強調しています
 - [Design by Contract - Bertrand Meyer](https://www.goodreads.com/book/show/130439.Object_Oriented_Software_Construction) — コントラクトによる設計の原則であり、フィーチャーリストの理論的基盤です
-- [How Google Tests Software](https://www.goodreads.com/book/show/13563030-how-google-tests-software) — テストピラミッドと、挙動仕様のためのエンジニアリング実践を扱っています
+- [The Practical Test Pyramid - Martin Fowler](https://martinfowler.com/articles/practical-test-pyramid.html) — テストピラミッドとユーザー視点の acceptance tests の実践
 
 ## 演習
 

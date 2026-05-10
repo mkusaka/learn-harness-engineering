@@ -144,7 +144,7 @@ FIX: ファイル操作を src/preload/file-ops.ts に移し、window.api.readFi
 
 ## 参考文献
 
-- [How Google Tests Software - Whittaker et al.](https://www.goodreads.com/book/show/13563030-how-google-tests-software) — テストピラミッドの古典的な出典
+- [The Practical Test Pyramid - Martin Fowler](https://martinfowler.com/articles/practical-test-pyramid.html) — テスト層を補完関係として扱う実践的整理
 - [Harness Engineering - OpenAI](https://openai.com/index/harness-engineering/) — アーキテクチャ制約を自動実行するためのエンジニアリング実践
 - [Chaos Engineering - Netflix (Basiri et al.)](https://ieeexplore.ieee.org/document/7466237) — システムの耐障害性を検証するために障害を意図的に注入する手法
 - [QuickCheck - Claessen & Hughes](https://www.cs.tufts.edu/~nr/cs257/archive/john-hughes/quick.pdf) — 例示ベースのテストと形式検証の間に位置するプロパティテスト手法

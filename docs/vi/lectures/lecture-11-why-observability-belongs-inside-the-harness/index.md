@@ -44,15 +44,15 @@ harness に observability が足りないと、体系的に 4 種類の問題が
 
 **再試行が手探りになる**: 何が失敗したのか分からなければ、再試行の方向性はランダムです。関係のない code path を修正してしまい、本当の失敗原因を見落としたまま同じことを何度も繰り返すことがあります。こうした盲目的な再試行は、token と時間の無駄です。
 
-**session 引き継ぎで情報が崖になる**: 未完了の work を次の session に渡すとき、observability が不足していると、新しい session は system state を一から診断し直さなければなりません。Anthropic の長時間稼働 agent に関する観察では、この冗長な診断に session 全体の 30〜50% が消費されることがあります。
+**session 引き継ぎで情報が崖になる**: 未完了の work を次の session に渡すとき、observability が不足していると、新しい session は system state を一から診断し直さなければなりません。Anthropic の公開事例でも、progress notes と git log を読ませ、起動時に基本動作を確認することで、前 session からの状態把握を助けています。
 
 ### Claude Code の実例
 
 「planner-generator-evaluator」の 3 役 workflow で、「dark mode を app に追加する」task を実行する harness を想像してください。
 
-**observability なし**: Planner は曖昧な description を出します。Generator はその曖昧さを前提に dark mode を実装しますが、planner の暗黙の期待と一致しません。Evaluator は自分だけが持つ暗黙の基準で却下しますが、何が悪いのかを具体的には説明できません。Generator は曖昧な却下理由を頼りに、当てずっぽうで再試行します。この cycle が 3〜4 回繰り返され、約 45 分かかり、ようやく一応受け入れられる程度の結果に落ち着きます。
+**observability なし**: Planner は曖昧な description を出します。Generator はその曖昧さを前提に dark mode を実装しますが、planner の暗黙の期待と一致しません。Evaluator は自分だけが持つ暗黙の基準で却下しますが、何が悪いのかを具体的には説明できません。Generator は曖昧な却下理由を頼りに、当てずっぽうな再試行を繰り返し、ようやく一応受け入れられる程度の結果に落ち着きます。
 
-**十分な observability がある場合**: Planner は sprint contract を提示します。修正すべき component、各 component の検証基準、例外（print styles は扱わない）を列挙します。Generator は contract に従って実装します。runtime observability は各 component の style の読み込みと適用の流れを記録します。Evaluator は採点 rubric を使って各観点を個別に評価し、具体的な evidence を引用します。1 回の反復で高品質な結果が得られ、約 15 分で完了します。
+**十分な observability がある場合**: Planner は sprint contract を提示します。修正すべき component、各 component の検証基準、例外（print styles は扱わない）を列挙します。Generator は contract に従って実装します。runtime observability は各 component の style の読み込みと適用の流れを記録します。Evaluator は採点 rubric を使って各観点を個別に評価し、具体的な evidence を引用します。短い反復で高品質な結果を得やすくなります。
 
 効率は 3 倍です。変わったのは observability だけです。
 
@@ -120,13 +120,13 @@ harness の session ごとに trace を 1 つ、task ごとに span を 1 つ、
 
 planner-generator-evaluator の workflow で、「dark mode のサポートを追加する」を実行する harness を考えます。
 
-**observability が不十分な版**: 3〜4 回の盲目的な再試行、45 分、ぎりぎり受け入れられる結果。Evaluator は「しっくりこない」と言うだけで、何が問題かは説明できません。Generator は間違った方向に多くの時間を費やします。
+**observability が不十分な版**: 複数回の盲目的な再試行、ぎりぎり受け入れられる結果。Evaluator は「しっくりこない」と言うだけで、何が問題かは説明できません。Generator は間違った方向に多くの時間を費やします。
 
 **十分に観測可能な版**:
 - Sprint contract が範囲、基準、例外を明確化する
 - Runtime trace が各 component の style 読み込みの流れを記録する
 - 採点 rubric が各観点の構造化された評価を提供する
-- 1 回の反復で高品質な結果が得られ、15 分で完了する
+- 具体的な evidence に沿って短い反復で高品質な結果を得やすい
 
 効率は 3 倍向上し、品質はより安定し、評価も再現可能になります。
 
@@ -136,7 +136,7 @@ planner-generator-evaluator の workflow で、「dark mode のサポートを�
 - **2 層の observability が必要です**。runtime signal は「何が起きたか」を説明し、process artifact は「なぜそのやり方だったのか」を説明します。
 - **Sprint contract は alignment を前倒しします**。generator が作ったものを evaluator が予想できる理由で即座に却下する、という事態を防ぎます。
 - **採点 rubric によって評価は再現可能になります**。異なる evaluator でも、同じ output に対して似た点数をつけやすくなります。
-- **observability 不足は session 時間の 30〜50% を余計な診断で浪費します。**
+- **observability 不足は session 冒頭の余計な診断を増やします。**
 
 ## さらに読む
 
