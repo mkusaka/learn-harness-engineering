@@ -1,86 +1,86 @@
-# CLAUDE.md -- Claude Code のクイックリファレンス
+# CLAUDE.md -- Quick Reference for Claude Code
 
 ## Project Overview
 
-これは、完全な可観測性、フィードバック、ベンチマーク機能を備えた、総仕上げとなる Electron + TypeScript + React のナレッジベースアプリケーションです。Learn Harness Engineering コースのすべての機能を統合しています。
+This is the capstone Electron + TypeScript + React knowledge base application with full observability, feedback, and benchmarking. It combines all features from the Learn Harness Engineering course.
 
 ## Build & Run
 
 ```bash
-npm install        # 依存関係をインストール
-npm run check      # 出力せずに型チェック
-npm run build      # main/preload をコンパイル + renderer をバンドル
-npm run dev        # ビルドして Electron を起動
-npm test           # vitest スイートを実行
+npm install        # Install dependencies
+npm run check      # Type-check without emitting
+npm run build      # Compile main/preload + bundle renderer
+npm run dev        # Build + launch Electron
+npm test           # Run vitest suite
 ```
 
 ## Quick Start
 
 ```bash
-bash init.sh       # 完全検証: install, check, build
+bash init.sh       # Full verification: install, check, build
 ```
 
 ## Key Files
 
 | File | Purpose |
 |------|---------|
-| `src/main/main.ts` | Electron のエントリーポイント、ウィンドウ作成、サービス配線 |
-| `src/main/ipc-handlers.ts` | IPC チャンネル登録 (14 チャンネル) |
+| `src/main/main.ts` | Electron entry point, window creation, service wiring |
+| `src/main/ipc-handlers.ts` | IPC channel registration (14 channels) |
 | `src/preload/preload.ts` | contextBridge API (5 namespaces) |
-| `src/renderer/App.tsx` | 画面切り替えを担うルート React コンポーネント |
-| `src/renderer/components/ConversationHistory.tsx` | フィードバック付きのチャット形式 Q&A 履歴 |
-| `src/services/logger.ts` | ログレベル付きの構造化 JSON ロギング |
-| `src/services/persistence-service.ts` | ロギング付きのファイル I/O |
-| `src/services/document-service.ts` | バリデーション付きの Document CRUD |
-| `src/services/indexing-service.ts` | メトリクスログ付きのチャンク処理 |
-| `src/services/qa-service.ts` | 引用とフィードバック付きの Q&A |
+| `src/renderer/App.tsx` | Root React component with view switching |
+| `src/renderer/components/ConversationHistory.tsx` | Chat-style Q&A history with feedback |
+| `src/services/logger.ts` | Structured JSON logging with log levels |
+| `src/services/persistence-service.ts` | File I/O with logging |
+| `src/services/document-service.ts` | Document CRUD with validation |
+| `src/services/indexing-service.ts` | Chunking with metrics logging |
+| `src/services/qa-service.ts` | Q&A with citations and feedback |
 | `src/shared/types.ts` | Shared types and IPC channel constants |
-| `feature_list.json` | 合否ステータスと証跡を持つ機能トラッキング |
-| `scripts/benchmark.sh` | パフォーマンスベンチマークスイート |
-| `scripts/cleanup-scanner.sh` | 古い成果物の検出 |
+| `feature_list.json` | Feature tracking with pass/fail status and evidence |
+| `scripts/benchmark.sh` | Performance benchmark suite |
+| `scripts/cleanup-scanner.sh` | Stale artifact detection |
 
 ## Architecture Rules
 
-- Renderer は Node.js モジュールを一切 import しない。
-- main-renderer 間の通信はすべて IPC を通す。
-- Services は constructor で注入された `PersistenceService` を使う。
-- IPC チャンネル名は `src/shared/types.ts` に置く。
-- すべての Services は `logger.forService()` 経由で構造化 JSON ロギングを使う。
+- Renderer never imports Node.js modules.
+- All main-renderer communication goes through IPC.
+- Services use constructor-injected `PersistenceService`.
+- IPC channel names live in `src/shared/types.ts`.
+- All services use structured JSON logging via `logger.forService()`.
 
 ## IPC Channels (14 total)
 
 | Channel | Direction | Purpose |
 |---------|-----------|---------|
-| `documents:list` | R -> M | すべての文書を一覧表示する |
-| `documents:import` | R -> M | ファイルを取り込む |
-| `documents:get` | R -> M | ID で文書を取得する |
-| `documents:delete` | R -> M | 文書を削除する |
-| `indexing:start` | R -> M | インデックス作成を開始する |
-| `indexing:status` | R -> M | インデックス作成の状態を取得する |
-| `indexing:chunks` | R -> M | 文書のチャンクを取得する |
-| `qa:ask` | R -> M | 質問する |
-| `qa:history` | R -> M | Q&A 履歴を取得する |
-| `qa:clear-history` | R -> M | Q&A 履歴を消去する |
-| `feedback:submit` | R -> M | フィードバックを送信する |
-| `feedback:list` | R -> M | すべてのフィードバックを取得する |
-| `app:reset` | R -> M | すべてのデータをリセットする |
-| `app:status` | R -> M | アプリの状態を取得する |
+| `documents:list` | R -> M | List all documents |
+| `documents:import` | R -> M | Import a file |
+| `documents:get` | R -> M | Get document by ID |
+| `documents:delete` | R -> M | Delete document |
+| `indexing:start` | R -> M | Start indexing |
+| `indexing:status` | R -> M | Get indexing status |
+| `indexing:chunks` | R -> M | Get chunks for document |
+| `qa:ask` | R -> M | Ask a question |
+| `qa:history` | R -> M | Get Q&A history |
+| `qa:clear-history` | R -> M | Clear Q&A history |
+| `feedback:submit` | R -> M | Submit feedback |
+| `feedback:list` | R -> M | Get all feedback |
+| `app:reset` | R -> M | Reset all data |
+| `app:status` | R -> M | Get app status |
 
 ## How to Add a Feature
 
-1. `src/shared/types.ts` で IPC チャンネルを定義する。
-2. `src/main/ipc-handlers.ts` にログ付きで handler を追加する。
-3. `src/preload/preload.ts` で API を公開する。
-4. `src/renderer/types.d.ts` に型定義を追加する。
-5. `src/renderer/components/` で UI を作る。
-6. Service メソッドにログ呼び出しを追加する。
-7. 結果を `feature_list.json` に反映する。
+1. Define the IPC channel in `src/shared/types.ts`.
+2. Add the handler in `src/main/ipc-handlers.ts` with logging.
+3. Expose the API in `src/preload/preload.ts`.
+4. Add the type declaration in `src/renderer/types.d.ts`.
+5. Build the UI in `src/renderer/components/`.
+6. Add logging calls to the service method.
+7. Update `feature_list.json` with the result.
 
 ## Testing
 
 ```bash
-npm test           # vitest スイートを実行
-npm run test:watch # watch モードでテストを実行
-bash scripts/benchmark.sh  # パフォーマンスベンチマークを実行
-bash scripts/cleanup-scanner.sh  # 古い成果物を確認
+npm test           # Run vitest suite
+npm run test:watch # Run tests in watch mode
+bash scripts/benchmark.sh  # Run performance benchmarks
+bash scripts/cleanup-scanner.sh  # Check for stale artifacts
 ```

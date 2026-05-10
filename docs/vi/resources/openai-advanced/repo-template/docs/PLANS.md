@@ -1,34 +1,34 @@
 # PLANS.md
 
-このファイルは、実行計画をどのように作成し、更新し、完了させ、保存するかを定義します。
+Tệp này định nghĩa cách các kế hoạch thực thi được tạo, cập nhật, hoàn thành và lưu trữ.
 
-## 計画が必要な場合
+## Khi Cần Một Kế hoạch
 
-次のいずれかに当てはまる作業では、実行計画を作成してください。
+Tạo một kế hoạch thực thi khi công việc:
 
-- 1回のセッションをまたぐ
-- 複数のサブシステムにまたがる変更を含む
-- 検証や展開に軽視できないリスクがある
-- 未確定の判断に依存しており、その内容を記録しておく必要がある
+- trải dài hơn một phiên
+- thay đổi nhiều hơn một hệ thống con
+- có rủi ro xác minh hoặc triển khai không tầm thường
+- phụ thuộc vào các quyết định mở nên được ghi lại
 
-## 計画の配置場所
+## Vị trí Kế hoạch
 
-- `docs/exec-plans/active/`: 現在作業を進めている計画
-- `docs/exec-plans/completed/`: 完了済みの計画。将来の agent に文脈を残すために保持する
-- `docs/exec-plans/tech-debt-tracker.md`: 後回しにした作業とフォローアップ
+- `docs/exec-plans/active/`: các kế hoạch hiện đang thúc đẩy công việc
+- `docs/exec-plans/completed/`: các kế hoạch đã hoàn thành được giữ lại để cung cấp ngữ cảnh cho agent trong tương lai
+- `docs/exec-plans/tech-debt-tracker.md`: công việc đã hoãn và các follow-up
 
-## 計画に最低限含める内容
+## Các Phần Kế hoạch Tối thiểu
 
-- 目的
-- 対象範囲と対象外
-- 検証手順
-- リスクとブロッカー
-- 進捗ログ
-- 未確定の判断事項
+- mục tiêu
+- phạm vi và ngoài phạm vi
+- đường dẫn xác minh
+- rủi ro và sự cố chặn
+- nhật ký tiến độ
+- quyết định mở
 
-## 運用ルール
+## Quy tắc Vận hành
 
-- active な計画には、責任者が明確な現在のステップを 1 つ持たせること。
-- 作業が進んだら計画を更新すること。静的な文章として扱わないこと。
-- 実装方針を変える判断があった場合は、計画に記録すること。
-- 完了した計画は `completed/` に移動し、過去の文脈を agent が参照できるようにすること。
+- Một kế hoạch active nên có một bước hiện tại được sở hữu rõ ràng.
+- Cập nhật kế hoạch khi công việc tiến triển; đừng coi nó như văn xuôi tĩnh.
+- Nếu một quyết định thay đổi hướng triển khai, hãy ghi lại nó trong kế hoạch.
+- Di chuyển các kế hoạch đã hoàn thành sang `completed/` để agent vẫn có thể khám phá ngữ cảnh trước đó.

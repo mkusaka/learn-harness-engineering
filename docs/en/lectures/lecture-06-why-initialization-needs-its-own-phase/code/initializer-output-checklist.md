@@ -1,7 +1,7 @@
-# Initializer Output チェックリスト
+# Initializer Output Checklist
 
-- 標準となる起動コマンドはありますか?
-- 標準となる検証コマンドはありますか?
-- 最初の進捗成果物はありますか?
-- 安定した最初のコミットはありますか?
-- 後続の実行で見える機能の入り口はありますか?
+- Is there a canonical startup command?
+- Is there a canonical verification command?
+- Is there a first progress artifact?
+- Is there a stable first commit?
+- Is there a visible feature surface for later runs?

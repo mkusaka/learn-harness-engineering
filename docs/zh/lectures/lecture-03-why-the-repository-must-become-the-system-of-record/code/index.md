@@ -1,7 +1,7 @@
-# Lecture 03 のコード
+# Code for Lecture 03
 
-このフォルダには、次のような例を入れてください:
+Use this folder for examples of:
 
-- エージェントが読みやすいリポジトリ構造
-- docs を system of record として扱う例
-- よくない知識の置き場所と、よい知識の置き場所の比較
+- agent-readable repo structures
+- docs as system of record
+- bad vs good knowledge placement

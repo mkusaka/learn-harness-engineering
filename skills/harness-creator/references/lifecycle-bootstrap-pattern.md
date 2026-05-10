@@ -1,38 +1,38 @@
-# ライフサイクルとブートストラップのパターン
+# Lifecycle and Bootstrap Pattern
 
-## 問題
+## Problem
 
-エージェントランタイムには、安全性を損なわずに拡張できる余地が必要です。
+Agent runtimes need extensibility without compromising safety:
 
-- **Hooks** — ライフサイクル上の節目で動作を拡張する（ツール実行の前後、セッション開始/終了）
-- **Background tasks** — メインのエージェントを止めずに、長時間かかる作業を追跡する
-- **Bootstrap** — 複数の起動モード（CLI、server、SDK）にまたがって初期化を構造化する
+- **Hooks** — Extend behavior at lifecycle moments (pre/post tool execution, session start/end)
+- **Background tasks** — Track long-running work without blocking the main agent
+- **Bootstrap** — Structure initialization across multiple entry modes (CLI, server, SDK)
 
-しかし、制御されていない拡張性は次の問題を生みます。
-- 信頼できない hooks によるセキュリティホール
-- 完了しない task によるリソースリーク
-- 初期化時の race condition
+But uncontrolled extensibility creates:
+- Security holes from untrusted hooks
+- Resource leaks from tasks that never complete
+- Race conditions in initialization
 
-## 基本ルール
+## Golden Rules
 
-### Hook の信頼は全体か無か
+### Hook Trust is All-or-Nothing
 
-workspace が信頼されていない場合は、**すべての hooks をスキップ**します。疑わしいものだけを除外するわけではありません。session スコープの hooks は一時的なもので、session 終了時にクリーンアップされます。
+If the workspace is untrusted, **all hooks skip** — not just suspicious ones. Session-scoped hooks are ephemeral and cleaned on session end.
 
 ```typescript
-// 例: trust gate を持つ hook ディスパッチ
+// Example: Hook dispatch with trust gate
 async function dispatchHook(
   hookType: HookType,
   context: HookContext
 ): Promise<HookResult[]> {
   
-  // trust gate: workspace が信頼されていなければ、すべての hooks をスキップする
+  // Trust gate: if workspace untrusted, skip ALL hooks
   if (!context.trustBoundary.crossed) {
-    logger.warn('信頼されていない workspace のため、hooks をスキップします');
+    logger.warn('Untrusted workspace, skipping hooks');
     return [];
   }
   
-  // session スコープの hooks は一時的なもの。session 終了時にクリーンアップする
+  // Session-scoped hooks ephemeral — cleanup on session end
   const sessionHooks = context.hooks.getByScope('session');
   const projectHooks = context.hooks.getByScope('project');
   
@@ -43,109 +43,109 @@ async function dispatchHook(
 }
 ```
 
-### 長時間作業: 2 段階 eviction を伴う型付き state machine
+### Long-Running Work: Typed State Machines with Two-Phase Eviction
 
-各 work unit には次が与えられます。
-1. **型付きで prefix 付きの ID**（例: `extractor-001`, `benchmark-002`）
-2. **厳密なライフサイクル**（running → completed | failed | killed）
-3. **disk-backed な出力**（単なる in-memory ではない）
+Each work unit gets:
+1. **Typed, prefixed ID** (e.g., `extractor-001`, `benchmark-002`)
+2. **Strict lifecycle** (running → completed | failed | killed)
+3. **Disk-backed output** (not just in-memory)
 
-eviction は 2 段階です。
-1. **disk 上の出力** は terminal state で即座にクリーンアップする
-2. **in-memory の記録** は parent への通知後に遅延クリーンアップする
+Eviction is two-phase:
+1. **Disk output** cleaned eagerly at terminal state
+2. **In-memory records** cleaned lazily after parent notified
 
-### Bootstrap: 依存順で並ぶ、メモ化された stage
+### Bootstrap: Dependency-Ordered, Memoized Stages
 
-複数の entry mode（CLI、server、SDK）は同じ bootstrap path を共有します。
+Multiple entry modes (CLI, server, SDK) share the same bootstrap path:
 
 ```
-Stage 1: 最小限のコンテキストを作成する（trust は不要）
+Stage 1: Create minimal context (no trust required)
   ↓
-Stage 2: tools を読み込む（read-only で安全）
+Stage 2: Load tools (read-only safe)
   ↓
-Stage 3: trust boundary を越える（user が consent を与える）
+Stage 3: Trust boundary crossed (user grants consent)
   ↓
-Stage 4: セキュリティ上センシティブな subsystem を読み込む（telemetry、secret env vars）
+Stage 4: Load security-sensitive subsystems (telemetry, secret env vars)
 ```
 
-**重要な分岐点**: セキュリティ上センシティブな subsystem は、trust が確立する前に有効化してはなりません。
+**Critical inflection**: Security-sensitive subsystems must not activate before trust is established.
 
-## 使う場面
+## When To Use
 
-- core code を変更せずに agent の挙動を拡張したい
-- 長時間動く background work を追跡したい
-- 複数の entry mode にまたがる構造化された初期化が必要
-- ライフサイクル上の節目（pre/post tool、session start/end）で hooks が必要
+- You need to extend agent behavior without modifying core code
+- You need to track long-running background work
+- You need structured initialization across multiple entry modes
+- You need hooks at lifecycle moments (pre/post tool, session start/end)
 
-## トレードオフ
+## Tradeoffs
 
-| 決定 | 利点 | コスト |
+| Decision | Benefit | Cost |
 |---|---|---|
-| Hook の信頼を全体か無かにする | セキュリティ境界が単純 | 信頼できない hook が 1 つあるだけで拡張システム全体が無効になる |
-| disk-backed な task 出力 | concurrent work に関係なく memory 使用量が一定 | I/O latency が work unit 数に比例する |
-| 依存順の bootstrap | 複数の entry mode で path を共有できる | 初期 startup が直列になる（stage を並列化できない） |
-| メモ化された stage | 再初期化が高速 | config 変更時に memoization を慎重に無効化する必要がある |
+| All-or-nothing hook trust | Simple security boundary | One untrusted hook disables entire extension system |
+| Disk-backed task output | Memory constant regardless of concurrent work | I/O latency proportional to work units |
+| Dependency-ordered bootstrap | Multiple entry modes share path | Initial startup sequential (can't parallelize stages) |
+| Memoized stages | Re-init is fast | Must carefully invalidate memoization on config change |
 
-## 実装パターン
+## Implementation Patterns
 
-### Hook のライフサイクル
+### Hook Lifecycle
 
-定義されたタイミングで 6 種類の hook がディスパッチされます。
+Six hook types dispatched at defined moments:
 
 ```typescript
 interface HookRegistry {
-  // session のライフサイクル
+  // Session lifecycle
   onSessionStart: (context: SessionContext) => Promise<void>;
   onSessionEnd: (context: SessionContext) => Promise<void>;
   
-  // tool 実行
+  // Tool execution
   preToolExecute: (context: ToolContext) => Promise<ToolContext>;
   postToolExecute: (context: ToolResult) => Promise<ToolResult>;
   
-  // prompt 送信
+  // Prompt submission
   prePromptSubmit: (context: PromptContext) => Promise<PromptContext>;
   postPromptSubmit: (context: ResponseContext) => Promise<ResponseContext>;
 }
 
-// 使い方: config 経由で hooks を登録する
+// Usage: Register hooks via config
 // /update-config hooks.preToolExecute = "scripts/audit-tool-call.js"
 ```
 
-### 長時間 task の追跡
+### Long-Running Task Tracking
 
 ```typescript
 interface TaskRegistry {
-  // 型付き prefix ID
+  // Typed prefixed IDs
   registerWork(
     type: 'extraction' | 'benchmark' | 'indexing',
     outputType: 'json' | 'text' | 'file'
-  ): string; // 型付き ID を返す: `extraction-001`
+  ): string; // Returns typed ID: `extraction-001`
   
-  // 厳密な state machine
+  // Strict state machine
   updateState(
     taskId: string,
     state: 'running' | 'completed' | 'failed' | 'killed',
     output?: any
   ): void;
   
-  // 2 段階 eviction
+  // Two-phase eviction
   evictTask(taskId: string): void;
-  // 1. disk 出力をクリーンアップする（terminal state で即時）
-  // 2. in-memory の記録をクリーンアップする（parent 通知後に遅延）
+  // 1. Clean disk output (eager, at terminal state)
+  // 2. Clean in-memory record (lazy, after parent notified)
 }
 ```
 
-### Bootstrap の流れ
+### Bootstrap Sequence
 
 ```typescript
-// 例: 依存順の初期化
+// Example: Dependency-ordered initialization
 class AgentBootstrap {
   private stages = new Map<string, Stage>();
   private memoizedCallers = new Map<string, any>();
   
   async bootstrap(entryMode: 'cli' | 'server' | 'sdk'): Promise<AgentContext> {
     
-    // Stage 1: 最小限のコンテキスト（trust は不要）
+    // Stage 1: Minimal context (no trust required)
     await this.runStage('minimal-context', async () => {
       return {
         cwd: process.cwd(),
@@ -154,20 +154,20 @@ class AgentBootstrap {
       };
     });
     
-    // Stage 2: tools を読み込む（read-only なら安全）
+    // Stage 2: Load tools (read-only safe)
     await this.runStage('load-tools', async (context) => {
       context.tools = await this.loadSafeTools();
       return context;
     });
     
-    // Stage 3: trust boundary（user が consent を与える）
+    // Stage 3: Trust boundary (user grants consent)
     await this.runStage('trust-boundary', async (context) => {
       const consent = await this.requestConsent();
       context.trustBoundary = { crossed: consent };
       return context;
     });
     
-    // Stage 4: セキュリティ上センシティブな subsystem（trust が必要）
+    // Stage 4: Security-sensitive subsystems (requires trust)
     if (context.trustBoundary.crossed) {
       await this.runStage('load-sensitive', async (context) => {
         context.telemetry = await this.loadTelemetry();
@@ -183,12 +183,12 @@ class AgentBootstrap {
     name: string,
     fn: (context: AgentContext) => Promise<AgentContext>
   ): Promise<void> {
-    // メモ化済み: すでに実行済みならスキップ
+    // Memoized: skip if already run
     if (this.stages.has(name) && this.stages.get(name).complete) {
       return;
     }
     
-    // stage を実行する
+    // Run stage
     const stage = { name, complete: false, running: true };
     this.stages.set(name, stage);
     
@@ -202,63 +202,63 @@ class AgentBootstrap {
 }
 ```
 
-## 落とし穴
+## Gotchas
 
-1. **Hook の信頼は全体か無か** — 信頼できない hook が 1 つあるだけで拡張システム全体が無効になる
-2. **ほとんどの async work は "pending" state を飛ばす** — work unit は直接 "running" として登録される
-3. **eviction には通知が必要** — terminal な work unit は parent に通知されて初めて GC 対象になる
-4. **fast-path dispatch** — メモ化された caller は stage を再実行せずに concurrent call を処理しなければならない
-5. **hook type は互いに重なってはいけない** — 重複する hook scope を作らない
+1. **Hook trust is all-or-nothing** — One untrusted hook disables entire extension system
+2. **Most async work skips "pending" state** — Work units register directly as "running"
+3. **Eviction requires notification** — Terminal work unit only GC-eligible after parent notified
+4. **Fast-path dispatch** — Memoized callers must handle concurrent calls without re-running stages
+5. **Hook types must be disjoint** — Don't create overlapping hook scopes
 
-## 関連パターン
+## Related Patterns
 
-- [Tool Registry](tool-registry-pattern.md) — bootstrap 時に tools をどう登録するか
-- [Memory Persistence](memory-persistence-pattern.md) — init 時に memory をどう読み込むか
+- [Tool Registry](tool-registry-pattern.md) — How tools are registered at bootstrap
+- [Memory Persistence](memory-persistence-pattern.md) — How memory is loaded at init
 
-## テンプレート: Bootstrap チェックリスト
+## Template: Bootstrap Checklist
 
-bootstrap 完了を宣言する前に確認します。
+Before declaring bootstrap complete:
 
 ```markdown
-## Bootstrap の確認
+## Bootstrap Verification
 
-### Stage 1: 最小限のコンテキスト
-- [ ] 作業ディレクトリを確認済み
-- [ ] 起動モードを判定済み（cli / server / sdk）
-- [ ] 信頼境界はまだ越えていない（secret は読み込まない）
+### Stage 1: Minimal Context
+- [ ] Working directory confirmed
+- [ ] Entry mode determined (cli / server / sdk)
+- [ ] Trust boundary NOT crossed (no secrets loaded)
 
-### Stage 2: Tools を読み込み済み
-- [ ] read-only の tools を登録済み（read, search, glob）
-- [ ] write tools はまだ登録していない（edit, shell）
-- [ ] tool permission は default に設定済み（ask / deny）
+### Stage 2: Tools Loaded
+- [ ] Read-only tools registered (read, search, glob)
+- [ ] Write tools NOT yet registered (edit, shell)
+- [ ] Tool permissions set to default (ask / deny)
 
-### Stage 3: 信頼境界
-- [ ] user consent を要求済み（interactive または config flag）
-- [ ] consent を session state に記録済み
-- [ ] security audit を記録済み
+### Stage 3: Trust Boundary
+- [ ] User consent requested (interactive or config flag)
+- [ ] Consent recorded in session state
+- [ ] Security audit logged
 
-### Stage 4: センシティブなサブシステム
-- [ ] telemetry を初期化済み（consent がある場合）
-- [ ] secret env vars を読み込み済み（consent がある場合）
-- [ ] write tools を登録済み（edit, shell, exec）
-- [ ] hook system を有効化済み（workspace が信頼されている場合）
+### Stage 4: Sensitive Subsystems
+- [ ] Telemetry initialized (if consent given)
+- [ ] Secret env vars loaded (if consent given)
+- [ ] Write tools registered (edit, shell, exec)
+- [ ] Hook system enabled (if workspace trusted)
 
-### Stage 5: バックグラウンドタスク
-- [ ] task registry を初期化済み
-- [ ] cleanup handler を登録済み
-- [ ] shutdown 時に drain する設定を済ませた
+### Stage 5: Background Tasks
+- [ ] Task registry initialized
+- [ ] Cleanup handlers registered
+- [ ] Drain-on-shutdown configured
 
-## いずれかの Stage が失敗した場合
+## If Any Stage Fails
 
-- Bootstrap はただちに停止する
-- session は safe mode のまま維持する（read-only）
-- error を stage 名と失敗理由付きで記録する
+- Bootstrap halts immediately
+- Session remains in safe mode (read-only)
+- Error logged with stage name and failure reason
 ```
 
-## 根拠
+## Evidence
 
-ライフサイクルと bootstrap のパターンは、次のような本番 runtime で確認されています。
-- workspace の信頼に基づき、hook dispatch は全件有効か全件無効かのどちらかになる
-- 長時間タスクは、型付きの prefix 付き ID と disk-backed な出力を使う
-- Bootstrap は依存順に並び、stage はメモ化される
-- trust boundary は、セキュリティ上センシティブな subsystem に対する明確な転換点になる
+Lifecycle and bootstrap patterns are observed in production runtimes where:
+- Hook dispatch is all-or-nothing based on workspace trust
+- Long-running tasks use typed prefixed IDs and disk-backed output
+- Bootstrap is dependency-ordered with memoized stages
+- Trust boundary is explicit inflection point for security-sensitive subsystems

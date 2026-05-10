@@ -1,13 +1,13 @@
-# データベーススキーマ
+# Database Schema
 
-このディレクトリは、エージェントがコードから逆解析しなくても確認できる、生成物または派生物を置くために使用します。
+Sử dụng thư mục này cho các artifact được tạo ra hoặc dẫn xuất mà agent có thể kiểm tra mà không cần reverse-engineer chúng từ mã.
 
-## ソース
+## Nguồn
 
-- 生成元: `[コマンドまたはソースのパス]`
-- 最終更新: `YYYY-MM-DD`
+- Được tạo từ: `[lệnh hoặc đường dẫn nguồn]`
+- Làm mới lần cuối: `YYYY-MM-DD`
 
-## 注記
+## Ghi chú
 
-- 生成された部分は手動で編集しないでください。
-- 下のスキーマが変更されたら、このファイルを再生成してください。
+- Không chỉnh sửa thủ công các phần được tạo ra.
+- Tạo lại tệp này khi schema bên dưới thay đổi.

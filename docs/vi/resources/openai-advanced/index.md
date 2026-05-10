@@ -1,21 +1,21 @@
-[英語版 →](../../../en/resources/openai-advanced/) | [中国語版 →](../../../zh/resources/openai-advanced/)
+[English Version →](../../../en/resources/openai-advanced/) | [中文版本 →](../../../zh/resources/openai-advanced/)
 
-# OpenAI の高度な Harness パッケージ
+# Gói Harness Nâng cao OpenAI
 
-このパッケージは、OpenAI の記事「Harness Engineering」で説明されている harness の設計を、実用的に使えるスターター一式と、それに付随する SOP 構造としてまとめたものです。
+Gói này tập hợp thiết kế harness được mô tả trong bài viết "Harness Engineering" của OpenAI thành một bộ tệp bắt đầu có thể áp dụng và cấu trúc SOP đi kèm.
 
-## なぜ存在するのか
+## Tại sao Nó Tồn tại
 
-Harness Engineering の記事では、リポジトリは記録システムであること、外部化された記憶、記憶ではなく機械的な検証、そして回復ループといった高レベルの原則が説明されています。このパッケージは、それらの原則を次の形に落とし込みます。
+Bài viết harness engineering mô tả các nguyên tắc cấp cao: kho lưu trữ là hệ thống ghi chép, bộ nhớ ngoại hóa, kiểm tra cơ học thay vì ký ức, và các vòng phản hồi phục hồi. Gói này biến các nguyên tắc đó thành:
 
-- 実際の repo に向けた、明確に構造化された文書一式
-- プロダクト領域とアーキテクチャ層に応じた品質スコアリング
-- model にとって扱いやすい参照ドキュメント用ディレクトリ
-- アーキテクチャ、知識の取り込み、runtime 検証のための標準運用手順
+- bộ tài liệu cấu trúc rõ ràng cho một repo thực tế
+- tính điểm chất lượng theo domain sản phẩm và lớp kiến trúc
+- thư mục tài liệu tham khảo thân thiện với model
+- các quy trình vận hành chuẩn cho kiến trúc, thu thập kiến thức, và xác minh runtime
 
-## すぐ使える構成
+## Bố cục Bắt đầu Có sẵn
 
-[`repo-template/`](./repo-template/index.md) にあるスターターパッケージは、次の構成を反映しています。
+Gói bắt đầu trong [`repo-template/`](./repo-template/index.md) phản ánh cấu trúc dưới đây:
 
 ```text
 AGENTS.md
@@ -46,29 +46,29 @@ docs/
 └── SECURITY.md
 ```
 
-## 適用方法
+## Cách Áp dụng Nó
 
-1. repo がまだ小さいうちは、最小構成のパッケージから始めてください。
-2. より強い構造が必要になったら、[`repo-template/`](./repo-template/index.md) 内のファイルを自分のリポジトリへコピーしてください。
-3. `AGENTS.md` は短く保ってください。百科事典ではなく、より深い文書へのルーターとして扱ってください。
-4. 品質、信頼性、計画に関する文書は、特別な片付けの日にまとめて更新するのではなく、日々の作業の一部として更新してください。
-5. 生成された artifact と外部参照は明確に保ち、agent がチャット履歴に頼らず見つけられるようにしてください。
+1. Bắt đầu từ gói tối giản nếu repo của bạn vẫn còn nhỏ.
+2. Sao chép các tệp trong [`repo-template/`](./repo-template/index.md) vào kho lưu trữ của bạn khi bạn cần cấu trúc mạnh hơn.
+3. Giữ `AGENTS.md` ngắn. Coi nó như bộ định tuyến vào các tài liệu sâu hơn, không phải như bách khoa toàn thư.
+4. Cập nhật các tài liệu chất lượng, độ tin cậy và kế hoạch như một phần của công việc thông thường, không phải như một ngày dọn dẹp riêng biệt.
+5. Giữ các artifact được tạo ra và tài liệu tham khảo bên ngoài rõ ràng để agent có thể tìm thấy chúng mà không cần dựa vào lịch sử chat.
 
-## SOP ライブラリ
+## Thư viện SOP
 
-[`sops/`](./sops/index.md) ディレクトリは、記事内の図を段階的な運用手順に変換します。
+Thư mục [`sops/`](./sops/index.md) biến các sơ đồ của bài viết thành các quy trình vận hành từng bước:
 
-- 分層ドメインアーキテクチャの構築
-- 暗黙知をリポジトリに定着させる
-- ローカル observability スタックとフィードバックループのワークフロー
-- UI 作業のための Chrome DevTools 検証ループ
+- thiết lập kiến trúc domain phân lớp
+- mã hóa kiến thức ẩn vào kho lưu trữ
+- stack observability cục bộ và workflow vòng phản hồi
+- vòng lặp xác minh Chrome DevTools cho công việc UI
 
-## 設計原則
+## Nguyên tắc Thiết kế
 
-- 入り口は短くし、深い内容はリンク先に持たせる
-- リポジトリは記録システムである
-- 機械的な検証は、記憶に頼った規則より優れている
-- 計画と品質履歴はコードのそばに置く
-- クリーンアップと単純化は最優先の責務である
+- Điểm đầu vào ngắn, tài liệu liên kết sâu hơn
+- Kho lưu trữ là hệ thống ghi chép
+- Kiểm tra cơ học tốt hơn các quy tắc được nhớ
+- Kế hoạch và lịch sử chất lượng nằm bên cạnh mã
+- Dọn dẹp và đơn giản hóa là trách nhiệm hạng nhất
 
-このパッケージは意図的に強い主張を持っていますが、盲目的にコピーするのではなく、自分のプロジェクトに合わせて調整してください。
+Gói này có chủ ý theo quan điểm, nhưng nó vẫn nên được điều chỉnh cho dự án của bạn thay vì sao chép mù quáng.

@@ -1,36 +1,36 @@
-# Project 04: ランタイム可観測性と構造的制御
+# Project 04: Runtime Observability and Structural Control
 
-仕込まれたランタイム不具合をデバッグしながら、ランタイム可観測性と構造的な境界チェックを導入します。
+Introduce runtime observability and structural boundary checks while debugging a seeded runtime defect.
 
-## ディレクトリ案内
+## Directory Guide
 
-| ディレクトリ | 意味 |
+| Directory | Meaning |
 |------|------|
-| `starter/` | **開始地点**: P3 の解答をベースにしており、ログ出力と構造的な境界機能はまだ実装していません。`IndexingService` には隠された仕込みバグがあり、1000 文字を超えるファイルで空のチャンクが生成されます。アーキテクチャ確認スクリプトはありません。 |
-| `solution/` | **参考実装**: 構造化ログモジュール、アーキテクチャ境界チェック用スクリプト、そして仕込みバグの修正済み版です。 |
+| `starter/` | **Starting point**: based on the P3 solution, with logging and structural boundary features still to implement. `IndexingService` contains a hidden seeded bug: files longer than 1000 characters produce empty chunks. There is no architecture-check script. |
+| `solution/` | **Reference implementation**: structured logging module, architecture boundary-check script, and the seeded bug fixed. |
 
-## 使い方
+## How to Use
 
 ```sh
 cd starter
 npm install
-# 1. ログを通じてエージェントがバグを見つけられるか確認する
-# 2. 大きなファイルを取り込み、チャンク分割が誤動作するか確認する
+# 1. Observe whether the agent can locate the bug through logs
+# 2. Import a large file and check whether chunking behaves incorrectly
 
 cd ../solution
 npm install
-# 構造化ログで原因特定がどれだけ速くなるか比較する
+# Compare how structured logs speed up diagnosis
 ```
 
-## 対応機能
+## Features Covered
 
-- 起動ログ
-- インポートとインデックス作成のログ
-- 目に見える QA 失敗経路
-- main、preload、renderer、services 各レイヤーの明確な境界
-- 仕込み済みランタイム不具合のデバッグ
+- Startup logs
+- Import and indexing logs
+- Visible QA failure path
+- Explicit boundaries between main, preload, renderer, and services layers
+- Debugging a seeded runtime defect
 
-## 関連講義
+## Related Lectures
 
 - [Lecture 07: Why Agents Overreach and Under-Finish](../../docs/en/lectures/lecture-07-why-agents-overreach-and-under-finish/index.md)
 - [Lecture 08: Why Feature Lists Are Harness Primitives](../../docs/en/lectures/lecture-08-why-feature-lists-are-harness-primitives/index.md)

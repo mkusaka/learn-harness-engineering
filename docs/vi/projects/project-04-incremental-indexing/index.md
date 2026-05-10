@@ -1,22 +1,22 @@
-[英語版 →](../../../en/projects/project-04-incremental-indexing/) | [中国語版 →](../../../zh/projects/project-04-incremental-indexing/)
+[English Version →](../../../en/projects/project-04-incremental-indexing/) | [中文版本 →](../../../zh/projects/project-04-incremental-indexing/)
 
-> 関連講義: [講義 07. agent のタスク境界を明確にする](./../../lectures/lecture-07-why-agents-overreach-and-under-finish/index.md) · [講義 08. feature list で agent の行動を制約する](./../../lectures/lecture-08-why-feature-lists-are-harness-primitives/index.md)
-> テンプレート: [templates/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/vi/resources/templates/)
+> Bài giảng liên quan: [Bài 07. Vạch ranh giới tác vụ rõ ràng cho agent](./../../lectures/lecture-07-why-agents-overreach-and-under-finish/index.md) · [Bài 08. Sử dụng feature list để ràng buộc những gì agent làm](./../../lectures/lecture-08-why-feature-lists-are-harness-primitives/index.md)
+> Tệp mẫu: [templates/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/vi/resources/templates/)
 
-# プロジェクト 04. Runtime フィードバックで agent の挙動を調整する
+# Dự án 04. Sử dụng Phản hồi Runtime để Điều chỉnh Hành vi Agent
 
-## やること
+## Bạn Làm Gì
 
-起動ログ、import/indexing ログ、エラー状態などの runtime の可観測性と、レイヤーをまたぐ逸脱を防ぐためのアーキテクチャ制約を追加します。エージェントが修正できる runtime バグも仕込みます。
+Thêm observability runtime (log khởi động, log import/indexing, trạng thái lỗi) và các ràng buộc kiến trúc để ngăn chặn vi phạm xuyên lớp. Cài một lỗi runtime để agent sửa.
 
-2 回実行します。1 回目はログも制約もなし、2 回目は適切なツールとルールを導入した状態で実行します。
+Bạn chạy hai lần: lần đầu không có log hoặc ràng buộc, lần hai với các công cụ và quy tắc phù hợp.
 
-## ツール
+## Công cụ
 
-- Claude Code または Codex
+- Claude Code hoặc Codex
 - Git
 - Node.js + Electron
 
-## Harness の考え方
+## Cơ chế Harness
 
-runtime フィードバック + スコープ制御 + 段階的 indexing
+Phản hồi runtime + kiểm soát phạm vi + indexing tăng dần

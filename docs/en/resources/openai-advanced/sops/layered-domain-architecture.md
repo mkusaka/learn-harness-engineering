@@ -1,46 +1,48 @@
-# SOP: レイヤードなドメインアーキテクチャ
+# SOP: Layered Domain Architecture
 
-エージェントが境界を繰り返し破ったり、レイヤーをまたいでロジックを重複させたり、数回の作業セッションでレビューしづらいコードを生み出したりする場合に、この SOP を使います。
+Use this SOP when the agent keeps violating boundaries, duplicating logic across
+layers, or producing code that becomes hard to review after a few sessions.
 
-## 目的
+## Goal
 
-ドメイン境界を十分に明確にし、エージェントが構造を静かに劣化させることなく素早く作業できるようにします。
+Make domain boundaries explicit enough that agents can move quickly without
+silently degrading structure.
 
-## 目標モデル
+## Target Model
 
-ビジネスドメイン内では、次の方向の流れを優先します。
+Within a business domain, prefer this directional flow:
 
 `Types -> Config -> Repo -> Service -> Runtime -> UI`
 
-横断的な関心事は、明示的な provider または adapter 経由で入れるべきです。
-共有 utils はドメインの外に置き、ドメイン固有のロジックを溜め込まないようにします。
+Cross-cutting concerns should enter through explicit providers or adapters.
+Shared utils stay outside the domain and should not accumulate domain logic.
 
-## セットアップチェックリスト
+## Setup Checklist
 
-- 現在のドメインを `ARCHITECTURE.md` に定義する。
-- 許可される依存方向を `ARCHITECTURE.md` に書く。
-- auth、telemetry、external APIs などの横断的なインターフェースを記録する。
-- いま最も厄介な境界違反について、短いメモを1つ追加する。
-- lint、tests、scripts のどれで機械的に強制するかを決める。
+- Define the current domains in `ARCHITECTURE.md`.
+- Write allowed dependency directions in `ARCHITECTURE.md`.
+- Record cross-cutting interfaces such as auth, telemetry, and external APIs.
+- Add one short note for the hardest current boundary violation.
+- Decide what should be enforced mechanically by lint, tests, or scripts.
 
-## 実行 SOP
+## Execution SOP
 
-1. 実装スタイルに手を入れる前に、コードベースをドメインごとに整理します。
-2. 各ドメインについて、許可されるレイヤー順を特定します。
-3. すべての横断的な関心事を特定し、provider または adapter を通して流します。
-4. 曖昧な共有ロジックは、所有するドメインに移すか、真に汎用的な utils に移します。
-5. ルールを `ARCHITECTURE.md` に記録します。
-6. 最もコストの高い違反に対して、1つ実行可能なガードレールを追加します。
-7. 変更後に quality scoring を更新します。
+1. Map the codebase into domains before touching implementation style.
+2. For each domain, identify the allowed layer sequence.
+3. Identify all cross-cutting concerns and route them through providers or adapters.
+4. Move ambiguous shared logic either into the owning domain or into truly generic utils.
+5. Document the rules in `ARCHITECTURE.md`.
+6. Add one executable guardrail for the highest-cost violation.
+7. Update quality scoring after the change.
 
-## 完了条件
+## Definition Of Done
 
-- 新しいエージェントでも、どのレイヤーが変更を所有しているか判断できる。
-- UI code が repo や外部の副作用に直接触れなくなる。
-- 横断的な関心事に、名前付きの入口がある。
-- 少なくとも1つの重要な境界が機械的に強制されている。
+- A fresh agent can tell which layer owns a change.
+- UI code no longer reaches into repo or external side effects directly.
+- Cross-cutting concerns have named entry points.
+- At least one important boundary is enforced mechanically.
 
-## 更新対象の Repo Artifact
+## Repo Artifacts To Update
 
 - `ARCHITECTURE.md`
 - `docs/QUALITY_SCORE.md`

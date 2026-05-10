@@ -80,6 +80,43 @@ const enSkillItems = [
   { text: "Skills Overview", link: "/en/skills/" }
 ];
 
+const jaLectureItems = [
+  { text: "ようこそ", link: "/ja/" },
+  { text: "有能なエージェントがそれでも失敗する理由", link: "/ja/lectures/lecture-01-why-capable-agents-still-fail/" },
+  { text: "Harness とは実際に何か", link: "/ja/lectures/lecture-02-what-a-harness-actually-is/" },
+  { text: "リポジトリを System of Record にする必要がある理由", link: "/ja/lectures/lecture-03-why-the-repository-must-become-the-system-of-record/" },
+  { text: "巨大な 1 つの指示ファイルが失敗する理由", link: "/ja/lectures/lecture-04-why-one-giant-instruction-file-fails/" },
+  { text: "長時間タスクが連続性を失う理由", link: "/ja/lectures/lecture-05-why-long-running-tasks-lose-continuity/" },
+  { text: "初期化に独立したフェーズが必要な理由", link: "/ja/lectures/lecture-06-why-initialization-needs-its-own-phase/" },
+  { text: "エージェントがやりすぎ、完了しきれない理由", link: "/ja/lectures/lecture-07-why-agents-overreach-and-under-finish/" },
+  { text: "Feature List が Harness の基本要素である理由", link: "/ja/lectures/lecture-08-why-feature-lists-are-harness-primitives/" },
+  { text: "エージェントが早すぎる勝利宣言をする理由", link: "/ja/lectures/lecture-09-why-agents-declare-victory-too-early/" },
+  { text: "End-to-End テストが結果を変える理由", link: "/ja/lectures/lecture-10-why-end-to-end-testing-changes-results/" },
+  { text: "Observability が Harness の中に必要な理由", link: "/ja/lectures/lecture-11-why-observability-belongs-inside-the-harness/" },
+  { text: "すべてのセッションがクリーン状態を残すべき理由", link: "/ja/lectures/lecture-12-why-every-session-must-leave-a-clean-state/" }
+];
+
+const jaProjectItems = [
+  { text: "ようこそ", link: "/ja/projects/" },
+  { text: "Prompt-only と Rules-first の比較", link: "/ja/projects/project-01-baseline-vs-minimal-harness/" },
+  { text: "エージェントが読めるワークスペース", link: "/ja/projects/project-02-agent-readable-workspace/" },
+  { text: "複数セッションの連続性", link: "/ja/projects/project-03-multi-session-continuity/" },
+  { text: "ランタイムフィードバックとスコープ制御", link: "/ja/projects/project-04-incremental-indexing/" },
+  { text: "自己検証と役割分離", link: "/ja/projects/project-05-grounded-qa-verification/" },
+  { text: "完全な Harness (Capstone)", link: "/ja/projects/project-06-runtime-observability-and-debugging/" }
+];
+
+const jaResourceItems = [
+  { text: "概要", link: "/ja/resources/" },
+  { text: "日本語テンプレート", link: "/ja/resources/templates/" },
+  { text: "日本語リファレンス", link: "/ja/resources/reference/" },
+  { text: "Advanced Pack", link: "/ja/resources/openai-advanced/" }
+];
+
+const jaSkillItems = [
+  { text: "Skills 概要", link: "/ja/skills/" }
+];
+
 const viLectureItems = [
   { text: "Chào mừng", link: "/vi/" },
   { text: "Tại sao các Agent mạnh vẫn thất bại", link: "/vi/lectures/lecture-01-why-capable-agents-still-fail/" },
@@ -256,6 +293,43 @@ export default withMermaid(
             '/en/skills/': [{ text: "Skills", items: enSkillItems }],
             '/en/': [{ text: "Lectures", items: enLectureItems }]
           },
+          socialLinks: [{ icon: "github", link: githubRepoTreeLink }]
+        }
+      },
+      ja: {
+        label: "日本語",
+        lang: "ja",
+        link: "/ja/",
+        themeConfig: {
+          nav: [
+            { text: "講義", link: jaLectureItems[1].link, activeMatch: '^/ja/(lectures/.*)?$' },
+            { text: "プロジェクト", link: jaProjectItems[0].link, activeMatch: '^/ja/projects/' },
+            { text: "ライブラリ", link: "/ja/resources/", activeMatch: '^/ja/resources/' },
+            { text: "Skills", link: "/ja/skills/", activeMatch: '^/ja/skills/' },
+            { text: "Harness を試す ↗", link: "https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/ja/resources/templates/index.md", target: "_blank", rel: "noopener noreferrer" }
+          ],
+          sidebar: {
+            '/ja/projects/': [{ text: "プロジェクト", items: jaProjectItems }],
+            '/ja/resources/': [{ text: "リソースライブラリ", items: jaResourceItems }],
+            '/ja/skills/': [{ text: "Skills", items: jaSkillItems }],
+            '/ja/': [{ text: "講義", items: jaLectureItems }]
+          },
+          outline: {
+            level: [2, 3],
+            label: "このページで"
+          },
+          docFooter: {
+            prev: "前へ",
+            next: "次へ"
+          },
+          lastUpdated: {
+            text: "最終更新"
+          },
+          returnToTopLabel: "トップへ戻る",
+          sidebarMenuLabel: "メニュー",
+          darkModeSwitchLabel: "テーマ",
+          lightModeSwitchTitle: "ライトモードへ切り替え",
+          darkModeSwitchTitle: "ダークモードへ切り替え",
           socialLinks: [{ icon: "github", link: githubRepoTreeLink }]
         }
       },

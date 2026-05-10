@@ -1,26 +1,26 @@
 # PRODUCT_SENSE.md
 
-このファイルは、エージェントがコードだけでは確実に推測できない、
-長く有効なプロダクト判断を記録します。
+This file captures durable product judgment that agents cannot infer reliably
+from code alone.
 
-## プロダクトの核
+## Product Core
 
-- 主なユーザー: `[replace]`
-- 実現すべき仕事: `[replace]`
-- 解消したい主な不満: `[replace]`
-- 受け入れ基準となる品質水準: `[replace]`
+- Primary user: `[replace]`
+- Job to be done: `[replace]`
+- Main frustration to remove: `[replace]`
+- Quality bar for acceptance: `[replace]`
 
-## プロダクトルール
+## Product Rules
 
-- 機能数よりも、ユーザーから見える信頼性を優先します。
-- 曖昧な挙動は、推測してよい根拠ではなく、仕様の不足として扱います。
-- 実装によってユーザーが目にするものや信頼するものが変わるなら、対応する仕様を更新します。
-- 具体的なフローはプロダクト仕様で扱い、このファイルでは横断的な
-  プロダクト優先事項を扱います。
+- Favor user-visible reliability over feature count.
+- Treat ambiguous behavior as a spec gap, not as permission to guess.
+- If implementation changes what users see or trust, update the matching spec.
+- Use product specs for concrete flows, and use this file for cross-cutting
+  product priorities.
 
-## 禁止パターン
+## No-Go Patterns
 
-- 目に見えない破壊的操作
-- ユーザーへのフィードバックなしに失敗すること
-- 目に見える状態の真の参照元が不明確なこと
-- 1文で説明できない機能
+- Hidden destructive actions
+- Silent failure without user feedback
+- Unclear source of truth for visible state
+- Features that cannot be explained in one sentence

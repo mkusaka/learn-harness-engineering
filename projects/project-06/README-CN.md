@@ -1,43 +1,43 @@
 # Project 06: Runtime Observability and Debugging (Capstone)
 
-コースの集大成プロジェクトです。完全な harness を構築してベンチマークを実行し、クリーンアップ・ループを回して品質の保守性を検証します。
+课程毕业项目：构建并基准测试完整的 harness，执行清理循环验证质量可维护性。
 
-## ディレクトリの説明
+## 目录说明
 
-| ディレクトリ | 内容 |
+| 目录 | 含义 |
 |------|------|
-| `starter/` | **出発点** - 完全な製品コードがある一方で、harness は意図的に弱められています（基本的な `AGENTS.md` のみで、`feature_list.json`、`session-handoff`、`clean-state-checklist` はありません）。 |
-| `solution/` | **参考実装** - 最大構成の harness です。成果物ファイルがすべてそろっており、品質ドキュメントの評価も高く、ベンチマークスクリプトとクリーンスキャナを含みます。 |
+| `starter/` | **起点**——完整的产品代码，但 harness 被刻意削弱（只有基础 AGENTS.md，没有 feature_list.json、session-handoff、clean-state-checklist）。 |
+| `solution/` | **参考实现**——最大 harness：所有产物文件齐全，质量文档评分高，包含基准测试脚本和清理扫描器。 |
 
-## 使い方
+## 使用方法
 
 ```sh
 cd starter
 npm install
-# 弱い harness でベンチマークテストスイートを実行し、結果を記録する
+# 用弱 harness 跑基准测试套件，记录结果
 
 cd ../solution
 npm install
-# 完全な harness で同じベンチマークを実行する
-# クリーンアップ・ループを実行する
-# `quality-document.md` のスコア変化を比較する
+# 用完整 harness 跑同样的基准测试
+# 执行清理循环
+# 对比 quality-document.md 中的评分变化
 
-# ベンチマークを実行する
+# 运行基准测试
 ./scripts/benchmark.sh
 
-# クリーンスキャンを実行する
+# 运行清理扫描
 ./scripts/cleanup-scanner.sh
 ```
 
-## このプロジェクトで扱う機能
+## 本项目涉及的功能
 
-- ドキュメントの取り込み
-- インデックスの構築または更新
-- 引用付きの Q&A
-- 実行時フィードバック
-- 読みやすく、再開可能なリポジトリ状態
+- 导入文档
+- 构建或刷新索引
+- 带引用的问答
+- 运行时反馈
+- 可读的、可重启的仓库状态
 
-## 対応する講義
+## 对应课件
 
-- [Lecture 11: 代理のランタイムを可観測にする](../../docs/lectures/lecture-11-why-observability-belongs-inside-the-harness/index.md)
-- [Lecture 12: すべてのセッションでクリーンな状態を残す](../../docs/lectures/lecture-12-why-every-session-must-leave-a-clean-state/index.md)
+- [Lecture 11: 让代理的运行时可观测](../../docs/lectures/lecture-11-why-observability-belongs-inside-the-harness/index.md)
+- [Lecture 12: 每次会话都要留下干净的状态](../../docs/lectures/lecture-12-why-every-session-must-leave-a-clean-state/index.md)

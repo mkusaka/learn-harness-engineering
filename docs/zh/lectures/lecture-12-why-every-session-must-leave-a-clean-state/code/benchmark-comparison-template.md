@@ -1,18 +1,18 @@
-# ベンチマーク比較テンプレート
+# Benchmark Comparison Template
 
 Harness A:
 
-- 完了率
-- 平均リトライ回数
-- 人手レビュー前に検出されたバグ
+- completion rate
+- average retries
+- bugs caught before human review
 
 Harness B:
 
-- 完了率
-- 平均リトライ回数
-- 人手レビュー前に検出されたバグ
+- completion rate
+- average retries
+- bugs caught before human review
 
-解釈:
+Interpretation:
 
-- どちらのハーネスが結果を変えたか？
-- どちらのハーネスが、その結果を得るコストを変えたか？
+- Which harness changed the result?
+- Which harness changed the cost of getting the result?

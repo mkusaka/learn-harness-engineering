@@ -1,149 +1,149 @@
-# ツールレジストリと安全性のパターン
+# Tool Registry and Safety Pattern
 
-## 問題
+## Problem
 
-エージェントが生産的に動くには、`shell`、ファイル編集、検索などのツールが必要です。ただし、制限のないツールアクセスには次のようなリスクがあります。
+Agents need tools (shell, file edit, search, etc.) to be productive. But unbounded tool access creates risks:
 
-- 破壊的な操作（`rm -rf`、`DROP TABLE` など）
-- ツール呼び出しの並行実行による競合状態
-- 権限設定の誤りによる、気づきにくいポリシー違反
+- Destructive operations (rm -rf, DROP TABLE, etc.)
+- Race conditions from concurrent tool calls
+- Silent policy violations from misconfigured permissions
 
-解決策は、明示的な並行実行分類と複数ソースの権限パイプラインを備えた、**fail-closed なレジストリ**です。
+The solution is a **fail-closed registry** with explicit concurrency classification and a multi-source permission pipeline.
 
-## 基本ルール
+## Golden Rules
 
-### デフォルトは fail-closed にする
+### Default to Fail-Closed
 
-ツールは、安全であると明示的に指定されない限り、**非並行**かつ**非読み取り専用**として扱います。これにより、次を防げます。
-- 状態を変更する操作の意図しない並列実行
-- 並行書き込みによる、気づきにくいデータ破損
+Tools are **non-concurrent** and **non-read-only** unless explicitly marked safe. This prevents:
+- Accidental parallel execution of state-mutating operations
+- Silent data corruption from concurrent writes
 
-### 並行性はツール単位ではなく呼び出し単位で判定する
+### Concurrency is Per-Call, Not Per-Tool
 
-同じツールでも、入力によって安全な場合と危険な場合があります。
+The same tool can be safe for some inputs and unsafe for others:
 
 ```
-✓ 安全（並列実行可）:
+✓ Safe (can run in parallel):
   - cat file1.txt
   - grep "pattern" src/
   - ls -la
 
-✗ 危険（直列実行が必要）:
+✗ Unsafe (must run serially):
   - rm -rf build/
   - npm install (network, filesystem mutation)
   - sed -i 's/old/new/g' *.ts
 ```
 
-ランタイムは、ツール呼び出しのバッチを連続するグループに分割します。安全な呼び出しは並列実行され、危険な呼び出しがあるとそこで直列セグメントが始まります。
+The runtime partitions a batch of tool calls into consecutive groups: safe calls run in parallel; any unsafe call starts a serial segment.
 
-### 権限パイプラインには副作用がある
+### Permission Pipeline has Side Effects
 
-権限評価器は**状態を持つ**もので、次の処理を行います。
-- 拒否を記録する（監査とレート制限のため）
-- モードを変換する（例: `auto` → 拒否後に `ask`）
-- 副作用としてセッション状態を更新する
+The permission evaluator is **stateful** — it:
+- Tracks denials (for audit and rate limiting)
+- Transforms modes (e.g., auto → ask after denial)
+- Updates session state as a side effect
 
-**厳密な優先順位は次のとおりです。**
+**Strict priority order:**
 ```
-ポリシー（組織全体） → ユーザー設定 → プロジェクトルール → ローカルの上書き設定 → セッショングラント
+Policy (org-wide) → User settings → Project rules → Local overrides → Session grants
 ```
 
-## 使う場面
+## When To Use
 
-- エージェントランタイムにツール登録が必要なとき
-- 並列ツール呼び出しの並行制御が必要なとき
-- 権限ゲート（自動承認、事前確認、拒否）が必要なとき
-- 監査のためにツール使用状況を追跡したいとき
+- Your agent runtime needs tool registration
+- You need concurrency control for parallel tool calls
+- You need permission gating (auto-approve, ask-first, deny)
+- You need to track tool usage for audit
 
-## トレードオフ
+## Tradeoffs
 
-| 判断 | 利点 | コスト |
+| Decision | Benefit | Cost |
 |---|---|---|
-| fail-closed のデフォルト | 新しいツールを最初から安全に扱える | 開発者が並行実行を明示的に有効化する必要がある |
-| 呼び出し単位の分類 | 並行実行を細かく制御できる | ツール登録だけでなく、各呼び出しの解析が必要になる |
-| 複数ソースの権限レイヤリング | 柔軟にポリシーを組み合わせられる | ルールが衝突したときに原因を追いにくい |
-| 状態を持つ評価器 | 履歴に応じて挙動を変えられる | 純粋関数ではないため、テストしづらい |
+| Fail-closed defaults | New tools are safe out of the box | Developers must actively opt into concurrency |
+| Per-call classification | Fine-grained control over parallelism | Requires analyzing each call, not just tool registration |
+| Multi-source permission layering | Flexible policy composition | Hard to debug when rules conflict |
+| Stateful evaluator | Can adapt behavior based on history | Not a pure function — harder to test |
 
-## 実装パターン
+## Implementation Patterns
 
-### ツール登録
+### Tool Registration
 
 ```typescript
-// 例: ツールレジストリエントリ
+// Example: Tool registry entry
 interface ToolDefinition {
   name: string;
   description: string;
   handler: (args: any) => Promise<any>;
   
-  // 安全性の分類
-  isReadOnly: boolean;       // デフォルト: false
-  isConcurrentSafe: boolean; // デフォルト: false
+  // Safety classification
+  isReadOnly: boolean;       // Default: false
+  isConcurrentSafe: boolean; // Default: false
   
-  // 任意のカスタム権限ロジック
+  // Optional custom permission logic
   permissionCheck?: (args: any, context: ToolContext) => PermissionResult;
 }
 
-// ツールを登録する
+// Register tools
 registry.register('read_file', {
   name: 'read_file',
-  description: 'ファイルの内容を読む',
+  description: 'Read contents of a file',
   handler: readFile,
   isReadOnly: true,
-  isConcurrentSafe: true,  // 複数ファイルを並列で読むのは安全
+  isConcurrentSafe: true,  // Safe to read multiple files in parallel
 });
 
 registry.register('write_file', {
   name: 'write_file',
-  description: 'ファイルを書き込む、または上書きする',
+  description: 'Write or overwrite a file',
   handler: writeFile,
   isReadOnly: false,
-  isConcurrentSafe: false, // 競合状態を防ぐため、直列で実行する必要がある
+  isConcurrentSafe: false, // Must run serially to prevent race conditions
 });
 ```
 
-### 権限パイプライン
+### Permission Pipeline
 
 ```typescript
-// 権限評価の順序
+// Permission evaluation order
 async function evaluatePermission(
   toolCall: ToolCall,
   context: PermissionContext
 ): Promise<PermissionResult> {
   
-  // 1. ポリシールール（最優先、組織全体）
+  // 1. Policy rules (highest priority, org-wide)
   const policyResult = await policyEngine.check(toolCall, context);
   if (policyResult !== 'defer') return policyResult;
   
-  // 2. ユーザー設定
+  // 2. User settings
   const userResult = await userSettings.check(toolCall, context);
   if (userResult !== 'defer') return userResult;
   
-  // 3. プロジェクトルール
+  // 3. Project rules
   const projectResult = await projectRules.check(toolCall, context);
   if (projectResult !== 'defer') return projectResult;
   
-  // 4. ローカルの上書き設定
+  // 4. Local overrides
   const localResult = await localOverrides.check(toolCall, context);
   if (localResult !== 'defer') return localResult;
   
-  // 5. セッショングラント（最下位の優先度）
+  // 5. Session grants (lowest priority)
   return sessionGrants.check(toolCall, context);
 }
 ```
 
-### バイパス不能ルール
+### Bypass-Immune Rules
 
-特定のパスや操作は、決して自動承認してはいけません。
+Certain paths or operations should never be auto-approved:
 
 ```yaml
-# 保護されたパス（自動承認しない）
+# Protected paths (never auto-approve)
 protected_paths:
   - /etc/**
   - /usr/**
   - node_modules/**
   - .git/**
 
-# 保護されたコマンド（常に確認する）
+# Protected commands (always ask)
 protected_commands:
   - "rm -rf*"
   - "DROP TABLE*"
@@ -151,50 +151,50 @@ protected_commands:
   - "mkfs*"
 ```
 
-## 注意点
+## Gotchas
 
-1. **ほとんどの非同期ワークは "pending" 状態を飛ばす** — ワークユニットは直接 "running" として登録される
-2. **権限評価には副作用がある** — 呼び出しをまたいで結果をキャッシュしないこと
-3. **並行性の分類には入力の解析が必要** — ツール名だけでは不十分
-4. **ツールのデフォルト権限は "allow"** — カスタムロジックのないツールはルールベースのシステムに委譲される
-5. **追い出しには通知が必要** — 終端のワークユニットは、親に通知されてから GC 対象になる
+1. **Most async work skips "pending" state** — work units register directly as "running"
+2. **Permission evaluation has side effects** — don't cache results across calls
+3. **Concurrency classification requires analyzing inputs**, not just tool name
+4. **The default permission for tools is "allow"** — tools without custom logic delegate to rule-based system
+5. **Eviction requires notification** — terminal work units only GC-eligible after parent notified
 
-## 関連パターン
+## Related Patterns
 
-- [Lifecycle & Bootstrap](lifecycle-bootstrap-pattern.md) — 初期化時にツールがどう登録されるか
-- [Hook Lifecycle](hook-lifecycle-pattern.md) — ツール実行前後のフック
+- [Lifecycle & Bootstrap](lifecycle-bootstrap-pattern.md) — How tools are registered at init
+- [Hook Lifecycle](hook-lifecycle-pattern.md) — Pre/post tool execution hooks
 
-## テンプレート: ツール安全性チェックリスト
+## Template: Tool Safety Checklist
 
-新しいツールを有効化する前に確認します。
+Before enabling a new tool:
 
 ```markdown
-## ツール安全性レビュー
+## Tool Safety Review
 
-**ツール名**: [例: execute_shell]
+**Tool name**: [e.g., execute_shell]
 
-### 分類
-- [ ] 読み取り専用かどうかを判断した（true / false / args に依存）
-- [ ] 並行実行可能かどうかを判断した（true / false / args に依存）
-- [ ] 安全でない入力パターンを文書化した
+### Classification
+- [ ] Determined if read-only (true / false / depends on args)
+- [ ] Determined if concurrent-safe (true / false / depends on args)
+- [ ] Documented unsafe input patterns
 
-### 権限要件
-- [ ] デフォルトモードを "ask" または "deny" に設定した
-- [ ] バイパス不能なパス/コマンドを定義した
-- [ ] 必要に応じてカスタム権限ロジックを実装した
-- [ ] 監査ログを有効にした
+### Permission Requirements
+- [ ] Default mode set to "ask" or "deny"
+- [ ] Bypass-immune paths/commands defined
+- [ ] Custom permission logic implemented (if needed)
+- [ ] Audit logging enabled
 
-### テスト
-- [ ] 安全な入力でテストした（自動承認されるはず）
-- [ ] 危険な入力でテストした（確認または拒否されるはず）
-- [ ] 並行実行をテストした（危険なら直列化されるはず）
-- [ ] エラーハンドリングをテストした（失敗が記録され、状態が整合すること）
+### Testing
+- [ ] Tested with safe inputs (should auto-approve)
+- [ ] Tested with unsafe inputs (should ask/deny)
+- [ ] Tested concurrent execution (should serialize if unsafe)
+- [ ] Tested error handling (failures logged, state consistent)
 ```
 
-## 根拠
+## Evidence
 
-ツールレジストリと安全性のパターンは、次のような本番のエージェントランタイムで確認されています。
-- 明示的な並行実行フラグを持つ Claude Code のツールレジストリ
-- 複数ソースの権限評価（設定 → プロジェクト → セッション）
-- 自動承認モードを回避する保護パス/コマンド一覧
-- ツールバッチを分割する、呼び出し単位の並行性分類
+Tool registry and safety patterns are observed in production agent runtimes including:
+- Claude Code's tool registry with explicit concurrency flags
+- Multi-source permission evaluation (settings → project → session)
+- Protected path/command lists that bypass auto-approve modes
+- Per-call concurrency classification that partitions tool batches

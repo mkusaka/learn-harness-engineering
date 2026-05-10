@@ -1,146 +1,146 @@
-[中国語版 →](../../../zh/lectures/lecture-06-why-initialization-needs-its-own-phase/)
+[中文版本 →](../../../zh/lectures/lecture-06-why-initialization-needs-its-own-phase/)
 
-> コード例: [code/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/en/lectures/lecture-06-why-initialization-needs-its-own-phase/code/)
-> 演習プロジェクト: [Project 03. Multi-session continuity](./../../projects/project-03-multi-session-continuity/index.md)
+> Code examples: [code/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/en/lectures/lecture-06-why-initialization-needs-its-own-phase/code/)
+> Practice project: [Project 03. Multi-session continuity](./../../projects/project-03-multi-session-continuity/index.md)
 
-# Lecture 06. 初期化に独立したフェーズが必要な理由
+# Lecture 06. Initialize Before Every Agent Session
 
-新しいエージェントセッションを開始して、「検索機能を追加して」と伝える。すると、その場でコーディングに飛びつく。意欲的ではある。しかし 20 分後、テストフレームワークの設定が不十分だと気づき、さらに 10 分かけて修正する。続いてデータベースのマイグレーションスクリプトの形式が違っていて、また手直しが必要になる。最終的に検索機能は追加されるものの、セッション全体は非効率だった。時間の大半が「このプロジェクトの動き方を把握すること」に費やされ、検索機能そのものを書く時間ではなかった。
+You start a new agent session and say "add a search feature." It jumps straight into coding — admirable enthusiasm. After 20 minutes it discovers the test framework isn't configured properly, spends another 10 fixing that, then the database migration script format is wrong, more fiddling. The search feature eventually gets added, but the whole session was inefficient — most time went to "figuring out how this project works" rather than writing the search feature.
 
-より良い方法は、エージェントに作業を始めさせる前に、別のフェーズでベース環境を整え、検証コマンドを通し、プロジェクト構造を理解させることだ。家を建てるのと同じで、基礎工事と壁の建設を同時には進めない。そんなことをすれば、基礎が固まる前に壁が立ち上がり、建物全体を壊してやり直すことになる。まず基礎を打ち、固まるのを待ってから壁を立てる。そうすれば、きれいで効率的だ。
+The better approach: before letting the agent start working, use a separate phase to get the base environment ready, verification commands passing, and project structure understood. It's like building a house — you don't pour the foundation and put up walls simultaneously. If you do, the walls go up before the foundation has cured, and the whole building has to be torn down and started over. Pour the foundation first, let it cure, then build the walls — clean and efficient.
 
-この講義では、なぜ初期化を実装と混ぜず、独立したフェーズとして扱う必要があるのかを説明する。
+This lecture explains why initialization must be a separate phase, not mixed in with implementation.
 
-## 基礎と壁: 本質的に異なる 2 つの仕事
+## Foundation and Walls: Two Fundamentally Different Jobs
 
-初期化と実装では、最適化対象がまったく違う。実装フェーズが最適化するのは、検証済みの機能の量と質を最大化することだ。初期化フェーズが最適化するのは、その後に続くすべての実装の信頼性と効率を最大化することだ。
+Initialization and implementation have completely different optimization targets. The implementation phase optimizes for: maximizing the quantity and quality of verified features. The initialization phase optimizes for: maximizing the reliability and efficiency of all subsequent implementation.
 
-初期化と実装を混ぜると、エージェントは複数目的の最適化問題に直面する。つまり、インフラを整えながら機能コードも書くことになる。優先順位を明示しないと、エージェントは自然とコードを書く方に寄る。なぜなら、それは直接見える成果だからだ。一方でインフラは、その価値が次のセッション以降にしか現れないため、軽視されやすい。建設チームに「基礎を打ちながら壁も同時に作って」と指示するようなものだ。おそらく、目に見えて成果が分かる壁の方を急いで作ろうとするだろう。しかし、基礎の悪い家は後になって構造的な問題を抱える。
+When you mix initialization and implementation, the agent faces a multi-objective optimization problem — simultaneously building infrastructure and writing feature code. Without explicit priority setting, the agent naturally gravitates toward writing code (because that's directly visible output) while sacrificing infrastructure (because its value only shows in subsequent sessions). It's like telling a construction crew to simultaneously pour the foundation and build the walls — they'll probably rush to build walls because walls are visible and demonstrable. But a house with a bad foundation has systemic problems down the line.
 
-## 初期化のライフサイクル
+## Initialization Lifecycle
 
 ```mermaid
 flowchart TB
-    subgraph Wrong["混在したセッション（誤り）"]
-        W1["すぐに機能開発を始める"] --> W2["作業中に環境とテストの不足を発見する"]
-        W2 --> W3["未検証のコードが蓄積する"]
-        W3 --> W4["次のセッションでプロジェクト状態を再把握する必要がある"]
+    subgraph Wrong["Mixed session (wrong)"]
+        W1["Start feature work immediately"] --> W2["Discover env and test gaps mid-task"]
+        W2 --> W3["Accumulate unverified code"]
+        W3 --> W4["Next session must rediscover project state"]
     end
 
-    subgraph Right["専用の初期化（正解）"]
-        R1["セッション 1: 環境が実行可能"] --> R2["サンプルテストが成功"]
-        R2 --> R3["ブートストラップ契約 + タスクリストを作成"]
-        R3 --> R4["クリーンなチェックポイントをコミット"]
-        R4 --> R5["後続セッションは検証済みのタスクから直接開始"]
+    subgraph Right["Dedicated initialization (right)"]
+        R1["Session 1: environment runnable"] --> R2["Example test passing"]
+        R2 --> R3["Bootstrap contract + task list written"]
+        R3 --> R4["Clean checkpoint committed"]
+        R4 --> R5["Later sessions start directly on verified tasks"]
     end
 ```
 
-## 混ぜると何が起きるか
+## What Happens When You Mix Them
 
-最も直接的な問題は、基礎が正しく固まらないことだ。エージェントは力の 80% を機能コードに使い、残りの 20% でインフラをなんとなく整える。テストフレームワークは設定されていても検証されていない。lint ルールは設定されていても緩すぎる。進捗ファイルも作られていない。こうした欠陥は最初のセッションでは目立たない。というのも、そのときのエージェントは自分が何をしたか覚えているからだ。しかし、次のセッションで表面化する。新しいエージェントは、どう実行するか、どうテストするか、今どういう状態なのかを知らない。ずさんな基礎、ぐらつく建物だ。
+The most direct problem: the foundation doesn't set properly. The agent spends 80% of its effort on feature code and 20% casually setting up some infrastructure. The test framework is configured but never verified, lint rules are set but too loose, no progress file created. These defects aren't obvious in the first session (because the agent still remembers what it did), but they surface in the second session — the new agent doesn't know how to run, test, or where things stand. Shoddy foundation, shaky building.
 
-もっと見えにくいコストは「未検証の蓄積」だ。テストフレームワークが整う前に書かれた機能コードは、検証されていないコードである。あとからそのコードにテストを追加しようとすると、そもそもの設計が間違っていたと分かるかもしれない。最初から分かっていれば、別の実装にしていたはずだ。濡れたコンクリートの上にタイルを貼るようなものだ。床が水平でないと分かった瞬間、タイルは全部はがしてやり直しになる。
+A more hidden cost is "unverified accumulation" — feature code written before the test framework is configured is code without verification. When you finally go back to add tests for that code, you might discover the design was wrong from the start — had you known, you would have implemented it differently. Like tiling over wet concrete — when you discover the floor isn't level, all the tiles have to be pried up and redone.
 
-セッション予算も無駄になる。初期化作業（環境設定、テスト準備、プロジェクト構造の理解）はかなりの予算を消費し、実際の機能実装に使える時間が減る。その結果、1 回目のセッションでは機能を半分しか終えられず、2 回目のセッションでもまたプロジェクト理解から始めることになる。基礎にお金を使ったのに、その基礎は固くもない。どちらの目的も達成できていない。
+Session budget is being wasted too. Initialization work (configuring environments, setting up tests, understanding project structure) consumes significant budget, leaving less for actual feature implementation. Result: the first session only completes half the features, and the second session has to start over understanding the project. Budget spent on the foundation, but the foundation isn't solid either — neither goal achieved.
 
-見落とされやすい問題は、暗黙の前提という地雷だ。初期化中にエージェントが下す決定（どのテストフレームワークを使うか、ディレクトリをどう整理するか、依存関係をどう管理するか）を明示的に記録していないと、後続セッションはその判断を理解できない。さらに悪いことに、後続セッションが矛盾した判断をしてしまうこともある。最初の工事班はコンクリートの基礎を使ったのに、次の工事班はそれを知らずに木製の杭を打ち込んでしまう。すると基礎がひび割れる。
+The most easily overlooked problem is implicit assumption landmines. Decisions the agent makes during initialization (which test framework, how to organize directories, dependency management) — if not explicitly recorded, subsequent sessions can't understand these choices. Worse, subsequent sessions might make contradictory choices. The first construction crew used a concrete foundation, the second crew doesn't know and drove wooden pilings into it — the foundation cracks.
 
-Anthropic の長時間稼働アプリケーション開発に関する研究でも、初期化を実装から分離する構成が紹介されている。公開記事で確認できる範囲では、専用の initializer が環境、feature list、progress record を用意し、以後の coding agent が段階的に進める。重要な示唆は、初期化を実装と混ぜると、後続セッションの立ち上がりや判断が曖昧になるということだ。基礎がしっかりしているほど、壁は速く立ち上がる。
+Anthropic's long-running application development research explicitly recommends separating initialization from implementation. Their experimental data: projects using a dedicated initialization phase showed 31% higher feature completion rates in multi-session scenarios compared to mixed approaches. The key insight — time invested in the initialization phase is fully recovered in the next 3-4 sessions. The more solid the foundation, the faster the walls go up.
 
-OpenAI の Codex harness engineering guide でも、「repository as operational record」原則が強調されている。最初の実行から明確な運用構造を確立しなければ、新しいセッションが来るたびにプロジェクトの慣習を再推論しなければならない。
+OpenAI's Codex harness engineering guide also emphasizes the "repository as operational record" principle — establish clear operational structure from the first run, or every new session has to re-infer project conventions.
 
-## コア概念
+## Core Concepts
 
-- **Initialization Phase**: エージェントのライフサイクルにおける最初のフェーズ。機能実装は行わず、その後のすべての実装フェーズに必要な前提条件だけを整える。成果物はコードではなく、インフラである。
-- **Bootstrap Contract**: 新しいエージェントセッションがプロジェクトを曖昧さなしに操作できる状態の条件。起動できる、テストできる、進捗を確認できる、次の作業を引き継げる、の 4 条件をすべて満たす必要がある。
-- **Cold Start vs Warm Start**: Cold start は空のディレクトリから始まり、エージェントがプロジェクト構造を推測しなければならない状態。Warm start はテンプレートや既存プロジェクトから始まり、インフラがすでに整っている状態。Warm start は Cold start を大きく上回る。水道と電気が通った現場で作業を始めるのと、何もない荒野から始めるのとの差だ。
-- **Handoff Readiness**: いつでも、新しいエージェントが引き継げる状態にあること。口頭説明は不要で、リポジトリの中身だけで十分である。
-- **Time to First Verification**: プロジェクト開始から最初の機能ポイントが検証を通過するまでの時間。初期化の効率を測る中心指標である。
-- **Downstream Usability**: 初期化品質を測る最良の指標。後続セッションのうち、暗黙知に頼らずにタスクを正常に実行できる割合を指す。
+- **Initialization Phase**: The first phase in the agent's lifecycle — no feature implementation, only establishing prerequisites for all subsequent implementation phases. The output isn't code, it's infrastructure.
+- **Bootstrap Contract**: The conditions under which a project can be unambiguously operated by a fresh agent session — can start, can test, can see progress, can pick up next steps. Four conditions, all required.
+- **Cold Start vs Warm Start**: Cold start is from an empty directory where the agent must guess project structure; warm start is from a template or existing project where infrastructure is already in place. Warm start far outperforms cold start — like starting work on a site with running water and electricity versus beginning from a barren wasteland.
+- **Handoff Readiness**: The project is in a state at any given moment where a fresh agent can take over. No verbal explanation needed — just repo contents.
+- **Time to First Verification**: The time from project start until the first feature point passes verification. This is the core metric for measuring initialization efficiency.
+- **Downstream Usability**: The best measure of initialization quality — the proportion of subsequent sessions that can successfully execute tasks without relying on implicit knowledge.
 
-## 正しい初期化の進め方
+## How to Do Initialization Right
 
-**初期化は専用フェーズとして扱う。** 最初のセッションは初期化だけを行い、ビジネス機能のコードは一切書かない。初期化で得るものは次のとおりだ。
+**Treat initialization as a dedicated phase.** The first session does only initialization — no business feature code at all. Initialization produces:
 
-**1. 実行可能な環境。** プロジェクトが起動し、依存関係がインストールされ、環境面の問題がない。基礎が打たれ、ひび割れもない。
+**1. Runnable environment.** The project starts, dependencies are installed, no environment issues. Foundation poured, no cracks.
 
-**2. 検証可能なテストフレームワーク。** 少なくとも 1 つのサンプルテストが通る。これにより、テストフレームワーク自体が正しく設定されていることが証明される。基礎の上に柱を立てて、荷重に耐えられることを確かめるようなものだ。
+**2. Verifiable test framework.** At least one example test passes. This proves the test framework itself is properly configured — like standing a pillar on the foundation to prove it can bear weight.
 
-**3. ブートストラップ契約ドキュメント。** 後続セッションに次の内容を明確に伝えるドキュメントを用意する。
+**3. Bootstrap contract document.** A clear document telling subsequent sessions:
 ```markdown
-# 初期化契約
+# Initialization Contract
 
-## 起動コマンド
-- 依存関係のインストール: `make setup`
-- 開発サーバーの起動: `make dev`
-- テストの実行: `make test`
-- 完全な検証: `make check`
+## Start Commands
+- Install dependencies: `make setup`
+- Start dev server: `make dev`
+- Run tests: `make test`
+- Full verification: `make check`
 
-## 現在の状態
-- すべての依存関係がインストールされ、ロック済み
-- テストフレームワーク設定済み (Vitest + React Testing Library)
-- サンプルテスト成功 (1/1)
-- lint ルール設定済み (ESLint + Prettier)
+## Current State
+- All dependencies installed and locked
+- Test framework configured (Vitest + React Testing Library)
+- Example test passing (1/1)
+- Lint rules configured (ESLint + Prettier)
 
-## プロジェクト構造
-- src/ — ソースコード
-- src/components/ — React コンポーネント
-- src/api/ — API クライアント
-- tests/ — テストファイル
+## Project Structure
+- src/ — Source code
+- src/components/ — React components
+- src/api/ — API client
+- tests/ — Test files
 ```
 
-**4. タスク分解。** プロジェクト全体を順序立てたタスクリストに分割し、それぞれのタスクに明確な受け入れ条件を付ける。
+**4. Task breakdown.** Split the entire project into an ordered task list, each task with clear acceptance criteria:
 ```markdown
-# タスク分解
+# Task Breakdown
 
-## タスク 1: ユーザー認証の基本
-- JWT 認証ミドルウェアを実装する
-- ログイン/登録エンドポイントを追加する
-- 受け入れ条件: pytest tests/test_auth.py がすべて成功する
+## Task 1: User Authentication Basics
+- Implement JWT auth middleware
+- Add login/register endpoints
+- Acceptance: pytest tests/test_auth.py all passing
 
-## タスク 2: ユーザープロフィールページ
-- ユーザープロフィールの CRUD を実装する
-- プロフィール編集フォームを追加する
-- 受け入れ条件: pytest tests/test_profile.py がすべて成功する
+## Task 2: User Profile Page
+- Implement user profile CRUD
+- Add profile edit form
+- Acceptance: pytest tests/test_profile.py all passing
 
-## タスク 3: 検索機能
+## Task 3: Search Feature
 - ...
 ```
 
-**5. Git コミットをチェックポイントにする。** 初期化が完了したら、クリーンなチェックポイントをコミットする。その後の作業はすべてこのチェックポイントから始める。
+**5. Git commit as checkpoint.** After initialization completes, commit a clean checkpoint. All subsequent work starts from this checkpoint.
 
-**Warm start 戦略**: 空のディレクトリから始めないこと。プロジェクトテンプレート（create-react-app、fastapi-template など）を使って、標準的なディレクトリ構造、依存関係設定、テストフレームワークをあらかじめ用意する。共通の初期化手順はテンプレートに埋め込み、プロジェクト固有の初期化だけを残す。水道と電気が通った現場で作業を始めるようなもので、何もない荒野から始めるのとは比べものにならない。
+**Warm start strategy**: Don't start from an empty directory. Use a project template (create-react-app, fastapi-template, etc.) to preset standard directory structure, dependency configuration, and test framework. Bake common initialization steps into the template, leaving only project-specific initialization work. Like starting work on a site with running water and electricity — ten thousand times better than beginning from a barren wasteland.
 
-**初期化完了条件** は「どれだけコードを書いたか」ではない。ブートストラップ契約の 4 条件、つまり起動できる、テストできる、進捗を確認できる、次の作業を引き継げる、が満たされているかどうかで判断する。初期化を検証するために、次のチェックリストを使う。
+**Initialization completion criteria**: Not "how much code was written," but whether the bootstrap contract's four conditions are met — can start, can test, can see progress, can pick up next steps. Use this checklist to validate initialization:
 
 ```markdown
-## 初期化受け入れチェックリスト
-- [ ] `make setup` がゼロから成功する
-- [ ] `make test` で少なくとも 1 つのテストが成功する
-- [ ] 新しいエージェントセッションが、リポジトリの内容だけから「起動方法」と「テスト方法」を答えられる
-- [ ] タスク分解ファイルがあり、少なくとも 3 つのタスクがある
-- [ ] すべてが git にコミットされている
+## Initialization Acceptance Checklist
+- [ ] `make setup` succeeds from scratch
+- [ ] `make test` has at least one passing test
+- [ ] A new agent session can answer "how to run" and "how to test" from repo contents alone
+- [ ] Task breakdown file exists with at least 3 tasks
+- [ ] Everything committed to git
 ```
 
-## 実例
+## Real-World Example
 
-React フロントエンドプロジェクトに対する 2 つの初期化アプローチを比較する。
+Two initialization approaches for a React frontend project:
 
-**混在アプローチ（基礎工事と壁の建設を同時に進める）**: エージェントは 1 回目のセッションで、プロジェクトの土台作りと最初の機能実装を同時に行った。セッション終了時点でリポジトリには実行可能なコードがあったが、明示的な起動/テストコマンドのドキュメントはなく、進捗追跡ファイルもなく、タスク分解もなかった。2 回目のセッションでは、プロジェクト構造、テストフレームワーク、ビルドプロセスを推測するのに約 20 分かかった。まるで新しい工事班が現場に到着したものの、基礎がどこまでできているのか、配管がどこを通っているのか分からず、1 か所ずつ穴を掘って確かめるようなものだ。
+**Mixed approach (pouring foundation and building walls simultaneously)**: The agent simultaneously created project scaffolding and implemented the first feature in session 1. At session end, the repo had runnable code but: no explicit start/test command documentation, no progress tracking file, no task breakdown. Session 2 spent ~20 minutes inferring project structure, test framework, and build process — like a new construction crew arriving at a site, not knowing how far the foundation got or where the plumbing runs are, having to dig holes one by one to find out.
 
-**専用の初期化（まず基礎）**: 1 回目のセッションでは初期化だけを行い、テンプレートからディレクトリ構造を作成し、テストフレームワーク（Vitest + React Testing Library）を設定し、1 つのサンプルテストを書いて検証し、ブートストラップ契約ドキュメントとタスク分解ファイルを作成し、初期チェックポイントをコミットした。2 回目のセッションの再構築時間は 3 分未満で、タスクリストから直接作業を開始できた。まるで作業班が現場に来て設計図を見れば、どこから着手すべきか一目で分かるようなものだ。
+**Dedicated initialization (foundation first)**: Session 1 did only initialization — created directory structure from a template, configured the test framework (Vitest + React Testing Library), wrote and verified one example test, created the bootstrap contract document and task breakdown file, committed the initial checkpoint. Session 2's rebuild time was under 3 minutes, and it started working directly from the task list — the crew arrives, glances at the blueprint, and knows exactly where to pick up.
 
-プロジェクト全体のサイクルを比較すると、混在アプローチの総再構築時間（全セッション合計）は、専用の初期化アプローチより約 60% 長かった。初期化に余分に 20 分かけた分は、その後のセッションで何倍にもなって回収された。堅牢な基礎が壁の立ち上がりを速くするように、遅く見えるものが実は速い。
+Full project cycle comparison: the mixed approach's total rebuild time (across all sessions) was ~60% more than the dedicated initialization approach. The extra 20 minutes spent on initialization was recovered many times over in subsequent sessions. Like a solid foundation making the walls go up faster — slow is fast.
 
-## 重要な要点
+## Key Takeaways
 
-- 初期化と実装は最適化対象が違う。混ぜると、両方とも遅くなる。まず基礎を打ち、その後で壁を作る。
-- 初期化の成果物はコードではなくインフラだ。実行可能な環境、検証可能なテスト、ブートストラップ契約、タスク分解を用意する。
-- 初期化はブートストラップ契約の 4 条件、つまり起動できる、テストできる、進捗を確認できる、次の作業を引き継げる、で検証する。
-- Warm start は Cold start に勝る。プロジェクトテンプレートを使って標準化されたインフラをあらかじめ整える。
-- 初期化に投じた時間は、後続セッションが毎回状態を推測し直すコストを減らす。これは追加コストではなく、先行投資だ。基礎が堅いほど、建物は速く立ち上がる。
+- Initialization and implementation have different optimization targets — mixing them just drags both down. Pour the foundation first, then build the walls.
+- Initialization's output isn't code, it's infrastructure: runnable environment, verifiable tests, bootstrap contract, task breakdown.
+- Validate initialization with the bootstrap contract's four conditions: can start, can test, can see progress, can pick up next steps.
+- Warm start beats cold start. Use project templates to preset standardized infrastructure.
+- Time invested in initialization is fully recovered in the next 3-4 sessions. This isn't extra cost — it's upfront investment. The more solid the foundation, the faster the building goes up.
 
-## 参考文献
+## Further Reading
 
 - [Anthropic: Effective Harnesses for Long-Running Agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
 - [OpenAI: Harness Engineering](https://openai.com/index/harness-engineering/)
@@ -148,10 +148,10 @@ React フロントエンドプロジェクトに対する 2 つの初期化ア�
 - [Infrastructure as Code — Martin Fowler](https://martinfowler.com/bliki/InfrastructureAsCode.html)
 - [SWE-agent: Agent-Computer Interfaces](https://github.com/princeton-nlp/SWE-agent)
 
-## 演習
+## Exercises
 
-1. **ブートストラップ契約の設計**: いま開発しているプロジェクトの完全なブートストラップ契約を書いてみる。その後、まったく新しいエージェントセッションを開き、リポジトリの内容だけを見せて（口頭の文脈は与えず）、プロジェクトの起動、テスト実行、現在の進捗理解を試させる。遭遇した問題をすべて記録する。記録された各問題は、ブートストラップ契約に不足している条項に対応している。
+1. **Bootstrap contract design**: Write a complete bootstrap contract for a project you're developing. Then open a completely fresh agent session, show it only repo contents (no verbal context), and have it try to start the project, run tests, and understand current progress. Record every problem it encounters — each one corresponds to a missing clause in your bootstrap contract.
 
-2. **比較実験**: 中程度に複雑な新規プロジェクトを 1 つ選ぶ。アプローチ A: エージェントに初期化と最初の実装を同時にさせる。アプローチ B: 1 セッションを専用の初期化に使い、2 セッション目から実装を始める。4 セッション後、次を比較する: 最初の検証までの時間、再構築コスト、機能完了率。
+2. **Comparison experiment**: Pick a moderately complex new project. Approach A: let the agent initialize and do first implementation simultaneously. Approach B: spend one session on dedicated initialization, start implementation in session 2. After 4 sessions, compare: time to first verification, rebuild cost, feature completion rate.
 
-3. **初期化受け入れチェックリスト**: あなたのプロジェクト向けに初期化受け入れチェックリストを設計する。新しいエージェントセッションに各チェック項目を実行させ、どれが通り、どれが失敗するかを記録する。失敗した項目こそ、あなたの harness を強化すべき箇所である。
+3. **Initialization acceptance checklist**: Design an initialization acceptance checklist for your project. Have a fresh agent session execute each checklist item and record which pass and which fail. The failing items are where your harness needs strengthening.

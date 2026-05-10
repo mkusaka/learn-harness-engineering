@@ -1,8 +1,8 @@
-# レッスン09のコード
+# Mã cho Bài 09
 
-このディレクトリは、次のような例に使います:
+Sử dụng thư mục này cho các ví dụ về:
 
-- レスポンスとしてのログ
-- ランタイム状態の可視化
-- クリーンな状態のチェック
-- 復旧の例
+- log như phản hồi
+- khả năng hiển thị trạng thái runtime
+- kiểm tra trạng thái sạch
+- các ví dụ phục hồi

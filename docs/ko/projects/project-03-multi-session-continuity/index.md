@@ -1,24 +1,24 @@
-[英語版 →](../../../en/projects/project-03-multi-session-continuity/)
+[English Version →](../../../en/projects/project-03-multi-session-continuity/)
 
-> 関連講義: [講義 05. セッション間でコンテキストを維持する](./../../lectures/lecture-05-why-long-running-tasks-lose-continuity/index.md) · [講義 06. すべてのエージェントセッションの前に初期化する](./../../lectures/lecture-06-why-initialization-needs-its-own-phase/index.md)
-> テンプレートファイル: [templates/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/en/resources/templates/)
+> 관련 강의: [강의 05. 세션 간에 컨텍스트를 유지하기](./../../lectures/lecture-05-why-long-running-tasks-lose-continuity/index.md) · [강의 06. 모든 에이전트 세션 전에 초기화하기](./../../lectures/lecture-06-why-initialization-needs-its-own-phase/index.md)
+> 템플릿 파일: [templates/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/en/resources/templates/)
 
-# プロジェクト 03. セッション再開後もエージェントが作業を継続できるようにする
+# 프로젝트 03. 세션 재시작 후에도 에이전트가 계속 작업하도록 만들기
 
-## やること
+## 해야 할 일
 
-エージェント(agent)にスコープ制御(scope control)と検証ゲート(verification gates)を追加します。文書のチャンク化(chunking)、メタデータ抽出、インデックス作成の進捗表示、引用ベースの Q&A フローを実装します。`feature_list.json` を使って機能の状態を追跡します。一度に処理する機能は1つだけにし、検証の証跡がなければ「完了(pass)」としてマークできないようにします。
+에이전트(agent)에 범위 제어(scope control)와 검증 게이트(verification gates)를 추가합니다. 문서 청킹(chunking), 메타데이터 추출, 인덱싱 진행 상태 표시, 인용 기반 Q&A 흐름을 구현합니다. `feature_list.json`을 사용하여 기능 상태를 추적합니다. 한 번에 하나의 기능만 처리하고, 검증 증거 없이는 "완료(pass)"로 표시할 수 없습니다.
 
-長時間実行される作業は、コンテキスト(context)の初期化や中断によって連続性(continuity)を失いやすくなります。進捗ログ(progress log)とセッションの引き継ぎを組み合わせることで、エージェントは以前に完了した項目を再確認せずに、正しい次のステップから再開できます。
+장시간 실행되는 작업은 컨텍스트(context) 초기화나 중단으로 인해 연속성(continuity)을 잃기 쉽습니다. 진행 로그(progress log)와 세션 핸드오프를 결합하면 에이전트가 이전에 완료한 항목을 재확인하지 않고 정확한 다음 단계에서 재개할 수 있습니다.
 
-2回実行します。1回目は制約なしで、2回目は厳格な適用方式で進めます。
+두 번 실행합니다. 첫 번째는 제약 없이, 두 번째는 엄격한 적용 방식으로 진행합니다.
 
-## ツール
+## 도구
 
-- Claude Code または Codex
+- Claude Code 또는 Codex
 - Git
 - Node.js + Electron
 
-## ハーネスの仕組み
+## 하네스 메커니즘
 
-進捗ログ + セッションの引き継ぎ + マルチセッション連続性(multi-session continuity)
+진행 로그 + 세션 핸드오프 + 멀티 세션 연속성(multi-session continuity)

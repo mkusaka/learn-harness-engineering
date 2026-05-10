@@ -1,9 +1,9 @@
-# 中核となる考え方
+# Niềm tin Cốt lõi
 
-- リポジトリは agent にとっての記録システムである。
-- `AGENTS.md` はルーターであり、百科事典ではない。
-- 確認のための証拠は、自信よりも重要である。
-- 境界が明確な 1 つのタスクは、うまく分割されていない複数のタスクよりも優れている。
-- 人間からの繰り返しのフィードバックは、再利用可能な harness のルールにしていくべきである。
-- 整理と単純化はリリースの一部であり、後回しにするものではない。
-- agent が repo 内である事実を見つけられないなら、その事実は運用上は利用不可能だとみなす。
+- Kho lưu trữ là hệ thống ghi chép cho agent.
+- `AGENTS.md` là bộ định tuyến, không phải bách khoa toàn thư.
+- Bằng chứng xác minh quan trọng hơn sự tự tin.
+- Một tác vụ có ranh giới tốt hơn nhiều tác vụ làm dở.
+- Phản hồi con người lặp đi lặp lại nên trở thành các quy tắc harness có thể tái sử dụng.
+- Dọn dẹp và đơn giản hóa là một phần của việc phát hành, không phải là suy nghĩ sau.
+- Nếu agent không thể khám phá một sự thật trong repo, hãy coi sự thật đó là không khả dụng về mặt vận hành.

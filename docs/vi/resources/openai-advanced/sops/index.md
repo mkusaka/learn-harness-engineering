@@ -1,25 +1,25 @@
-[英語版 →](../../../../en/resources/openai-advanced/sops/) | [中国語版 →](../../../../zh/resources/openai-advanced/sops/)
+[English Version →](../../../../en/resources/openai-advanced/sops/) | [中文版本 →](../../../../zh/resources/openai-advanced/sops/)
 
-# SOP ライブラリ
+# Thư viện SOP
 
-harness をセットアップし、運用するための段階的な標準手順をまとめたものです。
+Các quy trình vận hành chuẩn từng bước để thiết lập và vận hành harness.
 
-## 利用可能な SOP
+## SOP Có sẵn
 
 - [`layered-domain-architecture.md`](./layered-domain-architecture.md):
-  エージェントが境界を越えないように、階層化されたドメインアーキテクチャを構築します
+  thiết lập kiến trúc domain phân lớp để agent không vi phạm ranh giới
 - [`encode-knowledge-into-repo.md`](./encode-knowledge-into-repo.md):
-  チャット、ドキュメント、記憶にある暗黙知を、リポジトリ内のローカルファイルへ移します
+  di chuyển kiến thức ẩn từ chat, tài liệu và bộ nhớ vào các tệp cục bộ repo
 - [`observability-feedback-loop.md`](./observability-feedback-loop.md):
-  エージェントに log、metrics、trace、そして再現可能なデバッグループを提供します
+  cung cấp cho agent log, metrics, trace và vòng lặp debug có thể lặp lại
 - [`chrome-devtools-validation-loop.md`](./chrome-devtools-validation-loop.md):
-  browser 自動化と snapshot を使って、UI の挙動が期待どおりになるまで検証します
+  sử dụng tự động hóa browser và snapshot để xác minh hành vi UI cho đến khi sạch
 
-## 使い方
+## Cách Sử dụng Chúng
 
-1. 現在のボトルネックに合う SOP を選びます。
-2. チェックリストを使って、足りない artifact や tool を整えます。
-3. 得られたルールを、コピー済みの `repo-template/` 配下の文書に反映します。
-4. 何度も出る review コメントを、check、script、または guardrail に置き換えます。
+1. Chọn SOP phù hợp với điểm nghẽn hiện tại của bạn.
+2. Sử dụng danh sách kiểm tra để thiết lập các artifact hoặc công cụ còn thiếu.
+3. Mã hóa các quy tắc kết quả vào các tài liệu `repo-template/` đã sao chép của bạn.
+4. Chuyển đổi các nhận xét review lặp đi lặp lại thành kiểm tra, script hoặc guardrail.
 
-これらは盲目的に従うためのものではありません。harness をより読みやすく、実行可能で、再現しやすいものにするために設計されています。
+Những điều này không phải để được tuân theo mù quáng. Chúng được thiết kế để làm cho harness có thể đọc được, có thể thực thi và có thể lặp lại hơn.

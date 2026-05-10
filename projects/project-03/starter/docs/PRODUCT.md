@@ -1,40 +1,40 @@
-# 製品説明 -- ナレッジベース
+# Product Description -- Knowledge Base
 
-## これは何ですか？
+## What Is This?
 
-個人用ナレッジベースを管理するデスクトップアプリケーションです。ユーザーはファイルピッカーからテキストや Markdown の文書を取り込み、文書内容を閲覧できます。システムはそれらを検索可能なチャンクに分割して索引化し、出典付きの根拠ある Q&A を可能にします。
+A desktop application for managing a personal knowledge base. Users import text and Markdown documents via a file picker, view document content, and the system indexes them into searchable chunks for grounded Q&A with citations.
 
-## 主な機能
+## Core Features
 
-### 文書管理
-- `ImportPanel` のファイルピッカーから `.txt` と `.md` ファイルを取り込めます。
-- 文書のメタデータを表示します: タイトル、ファイル名、サイズ、取り込み日時、索引化ステータス。
-- スクロール可能なテキストビューアーで文書の全文を表示できます。
-- サイドバーで取り込んだすべての文書の一覧を参照できます。
-- 文書本体と関連データ（内容ファイル、元のコピー）を削除できます。
+### Document Management
+- Import `.txt` and `.md` files through a file picker in the ImportPanel.
+- View document metadata: title, filename, size, import date, indexing status.
+- View full document content in a scrollable text viewer.
+- Browse a list of all imported documents in a sidebar panel.
+- Delete documents and their associated data (content file, original copy).
 
-### テキスト索引
-- 文書を段落の区切りで、およそ 500 文字ごとのチャンクに分割します。
-- チャンクをメタデータ（文字数、単語数）付きで保存します。
-- 文書ごとおよび全体の索引化ステータスを追跡します。
-- 個別の文書、またはライブラリ全体の索引化に対応します。
+### Text Indexing
+- Split documents into ~500-character chunks at paragraph boundaries.
+- Store chunks with metadata (character count, word count).
+- Track indexing status per document and overall.
+- Support indexing individual documents or the full library.
 
-### 根拠付き Q&A
-- 文書ライブラリについて自然言語で質問できます。
-- 特定の文書チャンクを指す引用付きで回答を受け取れます。
-- 信頼度スコアで回答の確からしさを示します（引用ありは 0.85、引用なしは 0.30）。
-- Q&A の履歴全体はセッションをまたいで保持されます。
+### Grounded Q&A
+- Ask natural language questions about the document library.
+- Receive answers with citations pointing to specific document chunks.
+- Confidence scores indicate answer reliability (0.85 with citations, 0.30 without).
+- Full Q&A history is persisted across sessions.
 
-### 永続化
-- 取り込んだ文書は、アプリケーション再起動後もすべて保持されます。
-- 文書一覧はアプリケーション起動時に自動で読み込まれます。
-- データはユーザーのアプリケーションデータディレクトリにローカル保存されます。
+### Persistence
+- All imported documents persist across application restarts.
+- Document list loads automatically on application startup.
+- Data stored locally in the user's application data directory.
 
-### ステータスバー
-- 索引ステータス（idle、indexing、ready、error）をリアルタイムに表示します。
-- 文書数と最終アクティビティのタイムスタンプを表示します。
+### Status Bar
+- Real-time display of index status (idle, indexing, ready, error).
+- Document count and last activity timestamp.
 
-## ユーザーインターフェース
+## User Interface
 
 ```
 +------------------+----------------------------------------+
@@ -52,9 +52,9 @@
 +-----------------------------------------------------------+
 ```
 
-## 制約
+## Constraints
 
-- 対応する最大ファイルサイズは 10 MB です。
-- 対応形式は `.txt`、`.md` です。
-- このバージョンの Q&A はモックパターンを使用しており、LLM 連携はありません。
-- すべてのデータはローカルにあり、ネットワーク要求は行いません。
+- Maximum supported file size: 10 MB.
+- Supported formats: `.txt`, `.md`.
+- Q&A uses mock patterns -- no LLM integration in this version.
+- All data is local; no network requests.

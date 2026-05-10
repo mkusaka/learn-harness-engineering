@@ -1,51 +1,51 @@
 # SOP: Chrome DevTools Validation Loop
 
-この SOP は、UI の作業が実際のランタイム操作やスクリーンショットに依存し、
-コードの確認だけではなく DOM の状態やコンソール出力が重要な場合に使います。
+Use this SOP when UI work depends on actual runtime interaction and screenshots,
+DOM state, and console output matter more than code inspection alone.
 
-## 目的
+## Goal
 
-UI の検証を、エージェントが「きれい」になるまで繰り返し実行できる
-再現可能な操作ループにします。
+Turn UI validation into a repeatable interaction loop the agent can run until
+the journey is clean.
 
-## 基本ループ
+## Core Loop
 
-1. 対象のページまたはアプリインスタンスを選ぶ。
-2. 古いコンソールノイズを消す。
-3. BEFORE の状態を記録する。
-4. UI の経路を起動する。
-5. 操作中のランタイムイベントを観察する。
-6. AFTER の状態を記録する。
-7. 必要であれば修正を適用し、アプリを再起動する。
-8. 検証を再実行し、経路がきれいになるまで繰り返す。
+1. Select the target page or app instance.
+2. Clear stale console noise.
+3. Capture the BEFORE state.
+4. Trigger the UI path.
+5. Observe runtime events during interaction.
+6. Capture the AFTER state.
+7. Apply the fix and restart the app if needed.
+8. Re-run validation until the journey is clean.
 
-## 必要な入力
+## Required Inputs
 
-- 安定した起動コマンド
-- 再現可能な UI の経路
-- DOM、コンソール、またはスクリーンショットをスナップショットする手段
-- 何を "clean" とみなすかの基準
+- a stable startup command
+- a reproducible UI journey
+- a way to snapshot DOM, console, or screenshots
+- a rule for what counts as "clean"
 
-## 実行 SOP
+## Execution SOP
 
-1. 対象の経路をアクティブな plan に書く。
-2. 成功条件を観測可能な形で定義する。たとえば、テキストが表示されている、
-   ボタンが有効、エラーが消えた、コンソールがきれい、リクエストが成功した、など。
-3. 操作前に初期状態をスナップショットする。
-4. 一度に起動する経路は必ず1つだけにする。
-5. ランタイムイベント、DOM 変化、表示出力を記録する。
-6. 経路が失敗したら、原因となる最小の層を修正して再起動する。
-7. 同じ経路を再実行し、BEFORE/AFTER の証拠を比較する。
+1. Write the target journey in the active plan.
+2. Define success in observable terms: text present, button enabled, error gone,
+   console clean, request succeeded.
+3. Snapshot the initial state before interaction.
+4. Trigger exactly one path at a time.
+5. Record runtime events, DOM changes, and visible output.
+6. If the journey fails, fix the smallest responsible layer and restart.
+7. Re-run the same path and compare BEFORE/AFTER evidence.
 
-## Clean 基準
+## Clean Criteria
 
-- 意図した表示状態が存在している
-- 予期しないエラーがない
-- コンソールノイズの内容を理解している、または消去済みである
-- 同じ経路を再実行しても同じ結果になる
+- intended visible state is present
+- unexpected errors are absent
+- console noise is understood or cleared
+- rerunning the same path gives the same result
 
-## 更新するリポジトリ成果物
+## Repo Artifacts To Update
 
-- アクティブな実行 plan
-- 経路が golden path になった場合は `docs/RELIABILITY.md`
-- 見た目の動作が変わった場合は product spec
+- active execution plan
+- `docs/RELIABILITY.md` if the journey becomes a golden path
+- product spec if the visible behavior changed

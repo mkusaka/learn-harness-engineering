@@ -1,13 +1,13 @@
-# Product Spec インデックス
+# Chỉ mục Product Spec
 
-このディレクトリは、既存ユーザー向けの行動仕様に使います。
+Sử dụng thư mục này cho các spec hành vi dành cho người dùng hiện tại.
 
-## 有効な Spec
+## Spec Active
 
 - `new-user-onboarding.md`
 
-## ルール
+## Quy tắc
 
-- Spec は、ユーザーから見える挙動と受け入れ基準を記述してください。
-- 実装が spec と異なる場合は、同じセッション内でどちらか一方を更新してください。
-- 新しい agent が製品範囲をすばやく把握できるよう、このインデックスを最新に保ってください。
+- Spec nên mô tả hành vi có thể nhìn thấy của người dùng và tiêu chí chấp nhận.
+- Nếu triển khai khác với spec, hãy cập nhật một trong số chúng trong cùng phiên.
+- Giữ chỉ mục này hiện tại để agent mới có thể nhanh chóng khám phá phạm vi sản phẩm.

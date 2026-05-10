@@ -1,7 +1,7 @@
-# レクチャー03のコード
+# Mã cho Bài 03
 
-このディレクトリは、次のような例に使います。
+Sử dụng thư mục này cho các ví dụ về:
 
-- エージェントが読み取れる repo 構造
-- システム・オブ・レコードとしてのドキュメント
-- 悪い知識と良い知識の置き場所
+- cấu trúc repo mà agent có thể đọc được
+- tài liệu như hệ thống ghi chép
+- vị trí kiến thức xấu vs tốt

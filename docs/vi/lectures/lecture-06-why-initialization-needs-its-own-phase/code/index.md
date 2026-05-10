@@ -1,8 +1,8 @@
-# 第06講のコード
+# Mã cho Bài 06
 
-このディレクトリは、次の例に使用します。
+Sử dụng thư mục này cho các ví dụ về:
 
-- 初期化の出力
+- kết quả đầu ra của khởi tạo
 - init script
-- 進捗ファイル
-- 初回実行時の scaffolding
+- tệp tiến độ
+- scaffolding lần chạy đầu tiên

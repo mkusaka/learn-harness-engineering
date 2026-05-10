@@ -1,42 +1,42 @@
-# Project 01: ベースラインと最小ハーネス
+# Project 01: Baseline vs Minimal Harness
 
-弱いハーネス（プロンプトのみ）と、明示的なハーネス（ルールファイルと検証機構を含む）が、AI コーディングエージェントのタスク完了率にどう影響するかを比較します。
+Compare how a weak harness (prompt only) and an explicit harness (rule files plus verification mechanisms) affect the completion rate of AI coding-agent tasks.
 
-## ディレクトリガイド
+## Directory Guide
 
-| Directory | 意味 |
+| Directory | Meaning |
 |------|------|
-| `starter/` | **開始点**: 曖昧な `task-prompt.md` だけがあり、AGENTS.md も feature_list.json もありません。これはエージェントに渡す「弱いハーネス」版です。 |
-| `solution/` | **参考実装**: 同じアプリケーションコードですが、完全なハーネスファイル（AGENTS.md、feature_list.json、init.sh、claude-progress.md）が含まれています。これが「明示的なハーネス」版です。 |
+| `starter/` | **Starting point**: only a vague `task-prompt.md`, with no AGENTS.md and no feature_list.json. This is the "weak harness" version you give to the agent. |
+| `solution/` | **Reference implementation**: the same application code, but with complete harness files (AGENTS.md, feature_list.json, init.sh, claude-progress.md). This is the "explicit harness" version. |
 
-## 使い方
+## How to Use
 
 ```sh
-# 1. starter（弱いハーネス）でエージェントのタスクを1回実行する
+# 1. Run the agent task once with starter (weak harness)
 cd starter
 npm install
-# task-prompt.md の内容を Claude Code / Codex へのプロンプトとして渡す
-# エージェントに、ウィンドウの起動、ドキュメント一覧、QA パネル、データディレクトリの実装を依頼する
+# Give the contents of task-prompt.md as the prompt to Claude Code / Codex
+# Ask the agent to complete: window startup, document list, QA panel, data directory
 
-# 2. solution（明示的なハーネス）でも同じタスクを実行する
+# 2. Run the same task with solution (explicit harness)
 cd ../solution
 npm install
-# エージェントに AGENTS.md を読ませ、同じタスクでルールに従うよう依頼する
+# Ask the agent to read AGENTS.md and follow the rules for the same task
 
-# 3. 2つの結果を比較する
-# - タスクは完了したか？
-# - 何回の再試行が必要だったか？
-# - エージェントは早すぎる段階で「完了」と主張しなかったか？
+# 3. Compare the two results
+# - Was the task completed?
+# - How many retries were needed?
+# - Did the agent claim "done" too early?
 ```
 
-## 対象機能
+## Features Covered
 
-- Electron ウィンドウが正常に起動する
-- UI にドキュメント一覧エリアが表示される
-- UI に QA パネルが表示される
-- アプリがローカルのデータディレクトリを作成して使用する
+- Electron window starts successfully
+- UI shows the document-list area
+- UI shows the QA panel
+- App creates and uses a local data directory
 
-## 関連講義
+## Related Lectures
 
 - [Lecture 01: Why Capable Agents Still Fail](../../docs/en/lectures/lecture-01-why-capable-agents-still-fail/index.md)
 - [Lecture 02: What a Harness Actually Is](../../docs/en/lectures/lecture-02-what-a-harness-actually-is/index.md)

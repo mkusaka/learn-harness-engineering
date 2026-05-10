@@ -1,48 +1,48 @@
-# Learn Harness Engineeringへようこそ
+# Learn Harness Engineering에 오신 것을 환영합니다
 
-Learn Harness Engineering は、AI コーディングエージェント(coding agent)のエンジニアリングに焦点を当てた講座です。私たちは、業界で最も先進的なハーネスエンジニアリング(Harness Engineering)の理論と実践を深く学び、整理してきました。主な参考資料は次のとおりです。
+Learn Harness Engineering은 AI 코딩 에이전트(coding agent)의 엔지니어링에 집중하는 강의입니다. 우리는 업계에서 가장 앞선 하네스 엔지니어링(Harness Engineering) 이론과 실천을 깊이 학습하고 정리했습니다. 핵심 참고 자료는 다음과 같습니다.
 
 - [OpenAI: Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/)
 - [Anthropic: Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
 - [Anthropic: Harness design for long-running application development](https://www.anthropic.com/engineering/harness-design-long-running-apps)
 - [Awesome Harness Engineering](https://github.com/walkinglabs/awesome-harness-engineering)
 
-この講座では、体系的な環境設計、状態(state)管理、検証(verification)、制御(control)システムを通じて、Codex や Claude Code のようなエージェント型コーディングツールを実際に信頼できるものにする方法を学びます。明示的なルールと境界によって AI コーディング支援ツールを制約し、機能の実装、バグ修正、開発作業の自動化を支援します。
+이 강의는 체계적인 환경 설계, 상태(state) 관리, 검증(verification), 제어(control) 시스템을 통해 Codex와 Claude Code 같은 에이전트형 코딩 도구를 실제로 신뢰할 수 있게 만드는 방법을 가르칩니다. 명시적인 규칙과 경계로 AI 코딩 보조 도구를 제약하여, 기능을 구현하고 버그를 수정하며 개발 작업을 자동화하도록 돕습니다.
 
-> 見慣れない用語が多くても問題ありません。主要概念の韓国語・英語対応表は [用語集](./resources/reference/glossary.md) にまとめています。
+> 처음 보시는 용어가 많아도 괜찮습니다. 핵심 개념의 한국어·영어 대응표는 [용어집](./resources/reference/glossary.md)에 정리되어 있습니다.
 
-## 始める
+## 시작하기
 
-学習の入口を選んで進んでください。講座は、理論講義、実践プロジェクト、すぐに使えるリソース集で構成されています。
+학습 경로를 선택해 시작하세요. 강의는 이론 강의, 실습 프로젝트, 즉시 사용 가능한 리소스 모음으로 구성됩니다.
 
 <div class="card-grid">
   <a href="./lectures/lecture-01-why-capable-agents-still-fail/" class="card">
-    <h3>講義(Lectures)</h3>
-    <p>高性能なモデルがなぜなお失敗するのかを理解し、効果的なハーネスの理論を学びます。</p>
+    <h3>강의(Lectures)</h3>
+    <p>강력한 모델이 왜 여전히 실패하는지 이해하고, 효과적인 하네스의 이론을 배웁니다.</p>
   </a>
   <a href="./projects/" class="card">
-    <h3>プロジェクト(Projects)</h3>
-    <p>信頼できるエージェント環境を、最初から自分で作ってみる実践です。</p>
+    <h3>프로젝트(Projects)</h3>
+    <p>믿을 수 있는 에이전트 환경을 처음부터 직접 만들어 보는 실습입니다.</p>
   </a>
   <a href="./resources/" class="card">
-    <h3>リソース集(Resource Library)</h3>
-    <p>自分のリポジトリですぐに使える、コピペ用テンプレート(AGENTS.md, feature_list.json など)です。</p>
+    <h3>리소스 모음(Resource Library)</h3>
+    <p>여러분의 저장소에서 바로 쓸 수 있는 복사용 템플릿(AGENTS.md, feature_list.json 등)입니다.</p>
   </a>
 </div>
 
-## ハーネスの中核メカニズム
+## 하네스의 핵심 메커니즘
 
-ハーネス(harness)は、モデルを「より賢く」するための道具ではありません。代わりに、モデルのための閉ループ(closed loop)な**作業システム**を作ります。中核となる流れは、次の図で理解できます。
+하네스(harness)는 모델을 "더 똑똑하게" 만드는 도구가 아닙니다. 대신, 모델을 위한 닫힌 루프(closed loop) **작업 시스템**을 만들어 줍니다. 핵심 흐름은 다음 다이어그램으로 이해할 수 있습니다.
 
 ```mermaid
 graph TD
-    A["明確な目標<br/>AGENTS.md"] --> B("初期化<br/>init.sh")
-    B --> C{"作業実行<br/>AI Agent"}
-    C -->|問題発生| D["ランタイムフィードバック<br/>CLI / Logs"]
-    D -->|自動修正| C
-    C -->|コード完成| E{"検証と QA<br/>Test suite"}
-    E -->|失敗| D
-    E -->|通過| F["整理と引き継ぎ<br/>claude-progress.md"]
+    A["명확한 목표<br/>AGENTS.md"] --> B("초기화<br/>init.sh")
+    B --> C{"작업 실행<br/>AI Agent"}
+    C -->|문제 발생| D["런타임 피드백<br/>CLI / Logs"]
+    D -->|자동 수정| C
+    C -->|코드 완성| E{"검증과 QA<br/>Test suite"}
+    E -->|실패| D
+    E -->|통과| F["정리와 인계<br/>claude-progress.md"]
 
     classDef primary fill:#D95C41,stroke:#C14E36,color:#fff,font-weight:bold;
     classDef process fill:#F4F3EE,stroke:#D1D1D1,color:#1A1A1A;
@@ -53,24 +53,24 @@ graph TD
     class C,E check;
 ```
 
-## この講座で学ぶこと
+## 이 강의에서 배우는 것
 
-この講座をやり切ると、次のような重要概念を扱えるようになります。
+본 강의를 완주하면 다음과 같은 핵심 개념을 다룰 수 있게 됩니다.
 
 <ul class="index-list">
-  <li><strong>エージェントの動作制約</strong>: 明示的なルールと境界によって、エージェントの行動範囲を限定します。</li>
-  <li><strong>コンテキスト(context)保持</strong>: 長時間・複数セッションの作業でも、コンテキストを失わないようにします。</li>
-  <li><strong>性急な完了宣言の防止</strong>: エージェントが早すぎる段階で「終わった」と宣言できないようにします。</li>
-  <li><strong>作業の検証</strong>: 全体パイプラインのテストと自己点検(self-reflection)で成果物を検証します。</li>
-  <li><strong>可観測性の確保</strong>: ランタイムを観測・デバッグ可能にします。</li>
+  <li><strong>에이전트 동작 제약</strong>: 명시적인 규칙과 경계로 에이전트의 행동 범위를 한정합니다.</li>
+  <li><strong>컨텍스트(context) 유지</strong>: 장시간·다중 세션 작업에서도 컨텍스트를 잃지 않도록 합니다.</li>
+  <li><strong>섣부른 완료 선언 방지</strong>: 에이전트가 너무 빨리 "끝났다"고 선언하지 못하게 합니다.</li>
+  <li><strong>작업 검증</strong>: 전체 파이프라인 테스트와 자기 점검(self-reflection)으로 결과물을 검증합니다.</li>
+  <li><strong>관측 가능성 확보</strong>: 런타임을 관측·디버깅 가능하게 만듭니다.</li>
 </ul>
 
-## 次のステップ
+## 다음 단계
 
-主要概念に慣れてきたら、次の資料へ進んでみてください。
+핵심 개념이 익숙해졌다면, 다음 자료로 한 걸음 더 들어가 보세요.
 
 <ul class="index-list">
-  <li><a href="./lectures/lecture-01-why-capable-agents-still-fail/">講義 01: 有能なエージェントがなお失敗する理由</a> — ハーネスエンジニアリングの理論的出発点です。</li>
-  <li><a href="./projects/project-01-baseline-vs-minimal-harness/">プロジェクト 01: ベースライン(Baseline) vs ミニマルハーネス(Minimal Harness)</a> — 最初の実課題を一から進めてみます。</li>
-  <li><a href="./resources/templates/">テンプレート(Templates)</a> — ミニマルハーネスパック(AGENTS.md, feature_list.json, claude-progress.md)を自分のプロジェクトにそのまま適用してみてください。</li>
+  <li><a href="./lectures/lecture-01-why-capable-agents-still-fail/">강의 01: 유능한 에이전트가 여전히 실패하는 이유</a> — 하네스 엔지니어링의 이론적 출발점입니다.</li>
+  <li><a href="./projects/project-01-baseline-vs-minimal-harness/">프로젝트 01: 베이스라인(Baseline) vs 미니멀 하네스(Minimal Harness)</a> — 첫 실제 과제를 처음부터 진행해 봅니다.</li>
+  <li><a href="./resources/templates/">템플릿(Templates)</a> — 미니멀 하네스 팩(AGENTS.md, feature_list.json, claude-progress.md)을 자신의 프로젝트에 바로 적용해 보세요.</li>
 </ul>

@@ -1,24 +1,24 @@
 # PRODUCT_SENSE.md
 
-このファイルは、コードだけではエージェントが信頼して推測できない、長期的なプロダクト判断を記録します。
+Tệp này ghi lại phán xét sản phẩm lâu bền mà agent không thể suy ra đáng tin cậy chỉ từ mã.
 
-## プロダクトの核
+## Cốt lõi Sản phẩm
 
-- 主なユーザー: `[置き換え]`
-- 完了すべき作業: `[置き換え]`
-- 解消すべき主な不満: `[置き換え]`
-- 受け入れ基準となる品質レベル: `[置き換え]`
+- Người dùng chính: `[thay thế]`
+- Công việc cần hoàn thành: `[thay thế]`
+- Sự thất vọng chính cần loại bỏ: `[thay thế]`
+- Tiêu chuẩn chất lượng để chấp nhận: `[thay thế]`
 
-## プロダクト規則
+## Quy tắc Sản phẩm
 
-- 機能の数よりも、ユーザーから見える信頼性を優先します。
-- あいまいな挙動は、推測してよいという許可ではなく、仕様の空白として扱います。
-- 実装によってユーザーが見たり信頼したりするものが変わる場合は、仕様をそれに合わせて更新します。
-- 具体的なフローには `product spec` を使い、このファイルは横断的なプロダクト優先度に使います。
+- Ưu tiên độ tin cậy có thể nhìn thấy của người dùng hơn số lượng tính năng.
+- Coi hành vi mơ hồ là khoảng trống spec, không phải sự cho phép để đoán.
+- Nếu việc triển khai thay đổi những gì người dùng nhìn thấy hoặc tin tưởng, hãy cập nhật spec phù hợp.
+- Sử dụng product spec cho các luồng cụ thể, và sử dụng tệp này cho các ưu tiên sản phẩm xuyên suốt.
 
-## 禁止パターン
+## Mẫu Không được phép
 
-- ひそかに行われる破壊的な操作
-- ユーザーへのフィードバックがないままの静かな失敗
-- 目に見える状態について、真実の参照元が不明確であること
-- 一文で説明できない機能
+- Các hành động phá hủy ẩn
+- Thất bại âm thầm mà không có phản hồi cho người dùng
+- Nguồn sự thật không rõ ràng cho trạng thái có thể nhìn thấy
+- Các tính năng không thể giải thích trong một câu

@@ -1,30 +1,30 @@
-# セッション引き継ぎ
+# Bàn giao Phiên
 
-## 現在の進行状況
+## Đang Hoạt động Hiện tại
 
-- 実際に動作しているもの:
-- 実際に実行された検証:
+- Những gì đang hoạt động:
+- Xác minh nào thực sự đã chạy:
 
-## このセッションでの変更
+## Thay đổi Trong Phiên này
 
-- 追加したコードまたは挙動:
-- インフラまたは harness の変更:
+- Mã hoặc hành vi đã thêm:
+- Thay đổi cơ sở hạ tầng hoặc harness:
 
-## 壊れているもの、または未検証のもの
+## Bị Hỏng hoặc Chưa được Xác minh
 
-- 既知の不具合:
-- 未検証のパス:
-- 次のセッションへのリスク:
+- Lỗi đã biết:
+- Đường dẫn chưa được xác minh:
+- Rủi ro cho phiên tiếp theo:
 
-## 次に取るべき最善の一手
+## Bước Tốt nhất Tiếp theo
 
-- 未完了の機能のうち最も優先度が高いもの:
-- これが次の対象である理由:
-- 何をもって合格とみなすか:
-- この手順で変更しないもの:
+- Tính năng chưa hoàn thành có mức ưu tiên cao nhất:
+- Tại sao đây là tính năng tiếp theo:
+- Điều gì được tính là vượt qua:
+- Điều gì không được thay đổi trong bước đó:
 
-## コマンド
+## Lệnh
 
-- 起動:
-- 検証:
-- 集中デバッグ用コマンド:
+- Khởi động:
+- Xác minh:
+- Lệnh debug tập trung:

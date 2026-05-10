@@ -1,22 +1,22 @@
-[中国語版 →](../../../zh/projects/project-04-incremental-indexing/)
+[中文版本 →](../../../zh/projects/project-04-incremental-indexing/)
 
-> 関連講義: [Lecture 07. Draw clear task boundaries for agents](./../../lectures/lecture-07-why-agents-overreach-and-under-finish/index.md) · [Lecture 08. Use feature lists to constrain what the agent does](./../../lectures/lecture-08-why-feature-lists-are-harness-primitives/index.md)
-> テンプレートファイル: [templates/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/en/resources/templates/)
+> Related lectures: [Lecture 07. Draw clear task boundaries for agents](./../../lectures/lecture-07-why-agents-overreach-and-under-finish/index.md) · [Lecture 08. Use feature lists to constrain what the agent does](./../../lectures/lecture-08-why-feature-lists-are-harness-primitives/index.md)
+> Template files: [templates/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/en/resources/templates/)
 
-# Project 04. Runtime Feedback を使って Agent の挙動を修正する
+# Project 04. Use Runtime Feedback to Correct Agent Behavior
 
-## 取り組む内容
+## What You Do
 
-起動ログ、import/indexing ログ、エラー状態など、runtime の可観測性を追加し、レイヤーをまたぐ違反を防ぐためのアーキテクチャ上の制約も加えます。さらに、Agent に修正させる runtime バグも仕込みます。
+Add runtime observability (startup logs, import/indexing logs, error states) and architecture constraints to prevent cross-layer violations. Plant a runtime bug for the agent to fix.
 
-これを 2 回実行します。1 回目はログも制約もない状態で、2 回目は適切なツールとルールを入れた状態で行います。
+You run it twice: first without logs or constraints, second with proper tools and rules.
 
-## 使用ツール
+## Tools
 
 - Claude Code or Codex
 - Git
 - Node.js + Electron
 
-## Harness の仕組み
+## Harness Mechanism
 
-runtime feedback + scope control + incremental indexing
+Runtime feedback + scope control + incremental indexing

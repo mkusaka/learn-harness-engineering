@@ -1,120 +1,120 @@
 ---
-title: 日本語用語集 (Glossary)
-description: Learn Harness Engineering 日本語版全体で使う主要用語の英日対応表と定義です。
+title: 한국어 용어집 (Glossary)
+description: Learn Harness Engineering 한국어판 전반에서 사용되는 핵심 용어의 한·영 대응표와 정의입니다.
 ---
 
-# 日本語用語集 (Glossary)
+# 한국어 용어집 (Glossary)
 
-この文書は、日本語版全体で一貫した訳語を保証するための単一の信頼できる情報源 (Single Source of Truth) です。各講義・プロジェクト・リソース文書で最初に現れる専門用語は、この用語集の表記に従います。
+이 문서는 한국어판 전체에서 일관된 번역어를 보장하기 위한 단일 진실 원천(Single Source of Truth)입니다. 각 강의·프로젝트·리소스 문서에서 처음 등장하는 전문 용어는 본 용어집의 표기를 따릅니다.
 
-## 表記規則 (Convention)
+## 표기 규칙 (Convention)
 
-- **初出形式**: 本文で最初に出てくる専門用語は `日本語(English)` の形で併記します。例: `ハーネス(harness)`, `エージェント(agent)`。
-- **2回目以降**: 日本語のみを使いますが、文脈上あいまいな場合は再び英語を併記できます。
-- **固有名詞・ツール名**: `Claude Code`, `Codex`, `VitePress`, `GitHub Actions` などは英語のままにします。
-- **システムトークン**: `BLOCKING`, `HARD`, `[CP]`, `@plan-writer`, `Skill("...")` など、コードやプロンプトで意味を持つトークンは翻訳しません。
-- **コマンド・ファイルパス**: `npm run docs:build`, `docs/.vitepress/config.mts` などは英語のまま保持します。
+- **첫 등장 형식**: 본문에서 처음 나오는 전문 용어는 `한국어(English)` 형태로 병기합니다. 예: `하네스(harness)`, `에이전트(agent)`.
+- **두 번째 이후**: 한국어만 사용하되, 문맥상 모호하면 다시 영어를 병기할 수 있습니다.
+- **고유명사·도구명**: `Claude Code`, `Codex`, `VitePress`, `GitHub Actions` 등은 영어 그대로 둡니다.
+- **시스템 토큰**: `BLOCKING`, `HARD`, `[CP]`, `@plan-writer`, `Skill("...")` 등 코드·프롬프트에서 의미를 갖는 토큰은 번역하지 않습니다.
+- **명령어·파일 경로**: `npm run docs:build`, `docs/.vitepress/config.mts` 등은 영어로 유지합니다.
 
-## 核心概念 (Core Concepts)
+## 핵심 개념 (Core Concepts)
 
-| English | 日本語 | 定義 |
+| English | 한국어 | 정의 |
 |---------|--------|------|
-| Harness | ハーネス | AI コーディングエージェントが安定して動作できるように、環境・状態・検証・制御をまとめて提供する外骨格 (scaffolding) システム。本講義の中心概念。 |
-| Harness Engineering | ハーネスエンジニアリング | ハーネスを設計・構築・保守する工学的実践領域。 |
-| Agent | エージェント | 自律的に作業を進める AI ソフトウェア単位。本講義では主にコーディングエージェント (coding agent) を指します。 |
-| Coding Agent | コーディングエージェント | コード作成・リファクタ・テストなどの開発作業を行う AI エージェント。 |
-| State | 状態 | エージェントが次の行動を決める際に参照する永続データ (作業進捗ログ、機能一覧、git 履歴、チェックリストなど)。 |
-| Context | コンテキスト | エージェントが1回の推論で使う入力情報の集合。モデルのコンテキストウィンドウ (context window) に入る内容。 |
-| Context Window | コンテキストウィンドウ | LLM が一度に処理できるトークンの最大長。 |
-| Repository as System of Record | システムオブレコード (SoR) としてのリポジトリ | 作業結果・判断・根拠をすべて git リポジトリに永続化し、信頼の単一基準とする原則。 |
+| Harness | 하네스 | AI 코딩 에이전트가 안정적으로 동작하도록 환경·상태·검증·제어를 묶어서 제공하는 외골격(스캐폴딩) 시스템. 본 강의의 중심 개념. |
+| Harness Engineering | 하네스 엔지니어링 | 하네스를 설계·구축·유지보수하는 공학적 실천 분야. |
+| Agent | 에이전트 | 자율적으로 작업을 수행하는 AI 소프트웨어 단위. 본 강의에서는 주로 코딩 에이전트(coding agent)를 가리킵니다. |
+| Coding Agent | 코딩 에이전트 | 코드 작성·리팩터·테스트 등 개발 작업을 수행하는 AI 에이전트. |
+| State | 상태 | 에이전트가 다음 행동을 결정할 때 참조하는 영속 데이터(작업 진행 로그, 기능 목록, git 히스토리, 체크리스트 등). |
+| Context | 컨텍스트 | 에이전트가 한 번의 추론에 사용하는 입력 정보의 집합. 모델의 컨텍스트 윈도(context window)에 담긴 내용. |
+| Context Window | 컨텍스트 윈도 | LLM이 한 번에 처리할 수 있는 토큰의 최대 길이. |
+| Repository as System of Record | 시스템 오브 레코드(SoR)로서의 저장소 | 작업 결과·결정·근거를 모두 git 저장소에 영속화하여 신뢰의 단일 원천으로 삼는 원칙. |
 
-## 作業・成果物 (Work and Deliverables)
+## 작업·산출물 (Work and Deliverables)
 
-| English | 日本語 | 定義 |
+| English | 한국어 | 정의 |
 |---------|--------|------|
-| Deliverable | 成果物 | 作業の結果として作られる、ファイル・文書・コードなど検証可能な実体。 |
-| Specification | 仕様 | 作業の入力・動作・出力を明確に定義した文書。`spec` と略すこともあります。 |
-| Plan | 計画 | 仕様を満たすための段階的な作業順序と責任分担をまとめた文書。 |
-| TODO Checklist | TODO チェックリスト | 計画を実行可能な単位作業に分解したチェックボックス一覧。 |
-| Commit | コミット | git で変更を永続化する単位。 |
-| Branch | ブランチ | 独立した作業の流れを維持するための git の分岐。 |
-| Worktree | ワークツリー | 同じリポジトリで複数の作業を同時に進めるための別作業ディレクトリ。 |
-| Pull Request (PR) | プルリクエスト (PR) | あるブランチの変更を別のブランチへ取り込むよう依頼する GitHub の協業単位。 |
+| Deliverable | 산출물 | 작업의 결과로 만들어지는 파일·문서·코드 등 검증 가능한 실체. |
+| Specification | 명세 | 작업의 입력·동작·출력을 명확히 정의한 문서. `spec`로 줄여 쓰기도 합니다. |
+| Plan | 계획 | 명세를 만족시키기 위한 단계별 작업 순서와 책임 배분 문서. |
+| TODO Checklist | TODO 체크리스트 | 계획을 실행 가능한 단위 작업으로 분해한 체크박스 목록. |
+| Commit | 커밋 | git에서 변경 사항을 영속화하는 단위. |
+| Branch | 브랜치 | 독립적인 작업 흐름을 유지하기 위한 git 분기. |
+| Worktree | 워크트리 | 같은 저장소에서 여러 작업 흐름을 동시에 진행하기 위한 별도 작업 디렉터리. |
+| Pull Request (PR) | 풀 리퀘스트(PR) | 한 브랜치의 변경 사항을 다른 브랜치로 병합 요청하는 GitHub의 협업 단위. |
 
-## 検証と品質 (Verification and Quality)
+## 검증과 품질 (Verification and Quality)
 
-| English | 日本語 | 定義 |
+| English | 한국어 | 정의 |
 |---------|--------|------|
-| Verification | 検証 | 成果物が仕様を満たすかを客観的な証拠で確かめる手順。 |
-| Validation | 妥当性確認 | 入力値が制約を満たすかを確認する手順。検証より狭い意味です。 |
-| Critique | クリティーク | 計画・設計・成果物の弱点を事前に見つけるための対立的 (adversarial) レビュー。 |
-| Review | レビュー | コードや文書を同僚またはエージェントが読み、フィードバックを残す手順。 |
-| Test | テスト | コードの動作を自動で確認する検証手段 (単体・統合・E2E など)。 |
-| TDD (Test-Driven Development) | テスト駆動開発 | RED→GREEN→IMPROVE の順で、先にテストを書いてから実装する手法。 |
-| Acceptance Criteria | 受け入れ基準 | 作業が完了したと認められるために満たすべき客観的条件。 |
-| Quality Gate | 品質ゲート | 次の段階へ進む前に通過しなければならない、自動・手動のチェック群。 |
-| Lint | リント | 静的解析でスタイルや潜在的なエラーを検出するツール (例: `ruff`, `eslint`)。 |
-| Type Check | 型チェック | 静的型システムで型エラーを事前に検出する手順 (例: `pyright`, `tsc --noEmit`)。 |
+| Verification | 검증 | 산출물이 명세를 만족하는지 객관적 증거로 확인하는 절차. |
+| Validation | 유효성 검사 | 입력값이 제약을 만족하는지 확인하는 절차. 검증보다 좁은 의미. |
+| Critique | 비평(크리틱) | 계획·설계·산출물의 약점을 사전에 발견하기 위한 적대적(adversarial) 검토. |
+| Review | 리뷰 | 코드·문서를 동료 또는 에이전트가 읽고 피드백을 남기는 절차. |
+| Test | 테스트 | 코드의 동작을 자동으로 확인하는 검증 수단(단위·통합·E2E 등). |
+| TDD (Test-Driven Development) | 테스트 주도 개발 | RED→GREEN→IMPROVE 순서로 테스트를 먼저 쓴 뒤 구현하는 방식. |
+| Acceptance Criteria | 인수 기준 | 작업이 완료되었다고 인정받기 위해 만족해야 할 객관적 조건. |
+| Quality Gate | 품질 게이트 | 다음 단계로 진행하기 전에 통과해야 하는 자동·수동 검사 묶음. |
+| Lint | 린트 | 정적 분석으로 스타일·잠재적 오류를 검출하는 도구(예: `ruff`, `eslint`). |
+| Type Check | 타입 검사 | 정적 타입 시스템으로 타입 오류를 사전에 감지하는 절차(예: `pyright`, `tsc --noEmit`). |
 
-## ハーネス構成要素 (Harness Components)
+## 하네스 구성 요소 (Harness Components)
 
-| English | 日本語 | 定義 |
+| English | 한국어 | 정의 |
 |---------|--------|------|
-| Skill | スキル | 特定の作業フローを表した再利用可能なプロンプトモジュール。必要に応じてエージェントが読み込みます。 |
-| Hook | フック | エージェントのライフサイクル (例: ツール呼び出し前後、セッション開始) のタイミングで実行されるユーザー定義スクリプト。 |
-| Rule | ルール | エージェントが常に従うべき方針・制約をまとめた Markdown 文書。 |
-| Subagent / Agent (role) | サブエージェント / 役割エージェント | メインセッションが委譲できる専門ロール (例: `@api-implement`, `@code-review`)。 |
-| Orchestration | オーケストレーション | 複数のエージェント・ツール・検査を決められた順序でまとめて実行する上位のフロー制御。 |
-| Permission | 権限 | エージェントが特定のツール・ファイル・コマンドを使えるかを制御する設定。 |
-| Preflight | 事前点検 (preflight) | 本作業を始める前に、環境や前提条件が整っているかを確認する段階。 |
-| Guardrail | ガードレール | エージェントが危険な行動を取れないようにする方針・検証の仕組み。 |
-| Telemetry | テレメトリ | エージェント実行中に収集する測定指標 (イベントログ、遅延時間、失敗率など)。 |
+| Skill | 스킬 | 특정 작업 흐름을 묘사한 재사용 가능한 프롬프트 모듈. 에이전트가 필요할 때 로드합니다. |
+| Hook | 훅 | 에이전트의 라이프사이클(예: 도구 호출 전/후, 세션 시작) 시점에 실행되는 사용자 정의 스크립트. |
+| Rule | 규칙 | 에이전트가 항상 따라야 하는 정책·제약을 모아 둔 마크다운 문서. |
+| Subagent / Agent (role) | 서브에이전트 / 역할 에이전트 | 메인 세션이 위임할 수 있는 전문 역할(예: `@api-implement`, `@code-review`). |
+| Orchestration | 오케스트레이션 | 여러 에이전트·도구·검사를 정해진 순서로 묶어 실행하는 상위 흐름 제어. |
+| Permission | 권한 | 에이전트가 특정 도구·파일·명령을 사용할 수 있는지 제어하는 설정. |
+| Preflight | 사전 점검(프리플라이트) | 본 작업을 시작하기 전에 환경·전제 조건이 갖춰졌는지 확인하는 단계. |
+| Guardrail | 가드레일 | 에이전트가 위험한 행동을 하지 못하도록 막는 정책·검증 장치. |
+| Telemetry | 텔레메트리 | 에이전트 실행 중에 수집하는 측정 지표(이벤트 로그·지연 시간·실패율 등). |
 
-## 失敗と復旧 (Failure and Recovery)
+## 실패와 복구 (Failure and Recovery)
 
-| English | 日本語 | 定義 |
+| English | 한국어 | 정의 |
 |---------|--------|------|
-| Fail-loud | 失敗を大きく知らせる (fail-loud) | エラーが起きたら、すぐに目立つ形で通知する方針。静かな失敗の反対です。 |
-| Silent Failure | サイレント失敗 | エラーが起きても何の兆候もなく次の段階へ進んでしまう現象。 |
-| Continuity | 継続性 | 長時間の作業中でもコンテキストや状態が保たれ、途切れない性質。 |
-| Handoff | ハンドオフ | あるセッションまたはあるエージェントから次のセッション・エージェントへ作業を引き継ぐ行為。 |
-| Session Handoff | セッションハンドオフ | コンテキストが切れる危険があるとき、次のセッションが引き継げるように状態を永続化するパターン。 |
-| Checkpoint | チェックポイント | 復旧可能な進行点で状態を永続化した時点。 |
-| Rollback | ロールバック | 特定の時点まで状態を戻す行為。 |
+| Fail-loud | 실패-크게(fail-loud) | 오류가 발생하면 즉시 눈에 띄게 알리는 정책. 침묵 실패의 반대. |
+| Silent Failure | 무음(無音) 실패 | 오류가 났는데 아무런 신호 없이 다음 단계로 진행되는 현상. |
+| Continuity | 연속성 | 장시간 작업 중에도 컨텍스트·상태가 유지되어 끊기지 않는 성질. |
+| Handoff | 핸드오프 | 한 세션 또는 한 에이전트에서 다음 세션·에이전트로 작업을 인계하는 행위. |
+| Session Handoff | 세션 핸드오프 | 컨텍스트가 잘릴 위험이 있을 때 다음 세션이 이어 받을 수 있도록 상태를 영속화하는 패턴. |
+| Checkpoint | 체크포인트 | 복구 가능한 진행 지점에서 상태를 영속화한 시점. |
+| Rollback | 롤백 | 특정 시점으로 상태를 되돌리는 행위. |
 
-## 初期化とコンベンション (Initialization and Conventions)
+## 초기화와 컨벤션 (Initialization and Conventions)
 
-| English | 日本語 | 定義 |
+| English | 한국어 | 정의 |
 |---------|--------|------|
-| Initialization | 初期化 | 新しいプロジェクトや作業環境でハーネスを設定する段階。 |
-| Onboarding | オンボーディング | 新しいメンバー (人またはエージェント) がプロジェクトのコンベンションを学び、適用できるように支援する手順。 |
-| Convention | コンベンション | チームで合意した命名・構造・作業方法の標準。 |
-| Bootstrap | ブートストラップ | 何もない状態から動作可能な最小環境を整えること。 |
-| Scaffold | スキャフォールド | 作業の出発点となるディレクトリやファイル構造をあらかじめ作成するツール・パターン。 |
+| Initialization | 초기화 | 새 프로젝트나 작업 환경에서 하네스를 설정하는 단계. |
+| Onboarding | 온보딩 | 새 구성원(사람 또는 에이전트)이 프로젝트 컨벤션을 학습·적용하도록 돕는 절차. |
+| Convention | 컨벤션 | 팀이 합의한 명명·구조·작업 방식의 표준. |
+| Bootstrap | 부트스트랩 | 빈 상태에서 동작 가능한 최소 환경을 갖추는 일. |
+| Scaffold | 스캐폴딩 | 작업 시작점이 될 디렉터리·파일 구조를 미리 생성해 주는 도구·패턴. |
 
-## ツールとエコシステム (Tools and Ecosystem)
+## 도구 및 생태계 (Tools and Ecosystem)
 
-| English | 日本語(またはそのまま) | 備考 |
+| English | 한국어(또는 그대로) | 비고 |
 |---------|---------------------|------|
-| Claude Code | Claude Code | そのまま使用。Anthropic のコーディングエージェント CLI。 |
-| Codex | Codex | そのまま使用。OpenAI のコーディングエージェント CLI。 |
-| Cursor | Cursor | そのまま使用。AI コードエディタ。 |
-| VitePress | VitePress | そのまま使用。Markdown ベースの静的サイトジェネレーター。 |
-| MCP (Model Context Protocol) | MCP (Model Context Protocol) | エージェントが外部ツール・リソースを発見・呼び出すための標準。 |
-| LSP (Language Server Protocol) | LSP (Language Server Protocol) | エディタと言語ツールがコード情報をやり取りするための標準。 |
-| GitHub Actions | GitHub Actions | そのまま使用。GitHub の CI/CD システム。 |
-| LangGraph | LangGraph | そのまま使用。状態グラフベースのエージェントフレームワーク。 |
+| Claude Code | Claude Code | 그대로 사용. Anthropic의 코딩 에이전트 CLI. |
+| Codex | Codex | 그대로 사용. OpenAI의 코딩 에이전트 CLI. |
+| Cursor | Cursor | 그대로 사용. AI 코드 에디터. |
+| VitePress | VitePress | 그대로 사용. 마크다운 기반 정적 사이트 생성기. |
+| MCP (Model Context Protocol) | MCP(모델 컨텍스트 프로토콜) | 에이전트가 외부 도구·리소스를 발견·호출하기 위한 표준. |
+| LSP (Language Server Protocol) | LSP(언어 서버 프로토콜) | 에디터와 언어 도구가 코드 정보를 주고받는 표준. |
+| GitHub Actions | GitHub Actions | 그대로 사용. GitHub의 CI/CD 시스템. |
+| LangGraph | LangGraph | 그대로 사용. 상태 그래프 기반 에이전트 프레임워크. |
 
-## 保持トークン (Untranslated Tokens)
+## 보존 토큰 (Untranslated Tokens)
 
-次のトークンは、日本語版本文でも絶対に翻訳せず、英語のまま保持します。
+다음 토큰은 한국어판 본문에서도 절대 번역하지 않고 영어 그대로 유지합니다.
 
-- システム意味トークン: `BLOCKING`, `HARD`, `[CP]`, `RED`, `GREEN`, `IMPROVE`, `DONE`, `RETRY`, `BLOCKED`
-- エージェント識別子: `@plan-writer`, `@code-review`, `@doc-writer`, `@ui-implement` など、すべての `@agent-name`
-- スキル呼び出し: `Skill("omb-doc")`, `Skill("omb-tdd")` など、すべての `Skill("...")` 形式
-- ファイルパス・コマンド: `docs/.vitepress/config.mts`, `npm run docs:build`, `git commit -m "..."` など
-- frontmatter キー: `title`, `description`, `layout` など、`---` ブロック内の英語キー名
+- 시스템 의미 토큰: `BLOCKING`, `HARD`, `[CP]`, `RED`, `GREEN`, `IMPROVE`, `DONE`, `RETRY`, `BLOCKED`
+- 에이전트 식별자: `@plan-writer`, `@code-review`, `@doc-writer`, `@ui-implement` 등 모든 `@agent-name`
+- 스킬 호출: `Skill("omb-doc")`, `Skill("omb-tdd")` 등 모든 `Skill("...")` 형태
+- 파일 경로·명령어: `docs/.vitepress/config.mts`, `npm run docs:build`, `git commit -m "..."` 등
+- frontmatter 키: `title`, `description`, `layout` 등 `---` 블록 내부의 영어 키 이름
 
-## 今後の更新 (Maintenance)
+## 향후 갱신 (Maintenance)
 
-講義の翻訳中に新しい用語が見つかったら、この文書にすぐ追加し、後続の講義翻訳では更新済みの内容を入力として使います (計画 Task #16b 参照)。
+강의 번역 중 새 용어가 발견되면 본 문서에 즉시 추가하고, 후속 강의 번역 시 갱신본을 입력으로 사용합니다(계획 Task #16b 참조).

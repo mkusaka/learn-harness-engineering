@@ -1,24 +1,24 @@
-# 評価基準
+# Evaluator Rubric
 
-実装後から最終受け入れ前に、この評価基準を使ってください。
+Use this rubric after implementation and before final acceptance.
 
-| 分類 | 質問 | スコア (0-2) | 備考 |
+| Category | Question | Score (0-2) | Notes |
 | --- | --- | --- | --- |
-| 正確性 | 実装された動作は、依頼された機能と一致していますか? |  |  |
-| 検証 | 必要な確認は、証拠付きで実際に実行されましたか? |  |  |
-| スコープ遵守 | セッションは、選択した機能の範囲内に収まっていましたか? |  |  |
-| 信頼性 | 結果は、修正なしで再起動や再実行に耐えますか? |  |  |
-| 保守性 | 次のセッションにとって、コードとドキュメントは十分に分かりやすいですか? |  |  |
-| 引き継ぎ準備 | 新しいセッションが、リポジトリの成果物だけで作業を継続できますか? |  |  |
+| Correctness | Does the implemented behavior match the requested feature? |  |  |
+| Verification | Did the required checks actually run, with evidence? |  |  |
+| Scope discipline | Did the session stay inside the chosen feature scope? |  |  |
+| Reliability | Does the result survive restart or rerun without repair? |  |  |
+| Maintainability | Is the code and documentation clear enough for the next session? |  |  |
+| Handoff readiness | Can a fresh session continue work from repo artifacts only? |  |  |
 
-## 判定
+## Verdict
 
-- 受け入れ
-- 要修正
-- ブロック
+- Accept
+- Revise
+- Block
 
-## 必須フォローアップ
+## Required Follow-Up
 
-- 不足している証拠:
-- 必要な修正:
-- 次回レビューの条件:
+- Missing evidence:
+- Required fixes:
+- Next review trigger:

@@ -1,8 +1,8 @@
-# 講義 09 コード例
+# 강의 09 코드 예제
 
-このフォルダは、次の例のためのものです:
+이 폴더는 다음 예제들을 위한 공간입니다:
 
-- ログをフィードバックとして扱う例(logs as feedback)
-- ランタイム状態の可視性(runtime-state visibility)
-- クリーンな状態(clean state)の確認
-- リカバリ(recovery)の例
+- 피드백으로서의 로그(logs as feedback)
+- 런타임 상태 가시성(runtime-state visibility)
+- 클린 상태(clean state) 확인
+- 복구(recovery) 예제

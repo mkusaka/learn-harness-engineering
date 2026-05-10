@@ -1,8 +1,8 @@
-# 第 08 講のコード
+# Mã cho Bài 08
 
-このディレクトリは、次の例に使います:
+Sử dụng thư mục này cho các ví dụ về:
 
 - pass-state gating
-- end-to-end 検証
-- 弱い完了基準と強い完了基準
-- evaluator ループの例
+- xác minh end-to-end
+- tiêu chí hoàn thành yếu vs mạnh
+- các ví dụ vòng lặp evaluator

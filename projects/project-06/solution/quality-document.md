@@ -1,61 +1,61 @@
-# 品質ドキュメント -- Project 06 Capstone
+# Quality Document -- Project 06 Capstone
 
-## スコア概要
+## Scoring Summary
 
-| 項目 | 評価 | 備考 |
+| Dimension | Grade | Notes |
 |-----------|-------|-------|
-| Build & Compile | A | クリーンにコンパイルでき、エラーや警告はありません |
-| Feature Completeness | A | 15個すべての機能が実装され、正常に通過しています |
-| ConversationHistory | A | チャット吹き出し、展開可能な引用、フィードバックボタン、信頼度の色分け |
-| Structured Logging | A | JSON形式、ログレベル、サービスタグ、すべてのサービスでのデータペイロード |
-| Q&A with Citations | A | 8種類の回答パターン、キーワード検索、信頼度スコアリング |
-| Document Import | A | ファイル検証、サイズ制限、メタデータ、コンテンツ保存 |
-| Indexing | A | バッチモードと単一モード、段落を意識したチャンク分割、状態追跡 |
-| Persistence | A | すべてのデータ型が再起動後も保持されます |
-| Feedback Collection | A | 正/負の評価、永続保存、応答ごとのボタン |
-| Clean State Reset | A | 確認付きの完全なデータリセット、冪等 |
-| Test Coverage | B | ビルド時チェックは通過しますが、実行時検証はベンチマークスクリプトに依存しています |
-| Documentation | A | アーキテクチャ、製品、信頼性をカバーする3つのドキュメントファイル |
-| Benchmarking | A | インポート、インデックス、クエリの計測を含む一連のタスク |
-| Cleanup Scanner | A | 孤立データの検出とメタデータ整合性チェック |
-| Harness Quality | A | 9つの harness ファイルがすべて揃っており、一貫性があります |
+| Build & Compile | A | Clean compilation, no errors or warnings |
+| Feature Completeness | A | All 15 features implemented and passing |
+| ConversationHistory | A | Chat bubbles, expandable citations, feedback buttons, confidence colors |
+| Structured Logging | A | JSON format, log levels, service tags, data payloads on all services |
+| Q&A with Citations | A | 8 answer patterns, keyword retrieval, confidence scoring |
+| Document Import | A | File validation, size limits, metadata, content storage |
+| Indexing | A | Batch and single modes, paragraph-aware chunking, status tracking |
+| Persistence | A | All data types persist across restarts |
+| Feedback Collection | A | Positive/negative ratings, persistent storage, per-response buttons |
+| Clean State Reset | A | Full data reset with confirmation, idempotent |
+| Test Coverage | B | Build-time checks pass, runtime verification via benchmark scripts |
+| Documentation | A | 3 docs files covering architecture, product, and reliability |
+| Benchmarking | A | Full task suite with timing for import, index, query |
+| Cleanup Scanner | A | Orphan detection and metadata consistency checks |
+| Harness Quality | A | 9 harness files, all complete and consistent |
 
-## 総合評価: A
+## Overall Grade: A
 
-## 品質の根拠
+## Evidence of Quality
 
-### ビルド
-- `npm run check` は問題なく通過します
-- `npm run build` は正しい出力を生成します
-- `bash init.sh` は必要なファイルがすべて揃っていることを確認します
+### Build
+- `npm run check` passes cleanly
+- `npm run build` produces correct output
+- `bash init.sh` verifies all files present
 
-### 実行時
-- ウィンドウは 1200x800 で起動し、セキュアな設定が有効です
-- 構造化された JSON ログ出力が初回起動から表示されます
-- ドキュメントの取り込みでメタデータが作成され、コンテンツが保存されます
-- バッチインデックス処理はメトリクス付きで全ドキュメントを処理します
-- Q&A は引用付きで根拠のある回答を返します
-- 会話履歴はチャット風のレイアウトで表示されます
-- フィードバックボタンは評価を送信し、保存します
-- リセットはすべてのデータをきれいに消去します
+### Runtime
+- Window launches at 1200x800 with secure preferences
+- Structured JSON log output visible from first launch
+- Document import creates metadata and stores content
+- Batch indexing processes all documents with metrics
+- Q&A returns grounded answers with citations
+- Conversation history renders in chat-style layout
+- Feedback buttons submit and persist ratings
+- Reset clears all data cleanly
 
-### 可観測性
-- すべての IPC チャンネル呼び出しがログに記録されます
-- ドキュメント取り込みのログ: documentId, filename, sizeBytes
-- インデックス処理のログ: chunkCount, durationMs, throughput
-- Q&A のログ: confidence, citationCount, answerLength, durationMs
-- クリーンな状態へのリセットは WARN レベルでログ出力されます
+### Observability
+- Every IPC channel invocation is logged
+- Document import logs: documentId, filename, sizeBytes
+- Indexing logs: chunkCount, durationMs, throughput
+- Q&A logs: confidence, citationCount, answerLength, durationMs
+- Clean state reset logged at WARN level
 
-### パフォーマンス（サンプルデータのベンチマーク）
-- 3件のドキュメント取り込み: <200ms
-- 3件のドキュメントのバッチインデックス: <100ms
-- 引用付きクエリ: <300ms
-- クリーンな状態へのリセット: <20ms
+### Performance (sample data benchmarks)
+- Import 3 documents: <200ms
+- Batch indexing 3 documents: <100ms
+- Query with citations: <300ms
+- Clean state reset: <20ms
 
-## 確認対象
+## Verified Against
 
-- `clean-state-checklist.md`: 30項目すべてのチェックに合格
-- `evaluator-rubric.md`: 総合スコア 5.0/5
-- `feature_list.json`: 15/15 機能が status "pass"
-- `bash scripts/benchmark.sh`: すべてのタスクが完了
-- `bash scripts/cleanup-scanner.sh`: 古い成果物は見つかりません
+- `clean-state-checklist.md`: All 30 checks pass
+- `evaluator-rubric.md`: 5.0/5 overall score
+- `feature_list.json`: 15/15 features at status "pass"
+- `bash scripts/benchmark.sh`: All tasks complete
+- `bash scripts/cleanup-scanner.sh`: No stale artifacts

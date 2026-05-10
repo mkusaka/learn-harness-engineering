@@ -1,21 +1,21 @@
-# ハーネスの構成要素の例
+# Ví dụ Các Thành phần Harness
 
-ローカルのリポジトリで動作する coding agent の場合:
+Đối với một coding agent làm việc trong kho lưu trữ cục bộ:
 
-- モデル:
-  LLM そのもの
+- Mô hình:
+  bản thân LLM
 
-- ハーネス:
+- Harness:
   - system prompt
   - AGENTS.md
   - bash tool
-  - ファイル読み書きツール
-  - git アクセス権
-  - ローカルファイルシステム
-  - 起動スクリプト
-  - テストコマンド
+  - công cụ đọc/ghi tệp
+  - quyền truy cập git
+  - hệ thống tệp cục bộ
+  - script khởi động
+  - lệnh test
   - stop hook
-  - lint チェック
-  - evaluator のループ
+  - kiểm tra lint
+  - vòng lặp evaluator
 
-上のハーネスのどの部分を変えても、実際の agent が変わります。
+Nếu bạn thay đổi bất kỳ phần harness nào ở trên, bạn thay đổi agent thực tế.

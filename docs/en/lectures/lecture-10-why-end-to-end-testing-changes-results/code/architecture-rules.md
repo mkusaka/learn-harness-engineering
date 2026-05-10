@@ -1,6 +1,6 @@
 # Electron Architecture Rules
 
-- Renderer コードは filesystem に直接アクセスしてはならない。
-- Preload は renderer と Electron main をつなぐ唯一の bridge である。
-- retrieval と indexing のロジックは UI コンポーネントではなく service モジュールに置く。
-- Logging は構造化し、service boundary から出力するべきである。
+- Renderer code may not directly access the filesystem.
+- Preload is the only bridge between renderer and Electron main.
+- Retrieval and indexing logic live in service modules, not UI components.
+- Logging should be structured and emitted from service boundaries.

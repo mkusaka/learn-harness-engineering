@@ -1,13 +1,14 @@
-# プロダクト仕様インデックス
+# Product Specs Index
 
-このフォルダには、現在のユーザー向け動作仕様を置いてください。
+Use this folder for current user-facing behavior specs.
 
-## 有効な仕様
+## Active Specs
 
 - `new-user-onboarding.md`
 
-## ルール
+## Rules
 
-- 仕様には、ユーザーから見える動作と受け入れ基準を記述してください。
-- 実装が仕様からずれた場合は、同じセッション内でどちらか一方を更新してください。
-- このインデックスは常に最新に保ち、新しいエージェントがプロダクトの範囲をすばやく把握できるようにしてください。
+- Specs should describe user-visible behavior and acceptance criteria.
+- If implementation diverges from the spec, update one of them in the same
+  session.
+- Keep this index current so a fresh agent can discover product scope quickly.

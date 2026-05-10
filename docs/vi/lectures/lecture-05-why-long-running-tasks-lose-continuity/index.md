@@ -1,169 +1,169 @@
-[英語版 →](../../../en/lectures/lecture-05-why-long-running-tasks-lose-continuity/) | [中国語版 →](../../../zh/lectures/lecture-05-why-long-running-tasks-lose-continuity/)
+[English Version →](../../../en/lectures/lecture-05-why-long-running-tasks-lose-continuity/) | [中文版本 →](../../../zh/lectures/lecture-05-why-long-running-tasks-lose-continuity/)
 
-> ソースコード例: [code/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/vi/lectures/lecture-05-why-long-running-tasks-lose-continuity/code/)
-> 実践プロジェクト: [プロジェクト 03. マルチセッション継続性](./../../projects/project-03-multi-session-continuity/index.md)
+> Ví dụ mã nguồn: [code/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/vi/lectures/lecture-05-why-long-running-tasks-lose-continuity/code/)
+> Dự án thực hành: [Dự án 03. Tính liên tục đa phiên](./../../projects/project-03-multi-session-continuity/index.md)
 
-# 講義 05. セッションをまたいでコンテキストを維持する
+# Bài 05. Duy trì Ngữ cảnh Qua Các Phiên
 
-Claude Code に完成度の高い機能実装を依頼したとします。30分ほど動いて多くの作業をこなしたものの、コンテキストが尽きかけています。そこで新しいセッションを開始して続きに取りかかると、前回どんな判断をしたのか、なぜ A ではなく B を選んだのか、どのファイルを変更したのか、テスト結果がどうだったのかを何も覚えていないことに気づきます。そこから15分かけてプロジェクトを再調査し、場合によっては前回とは食い違うやり方を選んでしまうかもしれません。
+Bạn yêu cầu Claude Code triển khai một tính năng hoàn chỉnh. Nó chạy 30 phút, thực hiện hầu hết công việc, nhưng ngữ cảnh đang cạn kiệt. Bạn bắt đầu một phiên mới để tiếp tục — và khám phá rằng nó không nhớ những quyết định nào đã được đưa ra lần trước, tại sao lại chọn phương án A thay vì phương án B, những tệp nào đã được sửa đổi, hay trạng thái của các bài test là gì. Nó dành 15 phút để khám phá lại dự án, và có thể không nhất quán với cách tiếp cận trước.
 
-毎朝起きるたびに、すべてを忘れてしまう職人を想像してください。どの壁を作りかけていたのか、なぜ青いレンガではなく赤いレンガを選んだのか、水道管がどこまで通っていたのかを、そのたびにもう一度把握しなければなりません。さらに悪いことに、昨日取り付けた窓を、すでに終わっていたことを覚えていないせいで、外してしまうかもしれません。
+Hãy tưởng tượng bạn là một thợ thủ công quên hết mọi thứ mỗi buổi sáng khi thức dậy. Bạn phải làm quen lại với toàn bộ công trường — bức tường nào đang xây dở, tại sao lại chọn gạch đỏ thay vì gạch xanh, đường ống nước đã chạy đến đâu. Tệ hơn nữa, bạn có thể tháo ra một cửa sổ đã được lắp vào ngày hôm qua, đơn giản vì bạn không nhớ nó đã xong.
 
-これは、AI コーディング agent がセッションをまたぐタスクで直面する、まさに厄介な状況です。この講義では、なぜ長時間のタスクで agent が「記憶を失う」のか、そして構造化された状態保存によって、毎日きちんと日誌をつける信頼できる職人のように振る舞えるのかを説明します。職人自身の記憶は消えても、日誌がすべてを覚えている、というわけです。
+Đây chính xác là tình huống khó khăn mà các AI coding agent phải đối mặt trong các tác vụ xuyên phiên. Bài giảng này giải thích tại sao các agent "mất ký ức" trong các tác vụ dài, và cách lưu trữ trạng thái có cấu trúc có thể làm cho chúng giống như một thợ thủ công giữ nhật ký đáng tin cậy hàng ngày — vẫn bị mất ký ức, nhưng nhật ký nhớ mọi thứ.
 
-## コンテキストウィンドウは無限ではない
+## Cửa sổ Ngữ cảnh: Không Vô hạn
 
-コンテキストウィンドウには上限があります。これは、モデルを大きくすれば解決する話ではありません。仮にウィンドウサイズが 1M token に増えたとしても、複雑なタスクはそれを使い切ってしまいます。agent はコードを生成するだけではなく、コードベースを理解し、自身の判断履歴を追跡し、ツールの出力を処理し、会話のコンテキストを維持します。こうした情報は、ウィンドウの拡張よりも速く増えていきます。
+Cửa sổ ngữ cảnh là hữu hạn. Điều này không thể giải quyết bằng nâng cấp mô hình — ngay cả khi kích thước cửa sổ tăng lên 1M token, các tác vụ phức tạp vẫn sẽ tiêu hao chúng. Vì các agent không chỉ tạo ra mã; họ hiểu codebase, theo dõi lịch sử quyết định của chính mình, xử lý kết quả công cụ và duy trì ngữ cảnh hội thoại. Tất cả thông tin này tăng trưởng nhanh hơn sự mở rộng cửa sổ.
 
-さらに深刻なのは、agent が生成する情報は重要度が均一ではないことです。途中の推論ステップには、判断の「なぜ」が含まれます。なぜ A ではなく B を選んだのか、なぜこのライブラリなのか、なぜ特定の最適化を見送ったのか、という理由です。一方、最終成果物は「何をしたか」しか表しません。つまりコードそのものです。多くの圧縮戦略は後者は残せても、前者を失います。次のセッションはコードを見られても、そのコードがなぜそう書かれたのかを知りません。その結果、意図的な設計判断を「改善」してしまうことがあります。
+Một vấn đề sâu hơn: thông tin mà agent tạo ra không đồng đều về mức độ quan trọng. Các bước lý luận trung gian chứa "tại sao" của các quyết định — tại sao chọn phương án B thay vì A, tại sao thư viện này thay vì kia, tại sao một tối ưu hóa cụ thể bị bỏ qua. Kết quả cuối cùng chỉ chứa "cái gì" — bản thân mã. Các chiến lược nén thường bảo tồn cái sau nhưng mất cái trước. Phiên tiếp theo thấy mã nhưng không biết tại sao nó được viết như vậy, và có thể "tối ưu hóa" đi một quyết định thiết kế cố ý.
 
-Anthropic は長時間稼働する agent の研究で興味深い現象を見つけています。agent がコンテキスト切れを感じると、「早期収束」的な振る舞いを示すのです。つまり、今やっている作業を急いで終わらせ、検証を省略したり、最適解ではなく手っ取り早い解決策を選んだりします。試験の制限時間が迫ってきて、残りの選択問題を勘で埋め始めるのに似ています。Anthropic はこれを「コンテキスト不安」と呼んでいます。
+Anthropic đã phát hiện ra điều hấp dẫn trong nghiên cứu về agent chạy lâu của họ: khi các agent cảm thấy ngữ cảnh đang cạn kiệt, chúng thể hiện hành vi "hội tụ sớm" — vội vàng hoàn thành công việc hiện tại, bỏ qua các bước xác minh, hoặc chọn giải pháp đơn giản thay vì giải pháp tối ưu. Giống như nhận ra thời gian sắp hết trong bài thi và nhanh chóng đoán các câu hỏi trắc nghiệm còn lại. Anthropic gọi đây là "lo lắng ngữ cảnh."
 
-## セッション継続の流れ
+## Luồng Tính Liên tục Phiên
 
-継続用の成果物がなければ、新しいセッションは毎回悲惨です。
+Không có các artifact tính liên tục, mọi phiên mới là một thảm họa:
 
 ```mermaid
 flowchart LR
-    S1["セッション 1<br/>途中の機能実装"] --> End1["コンテキストがほぼ満杯<br/>セッション終了"]
-    End1 --> S2["セッション 2 が新規開始"]
-    S2 --> Guess["ディレクトリを読み直し、テストを再実行し、<br/>なぜこう書かれたのかを推測する"]
-    Guess --> Drift["作業の重複と<br/>立ち上がりの遅さ"]
+    S1["Phiên 1<br/>tính năng đang làm dở"] --> End1["Ngữ cảnh gần đầy<br/>phiên kết thúc"]
+    End1 --> S2["Phiên 2 bắt đầu mới"]
+    S2 --> Guess["Đọc lại thư mục, chạy lại test,<br/>đoán tại sao mã được viết như vậy"]
+    Guess --> Drift["Công việc bị lặp lại<br/>và phục hồi chậm"]
 ```
 
-継続用の成果物があれば、新しいセッションは素早く再開できます。
+Với các artifact tính liên tục, các phiên mới có thể tiếp tục nhanh chóng:
 
 ```mermaid
 flowchart LR
-    Work["セッション 1 の作業"] --> Progress["PROGRESS.md<br/>完了 / 進行中 / 次の一手"]
-    Work --> Decisions["DECISIONS.md<br/>この方針を選んだ理由"]
-    Work --> Verify["検証メモ<br/>どの test が通り、どれが失敗したか"]
-    Work --> Commit["Git チェックポイント<br/>正確な repo 状態"]
+    Work["Công việc Phiên 1"] --> Progress["PROGRESS.md<br/>xong / đang làm / bước tiếp theo"]
+    Work --> Decisions["DECISIONS.md<br/>tại sao cách tiếp cận này được chọn"]
+    Work --> Verify["Ghi chú xác minh<br/>test nào vượt qua và thất bại"]
+    Work --> Commit["Git checkpoint<br/>trạng thái repo chính xác"]
 
-    Progress --> Rebuild["セッション 2 を再構築"]
+    Progress --> Rebuild["Tái xây dựng Phiên 2"]
     Decisions --> Rebuild
     Verify --> Rebuild
     Commit --> Rebuild
 
-    Rebuild --> Resume["新しいセッションがすばやく再開"]
+    Rebuild --> Resume["Phiên mới tiếp tục nhanh chóng"]
 ```
 
-## 主要概念
+## Các Khái niệm Cốt lõi
 
-- **コンテキストウィンドウは有限**: どれほど大きい値が謳われていても（128K、200K、1M など）、長いタスクはいずれそれを使い切ります。使い切った後は、圧縮するか（情報を失う）、リセットするか（新しいセッションにする）しかありません。どちらも何かを失います。
-- **継続用成果物（Continuity Artifacts）**: 新しいセッションが曖昧さなく前回の続きから始められるようにする、保存された状態ファイル群です。基本形は、進捗ログ + 検証記録 + 次のアクションです。まさに職人の日誌です。
-- **再構築コスト（Rebuild Cost）**: 新しいセッションが実行可能な状態に達するまでの時間です。良い harness なら、この再構築コストを 15 分から 3 分程度まで圧縮できます。
-- **ドリフト（Drift）**: agent の理解と、実際のコードベース状態の差です。セッションの境界ごとにドリフトは発生し、放置すると蓄積します。
-- **コンテキスト不安（Context Anxiety）**: Anthropic が観測した現象で、認知上のコンテキスト上限に近づくと agent が早期収束の行動を示し、情報を失う前にタスクを早めに終わらせようとします。非合理的なリソース不安です。
-- **圧縮 vs. リセット（Compaction vs. Reset）**: 圧縮は同じセッション内でコンテキストを要約します（「何をしたか」は残るが、「なぜ」は失われやすい）。リセットは新しいセッションを開き、保存済み成果物から再構築します（きれいだが、成果物の完全性に依存します）。
+- **Cửa sổ ngữ cảnh là hữu hạn**: Bất kể kích thước cửa sổ nào được tuyên bố (128K, 200K, 1M), các tác vụ dài cuối cùng sẽ tiêu hao chúng. Sau khi tiêu hao, cần phải nén (mất thông tin) hoặc đặt lại (phiên mới). Cả hai đều mất điều gì đó.
+- **Artifact tính liên tục (Continuity Artifacts)**: Các tệp trạng thái được lưu trữ cho phép phiên mới tiếp tục không mơ hồ từ nơi phiên cuối kết thúc. Dạng cơ bản: nhật ký tiến độ + bản ghi xác minh + các hành động tiếp theo. Nhật ký của thợ thủ công đó.
+- **Chi phí Tái xây dựng (Rebuild Cost)**: Thời gian phiên mới cần để đạt đến trạng thái có thể thực thi. Harness tốt có thể nén chi phí tái xây dựng từ 15 phút xuống còn 3 phút.
+- **Trôi dạt (Drift)**: Khoảng cách giữa sự hiểu biết của agent và trạng thái thực tế của kho lưu trữ mã. Mỗi ranh giới phiên tạo ra trôi dạt; nếu không kiểm soát, nó sẽ tích lũy.
+- **Lo lắng ngữ cảnh (Context Anxiety)**: Hiện tượng được Anthropic quan sát — các agent thể hiện hành vi hội tụ sớm khi tiếp cận giới hạn ngữ cảnh nhận thức, kết thúc tác vụ sớm để tránh mất thông tin. Đó là sự lo lắng tài nguyên phi lý.
+- **Nén vs. Đặt lại (Compaction vs. Reset)**: Nén tóm tắt ngữ cảnh trong cùng phiên (giữ "cái gì," có thể mất "tại sao"); đặt lại mở phiên mới tái xây dựng từ trạng thái được lưu trữ (sạch nhưng phụ thuộc vào tính hoàn chỉnh của artifact).
 
-## 継続が壊れると何が起きるか
+## Điều Gì Xảy ra Khi Tính Liên tục Bị Phá vỡ
 
-前回のセッションは、3つのアプローチを分析して B 案を選ぶために、かなりのコンテキスト予算を使っていました。ところが今回の agent はその分析を知らないため、不完全な情報をもとに再び判断してしまい、A 案を選ぶかもしれません。まるで記憶を失った職人が、なぜ赤いレンガが選ばれたのかを覚えておらず、今日は青いレンガのほうがきれいだと思って、昨日の壁を壊して建て直すようなものです。
+Phiên trước đã dành ngân sách ngữ cảnh đáng kể để phân tích ba cách tiếp cận và chọn phương án B. Phiên này của agent không biết về phân tích đó và có thể quyết định lại dựa trên thông tin không đầy đủ — có thể chọn phương án A. Giống như thợ thủ công mất ký ức không nhớ tại sao gạch đỏ được chọn, nhìn vào gạch xanh ngày hôm nay và nghĩ chúng đẹp hơn, và tháo bức tường của ngày hôm qua để xây lại.
 
-さらに悪いのは、作業の重複です。ある作業がすでに完了しているのか確信が持てず、同じ作業をやり直してしまうことがあります。あるいはもっと悪く、途中まで進めた後で既存実装と衝突していることに気づき、やり直しになることもあります。建設現場では、2つの班が同時に同じ壁を作ることはできませんが、進捗記録がなければ、新しい班は誰かがすでにその壁を担当していることすら分かりません。
+Thậm chí còn tệ hơn là công việc trùng lặp. Agent không chắc chắn liệu một số công việc đã hoàn thành chưa và làm lại. Hoặc tệ hơn — làm một nửa, phát hiện ra xung đột với triển khai hiện có, và phải làm lại. Trên công trường, hai đội không thể xây cùng một bức tường đồng thời — nhưng không có bản ghi tiến độ, đội mới không biết có ai đó đang làm việc đó rồi.
 
-複数セッションにまたがると、実装方針そのものが静かに要件からずれていくこともあります。新しいセッションごとに、プロジェクト目標の理解が少しずつ異なるからです。伝言ゲームを思い浮かべてください。10人も伝えると、「コーヒーを一杯買ってきて」が「コーヒーメーカーを買ってきて」になってしまうかもしれません。
+Qua nhiều phiên, hướng triển khai có thể đã âm thầm trôi xa khỏi yêu cầu ban đầu. Mỗi phiên mới có sự hiểu biết hơi khác nhau về mục tiêu dự án. Giống như trò chơi truyền tin — sau mười người truyền tin, "đón tôi một ly cà phê" có thể trở thành "mua cho tôi máy pha cà phê."
 
-検証の抜けもあります。前回のセッションでどの test が通り、どの test が失敗し、なぜ失敗したのかが記録されていません。新しいセッションは現在の状態を理解するために、すべての検証をやり直さなければなりません。毎回ゼロから診断し直すことになり、そのたびに貴重なコンテキストが失われます。
+Cũng có khoảng cách xác minh. Kết quả xác minh của phiên trước (test nào vượt qua, test nào thất bại, tại sao thất bại) không được ghi lại. Phiên mới phải chạy lại tất cả xác minh để hiểu trạng thái hiện tại. Mỗi phiên chẩn đoán lại từ đầu, mỗi lần lãng phí ngữ cảnh quý báu.
 
-OpenAI と Anthropic の両方が、構造化された状態保存を自分たちの資料で重視しています。OpenAI の harness engineering に関する記事では、repo を「活動記録」として扱い、各操作の結果が repo に追跡可能な証拠を残すべきだとしています。Anthropic の長時間稼働 agent に関する文書では、特に「handoff file」を推奨しており、現在の状態、既知の問題、次のアクションを含む構造化された文書を用意するよう勧めています。
+Cả OpenAI và Anthropic đều nhấn mạnh lưu trữ trạng thái có cấu trúc trong tài liệu của họ. Bài viết về harness engineering của OpenAI coi kho lưu trữ là "bản ghi hoạt động" — kết quả của mỗi hoạt động phải để lại bằng chứng có thể truy vết trong repo. Tài liệu về agent chạy lâu của Anthropic đặc biệt khuyến nghị "tệp bàn giao" — các tài liệu có cấu trúc chứa trạng thái hiện tại, các vấn đề đã biết và các hành động tiếp theo.
 
-## 記憶を失う職人のための日誌
+## Nhật ký Cho Thợ thủ công Mất Ký ức
 
-核となる考え方は、**agent を記憶を失った腕の良い技術者として扱うこと**です。agent が「退勤」する前に、次の agent がすぐに続けられるよう、重要情報を記録しておく必要があります。
+Cách tiếp cận cốt lõi: **Đối xử với agent như một kỹ sư tài giỏi bị mất ký ức.** Trước khi nó "tan ca," nó phải ghi lại thông tin quan trọng để agent "ca tiếp theo" có thể tiếp tục nhanh chóng.
 
-**ツール 1: 進捗ファイル（PROGRESS.md）**。継続用成果物の基本であり、日誌の中心です。
+**Công cụ 1: Tệp tiến độ (PROGRESS.md).** Artifact tính liên tục cơ bản nhất — cốt lõi của nhật ký:
 
 ```markdown
-# プロジェクト進捗
+# Tiến độ Dự án
 
-## 現在の状態
-- 最新 commit: abc1234 (feat: add user preferences endpoint)
-- test 状態: 42/43 が通過済み (test_pagination_edge_case が失敗)
-- lint: 通過
+## Trạng thái Hiện tại
+- Commit mới nhất: abc1234 (feat: add user preferences endpoint)
+- Trạng thái test: 42/43 vượt qua (test_pagination_edge_case thất bại)
+- Lint: vượt qua
 
-## 完了済み
-- [x] User model と database migration
-- [x] 基本 CRUD endpoints
-- [x] auth middleware の統合
+## Đã Hoàn thành
+- [x] User model và database migration
+- [x] Các endpoint CRUD cơ bản
+- [x] Tích hợp auth middleware
 
-## 進行中
-- [ ] pagination 機能 (90% - edge case test が失敗)
+## Đang Thực hiện
+- [ ] Tính năng phân trang (90% - edge case test thất bại)
 
-## 既知の問題
-- test_pagination_edge_case が空の result set で 500 を返す
-- 削除済み user を一覧に含めるべきか要確認
+## Vấn đề Đã biết
+- test_pagination_edge_case trả về 500 trên result sets trống
+- Cần xác nhận liệu người dùng đã xóa có nên xuất hiện trong danh sách không
 
-## 次のステップ
-1. pagination の edge case を修正する
-2. "include deleted users" query parameter を追加する
-3. API documentation を更新する
+## Các Bước Tiếp theo
+1. Sửa lỗi edge case phân trang
+2. Thêm tham số truy vấn "include deleted users"
+3. Cập nhật tài liệu API
 ```
 
-**ツール 2: 決定ログ（DECISIONS.md）**。重要な設計判断と、その理由を記録します。詳細な設計書は不要です。「何を決めたか、なぜそうしたか、いつ決めたか」だけで十分です。日誌のメモのようなものです。
+**Công cụ 2: Nhật ký quyết định (DECISIONS.md).** Ghi lại các quyết định thiết kế quan trọng và lý do. Không cần tài liệu thiết kế chi tiết — chỉ cần "quyết định gì, tại sao, khi nào" — các ghi chú trong nhật ký:
 
 ```markdown
-# 設計上の決定
+# Các Quyết định Thiết kế
 
-## 2024-01-15: ユーザー設定の cache に Redis を使う
-- 理由: 読み取り頻度が高い（API 呼び出しごと）、データサイズが小さい
-- 却下した案: PostgreSQL materialized view（変更頻度が高く、保守コストに見合わない）
-- 制約: cache TTL は 5 分、書き込み時に能動的に無効化する
+## 2024-01-15: Sử dụng Redis để cache tùy chọn người dùng
+- Lý do: Tần suất đọc cao (mỗi lần gọi API), kích thước dữ liệu nhỏ
+- Phương án bị từ chối: PostgreSQL materialized view (tần suất thay đổi cao làm chi phí bảo trì không xứng đáng)
+- Ràng buộc: Cache TTL 5 phút, vô hiệu hóa chủ động khi ghi
 ```
 
-**ツール 3: Git commit を checkpoint として使う**。原子的な作業単位が終わるたびに commit します。commit message には、何をしたかだけでなく、なぜそれをしたかも書く必要があります。これはコストのかからない、自動版管理された状態スナップショットです。
+**Công cụ 3: Git commit như checkpoint.** Commit sau khi hoàn thành mỗi đơn vị công việc nguyên tử. Commit message phải giải thích những gì đã được thực hiện và tại sao. Đây là các snapshot trạng thái miễn phí, được phiên bản hóa tự động.
 
-**ツール 4: init.sh または harness の初期化フロー**。`AGENTS.md` に「セッション開始時」と「セッション終了時」の習慣を明示します。
+**Công cụ 4: init.sh hoặc luồng khởi tạo harness.** Chỉ định trong `AGENTS.md` các thói quen "bắt đầu ca" và "kết thúc ca":
 
 ```markdown
-## セッション開始時（始業）
-1. PROGRESS.md を読んで現在の状態を確認する
-2. DECISIONS.md を読んで重要な判断を確認する
-3. make check を実行して repo が整合状態にあることを確認する
-4. PROGRESS.md の「次のステップ」から作業を再開する
+## Khi bắt đầu phiên (bắt đầu ca)
+1. Đọc PROGRESS.md để biết trạng thái hiện tại
+2. Đọc DECISIONS.md để biết các quyết định quan trọng
+3. Chạy make check để xác nhận repo ở trạng thái nhất quán
+4. Tiếp tục từ phần "Các Bước Tiếp theo" của PROGRESS.md
 
-## セッション終了時（終業）
-1. PROGRESS.md を更新する
-2. make check を実行して整合状態を確認する
-3. 完了した作業をすべて commit する
+## Trước khi kết thúc phiên (kết thúc ca)
+1. Cập nhật PROGRESS.md
+2. Chạy make check để xác nhận trạng thái nhất quán
+3. Commit tất cả công việc đã hoàn thành
 ```
 
-**ハイブリッド戦略**: すべてのタスクでコンテキストリセットが必要なわけではありません。短いタスク（30分未満）は 1 セッションで完了できます。長いタスク（複数セッションにまたがるもの）は、継続性のために進捗ファイルと決定ログを使う必要があります。判断基準は、タスクがウィンドウの 60% を超えるなら、handoff の準備を始めることです。
+**Chiến lược hỗn hợp**: Không phải mọi tác vụ đều cần đặt lại ngữ cảnh. Các tác vụ ngắn (dưới 30 phút) có thể hoàn thành trong một phiên. Các tác vụ dài (trải dài qua các phiên) phải sử dụng tệp tiến độ và nhật ký quyết định để tính liên tục. Tiêu chí quyết định: nếu một tác vụ cần hơn 60% cửa sổ, hãy bắt đầu chuẩn bị bàn giao.
 
-### コンテキスト不安をさらに深掘りする
+### Tìm hiểu Sâu hơn về Lo lắng Ngữ cảnh
 
-Anthropic の 2026年3月の研究では、コンテキスト不安の具体的な現れがさらに示されました。Sonnet 4.5 では、コンテキストがウィンドウ上限に近づくと、agent は強い「早期収束」行動を示します。試験終了間際だと気づいて、選択問題の答えを適当に埋め始めるようなものです。
+Nghiên cứu tháng 3 năm 2026 của Anthropic tiếp tục tiết lộ các biểu hiện cụ thể của lo lắng ngữ cảnh: trên Sonnet 4.5, khi ngữ cảnh tiếp cận giới hạn cửa sổ, agent thể hiện hành vi "hội tụ sớm" mạnh. Giống như nhận ra thời gian gần hết trong bài thi và nhanh chóng điền câu trả lời ngẫu nhiên vào các câu trắc nghiệm.
 
-これに対処する方法は 2 つあります。
+Hai chiến lược giải quyết điều này:
 
-**圧縮（Compaction）**: 同じセッション内で会話の前半を要約します。利点は継続性を保てることです。agent は「何をしたか」を見られます。欠点は、要約の中で「なぜ」が失われがちなことです。なぜ A ではなく B を選んだのか、なぜ特定の最適化を見送ったのか、という理由です。さらに重要なのは、圧縮ではコンテキスト不安そのものを取り除けないことです。agent はかつて大きなコンテキストを持っていたことを知っているため、心理的には依然として急いで終わらせようとしがちです。
+**Nén (Compaction)**: Tóm tắt hội thoại đầu trong cùng phiên. Ưu điểm: duy trì tính liên tục, agent có thể thấy "cái gì." Nhược điểm: "tại sao" thường bị mất trong các bản tóm tắt — tại sao phương án B được chọn thay vì A, tại sao một tối ưu hóa cụ thể bị bỏ qua. Quan trọng hơn, nén không loại bỏ lo lắng ngữ cảnh — agent biết ngữ cảnh từng lớn, và về mặt tâm lý vẫn có xu hướng vội vàng kết thúc.
 
-**コンテキストリセット（Context Reset）**: コンテキストを完全に消し、新しいセッションを開き、保存された成果物から再構築します。利点は、心理状態がきれいにリセットされることです。新しいセッションには「時間が足りない」という不安がありません。欠点は、handoff 成果物が完全であることに依存する点です。日誌に重要情報が欠けていると、新しいセッションは誤った方向で時間を浪費する可能性があります。
+**Đặt lại ngữ cảnh (Context Reset)**: Xóa hoàn toàn ngữ cảnh, mở phiên mới, tái xây dựng từ các artifact được lưu trữ. Ưu điểm: trạng thái tâm trí sạch — phiên mới không có lo lắng "tôi sắp hết thời gian." Nhược điểm: phụ thuộc vào tính hoàn chỉnh của artifact bàn giao. Nếu nhật ký thiếu thông tin quan trọng, phiên mới có thể lãng phí thời gian đi theo hướng sai.
 
-Anthropic の公開記事では、Sonnet 4.5 の場合、コンテキスト不安は圧縮だけでは十分に抑えられず、コンテキストリセットが harness 設計の重要な要素になったと説明されています。一方で Opus 4.5 では、この挙動はかなり軽減され、リセットに頼らなくても圧縮でコンテキストを扱えたとされています。つまり、**harness 設計は対象モデルに特化して考える必要があり、万能のテンプレートでは足りない**ということです。
+Dữ liệu thực tế của Anthropic: đối với Sonnet 4.5, lo lắng ngữ cảnh đủ nghiêm trọng đến mức nén một mình không đủ — đặt lại ngữ cảnh trở thành thành phần quan trọng của thiết kế harness. Nhưng đối với Opus 4.5, hành vi này giảm đáng kể, và nén có thể quản lý ngữ cảnh mà không cần dựa vào đặt lại. Điều này có nghĩa là: **thiết kế harness cần sự hiểu biết cụ thể về mô hình mục tiêu, không phải một mẫu chung cho tất cả.**
 
-> 参考: [Anthropic: Harness design for long-running application development](https://www.anthropic.com/engineering/harness-design-long-running-apps)
+> Nguồn: [Anthropic: Harness design for long-running application development](https://www.anthropic.com/engineering/harness-design-long-running-apps)
 
-## 実例
+## Ví dụ Thực tế
 
-ユーザー認証つきの blog system を実装するよう agent に依頼したとします。12 個の機能ポイントがあり、5 セッションかかる見込みです。
+Một agent được giao nhiệm vụ triển khai hệ thống blog với xác thực người dùng — 12 điểm tính năng, ước tính cần 5 phiên.
 
-**日誌なし**: セッション 1 では user model と基本 route を実装します。セッション 2 が始まると、agent は auth middleware の interface contract を覚えておらず、前回の設計意図を推測するのに約15分使います。セッション 3 になるころには、累積したドリフトのせいで、完了済みの機能を再実装し始めます。セッション 5 では、repo には余分なコードが増えているのに、肝心の auth 機能はまだ end-to-end test を通っていません。12 個の機能ポイントのうち 7 個しか完了せず、3 個には隠れた正しさの問題があります。毎日記録をつけない職人のようなものです。5日目には現場が混乱し、いくつかの壁は二重に作られ、本来作るべき壁のいくつかは一度も着手されません。
+**Không có nhật ký**: Phiên 1 triển khai user model và các route cơ bản. Phiên 2 bắt đầu mà agent không nhớ hợp đồng giao diện của auth middleware, dành ~15 phút để suy ra ý định thiết kế trước. Đến phiên 3, trôi dạt tích lũy khiến agent bắt đầu triển khai lại các tính năng đã hoàn thành. Đến phiên 5, repo chứa nhiều mã dư thừa nhưng tính năng auth cốt lõi vẫn chưa vượt qua test end-to-end. Chỉ 7 trong 12 điểm tính năng hoàn thành, 3 có vấn đề tính đúng đắn ẩn. Giống như thợ thủ công không bao giờ ghi nhật ký — đến ngày thứ năm, công trường là hỗn loạn, một số bức tường được xây hai lần, một số lẽ ra phải được xây nhưng chưa bao giờ bắt đầu.
 
-**日誌あり**: 進捗ファイル、決定ログ、検証記録、git checkpoint を使います。状態報告は各セッションの終わりに自動更新されます。セッション 2 の再構築コストは約3分まで下がります。セッション 5 では、12 個すべての機能ポイントが完了し、検証も済みます。
+**Với nhật ký**: Sử dụng tệp tiến độ, nhật ký quyết định, bản ghi xác minh và git checkpoint. Báo cáo trạng thái được cập nhật tự động ở cuối mỗi phiên. Chi phí tái xây dựng của phiên 2 giảm xuống còn ~3 phút. Đến phiên 5, tất cả 12 điểm tính năng hoàn thành và được xác minh.
 
-定量比較では、再構築時間は約78%削減、機能完了率は 58% から 100% に向上、隠れた不具合率は 43% から 8% に低下します。職人は相変わらず記憶を失いますが、日誌があれば、毎日が昨日の続きから始まり、最初からやり直すことはありません。
+So sánh định lượng: thời gian tái xây dựng giảm ~78%, tỷ lệ hoàn thành tính năng từ 58% lên 100%, tỷ lệ lỗi ẩn từ 43% xuống còn 8%. Thợ thủ công vẫn mất ký ức, nhưng với nhật ký, mỗi ngày bắt đầu từ nơi ngày hôm qua dừng lại, không phải từ đầu.
 
-## 要点
+## Những Điểm chính cần Nhớ
 
-- コンテキストウィンドウは有限な資源です。長いタスクは複数セッションにまたがり、そのたびに情報は失われます。毎日忘れてしまう職人のように、これは避けられない現実です。
-- 解決策は、より大きなウィンドウではなく、より良い状態保存です。進捗ファイル + 決定ログ + git checkpoint。記憶を失う職人に、信頼できる日誌を持たせるのです。
-- agent は記憶を失った技術者として扱います。「退勤」前に、何をしたか、なぜそうしたか、次に何をするかを記録してください。
-- 再構築コストは重要な指標です。良い harness は、新しいセッションを 3 分以内に実行可能な状態へ導くべきです。
-- ハイブリッド戦略: 短いタスクは 1 セッションで、長いタスクは構造化された成果物で継続性を確保します。
+- Cửa sổ ngữ cảnh là tài nguyên hữu hạn. Các tác vụ dài sẽ trải dài qua nhiều phiên, và các phiên sẽ mất thông tin — giống như thợ thủ công quên mỗi ngày, đây là thực tế khách quan.
+- Giải pháp không phải là cửa sổ lớn hơn — mà là lưu trữ trạng thái tốt hơn. Tệp tiến độ + nhật ký quyết định + git checkpoint — đưa cho thợ thủ công mất ký ức một cuốn nhật ký đáng tin cậy.
+- Đối xử với agent như kỹ sư bị mất ký ức: trước khi "tan ca," hãy ghi lại những gì đã làm, tại sao, và tiếp theo là gì.
+- Chi phí tái xây dựng là chỉ số chính. Harness tốt phải đưa các phiên mới đến trạng thái có thể thực thi trong vòng 3 phút.
+- Chiến lược hỗn hợp: các tác vụ ngắn trong phiên, các tác vụ dài với artifact có cấu trúc để tính liên tục.
 
-## さらに読む
+## Đọc thêm
 
 - [Anthropic: Effective Harnesses for Long-Running Agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
 - [OpenAI: Harness Engineering](https://openai.com/index/harness-engineering/)
@@ -171,10 +171,10 @@ Anthropic の公開記事では、Sonnet 4.5 の場合、コンテキスト不�
 - [Claude Code Documentation](https://docs.anthropic.com/en/docs/claude-code)
 - [HumanLayer: Harness Engineering for Coding Agents](https://humanlayer.dev/articles/harness-engineering-for-coding-agents/)
 
-## 演習
+## Bài tập
 
-1. **継続性の喪失を測定する**: 少なくとも 3 セッション必要な開発タスクを 1 つ選びます。継続用成果物を一切与えず、各セッション開始時に agent が「前回何が起きたのか」を理解するためにどれだけコンテキストを使うかを記録してください。各セッション後に進捗ファイルを作成し、次のセッションがそこから始まるようにします。進捗ファイルの有無による再構築コストを比較してください。
+1. **Đo lường mất tính liên tục**: Chọn một tác vụ phát triển cần ít nhất 3 phiên. Không cung cấp bất kỳ artifact tính liên tục nào, ghi lại ở mỗi lần bắt đầu phiên xem agent dành bao nhiêu ngữ cảnh để "tìm hiểu chuyện gì đã xảy ra lần trước." Sau mỗi phiên, tạo một tệp tiến độ và để phiên tiếp theo bắt đầu từ đó. So sánh chi phí tái xây dựng có và không có tệp tiến độ.
 
-2. **handoff テンプレートを設計する**: 最小限の handoff テンプレートを、4 つの項目で設計してください。repo 状態（commit hash）、runtime 状態（test の通過率）、障害、次のアクションです。完全に新しい agent セッションに、このテンプレートだけを使ってプロジェクト状態を復元させてください。復元時に遭遇した曖昧さを記録し、テンプレートを反復的に改善してください。
+2. **Thiết kế mẫu bàn giao**: Thiết kế một mẫu bàn giao tối giản với bốn trường: trạng thái repo (hash commit), trạng thái runtime (tỷ lệ vượt qua test), các chướng ngại vật, các hành động tiếp theo. Để một phiên agent hoàn toàn mới phục hồi trạng thái dự án chỉ sử dụng mẫu này. Ghi lại các điểm mơ hồ gặp phải trong quá trình phục hồi, cải tiến mẫu lặp đi lặp lại.
 
-3. **ハイブリッド戦略を実験する**: 5 セッションの開発タスクで、次の 3 つの戦略を比較してください。(a) 毎回新しいセッションを開始し、進捗ファイルを使う、(b) できるだけ 1 セッションで進める（コンテキスト圧縮）、(c) ハイブリッド戦略（短いタスクは 1 セッション内、長いタスクは複数セッション + 進捗ファイル）。再構築時間、機能完了率、判断の一貫性を比較してください。
+3. **Thí nghiệm chiến lược hỗn hợp**: Trong một tác vụ phát triển 5 phiên, so sánh ba chiến lược: (a) luôn bắt đầu phiên mới + tệp tiến độ, (b) làm càng nhiều càng tốt trong một phiên (nén ngữ cảnh), (c) chiến lược hỗn hợp (tác vụ ngắn trong phiên, tác vụ dài xuyên phiên + tệp tiến độ). So sánh thời gian tái xây dựng, tỷ lệ hoàn thành tính năng và tính nhất quán của quyết định.

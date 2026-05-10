@@ -1,99 +1,110 @@
-[英語版](https://walkinglabs.github.io/learn-harness-engineering/en/) · [中国語](https://walkinglabs.github.io/learn-harness-engineering/zh/) · [ロシア語版](https://walkinglabs.github.io/learn-harness-engineering/ru/) · [ベトナム語版](https://walkinglabs.github.io/learn-harness-engineering/vi/) · [韓国語版](https://walkinglabs.github.io/learn-harness-engineering/ko/)
+[English](https://walkinglabs.github.io/learn-harness-engineering/en/) · [中文](https://walkinglabs.github.io/learn-harness-engineering/zh/) · [Русский](https://walkinglabs.github.io/learn-harness-engineering/ru/) · [Tiếng Việt](https://walkinglabs.github.io/learn-harness-engineering/vi/) · [한국어](https://walkinglabs.github.io/learn-harness-engineering/ko/)
 
 # Learn Harness Engineering
 
-> **これは、環境、状態、検証、制御の仕組みを通じて、AI コーディングエージェント（Coding Agents）をより確実に動かす方法を体系的に学ぶプロジェクト型コースです。**
+> **这是一门项目制课程：系统学习如何通过环境、状态、验证与控制机制，让 AI 编程智能体（Coding Agents）更可靠地工作。**
 
-Learn Harness Engineering は、AI コーディングエージェントを実際の開発に落とし込むための方法に特化したコースです。本コースでは、業界最前線の Harness Engineering（ハーネスエンジニアリング）の理論と実践を深く研究・整理しており、参考資料には次のものが含まれます。
+Learn Harness Engineering 是一门专注于 AI 编程智能体工程化落地的课程。本课程深度研究并总结了业内最前沿的 Harness Engineering（工具马具/脚手架工程）理论与实践，参考资料包括：
 
 - [OpenAI: Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/)
 - [Anthropic: Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
 - [Anthropic: Harness design for long-running application development](https://www.anthropic.com/engineering/harness-design-long-running-apps)
 - [Awesome Harness Engineering](https://github.com/walkinglabs/awesome-harness-engineering)
 
-[**公式サイトとドキュメント (English & 中国語)**](https://walkinglabs.github.io/learn-harness-engineering/) | [**English README**](./README.md)
+[**官方网站及文档 (English & 中文)**](https://walkinglabs.github.io/learn-harness-engineering/) | [**English README**](./README.md)
 
-> **すぐ始めたいですか？** [`skills/harness-creator/`](./skills/) の skill を使えば、数分で自分のプロジェクトに本番品質の harness（AGENTS.md、機能一覧、init.sh、検証ワークフロー）を組み込めます。
-
----
-
-<a id="界面速览"></a>
-## ✨ 画面プレビュー
-
-### 🏠 コースホーム
-> コース全体のシラバスと核となる考え方をまとめ、明快な学習パスで素早く入門できます。
-
-![コースホームのプレビュー](./docs/public/screenshots/readme/zh-home.png)
-
-### 📖 没入感のある講義
-> 実際の課題と実プロジェクト（Project 01 など）を組み合わせた深掘り解説で、没入感のある読み進めやすい学習体験を提供します。
-
-![講義プレビュー](./docs/public/screenshots/readme/zh-lecture-01.png)
-
-### 🗂️ そのまま使えるリソース集
-> すぐに再利用できる中国語テンプレートと参考設定を整理し、AI Agent の多輪開発で起こりがちな「途中で止まる」「コンテキストが切れる」といった厄介な問題に効きます。
-
-![拡張リソース集のプレビュー](./docs/public/screenshots/readme/zh-resources.png)
-
-## PDF ビルドと Release パイプライン
-
-このリポジトリには、コース PDF のビルド手順がすでに追加されています。
-
-- ローカルで `npm run pdf:build` を実行すると、英語版と中国語版の両方のコース PDF が生成されます。
-- 出力先は `artifacts/pdfs/` です。
-- README 内のスクリーンショットを更新したい場合は、`npm run screenshots:readme` を実行してください。
-- GitHub Actions のワークフロー [`release-course-pdfs.yml`](./.github/workflows/release-course-pdfs.yml) で PDF を自動ビルドし、成果物を GitHub Release にアップロードできます。
+> **快速上手？** [`skills/harness-creator/`](./skills/) 技能可以帮你在几分钟内为自己的项目搭建一套生产级的 harness（AGENTS.md、功能清单、init.sh、验证工作流）。
 
 ---
 
-## モデルは強力だが、Harness がないと頼りにならない
+## 目录
 
-多くの人が高い授業料を払ってようやく理解する事実があります。**世界最強のモデルでも、適切な作業環境がなければ、実際のエンジニアリングタスクではやはり失敗します。**
+- [✨ 界面速览](#-界面速览)
+- [Harness Engineering 到底是什么](#harness-engineering-到底是什么)
+- [快速开始：今天就能改善你的 agent](#快速开始今天就能改善你的-agent)
+- [贯穿项目：一个真实的应用](#贯穿项目一个真实的应用)
+- [学习路径](#学习路径)
+- [课程大纲](#课程大纲)
+- [Skills](#skills)
+- [其他课程](#其他课程)
 
-こういう経験はたぶんあるはずです。Claude や GPT にタスクを渡すと、一見うまくやっているように見えます。ファイルを読み、コードを書き、一生懸命に見える。ところが、問題が起こる。手順を一つ飛ばす。テストを壊す。「完了しました」と言ったのに、実際には何も動いていない。結局、後始末に費やす時間のほうが、自分でやるより長くなります。
+---
 
-これはモデルの問題ではありません。harness の問題です。
+## ✨ 界面速览
 
-証拠ははっきりしています。Anthropic は対照実験を行いました。同じモデル（Opus 4.5）、同じプロンプト（「2D レトロゲームエディタを作る」）。harness なしでは、20 分で 9 ドルを使い、ゲームの核となる機能は動きませんでした。完全な harness（planner + generator + evaluator の 3-agent 構成）を加えると、6 時間で 200 ドルかかりましたが、実際に遊べるゲームができました。モデルは変わっていません。変わったのは harness です。
+### 🏠 课程主页
+> 包含完整的课程大纲与核心理念介绍，清晰的学习路径助你快速入门。
 
-OpenAI も Codex を通じて同じ結論に至っています。harness がよく組まれたリポジトリでは、同じモデルが「不安定」から「信頼できる」へと変わります。単なる「少し良くなった」ではなく、質的な変化です。
+![课程主页预览](./docs/public/screenshots/readme/zh-home.png)
 
-**このコースでは、その環境をどう組むかを学びます。**
+### 📖 沉浸式讲义
+> 结合真实痛点与实战项目（如 Project 01）的深度解析，提供沉浸式的阅读与学习体验。
+
+![课程讲义预览](./docs/public/screenshots/readme/zh-lecture-01.png)
+
+### 🗂️ 开箱即用的资料库
+> 整理了可直接复用的中文模板与参考配置，专治 AI Agent 在多轮开发中的“做一半停下”、“上下文断裂”等疑难杂症。
+
+![扩展资料库预览](./docs/public/screenshots/readme/zh-resources.png)
+
+## PDF 构建与 Release 流水线
+
+仓库里现在已经补上了课程 PDF 的构建链路。
+
+- 本地执行 `npm run pdf:build`，会生成中英文两份课程 PDF。
+- 输出目录是 `artifacts/pdfs/`。
+- 如果需要刷新 README 里的截图，执行 `npm run screenshots:readme`。
+- GitHub Actions 工作流 [`release-course-pdfs.yml`](./.github/workflows/release-course-pdfs.yml) 可以自动构建 PDF，并把产物上传到 GitHub Release。
+
+---
+
+## 模型很强，但 Harness 让它靠谱
+
+有一个很多人交过学费才明白的事实：**世界上最强的模型，如果没有一个合适的工作环境，依然会在真实工程任务中翻车。**
+
+你多半见过这种情况。你给 Claude 或 GPT 一个任务，它看起来干得不错——读文件、写代码、很努力。然后出问题了。它跳过了一个步骤。它搞坏了一个测试。它说"完成了"但实际上什么都没跑通。你花在收拾烂摊子上的时间比自己做还多。
+
+这不是模型的问题，这是 harness 的问题。
+
+证据很明确。Anthropic 做过一组对照实验：同一个模型（Opus 4.5），同一段提示词（"做一个 2D 复古游戏编辑器"）。没有 harness 的情况下，20 分钟花了 $9，结果游戏核心功能跑不起来。加上完整 harness（planner + generator + evaluator 三 agent 架构），6 小时花了 $200，做出来的游戏可以正常游玩。模型没换，换的是 harness。
+
+OpenAI 用 Codex 也得出了同样结论：在一个 harness 搭得好的仓库里，同一个模型从"不可靠"变成"可靠"——不是"好了一点"，是质变。
+
+**这门课教你怎么搭建那个环境。**
 
 ```text
-                       HARNESS モード
+                       HARNESS 模式
                        ============
 
-    あなた --> タスクを渡す --> agent が harness ファイルを読む --> agent が実行を開始
-                                                        |
-                                              harness が各ステップを制御：
-                                              |
-                                              +--> 指示：何を、どの順番でやるか
-                                              +--> 範囲：一度に 1 つの機能、脱線しない
-                                              +--> 状態：進捗ログ、機能一覧、git 履歴
-                                              +--> 検証：テスト、lint、型チェック、スモークテスト
-                                              +--> ライフサイクル：開始時に初期化、終了時に引き継ぎを残す
-                                              |
-                                              v
-                                         agent は検証に合格してから
-                                         だけ止まる
+    你 --> 给出任务 --> agent 读取 harness 文件 --> agent 开始执行
+                                                    |
+                                          harness 管控每一步：
+                                          |
+                                          +--> 指令：做什么、按什么顺序
+                                          +--> 范围：一次一个功能，不越界
+                                          +--> 状态：进度日志、功能清单、git 历史
+                                          +--> 验证：测试、lint、类型检查、冒烟测试
+                                          +--> 周期：开工时初始化，结束时留交接
+                                          |
+                                          v
+                                     agent 只在验证通过后
+                                     才会停下来
 ```
 
 ---
 
-<a id="harness-engineering-到底是什么"></a>
-## Harness Engineering とは何か
+## Harness Engineering 到底是什么
 
-Harness engineering とは、モデルの周囲に一式の作業環境を組み立て、信頼できる結果を出させることです。より良いプロンプトを書くことだけが目的ではなく、モデルが動くシステム全体を設計することです。
+Harness engineering 是围绕模型搭建一整套工作环境，让它产出可靠的结果。不只是写更好的提示词，而是设计模型运行所在的系统。
 
-ひとつの harness は、次の 5 つのサブシステムから成ります。
+一个 harness 包含五个子系统：
 
 ```text
     ┌─────────────────────────────────────────────────────────────────┐
     │                          HARNESS                                │
     │                                                                 │
     │   ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐ │
-    │   │   指示       │  │     状態     │  │       検証           │ │
+    │   │    指令       │  │     状态     │  │       验证           │ │
     │   │              │  │              │  │                      │ │
     │   │ AGENTS.md    │  │ progress.md  │  │ tests + lint         │ │
     │   │ CLAUDE.md    │  │ feature_list │  │ type-check           │ │
@@ -102,408 +113,372 @@ Harness engineering とは、モデルの周囲に一式の作業環境を組み
     │   └──────────────┘  └──────────────┘  └──────────────────────┘ │
     │                                                                 │
     │   ┌──────────────┐  ┌──────────────────────────────────────┐   │
-    │   │     範囲      │  │          セッションのライフサイクル  │   │
+    │   │     范围      │  │          会话生命周期                 │   │
     │   │              │  │                                      │   │
-    │   │ 一度に 1 つ  │  │ 開始時に init.sh を実行             │   │
-    │   │ の機能      │  │ 終了時にクリーンアップの確認を行う   │   │
-    │   │ 明示的な完了 │  │ 次回のセッションへ引き継ぎメモを残す │   │
-    │   │ 定義         │  │ 安全に再開できるときだけ commit する │   │
+    │   │ 一次一个     │  │ 开工时跑 init.sh                    │   │
+    │   │ 功能         │  │ 结束时跑清理检查清单                │   │
+    │   │ 显式的完成   │  │ 给下次会话留交接笔记                │   │
+    │   │ 定义         │  │ 只在可以安全恢复时才 commit         │   │
     │   └──────────────┘  └──────────────────────────────────────┘   │
     │                                                                 │
     └─────────────────────────────────────────────────────────────────┘
 
-    モデルがどのコードを書くかを決める。
-    Harness は、いつ、どこで、どう書くかを制御する。
-    Harness はモデルを賢くはしない。
-    ただし、出力を信頼できるものにする。
+    模型决定写什么代码。
+    Harness 管控什么时候写、在哪里写、怎么写。
+    Harness 不会让模型变聪明。
+    它让模型的产出变可靠。
 ```
 
-各サブシステムには役割があります。
+每个子系统各司其职：
 
-- **指示** - agent に何を、どの順番で、作業前に何を読むかを伝えます。巨大な 1 ファイルではなく、段階的に展開される構造で、agent が必要に応じて辿れるようにします。
-- **状態** - 何を終えたか、今何をしているか、次に何をするかを追跡します。ディスクに永続化され、次のセッションは前回止まったところから続けられます。
-- **検証** - 合格したテストスイートだけが正解の証拠です。agent は、実行可能な証拠なしに「終わった」と言ってはいけません。
-- **範囲** - agent が一度に 1 つの機能だけを扱うように制約します。やり過ぎも、やり残しも、未完了を隠すために機能一覧をこっそり書き換えることも許しません。
-- **セッションのライフサイクル** - 開始時に初期化し、終了時に片付け、次のセッションがきれいに再開できる道筋を残します。
+- **指令** — 告诉 agent 做什么、按什么顺序、开工前先读什么。不是一个巨大的文件，而是渐进式展开的结构，agent 按需导航。
+- **状态** — 跟踪做了什么、正在做什么、下一步是什么。持久化到磁盘，下次会话从上次停下的地方继续。
+- **验证** — 只有通过的测试套件才算数。agent 不能没有可运行的证据就说"做完了"。
+- **范围** — 约束 agent 一次只做一个功能。不多做，不少做，不偷偷改功能清单掩盖未完成的工作。
+- **会话生命周期** — 开始时初始化，结束时清理，给下次会话留一条干净的重启路径。
 
 ---
 
-## なぜこのコースが必要なのか
+## 为什么要有这门课
 
-問題は「モデルがコードを書けるか」ではありません。書けます。問題は、**本物のリポジトリで、複数回のセッションをまたいで、人がずっと付き添わなくても、実際の工程タスクを確実に完了できるか**です。
+问题不是"模型能不能写代码"。能写。问题是：**能不能在真实的仓库里，跨越多次会话，不需要人一直盯着，就可靠地完成真实的工程任务？**
 
-今の答えは、harness なしでは無理、です。
+现在的答案是：没有 harness 就不行。
 
 ```text
-    HARNESS なし                            HARNESS あり
+    没有 HARNESS                            有 HARNESS
     ==============                          ===========
 
-    セッション 1: agent がコードを書く       セッション 1: agent が指示を読む
-            agent がテストを壊す                     agent が init.sh を実行する
-            agent が「完了しました」と言う           agent が 1 つの機能だけを実装する
-            あなたが手作業で修復する                 agent が検証後にだけ完了を宣言する
-                                                      agent が進捗ログを更新する
-    セッション 2: agent が最初からやり直す          agent がきれいに commit する
-            agent には前回の記憶がない
-            agent が同じことをもう一度する          セッション 2: agent が進捗ログを読む
-            あるいはまったく別のものを作る                 agent が前回止まったところから続ける
-            あなたがまた直す                           agent が未完了の機能を続ける
-                                                      あなたは火消しではなくレビューをする
+    会话 1: agent 写代码                     会话 1: agent 读指令
+            agent 搞坏测试                           agent 跑 init.sh
+            agent 说"做完了"                         agent 一次只做一个功能
+            你手动修复                                agent 验证后才说完成
+                                                      agent 更新进度日志
+    会话 2: agent 从头开始                           agent 干净地 commit
+            agent 没有上次
+            的记忆                            会话 2: agent 读进度日志
+            agent 重新做一遍                           agent 从上次停下的地方继续
+            或者做了完全不同的东西                      agent 继续未完成的功能
+            你再修一次                                 你是审查，不是救火
 
-    結果：あなたの時間が                      結果：agent が作業し、
-          自分でやるよりかかる                     あなたが結果を検証する
+    结果：你花的时间比                      结果：agent 干活，
+          自己做还多                                你验证结果
 ```
 
-このコースが本当に扱うテーマは次の通りです。
+课程真正关心的问题：
 
-- どの harness 設計がタスク完了率を高めるのか？
-- どの設計が手戻りと誤完了を減らすのか？
-- どの仕組みが長時間タスクをより安定して前進させるのか？
-- どの構造なら、複数回の agent 実行後もシステムを保守しやすいのか？
-
----
-
-## コースの構成とドキュメント
-
-コース全体の内容は、**[公式ドキュメントサイト (VitePress)](https://walkinglabs.github.io/learn-harness-engineering/zh/)** を直接ご覧ください。
-
-このコースは 3 つの主要パートに分かれています。
-
-1. **講義 (Lectures)**: 12 個の概念単元で、Harness 設計の理論的基盤を深く解説します。
-2. **プロジェクト (Projects)**: 6 つの段階的な実践プロジェクトで、信頼できる Agent ワーク環境をゼロから組み立てていきます。
-3. **リソースライブラリ (Resource Library)**: そのまま使える中英テンプレート（`AGENTS.md`、`feature_list.json`、`init.sh` など）を、今日から自分のプロジェクトにコピーして使えます。
+- 哪些 harness 设计会提升任务完成率？
+- 哪些设计会减少返工和错误完成？
+- 哪些机制能让长时任务更稳定地持续推进？
+- 哪些结构能让系统在多轮 agent 运行后仍然可维护？
 
 ---
 
-<a id="快速开始今天就能改善你的-agent"></a>
-## すぐ始める: 今日から agent を改善できる
+## 课程大纲与文档
 
-12 本の講義を読み終えるまで待つ必要はありません。すでに coding agent で開発しているなら、以下の内容だけでもすぐに効果があります。
+关于完整的课程内容，请直接访问 **[官方文档站点 (VitePress)](https://walkinglabs.github.io/learn-harness-engineering/zh/)**。
 
-考え方はシンプルです。プロンプトだけで済ませるのではなく、リポジトリ内に構造化されたファイル群を置いて、agent に何をすべきか、何が終わったか、どう検証するかを伝えます。これらのファイルはプロジェクト内に置かれ、各セッションは同じ状態から始まります。
+本课程分为三个主要部分：
+
+1. **讲义 (Lectures)**：12 个概念单元，深度解析 Harness 设计的理论基础。
+2. **项目 (Projects)**：6 个循序渐进的实战项目，带你从零开始搭建可靠的 Agent 工作环境。
+3. **资料库 (Resource Library)**：开箱即用的中英文模板（如 `AGENTS.md`、`feature_list.json`、`init.sh`），今天就可以直接复制到你自己的项目中使用。
+
+---
+
+## 快速开始：今天就能改善你的 agent
+
+不用读完 12 个讲义再动手。如果你已经在用 coding agent 做项目，下面这些能立刻改善效果。
+
+思路很简单：不是光写提示词，而是在仓库里放一组结构化的文件——告诉 agent 该做什么、做完了什么、怎么验证。这些文件就放在项目里，每次会话都从同一个状态开始。
 
 ```text
-    プロジェクトのルート
-    ├── AGENTS.md              <-- agent の操作マニュアル
-    ├── CLAUDE.md              <-- （Claude Code を使う場合の代替）
-    ├── init.sh                <-- インストール + 検証 + 起動を 1 回で実行
-    ├── feature_list.json      <-- どの機能があり、どれが完了したか
-    ├── claude-progress.md     <-- 各セッションで何をしたか
-    └── src/                   <-- あなたのコード
+    你的项目根目录
+    ├── AGENTS.md              <-- agent 的操作手册
+    ├── CLAUDE.md              <-- （备选，如果你用 Claude Code）
+    ├── init.sh                <-- 一条命令完成安装 + 验证 + 启动
+    ├── feature_list.json      <-- 有哪些功能、哪些已完成
+    ├── claude-progress.md     <-- 每次会话做了什么
+    └── src/                   <-- 你的代码
 ```
 
-**Step 1.** まず [リソース集](https://walkinglabs.github.io/learn-harness-engineering/zh/resources/) に行き、上記ファイルのテンプレートを取得して、自分のプロジェクトのルートに置いてください。
+**第一步.** 直接前往 [资料库](https://walkinglabs.github.io/learn-harness-engineering/zh/resources/) 拿到上述文件的模板代码，然后放进你的项目根目录。
 
-これで十分です。最小構成は 4 ファイルあれば始められます。プロンプトだけに頼るより、Agent の挙動はずっと安定します。
+就这么简单。四个文件，最小起步就够了。你的 Agent 表现会比光靠一段提示词稳定得多。
 
 ---
 
-<a id="贯穿项目一个真实的应用"></a>
-## プロジェクトを通して続く: ひとつの実例
+## 贯穿项目：一个真实的应用
 
-6 つのコースプロジェクトはすべて、同じ製品を中心にしています。**Electron ベースの個人知識ベース・デスクトップアプリ**です。
+全部 6 个课程项目都围绕同一个产品：**一个基于 Electron 的个人知识库桌面应用**。
 
 ```text
     ┌─────────────────────────────────────────────────────┐
-    │                知識ベース・デスクトップアプリ        │
+    │                知识库桌面应用                         │
     │                                                     │
     │  ┌──────────────┐  ┌──────────────────────────────┐│
-    │  │  ドキュメント一覧 │  │        Q&A パネル        ││
+    │  │  文档列表     │  │        问答面板              ││
     │  │              │  │                              ││
-    │  │ doc-001.md   │  │  質問: harness eng とは？    ││
-    │  │ doc-002.md   │  │  回答: agent を囲む        ││
-    │  │ doc-003.md   │  │      作業環境...           ││
-    │  │ ...          │  │      [引用: doc-002.md]    ││
+    │  │ doc-001.md   │  │  问：什么是 harness eng？    ││
+    │  │ doc-002.md   │  │  答：围绕 agent 模型搭建的   ││
+    │  │ doc-003.md   │  │      工作环境...             ││
+    │  │ ...          │  │      [引用：doc-002.md]      ││
     │  └──────────────┘  └──────────────────────────────┘│
     │                                                     │
     │  ┌─────────────────────────────────────────────────┐│
-    │  │ ステータスバー: 42 件の文書 | 38 件を索引済み | 最終同期 3 分前 ││
+    │  │ 状态栏：42 篇文档 | 38 篇已索引 | 上次同步 3分钟 ││
     │  └─────────────────────────────────────────────────┘│
     └─────────────────────────────────────────────────────┘
 
-    コア機能：
-    ├── ローカル文書を取り込む
-    ├── 文書ライブラリを管理する
-    ├── 文書を処理して索引付けする
-    ├── 取り込んだ内容に対して AI Q&A を実行する
-    └── 引用付きで追跡可能な回答を返す
+    核心功能：
+    ├── 导入本地文档
+    ├── 管理文档库
+    ├── 处理与索引文档
+    ├── 对导入内容发起 AI 问答
+    └── 返回带引用且可追溯的回答
 ```
 
-このプロジェクトを選んだのは、実用性の高さ、十分な製品複雑性、そして harness の改善前後の差を観察しやすさを、同時に満たしているからです。
+选择这个项目是因为它同时具备：很强的实际价值感、足够真实的产品复杂度、以及很适合观察 harness 优化前后的效果差异。
 
-各コースプロジェクトの starter/solution は、この Electron アプリをそれぞれの進化段階で丸ごと複製したものです。P(N+1) の starter は P(N) の solution から派生します。アプリが、あなたの harness スキルと一緒に進化していきます。
+每个课程项目的 starter/solution 是这个 Electron 应用在对应演化阶段的完整副本。P(N+1) 的 starter 从 P(N) 的 solution 衍生而来——应用跟着你的 harness 技能一起进化。
 
 ---
 
-<a id="学习路径"></a>
-## 学習パス
+## 学习路径
 
-このコースは順番どおりに進めるのが最も効果的です。各段階は前の段階の上に積み上がります。
+这门课按顺序来效果最好，每一阶段都建立在前一个的基础上。
 
 ```text
-    段階 1: 問題を認識する                      段階 2: リポジトリを整理する
+    阶段 1：看到问题                         阶段 2：组织仓库
     ===================                     ===================
 
-    L01  モデルが強い ≠ 実行が信頼できる       L03  リポジトリを唯一の
-                                                     事実源にする
-    L02  Harness とは何か
-                                           L04  指示を複数の
-         |                                      ファイルに分割する
+    L01  模型强 ≠ 执行可靠                   L03  仓库作为唯一
+                                                     事实来源
+    L02  Harness 到底是什么
+                                           L04  把指令拆分到
+         |                                      不同文件里
          v
-    P01  プロンプトだけを書く                    |
-         vs ルールを決める                        v
-                                                   P02  agent が読める作業空間
+    P01  只写提示词                                |
+         vs 定好规则                                v
+                                                   P02  agent 可读的工作空间
 
 
-    段階 3: セッションをつなぐ                段階 4: フィードバックと範囲
+    阶段 3：连接会话                         阶段 4：反馈与范围
     ===================                     ===================
 
-    L05  跨いだタスクでも                         L07  タスク境界を明確にする
-         継続性を保つ
-                                           L08  機能一覧を
-    L06  毎回の開始前に                             harness の原語にする
-         まず初期化する
+    L05  让跨会话任务                         L07  划清任务边界
+         保持连续
+                                           L08  功能清单作为
+    L06  每次开工前                               harness 原语
+         先初始化
                                                  |
          |                                       v
-         v                                       P04  実行フィードバックで
-    P03  セッション間の継続性                          agent の振る舞いを修正する
+         v                                       P04  运行反馈修正
+    P03  多会话连续性                                  agent 行为
 
 
-    段階 5: 検証                              段階 6: すべてをつなぐ
+    阶段 5：验证                             阶段 6：全部串起来
     ===================                     ===================
 
-    L09  agent の早すぎる                          L11  agent の実行過程を
-         勝利宣言を防ぐ                               観測可能にする
+    L09  防止 agent 提前                     L11  让 agent 运行
+         宣告完成                                   过程可观测
 
-    L10  完全なフローを                            L12  各セッションの終了前に
-         通してこそ本当の検証になる                   引き継ぎを整える
+    L10  跑通完整流程                        L12  每次会话结束
+         才算真的验证                               前做好交接
 
          |                                       |
          v                                       v
-    P05  agent が自分の仕事を検証する             P06  完全な harness を構築する
-                                                   （統合プロジェクト）
+    P05  agent 自己验证工作                    P06  搭建完整 harness
+                                                   （综合项目）
 ```
 
-各段階はおおむね 1 週間程度です（副業ペース）。急ぐなら、最初の 3 段階は週末 1 回で終えられます。
+每个阶段大约一周（兼职节奏）。想快的话，前三个阶段一个周末就能跑完。
 
 ---
 
-<a id="课程大纲"></a>
-## コース概要
+## 课程大纲
 
-### 講義 - 12 の概念単元で、それぞれが 1 つの核心的な問いに答える
+### 讲义 — 12 个概念单元，每个只回答一个核心问题
 
-*すべての講義は [ドキュメントサイト](https://walkinglabs.github.io/learn-harness-engineering/zh/) から読めます。*
+*点击访问 [文档站点](https://walkinglabs.github.io/learn-harness-engineering/zh/) 阅读全部讲义。*
 
-| 講義 | 中心となる問い | 重要概念 |
+| 讲义 | 核心问题 | 关键概念 |
 | ---- | -------- | -------- |
-| [L01](./docs/zh/lectures/lecture-01-why-capable-agents-still-fail/index.md) | モデルの能力が高いことは、実行の信頼性を意味しない | ベンチマークと実際のエンジニアリングの間にある能力ギャップ |
-| [L02](./docs/zh/lectures/lecture-02-what-a-harness-actually-is/index.md) | Harness とは何か | 5 つのサブシステム: 指示、状態、検証、範囲、ライフサイクル |
-| [L03](./docs/zh/lectures/lecture-03-why-the-repository-must-become-the-system-of-record/index.md) | リポジトリを唯一の事実源にする | agent が見えないものは、agent にとって存在しない |
-| [L04](./docs/zh/lectures/lecture-04-why-one-giant-instruction-file-fails/index.md) | なぜ巨大な指示ファイルは失敗するのか | 段階的展開: 地図は渡すが、百科事典は渡さない |
-| [L05](./docs/zh/lectures/lecture-05-why-long-running-tasks-lose-continuity/index.md) | なぜ長時間タスクは文脈を失うのか | 進捗をディスクに永続化し、止まったところから再開する |
-| [L06](./docs/zh/lectures/lecture-06-why-initialization-needs-its-own-phase/index.md) | なぜ初期化には独立した段階が必要なのか | agent が作業を始める前に、環境が健全かを検証する |
-| [L07](./docs/zh/lectures/lecture-07-why-agents-overreach-and-under-finish/index.md) | なぜ agent はやり過ぎたり、やり切れなかったりするのか | 1 回に 1 つの機能、明示的な完了定義 |
-| [L08](./docs/zh/lectures/lecture-08-why-feature-lists-are-harness-primitives/index.md) | なぜ機能一覧は harness の原語なのか | machine-readable な範囲境界は agent が無視できない |
-| [L09](./docs/zh/lectures/lecture-09-why-agents-declare-victory-too-early/index.md) | なぜ agent は早く完了宣言してしまうのか | 検証の抜け: 自信 ≠ 正しさ |
-| [L10](./docs/zh/lectures/lecture-10-why-end-to-end-testing-changes-results/index.md) | なぜ E2E テストは結果を変えるのか | 完全なフローを通してこそ、はじめて検証になる |
-| [L11](./docs/zh/lectures/lecture-11-why-observability-belongs-inside-the-harness/index.md) | なぜ可観測性は harness の内部に属するのか | agent が何をしたか見えなければ、壊したものを直せない |
-| [L12](./docs/zh/lectures/lecture-12-why-every-session-must-leave-a-clean-state/index.md) | なぜ毎回のセッションはきれいな状態を残す必要があるのか | 次のセッションの成功は、今回のクリーンアップ次第 |
+| [L01](./docs/zh/lectures/lecture-01-why-capable-agents-still-fail/index.md) | 模型能力强，不等于执行可靠 | 基准测试与真实工程之间的能力鸿沟 |
+| [L02](./docs/zh/lectures/lecture-02-what-a-harness-actually-is/index.md) | Harness 到底是什么 | 五个子系统：指令、状态、验证、范围、生命周期 |
+| [L03](./docs/zh/lectures/lecture-03-why-the-repository-must-become-the-system-of-record/index.md) | 让仓库成为唯一事实来源 | agent 看不到的东西，对它来说就不存在 |
+| [L04](./docs/zh/lectures/lecture-04-why-one-giant-instruction-file-fails/index.md) | 为什么一个巨大的指令文件会失败 | 渐进式展开：给地图，不给百科全书 |
+| [L05](./docs/zh/lectures/lecture-05-why-long-running-tasks-lose-continuity/index.md) | 为什么长时任务会丢失上下文 | 把进度持久化到磁盘，从停下的地方继续 |
+| [L06](./docs/zh/lectures/lecture-06-why-initialization-needs-its-own-phase/index.md) | 为什么初始化需要单独一个阶段 | agent 开始工作前先验证环境是否健康 |
+| [L07](./docs/zh/lectures/lecture-07-why-agents-overreach-and-under-finish/index.md) | 为什么 agent 会多做或少做 | 一次一个功能，显式的完成定义 |
+| [L08](./docs/zh/lectures/lecture-08-why-feature-lists-are-harness-primitives/index.md) | 为什么功能清单是 harness 原语 | 机器可读的范围边界，agent 无法忽略 |
+| [L09](./docs/zh/lectures/lecture-09-why-agents-declare-victory-too-early/index.md) | 为什么 agent 会提前宣告完成 | 验证缺口：自信 ≠ 正确 |
+| [L10](./docs/zh/lectures/lecture-10-why-end-to-end-testing-changes-results/index.md) | 为什么端到端测试会改变结果 | 只有跑通完整流程才算真正验证 |
+| [L11](./docs/zh/lectures/lecture-11-why-observability-belongs-inside-the-harness/index.md) | 为什么可观测性属于 harness | 看不到 agent 做了什么，就修不了它搞坏的东西 |
+| [L12](./docs/zh/lectures/lecture-12-why-every-session-must-leave-a-clean-state/index.md) | 为什么每次会话都要留干净状态 | 下次会话的成功，取决于这次会话的清理 |
 
-### プロジェクト - 6 つの実践プロジェクトで、講義の方法を同じ Electron アプリに落とし込む
+### 项目 — 6 个实践项目，把讲义方法落实到同一个 Electron 应用上
 
-| プロジェクト | やること | Harness の仕組み |
+| 项目 | 你要做什么 | Harness 机制 |
 | ---- | ---------- | ------------ |
-| [P01](./docs/zh/projects/project-01-baseline-vs-minimal-harness/index.md) | 同じタスクを 2 回実行する: プロンプトだけ vs ルールを決める | 最小構成の harness: AGENTS.md + init.sh + feature_list.json |
-| [P02](./docs/zh/projects/project-02-agent-readable-workspace/index.md) | agent が理解できるようにプロジェクト構造を組み替える | agent が読める作業空間 + 永続化された状態ファイル |
-| [P03](./docs/zh/projects/project-03-multi-session-continuity/index.md) | agent を閉じても再起動して続けられるようにする | 進捗ログ + セッション引き継ぎ + 複数セッションの継続性 |
-| [P04](./docs/zh/projects/project-04-incremental-indexing/index.md) | agent のやり過ぎ・やり足りなさを防ぐ | 実行フィードバック + 範囲制御 + 増分インデックス |
-| [P05](./docs/zh/projects/project-05-grounded-qa-verification/index.md) | agent に自分の作業を自分で検証させる | 自己検証 + 引用付き Q&A + 証拠に基づく完了判定 |
-| [P06](./docs/zh/projects/project-06-runtime-observability-and-debugging/index.md) | ゼロから完全な harness を組み上げる（統合プロジェクト） | 完全な harness: 全機構 + 可観測性 + アブレーション実験 |
+| [P01](./docs/zh/projects/project-01-baseline-vs-minimal-harness/index.md) | 跑两次同样的任务：只写提示词 vs 定好规则 | 最小 harness：AGENTS.md + init.sh + feature_list.json |
+| [P02](./docs/zh/projects/project-02-agent-readable-workspace/index.md) | 重组项目结构，让 agent 能读懂 | agent 可读的工作空间 + 持久化状态文件 |
+| [P03](./docs/zh/projects/project-03-multi-session-continuity/index.md) | 让 agent 关掉再打开还能接着干 | 进度日志 + 会话交接 + 多会话连续性 |
+| [P04](./docs/zh/projects/project-04-incremental-indexing/index.md) | 防止 agent 做多了或做少了 | 运行反馈 + 范围控制 + 增量索引 |
+| [P05](./docs/zh/projects/project-05-grounded-qa-verification/index.md) | 让 agent 自己验证自己的工作 | 自验证 + 带引用的问答 + 基于证据的完成判定 |
+| [P06](./docs/zh/projects/project-06-runtime-observability-and-debugging/index.md) | 从零搭建一套完整的 harness（综合项目） | 完整 harness：全部机制 + 可观测性 + 消融实验 |
 
 ```text
-    プロジェクトの進化
+    项目演进
     ========
 
-    P01  プロンプトだけ vs ルールを決める       問題を認識する
+    P01  只写提示词 vs 定好规则            你看到问题
      |
      v
-    P02  agent が読める作業空間               リポジトリを整理する
+    P02  agent 可读的工作空间               你重组仓库
      |
      v
-    P03  複数セッションの継続性               セッションをつなぐ
+    P03  多会话连续性                       你连接会话
      |
      v
-    P04  実行フィードバックと範囲制御          フィードバックループを追加する
+    P04  运行反馈与范围控制                  你加上反馈循环
      |
      v
-    P05  自己検証                             agent に自分をチェックさせる
+    P05  自验证                             你让 agent 检查自己
      |
      v
-    P06  完全な harness（統合プロジェクト）     完全なシステムを組み上げる
+    P06  完整 harness（综合项目）            你搭建完整系统
 
-    各プロジェクトの solution が、次のプロジェクトの starter になる。
-    アプリはあなたの harness スキルとともに進化する。
+    每个项目的 solution 成为下一个项目的 starter。
+    应用跟着你的 harness 技能一起进化。
 ```
 
-### リソースライブラリ
+### 资料库
 
-- [中国語版リソース集](https://walkinglabs.github.io/learn-harness-engineering/zh/resources/) - 中国語テンプレート、チェックリスト、方法の参考資料
-- [英語版リソース集](https://walkinglabs.github.io/learn-harness-engineering/en/resources/) - 英語テンプレート、チェックリスト、方法の参考資料
-
----
-
-<a id="其他课程"></a>
-## その他のコース
-
-私たちのチームは、ほかのコースも制作しています。ぜひご覧ください。
-
-[![Hands-on Modern RL](https://img.shields.io/badge/HANDS--ON_MODERN_RL-0052cc?style=for-the-badge)](https://github.com/walkinglabs/hands-on-modern-rl)
-
-**Hands-on Modern RL**: 基礎的な RL の概念から、LLM alignment、RLVR、さらに高度な Agentic systems へとつなぐ、オープンソースの実践型カリキュラムです。
+- [中文资料库](https://walkinglabs.github.io/learn-harness-engineering/zh/resources/) — 中文模板、清单和方法参考
+- [英文资料库](https://walkinglabs.github.io/learn-harness-engineering/en/resources/) — English templates, checklists, and method references
 
 ---
 
-## スター履歴
+## Agent 会话生命周期
 
-[![スター履歴チャート](https://api.star-history.com/svg?repos=walkinglabs/learn-harness-engineering&type=date&legend=top-left)](https://www.star-history.com/#walkinglabs/learn-harness-engineering&type=date&legend=top-left)
-
----
-
-## 謝辞
-
-このコースは、[learn-claude-code](https://github.com/shareAI-lab/learn-claude-code) にある発想や一部の考え方から着想を得ています。これは、単一ループから分離された自律実行までを段階的に組み立てる agent 入門チュートリアルです。
-
----
-
-<a id="skills"></a>
-## スキル
-
-このリポジトリには再利用可能な AI Agent スキルも含まれており、IDE や Agent ワークスペースにそのままインストールできます。
-
-- [**harness-creator**](./skills/harness-creator/)：自分のプロジェクトに本番品質の harness を数分で組み立てるのを助けるスキルです。
-
----
-
-## Agent のセッションライフサイクル
-
-このコースの核となる考え方のひとつは、**agent のセッションは自由に振る舞うのではなく、構造化されたライフサイクルに従うべきだ**ということです。流れは次の通りです。
+这门课的一个核心理念：**agent 的会话应该遵循结构化的生命周期，而不是自由发挥。** 它长这样：
 
 ```text
-    AGENT セッションライフサイクル
+    AGENT 会话生命周期
     =================
 
     ┌──────────────────────────────────────────────────────────────────┐
-    │  開始                                                            │
+    │  开工                                                           │
     │                                                                  │
-    │  1. agent が AGENTS.md / CLAUDE.md を読む                        │
-    │  2. agent が init.sh を実行する（インストール、検証、健全性確認）│
-    │  3. agent が claude-progress.md を読む（前回何をしたか）         │
-    │  4. agent が feature_list.json を読む（完了済みと次の対象を確認）│
-    │  5. agent が git log を確認する（最近の変更）                    │
+    │  1. agent 读取 AGENTS.md / CLAUDE.md                            │
+    │  2. agent 运行 init.sh（安装、验证、健康检查）                   │
+    │  3. agent 读取 claude-progress.md（上次做了什么）               │
+    │  4. agent 读取 feature_list.json（做完哪些、接下来做哪个）      │
+    │  5. agent 检查 git log（最近的改动）                             │
     │                                                                  │
-    │  選択                                                            │
+    │  选择                                                            │
     │                                                                  │
-    │  6. agent が未完了の機能を 1 つだけ選ぶ                          │
-    │  7. agent はその 1 つだけを実装する                              │
+    │  6. agent 选定且只选一个未完成的功能                              │
+    │  7. agent 只做这一个功能                                         │
     │                                                                  │
-    │  実行                                                            │
+    │  执行                                                            │
     │                                                                  │
-    │  8. agent がその機能を実装する                                   │
-    │  9. agent が検証（テスト、lint、型チェック）を走らせる          │
-    │  10. 検証に失敗したら: 修正して再実行                           │
-    │  11. 検証に通ったら: 証拠を記録する                              │
+    │  8. agent 实现这个功能                                           │
+    │  9. agent 运行验证（测试、lint、类型检查）                       │
+    │  10. 如果验证失败：修复后重跑                                    │
+    │  11. 如果验证通过：记录证据                                      │
     │                                                                  │
-    │  仕上げ                                                          │
+    │  收尾                                                            │
     │                                                                  │
-    │  12. agent が claude-progress.md を更新する                      │
-    │  13. agent が feature_list.json を更新する                       │
-    │  14. agent が未完了と未検証の項目を記録する                      │
-    │  15. agent が commit する（安全に再開できる場合のみ）            │
-    │  16. agent が次回セッション向けにきれいな再開経路を残す         │
+    │  12. agent 更新 claude-progress.md                               │
+    │  13. agent 更新 feature_list.json                                │
+    │  14. agent 记录还没做完和还没验证的东西                          │
+    │  15. agent commit（只在可以安全恢复时）                           │
+    │  16. agent 给下次会话留干净的重启路径                            │
     │                                                                  │
     └──────────────────────────────────────────────────────────────────┘
 
-    Harness はこのライフサイクルのあらゆる状態遷移を制御する。
-    何を書くかを決めるのはモデル。
-    harness がないと、9 歩目は「たぶん大丈夫に見える」で終わる。
-    harness があれば、9 歩目は「テスト合格、lint クリア、型チェック合格」になる。
+    Harness 管控这个生命周期里的每一次状态转换。
+    模型决定每一步写什么代码。
+    没有 harness 时，第 9 步变成"agent 说看起来没问题"。
+    有 harness 时，第 9 步是"测试通过、lint 干净、类型检查通过"。
 ```
 
 ---
 
-## 対象読者
+## 适合谁
 
-このコースは次のような人に向いています。
+这门课适合：
 
-- すでに coding agent を使っていて、安定性と品質を上げたいエンジニア
-- harness 設計を体系的に理解したい研究者やビルダー
-- 「環境設計が agent の性能にどう影響するか」を理解する必要がある技術責任者
+- 已经在使用 coding agent、希望提升稳定性和质量的工程师
+- 想系统理解 harness 设计的研究者或构建者
+- 需要理解"环境设计如何影响 agent 表现"的技术负责人
 
-このコースは次のような人には向きません。
+这门课不适合：
 
-- コードを書かない AI 入門だけを求めている人
-- prompt だけに関心があり、実装するつもりがない人
-- agent を実際のリポジトリで動かすつもりがない学習者
+- 只想要一个零代码 AI 入门的人
+- 只关心 prompt，而不打算做真实实现的人
+- 不准备让 agent 在真实仓库里工作的学习者
 
 ---
 
-## 環境要件
+## 环境要求
 
-これは、本当に coding agent を動かしながら学ぶコースです。
+这是一门真正需要动手跑 coding agent 的课程。
 
-少なくとも次のいずれかが必要です。
+你至少需要具备一个这类工具：
 
 - Claude Code
 - Codex
-- ファイル編集、コマンド実行、複数ステップのタスクに対応したその他の IDE / CLI coding agent
+- 其他支持文件编辑、命令执行、多步任务的 IDE / CLI coding agent
 
-コースでは、次のことができる前提です。
+课程默认你可以：
 
-- ローカルリポジトリを開ける
-- agent にファイル編集を許可できる
-- agent にコマンド実行を許可できる
-- 出力を確認しながら、タスクを繰り返し実行できる
+- 打开本地仓库
+- 允许 agent 编辑文件
+- 允许 agent 运行命令
+- 检查输出并重复执行任务
 
-このようなツールがない場合でも内容は読めますが、想定どおりにコースプロジェクトを完了することはできません。
+如果你没有这类工具，仍然可以阅读课程内容，但无法按预期完成课程项目。
 
 ---
 
-## ローカルプレビュー
+## 本地预览
 
-このリポジトリは VitePress をドキュメントビューアとして使っています。
+本仓库使用 VitePress 作为文档查看器。
 
 ```sh
 npm install
-npm run docs:dev        # 開発サーバー（ホットリロード）
-npm run docs:build      # 本番ビルド
-npm run docs:preview    # ビルド結果のプレビュー
+npm run docs:dev        # 开发服务器（热更新）
+npm run docs:build      # 生产构建
+npm run docs:preview    # 预览构建结果
 ```
 
-その後、ブラウザで VitePress が出力するローカルアドレスを開いてください。
+然后在浏览器里打开 VitePress 输出的本地地址即可。
 
 ---
 
-## 前提知識
+## 先修要求
 
-必須:
+必需：
 
-- ターミナル、git、ローカル開発環境に慣れていること
-- 一般的なアプリケーションスタックのコードを、少なくとも 1 つ読んで書けること
-- ログ、テスト、実行挙動の見方を含む、基本的なソフトウェアデバッグ経験があること
-- 実装寄りのコース課題をこなせるだけの時間を確保できること
+- 熟悉终端、git 和本地开发环境
+- 至少会读写一种常见应用栈中的代码
+- 有基本的软件调试经验，知道如何看日志、测试和运行行为
+- 能投入足够时间完成偏实现型的课程任务
 
-あると役立つが必須ではないもの:
+有帮助但非强制：
 
-- Electron、デスクトップアプリ、ローカルファーストツールを使った経験
-- テスト、ログ、ソフトウェアアーキテクチャの経験
-- Codex、Claude Code、あるいは類似の coding agent をすでに触ったことがある
+- 用过 Electron、桌面应用或本地优先工具
+- 有测试、日志、软件架构方面的经验
+- 已经接触过 Codex、Claude Code 或类似 coding agent
 
 ---
 
-## 主要参考資料
+## 核心参考资料
 
-主な参考資料:
+主参考：
 
 - [OpenAI: Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/)
 - [Anthropic: Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
@@ -514,31 +489,69 @@ npm run docs:preview    # ビルド結果のプレビュー
 - [Thoughtworks / Martin Fowler: Harness engineering for coding agent users](https://martinfowler.com/articles/harness-engineering.html)
 - [Cursor: Continually improving our agent harness](https://cursor.com/blog/continually-improving-agent-harness)
 
-完全な階層別の参考一覧は [`docs/zh/resources/reference/`](./docs/zh/resources/reference/index.md) をご覧ください。
+完整分层参考列表见 [`docs/zh/resources/reference/`](./docs/zh/resources/reference/index.md)。
 
 ---
 
-## リポジトリ構成
+## 仓库结构
 
 ```text
 learn-harness-engineering/
-├── docs/                          # VitePress ドキュメントサイト
-│   ├── index.md                   # 言語選択ページ（中国語 / English）
-│   ├── zh/                        # 中国語版の完全なコンテンツ
-│   │   ├── lectures/              # 12 講義（index.md + code/ 例）
-│   │   ├── projects/              # 6 プロジェクト
-│   │   └── resources/             # テンプレート、参考資料、高度な資料パック
-│   └── en/                        # 英語版の完全なコンテンツ
-│       ├── lectures/              # 12 講義
-│       ├── projects/              # 6 プロジェクト
-│       └── resources/             # テンプレート、参考資料、高度な資料パック
+├── docs/                          # VitePress 文档站
+│   ├── index.md                   # 语言选择页（中文 / English）
+│   ├── zh/                        # 中文完整内容
+│   │   ├── lectures/              # 12 个讲义（index.md + code/ 示例）
+│   │   ├── projects/              # 6 个项目
+│   │   └── resources/             # 模板、参考、高级资源包
+│   └── en/                        # 英文完整内容
+│       ├── lectures/              # 12 lectures
+│       ├── projects/              # 6 projects
+│       └── resources/             # templates, references, advanced pack
 ├── projects/
-│   ├── shared/                    # Electron + TypeScript + React の共通ベース
-│   └── project-NN/               # 各プロジェクトの starter/ と solution/
-├── skills/                        # 再利用可能な AI agent スキル
-│   └── harness-creator/           # Harness エンジニアリング用スキル
-├── package.json                   # VitePress + 開発ツール
-└── CLAUDE.md                      # Claude Code の指示ファイル
+│   ├── shared/                    # Electron + TypeScript + React 共享基础
+│   └── project-NN/               # 每个项目的 starter/ 和 solution/
+├── skills/                        # 可复用的 AI agent 技能
+│   └── harness-creator/           # Harness 工程技能
+├── package.json                   # VitePress + 开发工具
+└── CLAUDE.md                      # Claude Code 指令文件
 ```
 
 ---
+
+## 课程组织方式
+
+- 每个讲义聚焦一个问题
+- 整门课配套 6 个项目
+- 每个项目都要求 agent 真正干活
+- 每个项目都要做弱 harness / 强 harness 对照
+- 我们关心的是效果变化，而不是"写了多少说明文档"
+
+---
+
+## Skills
+
+本仓库还包含可复用的 AI Agent 技能（Skills），你可以将它们直接安装到你的 IDE 或 Agent 工作区中。
+
+- [**harness-creator**](./skills/harness-creator/)：帮助你在几分钟内为自己的项目搭建一套生产级 harness（脚手架）的技能。
+
+---
+
+## 其他课程
+
+我们的团队还制作了其他课程！请查看：
+
+[![Hands-on Modern RL](https://img.shields.io/badge/HANDS--ON_MODERN_RL-0052cc?style=for-the-badge)](https://github.com/walkinglabs/hands-on-modern-rl)
+
+**Hands-on Modern RL**: An open-source, hands-on curriculum bridging the gap from basic RL concepts to LLM alignment, RLVR, and advanced Agentic systems.
+
+---
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=walkinglabs/learn-harness-engineering&type=date&legend=top-left)](https://www.star-history.com/#walkinglabs/learn-harness-engineering&type=date&legend=top-left)
+
+---
+
+## 致谢
+
+本课程的灵感和部分思路来自 [learn-claude-code](https://github.com/shareAI-lab/learn-claude-code) —— 一个从零开始搭建 agent 的渐进式教程，从单个循环到隔离的自主执行。

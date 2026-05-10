@@ -1,49 +1,49 @@
 # Skills（技能集）
 
-このディレクトリには、コースに付属する AI agent 向けの skills が含まれています。各 skill は自己完結したプロンプトテンプレートで、AI プログラミングエージェント（Claude Code、Codex、Cursor、Windsurf など）が読み込んで専門的なタスクを実行できます。
+本目录包含课程附带的 AI agent 技能。每个技能都是自包含的提示词模板，可被 AI 编程智能体（Claude Code、Codex、Cursor、Windsurf 等）加载以执行专业任务。
 
 ## harness-creator
 
-AI プログラミングエージェント向けの、本番運用を想定した harness エンジニアリング skill です。指示、状態、検証、スコープ、セッションライフサイクルという 5 つの中核サブシステムの作成、評価、改善を支援します。
+面向 AI 编程智能体的生产级 harness 工程技能。帮助创建、评估和改进五个核心 harness 子系统：指令、状态、验证、范围和会话生命周期。
 
 ### 它能做什么
 
-- **harness をゼロから作成** — AGENTS.md、機能一覧、検証ワークフロー
-- **既存の harness を改善** — 5 サブシステムの採点と、優先順位付きの改善提案
-- **セッションの継続性を設計** — 記憶の永続化、進捗追跡、引き継ぎの仕組み
-- **本番向けパターンを適用** — 記憶、コンテキストエンジニアリング、ツールの安全性、マルチエージェント協調
+- **从零创建 harness** — AGENTS.md、功能清单、验证工作流
+- **改进已有 harness** — 五子系统评分 + 优先级改进建议
+- **设计会话连续性** — 记忆持久化、进度跟踪、交接机制
+- **应用生产级模式** — 记忆、上下文工程、工具安全、多智能体协调
 
 ### 快速开始
 
-skill ファイルは、リポジトリ内の [`skills/harness-creator/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/skills/harness-creator) ディレクトリにあります。
+技能文件位于仓库的 [`skills/harness-creator/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/skills/harness-creator) 目录。
 
-Claude Code で使う場合は、`harness-creator/` ディレクトリをプロジェクトの skill パスにコピーするか、agent に `SKILL.md` を直接読ませてください。
+在 Claude Code 中使用时，将 `harness-creator/` 目录复制到你项目的技能路径下，或让 agent 直接读取 SKILL.md 文件即可。
 
 ### 参考模式
 
-この skill には、6 つの詳細なパターン参考ドキュメントが含まれています。
+技能包含 6 个深入的模式参考文档：
 
 | 模式 | 适用场景 |
 |------|----------|
-| 記憶の永続化 | agent がセッションをまたいでプロジェクト知識を忘れる場合 |
-| コンテキストエンジニアリング | コンテキスト予算の管理、オンデマンド読み込み、委譲の分離 |
-| ツール登録 | ツールの安全性、並行制御、権限制御のパイプライン |
-| マルチエージェント協調 | 並列化、専門化、調査者→実装者のワークフロー |
-| ライフサイクルと起動 | フック、バックグラウンドタスク、初期化シーケンス |
-| よくある落とし穴 | 15 個の失敗パターンと修正方法 |
+| 记忆持久化 | agent 在会话间遗忘项目知识 |
+| 上下文工程 | 上下文预算管理、按需加载、委托隔离 |
+| 工具注册 | 工具安全、并发控制、权限管道 |
+| 多智能体协调 | 并行化、专业化、研究员→实施者工作流 |
+| 生命周期与引导 | 钩子、后台任务、初始化序列 |
+| 常见陷阱 | 15 个容易踩坑的失败模式及修复方案 |
 
 ### 模板
 
-この skill には、すぐに使えるテンプレートも付属しています。
+技能附带开箱即用的模板：
 
-- `agents.md` — 作業ルールを含む AGENTS.md のひな形
+- `agents.md` — AGENTS.md 脚手架，包含工作规则
 - `feature-list.json` — JSON Schema + 功能列表示例
-- `init.sh` — 標準の初期化スクリプト
-- `progress.md` — セッション進捗ログのテンプレート
+- `init.sh` — 标准初始化脚本
+- `progress.md` — 会话进度日志模板
 
 ### 开发过程
 
-`harness-creator` は **skill-creator** の方法論に基づいて開発されています。これは Anthropic が提供するメタ skill で、agent skill の作成、テスト、反復改善に使います。skill-creator には、下書き → テスト → 評価 → 反復 という構造化されたワークフローがあり、評価ランナー、スコアラー、ベンチマークビューアが組み込まれています。
+`harness-creator` 基于 **skill-creator** 方法论开发——这是 Anthropic 官方提供的元技能，用于创建、测试和迭代改进 agent 技能。skill-creator 提供了结构化的工作流（起草 → 测试 → 评估 → 迭代），内置评估运行器、评分器和基准查看器。
 
-- **skill-creator の出典**：[anthropics/skills — skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator)
-- **Claude Code skill ドキュメント**：[anthropics/claude-code — plugin-dev/skills](https://github.com/anthropics/claude-code/tree/main/plugins/plugin-dev/skills)
+- **skill-creator 来源**：[anthropics/skills — skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator)
+- **Claude Code 技能文档**：[anthropics/claude-code — plugin-dev/skills](https://github.com/anthropics/claude-code/tree/main/plugins/plugin-dev/skills)

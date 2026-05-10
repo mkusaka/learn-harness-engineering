@@ -1,20 +1,20 @@
-# AGENTS.md -- Project 02: エージェント向けワークスペース
+# AGENTS.md -- Project 02: Agent-Readable Workspace
 
-## クイックスタート
+## Quick Start
 
-1. ビルドを確認するために `npm install && npm run check` を実行してください。
-2. レイヤー構成については `docs/ARCHITECTURE.md` を読んでください。
-3. 何を行う必要があるかは `feature_list.json` を確認してください。
+1. Run `npm install && npm run check` to verify the build.
+2. Read `docs/ARCHITECTURE.md` for layer structure.
+3. Check `feature_list.json` for what needs to be done.
 
-## レイヤー
+## Layers
 
-- Main process: `src/main/` -- ウィンドウ、IPC、サービス
-- Preload: `src/preload/` -- ブリッジ API
+- Main process: `src/main/` -- window, IPC, services
+- Preload: `src/preload/` -- bridge API
 - Renderer: `src/renderer/` -- React UI
-- Services: `src/services/` -- ビジネスロジック
+- Services: `src/services/` -- business logic
 
-## 規約
+## Conventions
 
-- TypeScript の strict mode を使用します。コメントなしで `any` を使わないでください。
-- named export のみを使用します。
-- IPC チャンネルは `src/shared/types.ts` にあります。
+- TypeScript strict mode. No `any` without comment.
+- Named exports only.
+- IPC channels in `src/shared/types.ts`.

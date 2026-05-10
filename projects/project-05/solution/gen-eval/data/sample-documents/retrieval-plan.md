@@ -1,46 +1,46 @@
-# 検索計画
+# Retrieval Plan
 
-## 概要
+## Overview
 
-この文書では、ナレッジベースアプリケーションでテキスト検索を実装するための方針を説明します。外部の LLM API を使わずに、取り込んだ文書に対して根拠に基づく質問応答を可能にすることが目的です。
+This document outlines the strategy for implementing text retrieval in the knowledge base application. The goal is to enable grounded question answering over imported documents without requiring an external LLM API.
 
-## チャンク化の方針
+## Chunking Approach
 
-文書は、段落を考慮したアルゴリズムでチャンクに分割します。
-- 2つの改行（段落境界）で分割する
-- チャンクが約 500 文字に達するまで短い段落を結合する
-- 各チャンクに一意の ID、文書参照、メタデータを付与する
+Documents are split into chunks using a paragraph-aware algorithm:
+- Split on double newlines (paragraph boundaries)
+- Merge short paragraphs until chunk reaches ~500 characters
+- Each chunk gets a unique ID, document reference, and metadata
 
-## キーワード一致
+## Keyword Matching
 
-検索システムは、キーワードベースの一致を使います。
-1. 質問を個々の単語に分割する
-2. ストップワード（3 文字未満の語）を除外する
-3. 各チャンクについて、質問のキーワードが内容にいくつ含まれるかを数える
-4. キーワードの重なりスコアでチャンクを順位付けする
-5. 最も関連性の高い上位 2 件のチャンクを引用として返す
+The retrieval system uses keyword-based matching:
+1. Tokenize the question into individual words
+2. Filter out stop words (words shorter than 3 characters)
+3. For each chunk, count how many question keywords appear in the content
+4. Rank chunks by keyword overlap score
+5. Return top 2 most relevant chunks as citations
 
-## 引用形式
+## Citation Format
 
-各引用には次の情報を含めます。
-- 文書 ID とタイトル
-- 文書内のチャンク番号
-- テキストの抜粋（チャンクの先頭 200 文字）
+Each citation includes:
+- Document ID and title
+- Chunk index within the document
+- Text excerpt (first 200 characters of the chunk)
 
-## モック Q&A パターン
+## Mock Q&A Patterns
 
-モック Q&A サービスには、よくあるトピック向けの定義済み回答パターンが含まれます。
-- アーキテクチャと設計に関する質問
-- 文書の取り込みと管理
-- インデックス作成と検索
-- 議事録と要約
+The mock Q&A service includes predefined answer patterns for common topics:
+- Architecture and design questions
+- Document import and management
+- Indexing and search
+- Meeting notes and summaries
 
-いずれのパターンにも一致しない質問については、最も関連性の高い引用に基づく一般的な応答を返すか、索引化された文書がないことを示します。
+For questions that don't match a pattern, the system returns a generic response based on the most relevant citation, or indicates that no indexed documents are available.
 
-## 信頼度スコア
+## Confidence Scoring
 
-応答には信頼度スコアが含まれます。
-- 引用が見つかった場合は 0.85
-- 引用が利用できない場合は 0.30
+Responses include a confidence score:
+- 0.85 when citations are found
+- 0.30 when no citations are available
 
-このスコアリングにより、UI 上で根拠のある回答と推測に基づく回答を視覚的に区別できます。
+This scoring system allows the UI to visually distinguish between well-grounded and speculative answers.

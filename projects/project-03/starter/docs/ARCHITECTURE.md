@@ -1,10 +1,10 @@
 # Architecture -- Knowledge Base Electron App
 
-## システム概要
+## System Overview
 
-Knowledge Base は、TypeScript と React で構築された Electron デスクトップアプリケーションです。ファイルピッカーを使ったドキュメントの取り込み、チャンク分割を伴うテキスト索引化、コンテンツ表示、出典付きの根拠ベース質問応答を提供します。
+The Knowledge Base is an Electron desktop application built with TypeScript and React. It provides document import with file picker, text indexing with chunking, content viewing, and grounded question answering with citations.
 
-## レイヤー図
+## Layer Diagram
 
 ```
 +-----------------------------------------------------------+
@@ -12,9 +12,9 @@ Knowledge Base は、TypeScript と React で構築された Electron デスク�
 |  App.tsx -> DocumentList, DocumentDetail, ImportPanel,    |
 |             QuestionPanel, StatusBar                       |
 +-----------------------------------------------------------+
-         |  window.knowledgeBase.* (型付き IPC ブリッジ)
+         |  window.knowledgeBase.* (typed IPC bridge)
 +-----------------------------------------------------------+
-|                     Preload スクリプト                    |
+|                     Preload Script                         |
 |  contextBridge.exposeInMainWorld -> documents, indexing, qa|
 +-----------------------------------------------------------+
          |  ipcRenderer.invoke(IPC_CHANNELS.*)
@@ -23,25 +23,25 @@ Knowledge Base は、TypeScript と React で構築された Electron デスク�
 |  main.ts -> createWindow(), initializeServices()          |
 |  ipc-handlers.ts -> registerIpcHandlers()                  |
 +-----------------------------------------------------------+
-         |  Service メソッド呼び出し
+         |  Service method calls
 +-----------------------------------------------------------+
-|                     Services レイヤー                    |
+|                     Services Layer                         |
 |  DocumentService | IndexingService | QaService             |
-|  PersistenceService (ファイルシステム I/O)                 |
+|  PersistenceService (filesystem I/O)                       |
 +-----------------------------------------------------------+
 ```
 
-## Electron の各レイヤー
+## Electron Layers
 
 ### Main Process (`src/main/`)
 
-- **ウィンドウ管理**: セキュアな Web 設定を持つ `BrowserWindow` インスタンスを作成します。
-- **IPC 登録**: `registerIpcHandlers()` を通じて、IPC チャンネル名を service メソッドに対応付けます。
-- **Service 初期化**: 依存性注入を使ってすべての service を構築します。
+- **Window management**: Creates `BrowserWindow` instances with secure web preferences.
+- **IPC registration**: Maps IPC channel names to service methods via `registerIpcHandlers()`.
+- **Service initialization**: Constructs all services with dependency injection.
 
 ### Preload (`src/preload/`)
 
-preload スクリプトは、`contextBridge` 経由で型付き API を公開します。
+The preload script exposes a typed API via `contextBridge`:
 
 ```typescript
 window.knowledgeBase = {
@@ -53,69 +53,69 @@ window.knowledgeBase = {
 
 ### Renderer (`src/renderer/`)
 
-Vite でバンドルされる React 18 アプリケーションです。
+React 18 application bundled by Vite:
 
-- `App.tsx` -- 取り込み切り替え、ドキュメント選択、Q&A を含むルートレイアウト。
-- `DocumentList` -- 取り込んだドキュメントを一覧表示するサイドバー。
-- `DocumentDetail` -- メタデータ、全文、チャンク、削除ボタンを表示します。
-- `ImportPanel` -- `.txt` と `.md` ドキュメントを取り込むためのファイル入力。
-- `QuestionPanel` -- 質問を入力するためのテキスト入力欄。
-- `StatusBar` -- インデックス状態とドキュメント数を表示します。
+- `App.tsx` -- Root layout with import toggle, document selection, and Q&A.
+- `DocumentList` -- Sidebar listing of imported documents.
+- `DocumentDetail` -- Shows metadata, full content, chunks, and delete button.
+- `ImportPanel` -- File input for importing .txt and .md documents.
+- `QuestionPanel` -- Text input for asking questions.
+- `StatusBar` -- Shows index status and document count.
 
 ### Services (`src/services/`)
 
-- `PersistenceService` -- 原子的書き込みを伴う低レベルの JSON/text ファイル I/O。
-- `DocumentService` -- コンテンツ保存とクリーンアップを含むドキュメント CRUD。
-- `IndexingService` -- 段落を考慮したチャンク分割（約500文字）とインデックス管理。
-- `QaService` -- キーワードベースの検索と引用を使ったモック Q&A。
+- `PersistenceService` -- Low-level JSON/text file I/O with atomic writes.
+- `DocumentService` -- Document CRUD with content storage and cleanup.
+- `IndexingService` -- Paragraph-aware chunking (~500 chars) and index management.
+- `QaService` -- Mock Q&A with keyword-based retrieval and citations.
 
-## 取り込みフロー
+## Import Flow
 
-ドキュメント取り込みフローは、IPC のデータパス全体を示しています。
+The document import flow demonstrates the full IPC data path:
 
 ```
-1. ユーザーが App.tsx の "Import" ボタンをクリックする
-2. ImportPanel がファイル入力を描画する
-3. ユーザーが .txt または .md ファイルを選択する
-4. ImportPanel が onImport(file.path) を呼び出す
-5. App.tsx が window.knowledgeBase.documents.import(filePath) を呼び出す
-6. Preload ブリッジが ipcRenderer.invoke('documents:import', filePath) を実行する
-7. ipc-handlers.ts が DocumentService.importDocument(filePath) に処理を委譲する
+1. User clicks "Import" button in App.tsx
+2. ImportPanel renders file input
+3. User selects a .txt or .md file
+4. ImportPanel calls onImport(file.path)
+5. App.tsx calls window.knowledgeBase.documents.import(filePath)
+6. Preload bridge invokes ipcRenderer.invoke('documents:import', filePath)
+7. ipc-handlers.ts delegates to DocumentService.importDocument(filePath)
 8. DocumentService:
-   a. ファイルが存在することを検証する
-   b. ファイルの内容と統計情報を読み取る
-   c. Document のメタデータオブジェクトを作成する
-   d. PersistenceService 経由でファイルを documents ディレクトリにコピーする
-   e. 抽出したテキストコンテンツを PersistenceService 経由で保存する
-   f. documents-meta.json に追記する
-9. 結果が IPC を通じて戻る
-10. App.tsx が refreshDocuments() を呼び出して一覧を更新する
-11. DocumentList が新しいドキュメントで再描画される
+   a. Validates the file exists
+   b. Reads file content and stats
+   c. Creates Document metadata object
+   d. Copies file to documents directory via PersistenceService
+   e. Stores extracted text content via PersistenceService
+   f. Appends to documents-meta.json
+9. Result flows back through IPC
+10. App.tsx calls refreshDocuments() to update the list
+11. DocumentList re-renders with the new document
 ```
 
-## コンテンツ取得フロー
+## Content Retrieval Flow
 
-ドキュメントコンテンツの表示には、専用の IPC チャンネルが追加されています。
+Document content viewing adds a dedicated IPC channel:
 
 ```
-1. ユーザーが DocumentDetail の "View Content" をクリックする
-2. DocumentDetail が window.knowledgeBase.documents.getContent(id) を呼び出す
-3. Preload が 'documents:get-content' IPC を呼び出す
-4. ipc-handlers が DocumentService.getDocumentContent(id) に委譲する
-5. PersistenceService が content/<id>.txt を読み取る
-6. コンテンツが renderer に戻り、pre-wrap コンテナで表示される
+1. User clicks "View Content" in DocumentDetail
+2. DocumentDetail calls window.knowledgeBase.documents.getContent(id)
+3. Preload invokes 'documents:get-content' IPC
+4. ipc-handlers delegates to DocumentService.getDocumentContent(id)
+5. PersistenceService reads content/<id>.txt
+6. Content flows back to renderer for display in pre-wrap container
 ```
 
-## データ保存
+## Data Storage
 
 ```
 knowledge-base-data/
-  documents-meta.json     # Document メタデータ配列
+  documents-meta.json     # Document metadata array
   content/
-    <doc-id>.txt          # ドキュメントごとの抽出済みテキストコンテンツ
+    <doc-id>.txt          # Extracted text content per document
   chunks/
-    <doc-id>.json         # ドキュメントごとのチャンク配列
+    <doc-id>.json         # Chunk array per document
   index/
-    index-meta.json       # Document ID から chunk ID への対応表
-  qa-history.json         # Q&A の操作ログ
+    index-meta.json       # Mapping of document IDs to chunk IDs
+  qa-history.json         # Q&A interaction log
 ```

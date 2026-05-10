@@ -1,154 +1,154 @@
-[中国語版 →](../../../zh/lectures/lecture-11-why-observability-belongs-inside-the-harness/)
+[中文版本 →](../../../zh/lectures/lecture-11-why-observability-belongs-inside-the-harness/)
 
-> コード例: [code/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/en/lectures/lecture-11-why-observability-belongs-inside-the-harness/code/)
-> 実践プロジェクト: [Project 06. 完全なハーネス (Capstone)](./../../projects/project-06-runtime-observability-and-debugging/index.md)
+> Code examples: [code/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/en/lectures/lecture-11-why-observability-belongs-inside-the-harness/code/)
+> Practice project: [Project 06. Complete harness (Capstone)](./../../projects/project-06-runtime-observability-and-debugging/index.md)
 
-# 第11講. なぜ可観測性はハーネスの内部にあるべきなのか
+# Lecture 11. Make the Agent's Runtime Observable
 
-## この講義で解決する問題は何か？
+## What Problem Does This Lecture Solve?
 
-エージェントに機能の実装を依頼したとします。20分ほど動いたあと、いくつものファイルを変更し、最後に「完了しましたが、2つのテストが失敗しています」と報告してきます。なぜ失敗しているのかを尋ねると、「よくわかりません。タイミングの問題かもしれません」と返ってくる。どの重要経路を変更したのかを聞くと、「ちょっとコードを見てみます...」となる。
+You ask an agent to implement a feature. It runs for 20 minutes, modifies a bunch of files, then tells you "done, but two tests are failing." You ask why they're failing — "not sure, might be a timing issue." You ask which critical paths it changed — "let me look at the code..."
 
-これは、エージェントに能力が足りないという話ではありません。ハーネスが十分な可観測性を提供していないのです。**可観測性がなければ、エージェントは不確実なまま判断し、評価は主観的なものになり、再試行は盲目的なさまよいになります。** OpenAI も Anthropic も、信頼性とは証拠の問題だと定義しています。ハーネスは、次の判断を導くために使える形で、実行時の挙動と評価シグナルを露出しなければなりません。
+This isn't about the agent lacking capability. It's about your harness not providing enough observability. **Without observability, agents make decisions under uncertainty, evaluations become subjective judgments, and retries become blind wandering.** Both OpenAI and Anthropic define reliability as an evidence problem — the harness must expose runtime behavior and evaluation signals in a form that can guide the next decision.
 
-## 基本概念
+## Core Concepts
 
-- **実行時可観測性**: ログ、トレース、プロセスイベント、ヘルスチェックといったシステムレベルのシグナル。システムが「何をしたか」に答える。
-- **プロセス可観測性**: 計画、採点ルーブリック、受け入れ基準といったハーネスの判断アーティファクトの可視性。変更が「なぜ受け入れられるべきか」に答える。
-- **タスクトレース**: タスク開始から完了までの完全な判断経路記録。分散システムにおけるリクエストトレーシングに相当する。エージェントが踏んだすべての手順と文脈を記録する。
-- **スプリント契約**: コーディングを始める前に交わす短期合意。タスク範囲、検証基準、除外事項を明示する。プロセス可観測性の中核となるツール。
-- **評価ルーブリック**: 品質評価を主観から証拠ベースの構造化採点へ変換する。異なる評価者でも同じ出力に対して似た結果を出しやすくする。
-- **レイヤード可観測性**: システム層とプロセス層の可観測性を同時に設計し、相互に補強する考え方。実行時シグナルは挙動を説明し、プロセスアーティファクトは意図を説明する。
+- **Runtime observability**: System-level signals — logs, traces, process events, health checks. Answers "what did the system do."
+- **Process observability**: Visibility into harness decision artifacts — plans, scoring rubrics, acceptance criteria. Answers "why should this change be accepted."
+- **Task trace**: A complete decision-path record from task start to completion, analogous to request tracing in distributed systems. Every step the agent takes, with context, is recorded.
+- **Sprint contract**: A short-term agreement negotiated before coding begins — specifying task scope, verification standards, and exclusions. The core tool for process observability.
+- **Evaluator rubric**: Transforms quality evaluation from subjective judgment into evidence-based structured scoring. Makes different evaluators produce similar results for the same output.
+- **Layered observability**: System-layer and process-layer observability designed simultaneously and reinforcing each other. Runtime signals explain behavior; process artifacts explain intent.
 
-## レイヤード可観測性
+## Layered Observability
 
 ```mermaid
 flowchart LR
-    Contract["まずタスクを書く<br/>何を変更するか / 何を変更しないか / 合格条件"] --> Generator["生成器"]
-    Generator --> Signals["実行中のアプリログ、トレース、<br/>ヘルスチェックを収集する"]
-    Contract --> Review["結果を項目ごとに確認する<br/>挙動 / テスト / 境界"]
+    Contract["Write down the task first<br/>what to change / what not to change / pass criteria"] --> Generator["Generator"]
+    Generator --> Signals["Collect app logs, traces,<br/>and health checks while it runs"]
+    Contract --> Review["Check the result item by item<br/>behavior / tests / boundaries"]
     Signals --> Review
-    Review --> Verdict["失敗したチェックと<br/>修正すべき箇所を指摘する"]
+    Review --> Verdict["Point to the failed check<br/>and where to fix it"]
     Verdict --> Generator
 ```
 
-## なぜこうなるのか
+## Why This Happens
 
-### 可観測性が欠けると何が本当に失われるのか
+### The Real Cost of Missing Observability
 
-ハーネスに可観測性がないと、4種類の問題が体系的に現れます。
+When a harness lacks observability, four types of problems systematically appear:
 
-**「正しい」と「正しそう」を見分けられない**: 関数はコードレビューでは完璧に見えるかもしれません。構文は正しく、ロジックも妥当です。しかし実行時には、エッジケース処理の誤りにより、特定の入力で誤った結果を返します。実際の実行経路が期待から外れていることを明らかにできるのは、実行時トレースだけです。
+**Cannot distinguish "correct" from "looks correct"**: A function looks perfectly right during code review — correct syntax, sound logic. But at runtime, an edge case handling error produces incorrect results under specific inputs. Only runtime traces can reveal that the actual execution path deviated from expectations.
 
-**評価が神秘化する**: 採点ルーブリックや受け入れ基準がなければ、評価者（人間でもエージェントでも）は暗黙の前提に頼ることになります。同じ出力でも、評価者によって大きく結果が変わり得ます。品質評価は再現不能になります。
+**Evaluation becomes mysticism**: Without scoring rubrics and acceptance criteria, evaluators (human or agent) rely on implicit assumptions. The same output might get wildly different evaluations from different assessors. Quality assessment becomes non-reproducible.
 
-**再試行が盲目的な推測になる**: 何が失敗の原因なのかエージェントがわからなければ、再試行の方向はランダムになります。無関係なコード経路を直し続けて、本当の失敗原因を見落とすかもしれません。盲目的な再試行のたびに、トークンと時間が失われます。
+**Retries become blind guesses**: When the agent doesn't know why something failed, retry direction is random. It might try repeatedly in the wrong direction — fixing unrelated code paths while ignoring the actual failure root cause. Every blind retry costs tokens and time.
 
-**セッション引き継ぎの情報断崖が起きる**: 未完了の作業を次のセッションに渡すとき、可観測性が不足していると、新しいセッションはシステム状態を一から診断しなければなりません。Anthropic の公開事例でも、progress notes と git log を読ませ、起動時に基本動作を確認することで、前セッションからの状態把握を助けています。
+**Session handoff information cliff**: When incomplete work is handed to the next session, missing observability means the new session must diagnose system state from scratch. Anthropic's long-running agent observations show this redundant diagnosis can consume 30-50% of total session time.
 
-### 実際の Claude Code のシナリオ
+### A Real Claude Code Scenario
 
-「planner-generator-evaluator」の3役ワークフローを持つハーネスで、「アプリにダークモードを追加する」タスクを実行するとします。
+Imagine a harness using a "planner-generator-evaluator" three-role workflow, executing an "add dark mode to the app" task.
 
-**可観測性がない場合**: planner は曖昧な説明を出します。generator はその曖昧さを前提にダークモードを実装しますが、planner の暗黙の期待には合いません。evaluator は自分の暗黙の基準で却下しますが、何が具体的に悪いのかは言えません。generator は、曖昧な却下理由をもとに盲目的な再試行を繰り返し、かろうじて受け入れられる程度の出力になります。
+**Without observability**: The planner outputs a vague description. The generator implements dark mode based on that vagueness, but it doesn't match the planner's implicit expectations. The evaluator rejects based on their own implicit standards but can't articulate what's specifically wrong. The generator retries blindly based on vague rejection reasons. The cycle repeats 3-4 times, taking about 45 minutes, producing a barely acceptable output.
 
-**完全に可観測な場合**: planner はスプリント契約を出し、どのコンポーネントを変更するか、各項目の検証基準、除外事項（印刷用スタイルなし）を列挙します。generator は契約に従って実装します。実行時可観測性が、各コンポーネントのスタイル読み込みと適用プロセスを記録します。evaluator は採点ルーブリックを使い、各観点を分けて、具体的な証拠を引用しながら評価します。短い反復で高品質な結果を得やすくなります。
+**With full observability**: The planner outputs a sprint contract — listing which components to modify, verification standards for each, and exclusions (no print styles). The generator implements according to the contract. Runtime observability records each component's style loading and application process. The evaluator uses a scoring rubric to evaluate dimension by dimension, with specific evidence citations. One iteration produces a high-quality result, in about 15 minutes.
 
-違いは、判断に使える証拠があるかどうかです。
+3x efficiency difference. The only change is observability.
 
-### なぜエージェント自身では解決できないのか
+### Why Agents Can't Solve This Themselves
 
-「エージェント自身がログを出せばいいのでは？」と思うかもしれません。問題は次の通りです。
+You might be thinking: "Can't the agent just print its own logs?" The problems are:
 
-1. エージェントは自分が知らないことを知らないため、必要だと気づいていないシグナルを自発的には記録しません。
-2. ログ形式が一貫しないため、セッションごとに出力形式が違い、体系的な分析ができません。
-3. プロセス可観測性はログだけでは解決できません。スプリント契約や採点ルーブリックは、ハーネス側の支援が必要な構造化アーティファクトです。
+1. The agent doesn't know what it doesn't know — it won't proactively record signals it doesn't realize it needs.
+2. Log formats are inconsistent — different sessions use different log formats, making systematic analysis impossible.
+3. Process observability can't be solved by logs — sprint contracts and scoring rubrics are structured artifacts that need harness-level support.
 
-## 正しいやり方
+## How to Do It Right
 
-### 1. 実行時シグナル収集をハーネスに組み込む
+### 1. Build Runtime Signal Collection into the Harness
 
-エージェントに自分でログを出させることに頼らないでください。ハーネスが次のシグナルを自動収集すべきです。
+Don't rely on the agent to print its own logs. The harness should automatically collect these signals:
 
-- **アプリケーションライフサイクル**: 起動、準備完了、稼働中、シャットダウンの各フェーズ状態
-- **機能パス実行**: エントリポイント、チェックポイント、終了点を含む重要経路の実行記録
-- **データフロー**: コンポーネント間を流れるデータの記録
-- **リソース利用**: 異常なリソース使用パターン（例: メモリが継続的に増え続ける）
-- **エラーと例外**: エラーメッセージだけでなく、完全なエラー文脈
+- **Application lifecycle**: Startup, ready, running, shutdown phase states
+- **Feature path execution**: Records of critical path execution, including entry points, checkpoints, and exits
+- **Data flow**: Records of data flowing between components
+- **Resource utilization**: Abnormal resource usage patterns (e.g., continuously growing memory)
+- **Errors and exceptions**: Full error context, not just error messages
 
-### 2. スプリント契約を実装する
+### 2. Implement Sprint Contracts
 
-各タスクの開始前に、generator と evaluator（同じエージェントの別実行であってもよい）が契約を交渉します。
-
-```markdown
-# スプリント契約: ダークモード対応
-
-## 範囲
-- テーマ切り替えコンポーネントを変更する
-- グローバル CSS 変数を更新する
-- ダークモードのテストを追加する
-
-## 検証基準
-- 各コンポーネントでビジュアル回帰テストが通る
-- メインフローの E2E テストが通る
-- 未スタイルコンテンツのちらつき（FOUC）がない
-
-## 除外事項
-- 印刷用スタイルは扱わない
-- サードパーティ製コンポーネントのダークモードは扱わない
-```
-
-### 3. 評価ルーブリックを整備する
-
-「良いか悪いか」を、定量的に採点できる形に変えます。
+Before each task starts, the generator and evaluator (which may be different invocations of the same agent) negotiate a contract:
 
 ```markdown
-# 採点ルーブリック
+# Sprint Contract: Dark Mode Support
 
-| 観点 | A | B | C | D |
-|------|---|---|---|---|
-| コードの正確性 | すべてのテストが通る | メインフローが通る | 部分的に通る | ビルドが失敗する |
-| アーキテクチャ適合性 | 完全に適合 | 軽微な逸脱 | 明らかな逸脱 | 重大な違反 |
-| テストカバレッジ | メイン + エッジケース | メインフローのみ | 骨組みだけ | テストなし |
+## Scope
+- Modify the theme toggle component
+- Update global CSS variables
+- Add dark mode tests
+
+## Verification Standards
+- Visual regression tests pass for each component
+- Main flow end-to-end tests pass
+- No flash of unstyled content (FOUC)
+
+## Exclusions
+- Not handling print styles
+- Not handling third-party component dark mode
 ```
 
-### 4. OpenTelemetry で標準化する
+### 3. Establish an Evaluator Rubric
 
-ハーネスの各セッションにトレースを1つ、各タスクにスパンを1つ、各検証ステップにサブスパンを作成します。標準属性を使って重要情報を注釈します。こうすることで、可観測性データを標準的なツールチェーン（Jaeger, Zipkin）へ統合できます。
+Turn "is it good or not" into quantifiable scoring:
 
-## 実世界の事例
+```markdown
+# Scoring Rubric
 
-planner-generator-evaluator ワークフローを使い、「ダークモード対応を追加する」を実行するハーネスを考えます。
+| Dimension | A | B | C | D |
+|-----------|---|---|---|---|
+| Code correctness | All tests pass | Main flow passes | Partial pass | Build fails |
+| Architecture compliance | Fully compliant | Minor deviations | Obvious deviations | Serious violations |
+| Test coverage | Main + edge cases | Main flow only | Only skeleton | No tests |
+```
 
-**可観測でない版**: 複数回の盲目的再試行、かろうじて受け入れ可能な出力。evaluator は「何となく違う」としか言えず、何が具体的に悪いのかは説明できません。generator は間違った方向に多くの時間を費やします。
+### 4. Standardize with OpenTelemetry
 
-**完全に可観測な版**:
-- スプリント契約が範囲、基準、除外事項を明確化する
-- 実行時トレースが各コンポーネントのスタイル読み込みプロセスを記録する
-- 採点ルーブリックが観点ごとの構造化評価を提供する
-- 具体的な証拠に沿って短い反復で高品質な結果を得やすい
+Create a trace for each harness session, a span for each task, and sub-spans for each verification step. Use standard attributes to annotate key information. This way observability data integrates with standard toolchains (Jaeger, Zipkin).
 
-より安定した品質、再現可能な評価。
+## Real-World Case
 
-## 重要なポイント
+A harness using a planner-generator-evaluator workflow, executing "add dark mode support":
 
-- **可観測性はハーネスのアーキテクチャ特性である** - 後付けの機能ではなく、設計時点で考慮すべき中核能力です。
-- **両方の可観測性レイヤーが必要である** - 実行時シグナルは「何が起きたか」を説明し、プロセスアーティファクトは「なぜそのやり方だったか」を説明します。
-- **スプリント契約は認識合わせを前倒しする** - 「generator が何かを作ったが、evaluator が予見可能な理由で即座に拒否する」事態を防ぎます。
-- **採点ルーブリックは評価を再現可能にする** - 異なる評価者でも同じ出力に対して似たスコアを出します。
-- **可観測性の欠如は、セッション冒頭の重複診断を増やす**。
+**Unobservable version**: 3-4 rounds of blind retries, 45 minutes, barely acceptable output. Evaluator says "it doesn't feel right" but can't say what specifically. Generator wastes significant time in wrong directions.
 
-## 参考文献
+**Fully observable version**:
+- Sprint contract clarifies scope, standards, and exclusions
+- Runtime traces record each component's style loading process
+- Scoring rubric provides dimension-by-dimension structured evaluation
+- One iteration produces high-quality results, 15 minutes
 
-- [Observability Engineering - Charity Majors](https://www.honeycomb.io/blog/observability-engineering-book) — 現代の可観測性エンジニアリングに関する理論と実践の枠組み
-- [Dapper - Google (Sigelman et al.)](https://research.google/pubs/pub36356/) — 大規模分散トレーシングにおける画期的な実践
-- [Harness Design - Anthropic](https://www.anthropic.com/engineering/harness-design-long-running-apps) — スプリント契約と評価ルーブリックの紹介
-- [Site Reliability Engineering - Google](https://sre.google/sre-book/table-of-contents/) — 本番システムにおける可観測性の体系的な適用
+3x efficiency improvement, more stable quality, reproducible evaluations.
 
-## 演習
+## Key Takeaways
 
-1. **可観測性ギャップ分析**: 現在のハーネスについて、システム層とプロセス層の可観測性を監査してください。既存のシグナルでは区別できないシステム状態を見つけ、追加案を提案してください。
+- **Observability is a harness architecture property** — not a feature added after the fact, but a core capability that must be considered during design.
+- **Both observability layers are essential** — runtime signals explain "what happened," process artifacts explain "why it was done this way."
+- **Sprint contracts front-load alignment** — preventing "the generator built something the evaluator immediately rejects for foreseeable reasons."
+- **Scoring rubrics make evaluation reproducible** — different evaluators produce similar scores for the same output.
+- **Missing observability wastes 30-50% of session time on redundant diagnosis.**
 
-2. **スプリント契約の実践**: 実際のタスク向けにスプリント契約を書いてください。エージェントに契約どおり実行させ、契約ありとなしで効率と品質を比較してください。
+## Further Reading
 
-3. **タスクトレースの構築**: 完全なコーディングタスクの間、エージェントの操作の各ステップを記録してください。OpenTelemetry のセマンティック規約に沿って注釈を付けます。トレース内の情報ボトルネックを分析し、どのステップで判断に十分なシグナルが不足しているかを特定してください。
+- [Observability Engineering - Charity Majors](https://www.honeycomb.io/blog/observability-engineering-book) — Theory and practice framework for modern observability engineering
+- [Dapper - Google (Sigelman et al.)](https://research.google/pubs/pub36356/) — Groundbreaking practice in large-scale distributed tracing
+- [Harness Design - Anthropic](https://www.anthropic.com/engineering/harness-design-long-running-apps) — Introducing sprint contracts and evaluator rubrics
+- [Site Reliability Engineering - Google](https://sre.google/sre-book/table-of-contents/) — Systematic application of observability in production systems
+
+## Exercises
+
+1. **Observability Gap Analysis**: Audit your current harness for system-layer and process-layer observability. Find system states that can't be distinguished from existing signals, and propose additions.
+
+2. **Sprint Contract Practice**: Write a sprint contract for a real task. Have the agent execute according to the contract, and compare efficiency and quality with and without the contract.
+
+3. **Task Trace Construction**: Record every step of an agent's operations during a complete coding task. Annotate with OpenTelemetry semantic conventions. Analyze information bottlenecks in the trace — which steps lack sufficient signal support for decisions.

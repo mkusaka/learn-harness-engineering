@@ -1,6 +1,6 @@
-# Electron のアーキテクチャ規則
+# Quy tắc Kiến trúc Electron
 
-- renderer のコードはファイルシステムに直接アクセスしてはいけない。
-- Preload は renderer と Electron main の間にある唯一の橋渡しである。
-- 取得と indexing のロジックは UI component ではなく、service module に置く。
-- Logging は構造化し、service の境界から出力する。
+- Mã renderer không được truy cập trực tiếp hệ thống tệp.
+- Preload là cầu nối duy nhất giữa renderer và Electron main.
+- Logic truy xuất và indexing nằm trong các module service, không phải trong UI component.
+- Logging nên có cấu trúc và được phát ra từ các ranh giới service.

@@ -1,47 +1,47 @@
 # English Resource Library
 
-このフォルダは、コースの手法を、そのまま使えるテンプレートと簡潔な
-リファレンスに落とし込み、実際のリポジトリで使えるようにします。
+This folder turns the course methods into copy-ready templates and compact
+references you can use in a real repository.
 
 ## When To Use It
 
-Codex、Claude Code、または他のコーディングエージェントに、セットアップ・進捗・
-スコープを毎回ゼロから再構成させずに、複数セッションにまたがって作業させたいときは
-ここから始めてください。
+Start here when you want Codex, Claude Code, or another coding agent to work
+across multiple sessions without constantly re-deriving setup, status, and
+scope.
 
-特に次のような場合に有効です。
+It is especially useful when:
 
-- 作業が複数セッションにまたがる
-- 機能が多く、未完了のまま残りやすい
-- エージェントが早々に完了宣言しがち
-- 起動手順を毎回再発見してしまう
+- work spans multiple sessions
+- features are numerous and easy to leave half-finished
+- agents tend to declare victory too early
+- startup steps are rediscovered every time
 
 ## Start Here
 
-最小構成なら、まず以下を用意してください。
+For a minimal setup, begin with:
 
 - root instructions: [`templates/AGENTS.md`](./templates/AGENTS.md) or [`templates/CLAUDE.md`](./templates/CLAUDE.md)
 - feature state: [`templates/feature_list.json`](./templates/feature_list.json)
 - progress log: [`templates/claude-progress.md`](./templates/claude-progress.md)
 - bootstrap script reference: `docs/en/resources/templates/init.sh`
 
-次に、以下を追加します。
+Then add:
 
 - session handoff: [`templates/session-handoff.md`](./templates/session-handoff.md)
 - clean-exit checklist: [`templates/clean-state-checklist.md`](./templates/clean-state-checklist.md)
 - evaluator rubric: [`templates/evaluator-rubric.md`](./templates/evaluator-rubric.md)
 
-「Harness engineering」記事で紹介している、より充実した OpenAI 風の
-リポジトリ構成が欲しい場合は、代わりに advanced pack を使ってください。
+If you want the fuller OpenAI-style repository structure from the
+"Harness engineering" post, use the advanced pack:
 
 - [`openai-advanced/index.md`](./openai-advanced/index.md)
 
 ## Library Structure
 
-- [`templates/`](./templates/index.md): 実際の repo にコピーするためのテンプレート
-- [`reference/`](./reference/index.md): 手法メモ、起動フロー、障害モードのマップ
-- [`openai-advanced/`](./openai-advanced/index.md): advanced な repo の骨格、
-  system-of-record 用ドキュメント、agent-first のガバナンステンプレート
+- [`templates/`](./templates/index.md): templates to copy into a real repo
+- [`reference/`](./reference/index.md): method notes, startup flow, and failure-mode maps
+- [`openai-advanced/`](./openai-advanced/index.md): advanced repo skeleton,
+  system-of-record docs, and agent-first governance templates
 
 ## Recommended Minimal Pack
 
@@ -50,8 +50,9 @@ Codex、Claude Code、または他のコーディングエージェントに、�
 - `claude-progress.md`
 - `init.sh`
 
-この 4 ファイルがあれば、ほとんどのエージェントワークフローは目に見えて安定します。
+Those four files are enough to make most agent workflows noticeably more stable.
 
-リポジトリが、複数ドメイン・進行中の計画・品質スコアリング・信頼性ポリシーを持つ
-長期運用システムに成長したら、最小構成を無理に引き延ばすのではなく、
-[`openai-advanced/`](./openai-advanced/index.md) パックへ移行してください。
+When the repo grows into a longer-running system with multiple domains, active
+plans, quality scoring, and reliability policies, move up to the
+[`openai-advanced/`](./openai-advanced/index.md) pack instead of stretching the
+minimal pack too far.

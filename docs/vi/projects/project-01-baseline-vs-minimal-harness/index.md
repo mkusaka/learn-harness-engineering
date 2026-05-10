@@ -1,25 +1,25 @@
-[英語版 →](../../../en/projects/project-01-baseline-vs-minimal-harness/) | [中国語版 →](../../../zh/projects/project-01-baseline-vs-minimal-harness/)
+[English Version →](../../../en/projects/project-01-baseline-vs-minimal-harness/) | [中文版本 →](../../../zh/projects/project-01-baseline-vs-minimal-harness/)
 
-> 関連講義: [第01講. 強いモデルでも確実に実行できるとは限らない](./../../lectures/lecture-01-why-capable-agents-still-fail/index.md) · [第02講. Harness とは実際には何か](./../../lectures/lecture-02-what-a-harness-actually-is/index.md)
-> テンプレート: [templates/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/vi/resources/templates/)
+> Bài giảng liên quan: [Bài 01. Mô hình mạnh không có nghĩa là thực thi đáng tin cậy](./../../lectures/lecture-01-why-capable-agents-still-fail/index.md) · [Bài 02. Harness thực sự có nghĩa là gì](./../../lectures/lecture-02-what-a-harness-actually-is/index.md)
+> Tệp mẫu: [templates/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/vi/resources/templates/)
 
-# プロジェクト01. Prompt だけ vs. ルール優先: どれほど差が出るのか
+# Dự án 01. Chỉ Prompt vs. Ưu tiên Quy tắc: Sự Khác biệt Lớn thế Nào
 
-## 何をするか
+## Bạn Làm Gì
 
-最小限の Electron knowledge-base shell アプリを作る。左にドキュメント一覧、右に Q&A パネル、そしてローカルのデータディレクトリを備えた、1 つのウィンドウだけの構成にする。タスク自体は複雑ではない。複雑なのは、それを agent にどう完了させるかだ。
+Xây dựng một ứng dụng Electron knowledge-base shell tối giản — một cửa sổ với danh sách tài liệu bên trái, panel Q&A bên phải, và thư mục dữ liệu cục bộ. Bản thân tác vụ không phức tạp. Điều phức tạp là cách bạn để agent hoàn thành nó.
 
-2 回実行する。1 回目は、事前準備なしで単一の prompt だけを与える。2 回目は、`AGENTS.md`、`init.sh`、`feature_list.json` を repo にあらかじめ置いておく。そのうえで比較する。
+Bạn chạy hai lần. Lần đầu: chỉ một prompt, không chuẩn bị gì. Lần hai: `AGENTS.md`, `init.sh`, `feature_list.json` được đặt sẵn trong repo. Sau đó so sánh.
 
-このプロジェクトの核心は、コードを書くことではない。「先に 15 分かけてルールを整える」ことと、「agent に任せきりにする」ことの差がどれほど大きいのかを確かめることだ。
+Cốt lõi của dự án này không phải là viết mã — mà là tìm hiểu khoảng cách lớn thế nào giữa "dành 15 phút chuẩn bị quy tắc trước" và "cứ để agent tự làm."
 
-## ツール
+## Công cụ
 
-- Claude Code または Codex（どちらか一方を選び、2 回とも同じものを使う）
-- Git（ブランチ管理と比較）
-- Node.js + Electron（プロジェクトの tech stack）
-- ストップウォッチ（各実行時間を記録する）
+- Claude Code hoặc Codex (chọn một, sử dụng cho cả hai lần chạy)
+- Git (quản lý branch và so sánh)
+- Node.js + Electron (tech stack dự án)
+- Đồng hồ đo thời gian (ghi lại thời gian mỗi lần chạy)
 
-## Harness の仕組み
+## Cơ chế Harness
 
-最小構成の Harness: `AGENTS.md` + `init.sh` + `feature_list.json`
+Harness tối giản: `AGENTS.md` + `init.sh` + `feature_list.json`

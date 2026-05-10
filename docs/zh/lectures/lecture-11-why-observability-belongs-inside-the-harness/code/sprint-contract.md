@@ -1,12 +1,12 @@
-# スプリント契約の例
+# Sprint Contract Example
 
-スプリントの目標:
+Sprint goal:
 
-- 根拠付き Q&A の結果に、見える形の引用を追加する
+- Add visible citations to grounded Q&A results
 
-完了条件:
+Done means:
 
-- ユーザーが質問する
-- アプリが回答を返す
-- 少なくとも 1 件の引用が表示される
-- 引用をクリックすると、文書ビューで元の場所が開く
+- User asks a question
+- App returns an answer
+- At least one citation is shown
+- Clicking a citation opens the source location in the document view

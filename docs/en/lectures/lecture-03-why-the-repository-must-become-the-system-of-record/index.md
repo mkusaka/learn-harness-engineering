@@ -1,126 +1,126 @@
-[中国語版 →](../../../zh/lectures/lecture-03-why-the-repository-must-become-the-system-of-record/)
+[中文版本 →](../../../zh/lectures/lecture-03-why-the-repository-must-become-the-system-of-record/)
 
-> コード例: [code/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/en/lectures/lecture-03-why-the-repository-must-become-the-system-of-record/code/)
-> 演習プロジェクト: [Project 02. Agent-readable workspace](./../../projects/project-02-agent-readable-workspace/index.md)
+> Code examples: [code/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/en/lectures/lecture-03-why-the-repository-must-become-the-system-of-record/code/)
+> Practice project: [Project 02. Agent-readable workspace](./../../projects/project-02-agent-readable-workspace/index.md)
 
-# 講義 03. リポジトリをシステム・オブ・レコードにする
+# Lecture 03. Make the Repository Your Single Source of Truth
 
-チームのアーキテクチャ上の判断は、Confluence、Slack、Jira、そして数人のシニアエンジニアの頭の中に散らばっています。人間なら、これはなんとか回ります。同僚に聞くこともできるし、チャット履歴を検索することもできるし、ドキュメントを掘り返すこともできます。最悪でも、休憩室で誰かをつかまえて確認できます。しかし AI エージェントにとっては、リポジトリに入っていない情報は存在しないのと同じです。
+Your team's architecture decisions are scattered across Confluence, Slack, Jira, and a few senior engineers' heads. For humans this barely works — you can ask a colleague, search chat history, dig through docs. If all else fails, you can corner someone in the break room. But for an AI agent, information that's not in the repository simply does not exist.
 
-これは誇張ではありません。エージェントが実際に受け取る入力を考えてみてください。システムプロンプトとタスク説明、リポジトリ内のファイル内容、それからツール実行の出力です。それだけです。Slack の履歴、Jira のチケット、Confluence のページ、金曜の午後に同僚とコーヒーを飲みながら話したアーキテクチャ判断は、エージェントには見えません。「誰かに聞く」ことも「チャット履歴を検索する」こともできません。エージェントは、リポジトリの中に閉じ込められたエンジニアです。外側にあるものは何も知りません。
+This isn't an exaggeration. Think about what an agent's inputs actually are: system prompts and task descriptions, file contents from the repository, and tool execution output. That's it. Your Slack history, Jira tickets, Confluence pages, and that architecture decision you discussed with a colleague over coffee on Friday afternoon — the agent can't see any of it. It can't "go ask someone" or "search the chat history." It's an engineer locked inside the repository — everything outside, it knows nothing about.
 
-では、そのエンジニアに良い地図を渡せるか、という話になります。
+So the question becomes: are you going to give this engineer a good map?
 
-## 地図に載せるべきもの
+## What Belongs on the Map
 
-OpenAI はこれをはっきり述べています。**リポジトリに存在しない情報は、エージェントにとって存在しない。** 彼らはこれを「repo as spec」の原則と呼んでいます。つまり、リポジトリそのものが最も権威のある仕様書です。
+OpenAI states this bluntly: **information that doesn't exist in the repo, doesn't exist for the agent.** They call this the "repo as spec" principle — the repository itself is the highest-authority specification document.
 
-Anthropic の長期実行エージェント向けドキュメントも、同じ方向を向いています。永続状態は、長時間のタスクを継続するための前提条件です。セッションをまたいで知識を取り出せるかどうかが、タスク成功率を直接左右します。そして、この状態はリポジトリに置かなければなりません。エージェントが安定してアクセスできる保存先は、そこしかないからです。
+Anthropic's long-running agents documentation echoes this: persistent state is a necessary condition for long-task continuity. Cross-session knowledge recoverability directly determines task success rates. And this state must exist in the repository — because that's the only stable, accessible storage the agent has.
 
-「うちは小さなチームだし、知識はみんなの頭の中にある。問題ない」と思うかもしれません。人間にとってはそうかもしれません。しかしエージェントを使うなら、この事実を受け入れる必要があります。エージェントは人に聞けません。必要な情報はすべて書き下ろし、見つけられる場所に置かなければなりません。
+You might think: "Our team is small, knowledge is in everyone's heads, and it works fine." Sure, for humans. But if you're using an agent, accept this fact: the agent can't ask people. Everything it needs to know must be written down and placed where it can find it.
 
-これは「もっとドキュメントを書く」という話ではありません。「判断に必要な情報を正しい場所に置く」という話です。`src/api/` ディレクトリにある 50 行の `ARCHITECTURE.md` は、誰も保守していない Confluence 上の 500 ページの設計書よりも、1 万倍役に立ちます。机に貼った手書きの社内地図と、書庫にしまわれた美しい設計図の違いに似ています。前者は必要なときに目の前にあります。後者は技術的には優れていても、その瞬間には役に立ちません。
+This isn't about "writing more documentation." It's about "putting decision information in the right place." A 50-line `ARCHITECTURE.md` in the `src/api/` directory is ten thousand times more useful than a 500-page design document in Confluence that nobody maintains. It's like a hand-drawn office map taped to your desk versus a beautiful architectural blueprint locked in a filing cabinet — the former is right there when you need it; the latter is technically superior but useless in the moment.
 
-## 知識の可視性
+## Knowledge Visibility
 
 ```mermaid
 flowchart LR
-    Slack["Slack 上のルール"] --> Write["リポジトリのファイルに書き込む<br/>AGENTS.md / ARCHITECTURE.md / PROGRESS.md"]
-    Confluence["Confluence 上のルール"] --> Write
-    Heads["人の頭の中のルール"] --> Write
-    Jira["Jira チケット上のルール"] --> Write
-    Write --> Repo["リポジトリのファイル"]
-    Repo --> Agent["新しいエージェントセッションが<br/>リポジトリを直接読む"]
-    Warning["ルールがリポジトリにないなら、<br/>エージェントには見えない"] --> Agent
+    Slack["Rules in Slack"] --> Write["Write them into repo files<br/>AGENTS.md / ARCHITECTURE.md / PROGRESS.md"]
+    Confluence["Rules in Confluence"] --> Write
+    Heads["Rules in people's heads"] --> Write
+    Jira["Rules in Jira tickets"] --> Write
+    Write --> Repo["Repository files"]
+    Repo --> Agent["New agent session<br/>reads the repo directly"]
+    Warning["If a rule is not in the repo,<br/>the agent cannot see it"] --> Agent
 ```
 
-地図が十分かどうかは、どうやって確認するのでしょうか。「コールドスタートテスト」を行います。まったく新しいエージェントセッションを、リポジトリの内容だけで立ち上げ、次の 5 つの基本的な質問に答えられるかを確かめます。
+How do you test whether your map is good enough? Run a "cold-start test": open a brand new agent session using only repo contents, and see if it can answer five basic questions:
 
 ```mermaid
 flowchart TB
-    Q1["このシステムは何か？"] --> A1["AGENTS.md / README"]
-    Q2["どう構成されているか？"] --> A2["ARCHITECTURE.md / モジュールドキュメント"]
-    Q3["どうやって実行するか？"] --> A3["Makefile / init.sh / package scripts"]
-    Q4["どうやって検証するか？"] --> A4["test, lint, check のコマンド"]
-    Q5["今どこにいるのか？"] --> A5["PROGRESS.md / feature list / git history"]
+    Q1["What is this system?"] --> A1["AGENTS.md / README"]
+    Q2["How is it organized?"] --> A2["ARCHITECTURE.md / module docs"]
+    Q3["How do I run it?"] --> A3["Makefile / init.sh / package scripts"]
+    Q4["How do I verify it?"] --> A4["Test, lint, and check commands"]
+    Q5["Where are we now?"] --> A5["PROGRESS.md / feature list / git history"]
 
-    A1 --> Ready["人間に聞かなくても<br/>新しいセッションが作業を始められる"]
+    A1 --> Ready["A new session can start work<br/>without asking a human"]
     A2 --> Ready
     A3 --> Ready
     A4 --> Ready
     A5 --> Ready
 ```
 
-これらに答えられないなら、地図には空白があります。地図の空白を見つけたエージェントは推測します。間違った推測はバグになり、過剰な推測はコンテキストを浪費します。そして新しいセッションが始まるたびに、同じ推測をまた繰り返します。推測にかかるコストは、最初に地図を正しく描くコストより、常に高くつきます。
+If it can't answer, the map has blank spots. Where the map is blank, the agent guesses — wrong guesses become bugs, excessive guessing wastes context. And every new session guesses all over again. The cost of guessing is always higher than the cost of drawing the map properly in the first place.
 
-## 基本概念
+## Core Concepts
 
-- **Knowledge Visibility Gap**: プロジェクト知識の総量のうち、リポジトリに入っていない割合です。ギャップが大きいほど、エージェントの失敗率は高くなります。このプロジェクトに関する暗黙知は、どれだけあなたの頭の中にあるでしょうか。全部数え上げて、どれだけがリポジトリに入っているかを見てください。その差が可視性ギャップです。
-- **System of Record**: プロジェクトの判断、アーキテクチャ制約、実行状態、検証基準についての権威ある情報源としてのコードリポジトリです。最終決定権はリポジトリにあり、他の場所は関係ありません。たとえば「通行止め」と書かれた地図のようなものです。その道には入らないでしょう。しかしその情報が Old Zhang の頭の中にしかないなら、毎回 Old Zhang に聞かなければなりません。
-- **Cold-Start Test**: 上の 5 つの質問です。何個に答えられるかが、地図の完全さを表します。
-- **Discovery Cost**: エージェントがリポジトリ内で重要な情報を見つけるために消費するコンテキスト予算です。情報が隠れているほど discovery cost は高くなり、実際の作業に使える予算は減ります。重要な情報を 10 階層下の README に隠すのは、消火器を地下の金庫にしまうようなものです。存在はしていますが、必要なときに見つけられません。
-- **Knowledge Decay Rate**: 単位時間あたりに陳腐化する知識エントリの割合です。コードとドキュメントがずれていくことは最大の敵であり、ドキュメントがないことよりも悪い場合があります。
-- **ACID Analogy**: データベースのトランザクション原則（Atomicity, Consistency, Isolation, Durability）を、エージェントの状態管理に当てはめる考え方です。これについては後で詳しく説明します。
+- **Knowledge Visibility Gap**: The proportion of total project knowledge that's NOT in the repository. The bigger the gap, the higher the agent's failure rate. How much implicit knowledge about this project lives in your head? Count it all, then see how much made it into the repo — the difference is your visibility gap.
+- **System of Record**: The code repository as the authoritative source for project decisions, architecture constraints, execution state, and verification standards. The repo has the final word, nowhere else counts. Like a map that marks "road closed" — you won't go down that road. But if that information only exists in Old Zhang's head, you have to ask Old Zhang every time.
+- **Cold-Start Test**: The five questions above. How many it can answer is how complete your map is.
+- **Discovery Cost**: How much context budget the agent burns to find a key piece of information in the repo. The more hidden the information, the higher the discovery cost, and the less budget left for the actual task. Hiding critical information in a README ten directory levels deep is like locking the fire extinguisher in a basement safe — it exists, but you can't find it when you need it.
+- **Knowledge Decay Rate**: The proportion of knowledge entries that become stale per unit of time. Documentation going out of sync with code is the biggest enemy — worse than no documentation at all.
+- **ACID Analogy**: Applying database transaction principles (Atomicity, Consistency, Isolation, Durability) to agent state management. We'll expand on this below.
 
-## 良い地図の描き方
+## How to Draw a Good Map
 
-**原則 1: 知識はコードの近くに置く。** API エンドポイントの認証に関するルールは、大きなグローバル文書の奥深くに埋めるのではなく、API コードのそばに置くべきです。各モジュールの責務、インターフェース、特別な制約を説明する短いドキュメントを、各モジュールディレクトリに置きましょう。図書館の棚札のようなものです。歴史書を探すなら、「History」と書かれた棚に行けばいい。図書館全体を探す必要はありません。
+**Principle 1: Knowledge lives next to code.** A rule about API endpoint authentication belongs next to the API code, not buried in a giant global document. Put a short doc in each module directory explaining that module's responsibilities, interfaces, and special constraints. Like library shelf labels — you want history books, go straight to the shelf marked "History." No need to search the entire library.
 
-**原則 2: 標準化された入口ファイルを使う。** `AGENTS.md`（または `CLAUDE.md`）は、エージェントの「ランディングページ」です。すべての情報を入れる必要はありませんが、少なくとも次の 3 つにはすぐ答えられなければなりません。「このプロジェクトは何か」「どうやって実行するか」「どうやって検証するか」です。50〜100 行あれば十分です。
+**Principle 2: Use a standardized entry file.** `AGENTS.md` (or `CLAUDE.md`) is the agent's "landing page." It doesn't need to contain all information, but it must let the agent quickly answer three questions: "What is this project," "How do I run it," and "How do I verify it." 50-100 lines is enough.
 
-**原則 3: 最小限だが十分であること。** すべての知識には明確な用途が必要です。あるルールを削除してもエージェントの判断品質に影響しないなら、そのルールは存在すべきではありません。しかしコールドスタートテストのすべての質問には答えが必要です。これは繊細なバランスです。多すぎず、少なすぎず、ちょうどよく。
+**Principle 3: Minimal but complete.** Every piece of knowledge should have a clear use case. If removing a rule doesn't affect the agent's decision quality, that rule shouldn't exist. But every question from the cold-start test must have an answer. This is a delicate balance — not too much, not too little, just enough.
 
-**原則 4: コードと一緒に更新する。** 知識の更新をコード変更に結びつけます。最も単純な方法は、対応するモジュールディレクトリにアーキテクチャドキュメントを置くことです。コードを変更すると、自然にそのドキュメントが目に入ります。コード変更のあとで、CI がドキュメント更新の必要性を思い出させることもできます。
+**Principle 4: Update with code.** Bind knowledge updates to code changes. The simplest approach: put architecture docs in the corresponding module directory. When you modify code, you naturally see the doc. After code changes, CI can remind you to check if docs need updating.
 
-**具体的なリポジトリ構成**:
+**Concrete repo structure**:
 
 ```
 project/
-├── AGENTS.md              # 入口: プロジェクト概要、実行コマンド、厳格な制約
+├── AGENTS.md              # Entry: project overview, run commands, hard constraints
 ├── src/
 │   ├── api/
-│   │   ├── ARCHITECTURE.md  # API レイヤーのアーキテクチャ判断
+│   │   ├── ARCHITECTURE.md  # API layer architecture decisions
 │   │   └── ...
 │   ├── db/
-│   │   ├── CONSTRAINTS.md   # DB 操作の厳格な制約
+│   │   ├── CONSTRAINTS.md   # Database operation hard constraints
 │   │   └── ...
 │   └── ...
-├── PROGRESS.md             # 現在の進捗: 完了、進行中、ブロック中
-└── Makefile                # 標準化されたコマンド: setup, test, lint, check
+├── PROGRESS.md             # Current progress: done, in-progress, blocked
+└── Makefile                # Standardized commands: setup, test, lint, check
 ```
 
-## ACID 原則でエージェント状態を管理する
+## Managing Agent State with ACID Principles
 
-この比喩はデータベースのトランザクション管理から来ています。大げさに思えるかもしれませんが、実際にはとても実用的な枠組みを与えてくれます。
+This analogy comes from database transaction management — you might think it's overcomplicating things, but it actually gives you a very practical framework:
 
-- **Atomicity**: 各「論理操作」（たとえば「新しいエンドポイントを追加してテストを更新する」）ごとに 1 つの git commit にします。途中で失敗したら、`git stash` で巻き戻します。全部かゼロかであり、「半分だけ終わった」はありません。
-- **Consistency**: 「整合した状態」の検証条件を定義します。すべてのテストが通り、lint がエラー 0 であることです。エージェントは各操作の後に検証を実行し、一時的な不整合状態のままコミットしません。銀行振込のようなものです。引き落としだけして入金しない、ということはできません。
-- **Isolation**: 複数のエージェントが同時に作業するときは、状態ファイルを設計して競合を避けます。単純な方法は、各エージェントに専用の進捗ファイルを持たせるか、git ブランチで分離することです。2 人の料理人が同じ鍋に同時に塩を入れるわけにはいきません。しょっぱくなりすぎたとき、責任は誰が取るのでしょうか。
-- **Durability**: 重要なプロジェクト知識は git で追跡されるファイルに置きます。一時的な状態はセッションメモリに置いても構いませんが、セッションをまたいで必要な知識はファイルに保存しなければなりません。頭の中にあるものは数えません。紙の上にあるものだけが数に入ります。
+- **Atomicity**: Each "logical operation" (e.g., "add new endpoint and update tests") gets one git commit. If it fails midway, `git stash` to roll back. All or nothing — no "half done."
+- **Consistency**: Define "consistent state" verification predicates — all tests pass, lint reports zero errors. The agent runs verification after each operation; inconsistent intermediate states don't get committed. Like a bank transfer — you can't debit without crediting.
+- **Isolation**: When multiple agents work concurrently, design state files to avoid race conditions. Simple approach: each agent uses its own progress file, or use git branches for isolation. Two chefs can't season the same pot simultaneously — who takes responsibility when it's over-salted?
+- **Durability**: Critical project knowledge lives in git-tracked files. Temporary state can stay in session memory, but cross-session knowledge must be persisted to files. What's in your head doesn't count — only what's on paper counts.
 
-## 実際の変革ストーリー
+## A Real Transformation Story
 
-あるチームは、約 30 のマイクロサービスを持つ e コマースプラットフォームを運用していました。アーキテクチャ判断（サービス間通信プロトコル、データ整合性戦略、API バージョニングのルール）は、Confluence（部分的に古い）、Slack（検索しづらい）、一部のシニアエンジニアの頭の中（スケールしない）、断片的なコードコメント（体系的でない）に散らばっていました。
+A team maintained an e-commerce platform with ~30 microservices. Architecture decisions (inter-service communication protocols, data consistency strategies, API versioning rules) were scattered across: Confluence (partially outdated), Slack (hard to search), a few senior engineers' heads (not scalable), and sporadic code comments (not systematic).
 
-AI エージェントを導入したあと、タスクの 70% で人間の介入が必要でした。ほぼすべての失敗は、エージェントが「みんな知っているが誰も書いていない」暗黙の制約を破ったことに起因していました。これは、新人に「昼食の注文はグループチャットに投稿する必要がある」と誰も教えなかったのに似ています。新人は間違えて、叱られます。しかし叱ったあとも、結局そのルールは誰も教えません。
+After introducing AI agents, 70% of tasks required human intervention. Nearly every failure involved the agent violating some "everyone knows but nobody wrote down" implicit constraint. It's like a new employee whom nobody told "you need to post your lunch order in the group chat" — they guess wrong, get scolded, but after the scolding still nobody tells them the rule.
 
-チームは次の変革を実施しました。
-1. リポジトリのルートに `AGENTS.md` を作成し、プロジェクト概要、技術スタックのバージョン、グローバルな厳格制約を記載した
-2. 各マイクロサービスのディレクトリに `ARCHITECTURE.md` を追加し、責務、インターフェース、依存関係を説明した
-3. 厳格な制約を明示的な "MUST/MUST NOT" 言語でまとめた集中管理の `CONSTRAINTS.md` を作成した
-4. 各サービスディレクトリに `PROGRESS.md` を追加し、現在の作業状況を追跡した
+The team executed a transformation:
+1. Created `AGENTS.md` in the repo root with project overview, tech stack versions, and global hard constraints
+2. Added `ARCHITECTURE.md` in each microservice directory describing responsibilities, interfaces, and dependencies
+3. Created a centralized `CONSTRAINTS.md` with hard constraints in explicit "MUST/MUST NOT" language
+4. Added `PROGRESS.md` in each service directory tracking current work status
 
-変革の結果、同じエージェントがコールドスタートで主要なプロジェクト質問すべてに答えられるようになり、タスク完了の品質も大幅に改善しました。
+After transformation: the same agent could answer all key project questions on cold start, and task completion quality improved significantly.
 
-## 要点
+## Key Takeaways
 
-- リポジトリにない知識は、エージェントにとって存在しません。重要な判断をリポジトリに置くことは、ハーネスへの最も基本的な投資です。良い地図を描いて、迷わないようにしましょう。
-- リポジトリ品質の評価には「コールドスタートテスト」を使います。新しいセッションが、リポジトリの内容だけで 5 つの基本質問に答えられるかを確認してください。
-- 知識はコードの近くに置き、最小限だが十分であり、コードと一緒に更新すべきです。大切なのは、もっとドキュメントを書くことではなく、情報を正しい場所に置くことです。
-- エージェント状態には ACID 原則を使います。原子的な commit、整合性の検証、同時実行の分離、重要知識の永続化です。
-- 知識の劣化が最大の敵です。コードとずれたドキュメントは、ドキュメントがないことより危険です。エージェントを、自分では正しいと思いながら間違った方向へ導いてしまいます。
+- Knowledge not in the repo doesn't exist for the agent. Putting critical decisions in the repo is the most basic harness investment — draw a good map so you don't get lost.
+- Use the "cold-start test" to evaluate repo quality: can a fresh session answer five basic questions using only repo contents?
+- Knowledge should be near code, minimal but complete, and updated with code. It's not about writing more docs — it's about putting information in the right place.
+- Use ACID principles for agent state: atomic commits, consistency verification, concurrency isolation, durable critical knowledge.
+- Knowledge decay is the biggest enemy. Documentation out of sync with code is more dangerous than no documentation — it sends the agent in the wrong direction while they think they're right.
 
-## さらに読む
+## Further Reading
 
 - [OpenAI: Harness Engineering](https://openai.com/index/harness-engineering/)
 - [Anthropic: Effective Harnesses for Long-Running Agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
@@ -128,10 +128,10 @@ AI エージェントを導入したあと、タスクの 70% で人間の介入
 - [ADR: Architecture Decision Records](https://adr.github.io/)
 - [The Twelve-Factor App](https://12factor.net/)
 
-## 演習
+## Exercises
 
-1. **コールドスタートテスト**: あなたのプロジェクトで、まったく新しいエージェントセッションを開いてください（口頭のコンテキストはなし、リポジトリ内容のみ）。次の 5 つを質問します。このシステムは何か？ どう構成されているか？ どうやって実行するか？ どうやって検証するか？ 現在の進捗はどうなっているか？ 答えられなかった内容を記録し、答えられるようになるまでリポジトリを改善してください。
+1. **Cold-start test**: Open a completely fresh agent session in your project (no verbal context, repo contents only). Ask it five questions: What is this system? How is it organized? How do I run it? How do I verify it? What's the current progress? Record what it can't answer, then improve the repo until it can.
 
-2. **知識の外部化の定量化**: プロジェクトの開発作業に重要な判断と制約をすべて列挙してください。それぞれがリポジトリ内か外かを記録します。Knowledge visibility gap（リポジトリ外の割合）を計算してください。10% 未満にする計画を立ててください。
+2. **Knowledge externalization quantification**: List all decisions and constraints important for development work in your project. Mark each as inside or outside the repo. Calculate your knowledge visibility gap (proportion outside repo). Make a plan to get it below 10%.
 
-3. **ACID 評価**: この講義の ACID 比喩を使って、プロジェクトの状態管理を評価してください。Atomicity — エージェント操作はきれいに巻き戻せますか？ Consistency — 「整合した状態」の検証がありますか？ Isolation — 同時に作業するエージェント同士が干渉していませんか？ Durability — セッションをまたぐ知識はすべて永続化されていますか？
+3. **ACID assessment**: Evaluate your project's state management using this lecture's ACID analogy. Atomicity — can agent operations be cleanly rolled back? Consistency — is there "consistent state" verification? Isolation — do concurrent agents step on each other? Durability — is all cross-session knowledge persisted?

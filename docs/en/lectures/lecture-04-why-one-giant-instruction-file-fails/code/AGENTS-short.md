@@ -1,14 +1,15 @@
 # AGENTS.md
 
-## まず読むもの
+## Start Here
 
-- `docs/ARCHITECTURE.md` を読む
-- `docs/PRODUCT.md` を読む
-- アプリを起動するには `npm run dev` を使う
-- 作業完了として扱う前に `npm run check` を実行する
+- Read `docs/ARCHITECTURE.md`
+- Read `docs/PRODUCT.md`
+- Use `npm run dev` to start the app
+- Use `npm run check` before marking work complete
 
-## 厳守事項
+## Hard Rules
 
-- `docs/ARCHITECTURE.md` を読まずに Electron の main/preload/renderer の境界を変更しない
-- 検証なしに機能完了と見なさない
-- 次のセッションのために、クリーンな状態を残す
+- Do not change Electron main/preload/renderer boundaries without reading
+  `docs/ARCHITECTURE.md`
+- Do not mark a feature complete without verification
+- Leave a clean state for the next session

@@ -1,9 +1,9 @@
-# 中核となる信念
+# Core Beliefs
 
-- リポジトリは、エージェントにとっての正本である。
-- `AGENTS.md` は百科事典ではなく、ルーターである。
-- 検証の証拠は、自信よりも重要である。
-- 境界の明確な1つのタスクは、未完了のタスクをたくさん抱えるより良い。
-- 人間からの繰り返しのフィードバックは、再利用可能な harness のルールにすべきである。
-- 整理と単純化は、後回しにするものではなく、リリースの一部である。
-- エージェントがリポジトリ内で事実を見つけられないなら、その事実は運用上利用不可能なものとして扱うこと。
+- The repository is the system of record for agents.
+- `AGENTS.md` is a router, not an encyclopedia.
+- Verification evidence matters more than confidence.
+- One bounded task is better than many half-finished tasks.
+- Repeated human feedback should become reusable harness rules.
+- Cleanup and simplification are part of shipping, not afterthoughts.
+- If an agent cannot discover a fact in-repo, treat that fact as operationally unavailable.

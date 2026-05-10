@@ -1,47 +1,47 @@
-# SOP: レイヤード・ドメイン・アーキテクチャ
+# SOP: Kiến trúc Domain Phân lớp
 
-この SOP は、エージェントが境界を繰り返し破ったり、レイヤーをまたいでロジックを複製したり、数回のセッションのあとでレビューしづらいコードを作ったりする場合に使います。
+Sử dụng SOP này khi agent tiếp tục vi phạm ranh giới, sao chép logic qua các lớp, hoặc tạo ra mã khó review sau một vài phiên.
 
-## 目的
+## Mục tiêu
 
-ドメインの境界を十分に明確にして、エージェントが構造をひそかに劣化させることなく、素早く動けるようにします。
+Làm cho ranh giới domain đủ rõ ràng để agent có thể di chuyển nhanh mà không âm thầm làm xuống cấp cấu trúc.
 
-## 目標モデル
+## Mô hình Mục tiêu
 
-1 つのビジネスドメインでは、次の流れを優先します。
+Trong một domain kinh doanh, ưu tiên luồng định hướng này:
 
 `Types -> Config -> Repo -> Service -> Runtime -> UI`
 
-横断的な関心事は、明確な provider または adapter を通して入るべきです。共通 utils はドメインの外側に置き、ドメインロジックを蓄積させてはいけません。
+Các mối quan tâm xuyên suốt nên đi vào qua các provider hoặc adapter rõ ràng. Các utils dùng chung nằm bên ngoài domain và không nên tích lũy logic domain.
 
-## セットアップチェックリスト
+## Danh sách Kiểm tra Thiết lập
 
-- 既存のドメインを `ARCHITECTURE.md` に定義する。
-- `ARCHITECTURE.md` に許可された依存方向を書く。
-- auth、telemetry、external API のような横断的インターフェースを記録する。
-- 現在最も厄介な境界違反について、短い注記を追加する。
-- lint、test、script のどれで機械的に強制すべきかを決める。
+- Định nghĩa các domain hiện tại trong `ARCHITECTURE.md`.
+- Viết các hướng phụ thuộc được phép trong `ARCHITECTURE.md`.
+- Ghi lại các giao diện xuyên suốt như auth, telemetry và external API.
+- Thêm một ghi chú ngắn cho vi phạm ranh giới khó nhất hiện tại.
+- Quyết định những gì nên được thực thi cơ học bởi lint, test hoặc script.
 
-## 実行 SOP
+## SOP Thực thi
 
-1. 実装スタイルに触る前に、codebase をドメインごとにマッピングする。
-2. 各ドメインについて、許可されるレイヤーチェーンを特定する。
-3. すべての横断的な関心事を洗い出し、provider または adapter 経由でルーティングする。
-4. あいまいな共通ロジックは、所有ドメインか、真に汎用的な utils に移す。
-5. ルールを `ARCHITECTURE.md` に記録する。
-6. 最もコストの高い違反に対して、実行可能なガードレールを追加する。
-7. 変更後に品質スコアを更新する。
+1. Ánh xạ codebase thành các domain trước khi chạm vào phong cách triển khai.
+2. Cho mỗi domain, xác định chuỗi lớp được phép.
+3. Xác định tất cả các mối quan tâm xuyên suốt và định tuyến chúng qua các provider hoặc adapter.
+4. Di chuyển logic dùng chung mơ hồ sang domain sở hữu hoặc sang utils thực sự chung chung.
+5. Ghi lại các quy tắc trong `ARCHITECTURE.md`.
+6. Thêm một guardrail có thể thực thi cho vi phạm có chi phí cao nhất.
+7. Cập nhật điểm chất lượng sau khi thay đổi.
 
-## 完了定義
+## Định nghĩa Hoàn thành
 
-- 新しいエージェントが、どのレイヤーが変更を所有しているか分かる。
-- UI コードが repo や外部 side effect に直接触れなくなる。
-- 横断的な関心事に、名前の付いた入力点がある。
-- 少なくとも 1 つの重要な境界が機械的に強制されている。
+- Một agent mới có thể biết lớp nào sở hữu một thay đổi.
+- Mã UI không còn tiếp cận vào repo hoặc side effect bên ngoài trực tiếp.
+- Các mối quan tâm xuyên suốt có các điểm đầu vào được đặt tên.
+- Ít nhất một ranh giới quan trọng được thực thi cơ học.
 
-## 更新が必要な Repo Artifact
+## Artifact Repo Cần Cập nhật
 
 - `ARCHITECTURE.md`
 - `docs/QUALITY_SCORE.md`
-- 理由づけが変わる場合は `docs/design-docs/`
-- `docs/PLANS.md` またはアクティブな実行計画
+- `docs/design-docs/` khi lý luận thay đổi
+- `docs/PLANS.md` hoặc kế hoạch thực thi active

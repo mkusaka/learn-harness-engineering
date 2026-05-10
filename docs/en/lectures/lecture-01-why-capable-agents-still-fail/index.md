@@ -1,60 +1,60 @@
-[中国語版 →](../../../zh/lectures/lecture-01-why-capable-agents-still-fail/)
+[中文版本 →](../../../zh/lectures/lecture-01-why-capable-agents-still-fail/)
 
-> コード例: [code/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/en/lectures/lecture-01-why-capable-agents-still-fail/code/)
-> 演習プロジェクト: [Project 01. Prompt-only vs. rules-first](./../../projects/project-01-baseline-vs-minimal-harness/index.md)
+> Code examples: [code/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/en/lectures/lecture-01-why-capable-agents-still-fail/code/)
+> Practice project: [Project 01. Prompt-only vs. rules-first](./../../projects/project-01-baseline-vs-minimal-harness/index.md)
 
-# Lecture 01. 強いモデルでも安定実行とは限らない
+# Lecture 01. Strong Models Don't Mean Reliable Execution
 
-あなたは AI の世界にかなり通じているつもりです。Claude Pro のサブスクリプションもあるし、GPT-4o の API キーも持っているし、SWE-bench の上位スコアだって覚えています。そんなあなたが、ある日ついに実案件を AI エージェントに任せます。自信満々で。結果はどうでしょう。機能は追加したのにテストが壊れ、バグを直したはずなのに別のバグを 2 つ増やし、20 分動いて堂々と「完了」と宣言する。それでもコードを見れば、こちらが頼んだものとはまるで違う。
+You consider yourself well-traveled in the AI world — Claude Pro subscription, GPT-4o API key, SWE-bench leaderboard numbers memorized. One day you finally hand a real project to an AI agent, brimming with confidence. The result? It adds a feature but breaks the tests, fixes a bug but introduces two more, runs for 20 minutes and proudly declares "done" — and you look at the code and it's not what you asked for at all.
 
-最初に浮かぶのは、「このモデルは十分ではない。アップグレードしよう」という考えかもしれません。ですが、財布を開く前に、問題はモデルそのものではない可能性を考えてください。
+Your first instinct? "This model isn't good enough. Time to upgrade." Hold on. Before you reach for your wallet, consider that the problem might not be the model at all.
 
-数字を見てみましょう。ベンチマークの数字は急速に更新されます。2025 年 9 月時点で、Anthropic は Claude Sonnet 4.5 が SWE-bench Verified で 77.2% に達したと公表しています。つまり、ベンチマーク上ではかなり強く見えるモデルでも、問題の説明が明確で既存のテストケースもある、よく選ばれたタスクでの結果です。日々の開発環境に移るとどうでしょう。要件は曖昧で、既存テストはなく、暗黙の業務ルールがあちこちに散らばっている。そんな環境では、その数字はそのまま再現されません。
+Let's look at some numbers. As of late 2025, the strongest coding agents on SWE-bench Verified achieve roughly 50-60%. And that's on carefully selected tasks with clear issue descriptions and existing test cases. Move to your daily development environment — vague requirements, no existing tests, implicit business rules scattered everywhere — and that number only goes down.
 
-しかし、この数字の裏には直感に反する真実があります。
+But behind these numbers lies a counterintuitive truth.
 
-## 同じ馬でも、結果は違う
+## Same Horse, Different Fates
 
-Anthropic は制御実験を行いました。プロンプトは同じ（「2D のレトロゲーム制作ツールを作る」）、モデルも同じ（Opus 4.5）です。1 回目は素のまま、支援なし。20 分、9 ドルで、ゲームの中核機能はまったく動きませんでした。2 回目は完全なハーネス（planner + generator + evaluator の 3 エージェント構成）を使い、6 時間、200 ドルをかけたところ、ゲームは遊べる状態になりました。
+Anthropic ran a controlled experiment. Same prompt ("build a 2D retro game maker"), same model (Opus 4.5). First run: bare, no support — 20 minutes, $9, the game's core features didn't work at all. Second run: full harness (planner + generator + evaluator three-agent architecture) — 6 hours, $200, the game was playable.
 
-変えたのはモデルではありません。Opus 4.5 は最後まで Opus 4.5 のままでした。変わったのは鞍です。
+They didn't change the model. Opus 4.5 was still Opus 4.5. What changed was the saddle.
 
-OpenAI が 2026 年に公開した harness engineering 記事は、これを明快に述べています。よく整備されたハーネスを持つリポジトリでは、Codex は「不安定」から「信頼できる」へ変わるのです。ここで注目すべきは言葉遣いです。「少し良くなる」ではなく、質的な転換だということです。サラブレッドのようなものです。鞍なしでも乗れますが、遠くまでは行けないし、速くも走れないし、落馬しても不思議ではありません。ハーネスとはその鞍です。**モデルの重み以外にある、あらゆるエンジニアリング基盤**を指します。
+OpenAI's 2025 harness engineering article puts it plainly: Codex in a well-harnessed repository goes from "unreliable" to "reliable." Note their wording — not "a bit better," but a qualitative shift. Like a thoroughbred: you can ride it without a saddle, but you won't go far, won't go fast, and falling off is no surprise. The harness is that saddle — **everything in the engineering infrastructure outside the model weights.**
 
-## エージェントはどこで実際につまずくのか
+## Where Agents Actually Get Stuck
 
-では、具体的には何がうまくいかないのでしょうか。
+So what specifically goes wrong?
 
-最も多いのは、タスクを明確に定義していないことです。「検索機能を追加して」と伝えると、エージェントの理解はあなたの意図とまったく違うかもしれません。何を検索するのか。全文検索なのか、構造化検索なのか。ページネーションは必要か。ハイライトは要るのか。そこを指定していないので、エージェントは推測します。たまたま当たれば運が良かっただけで、外れた場合は、最初から具体的に書いていたほうが安かったはずの修正コストを払うことになります。レストランに入って料理人に「魚をください」と言うようなものです。煮付けか、蒸し物か、鍋物かは完全に運任せです。
+The most common: you never clearly defined the task. You say "add a search feature," and the agent's understanding is completely different from yours — search what? Full-text or structured? Pagination? Highlighting? You didn't specify, so the agent guesses. A correct guess is luck; a wrong one costs more to fix than being specific would have cost in the first place. It's like walking into a restaurant and telling the chef "I'll have fish" — whether you get it braised, steamed, or in a hot pot is entirely up to chance.
 
-たとえ指定したとしても、プロジェクトにはエージェントの知らない暗黙の設計規約があります。チームでは SQLAlchemy 2.0 の構文に統一しているのに、エージェントはデフォルトで 1.x のコードを書いてしまう。すべての API エンドポイントは OAuth 2.0 認証を使うべきなのに、そのルールはあなたの頭の中と 3 か月前の Slack メッセージの中にしかない。エージェントにはそれが見えません。従う気がないのではなく、そもそもそのルールの存在を知らないのです。
+Even when you do specify, the project has implicit architectural conventions the agent doesn't know. Your team standardized on SQLAlchemy 2.0 syntax, but the agent writes 1.x code by default. All API endpoints must use OAuth 2.0 authentication, but that rule only exists in your head and a Slack message from three months ago. The agent can't see these — it's not that it doesn't want to comply, it literally doesn't know these rules exist.
 
-環境も落とし穴です。開発環境が不完全で、依存関係が足りず、ツールのバージョンも合っていない。エージェントは本来の課題ではなく、`pip install` の失敗や Node のバージョン不一致に貴重なコンテキストウィンドウを費やしてしまいます。これは、腕のいい大工を雇ったのに、ハンマーも釘も、水平な作業台も用意し忘れるようなものです。どれだけ優秀でも、仕事はできません。
+The environment is a trap too. Incomplete dev environment, missing dependencies, wrong tool versions. The agent burns precious context window on `pip install` failures and Node version mismatches instead of solving your actual task. Like hiring a skilled carpenter but forgetting to provide a hammer, nails, or a level workbench — no matter how talented, they can't do the job.
 
-さらによくあるのは、そもそも検証する手段がないことです。テストもなく、lint もなく、検証コマンドもエージェントに伝えられていない。エージェントはコードを書き、それを見て「問題ない」と判断し、「完了」と言います。答え合わせのない宿題を学生に出すようなものです。本人は合っていると思っていても、採点してみればエラーの山です。Anthropic は興味深い現象も観測しています。エージェントがコンテキスト不足を感じると、急いで終わらせようとして検証を飛ばし、最適解より単純な解を選びがちになるのです。彼らはこれを「context anxiety」と呼んでいます。試験終了間際に気づいて、残りの選択問題を勘で埋め始めるあの感覚と同じです。
+Even more common: there's simply no way to verify. No tests, no lint, or verification commands never communicated to the agent. The agent writes code, looks at it, decides it's fine, says "done." It's like asking a student to submit homework with no answer key — they think they got it right, but when you grade it there's a pile of errors. Anthropic also observed an interesting phenomenon: when agents sense context is running low, they rush to finish, skip verification, and choose a simple solution over the optimal one. They call it "context anxiety" — the same thing that happens when you realize time is almost up on an exam and start randomly guessing on the remaining multiple-choice questions.
 
-セッションをまたぐ長いタスクはさらに厄介です。前のセッションで得た発見がすべて失われ、新しいセッションのたびにプロジェクト構造を再探索し、コードの整理方針を再理解しなければならないからです。永続状態を持たないエージェントでは、30 分を超えるタスクで失敗率が大きく跳ね上がります。
+Long tasks spanning sessions are even worse — all discoveries from the previous session are lost, and every new session has to re-explore the project structure and re-understand the code organization. Agents without persistent state see failure rates spike sharply on tasks exceeding 30 minutes.
 
-## 重要な用語
+## Key Terminology
 
-こうした状況を踏まえると、次の用語もただの専門用語ではなくなります。
+With these scenarios in mind, these concepts are no longer just jargon:
 
-- **Capability Gap**: ベンチマーク上でのモデル性能と、実際のタスクでの性能の大きな隔たり。SWE-bench Verified で高い合格率が出ていても、現実の issue では要件の曖昧さ、暗黙の設計規約、検証不足によって結果が大きく落ちることがあります。
-- **Harness**: モデル以外のすべてです。指示、ツール、環境、状態管理、検証フィードバック。モデルの重み以外はすべてハーネスです。ここで言う「鞍」のことです。
-- **Harness-Induced Failure**: モデルには十分な能力があるのに、実行環境に構造的な欠陥がある状態です。Anthropic の制御実験がすでにこれを証明しています。
-- **Verification Gap**: エージェントの出力に対する自信と、実際の正しさのあいだにある差です。終わっていないのにエージェントが「終わりました」と言う。これが最も一般的な失敗パターンです。
-- **Diagnostic Loop**: 実行し、失敗を観測し、特定のハーネス層に原因を帰し、その層を修正して、再実行する。これが harness engineering の中核となる方法論です。
-- **Definition of Done**: テストが通る、lint がきれい、型チェックが通る、といった機械的に検証可能な条件の集合です。明示的な Definition of Done がなければ、エージェントは自分で勝手に定義してしまいます。
+- **Capability Gap**: The huge gulf between model performance on benchmarks and performance on real tasks. A 50-60% pass rate on SWE-bench Verified means nearly half of real issues can't be resolved.
+- **Harness**: Everything outside the model — instructions, tools, environment, state management, verification feedback. If it's not model weights, it's harness. What we've been calling the "saddle."
+- **Harness-Induced Failure**: The model has enough capability, but the execution environment has structural defects. Anthropic's controlled experiment already proved this.
+- **Verification Gap**: The gap between the agent's confidence in its output and actual correctness. The agent says "I'm done" when it's not done — this is the most common failure mode.
+- **Diagnostic Loop**: Execute, observe failure, attribute to a specific harness layer, fix that layer, re-execute. This is the core methodology of harness engineering.
+- **Definition of Done**: A set of machine-verifiable conditions — tests pass, lint is clean, type checks pass. Without an explicit definition of done, the agent will invent its own.
 
-## 失敗したら、まずハーネスを直す
+## When Things Fail, Fix the Harness First
 
-基本原則はこうです。**失敗したら、最初にモデルを替えるのではなく、ハーネスを確認すること。** 同じモデルが似たような整ったタスクで成功するなら、まずハーネスの問題だと考えてください。車が止まったからといって、すぐエンジンを疑うわけではありません。まずガス欠かどうかを確かめるはずです。
+Core principle: **When things fail, don't swap the model first — check the harness.** If the same model succeeds on similar, well-structured tasks, assume it's a harness problem. It's like a car breaking down — you don't immediately suspect the engine. You check if it's out of gas first.
 
-具体的には次のとおりです。
+Concrete steps:
 
-**すべての失敗を特定の層に帰属させる。** 「このモデルはダメだ」で終わらせないでください。タスクは曖昧だったのか。コンテキストが足りなかったのか。検証方法がなかったのか。各失敗を 5 つの失敗層（タスク定義、コンテキスト提供、実行環境、検証フィードバック、状態管理）のどれかに対応づけます。この習慣をつけると、「モデルが十分ではない」という言葉はログに出てくる回数が減っていきます。
+**Attribute every failure to a specific layer.** Don't just say "the model sucks." Ask: was the task unclear? Was context insufficient? Were there no verification methods? Map each failure to one of the five failure layers (task specification, context provision, execution environment, verification feedback, state management). Build this habit, and you'll find "the model isn't good enough" appearing less and less in your logs.
 
-**すべてのタスクに明示的な Definition of Done を書く。** 「検索機能を追加して」ではなく、次のように書きます。
+**Write an explicit Definition of Done for every task.** Don't say "add a search feature." Say:
 ```
 Completion criteria:
 - New endpoint GET /api/search?q=xxx
@@ -64,43 +64,43 @@ Completion criteria:
 - Type checking passes (mypy --strict)
 ```
 
-**AGENTS.md を作る。** リポジトリのルートに置き、プロジェクトの技術スタック、設計規約、検証コマンドをエージェントに伝えます。これは harness engineering の第一歩であり、最も費用対効果の高い一手です。より高価なモデルにアップグレードするより、1 つの `AGENTS.md` のほうが効くこともあります。本気で言っています。
+**Create an AGENTS.md file.** Put it in the repo root to tell the agent the project's tech stack, architectural conventions, and verification commands. This is the first step in harness engineering and the highest-ROI step you can take. One `AGENTS.md` file might be more effective than upgrading to a more expensive model — I'm not joking.
 
-**診断ループを作る。** 失敗を「またモデルがバカをやった」とは扱わないでください。ハーネスに欠陥があるというシグナルとして扱います。失敗ごとに層を特定し、修正し、同じ失敗を二度と起こさないようにします。何回か繰り返すうちに、ハーネスは強くなり、エージェントの性能も安定します。道路補修と同じです。穴を 1 つ埋めるたびに、次の区間は少しなめらかになります。
+**Build a diagnostic loop.** Don't treat failures as "the model being dumb again." Treat them as signals that your harness has a defect. Each failure, identify the layer, fix it, never fail that way again. After a few rounds, your harness gets stronger and agent performance stabilizes. Like road repair — every pothole you fill makes the next stretch smoother.
 
-**改善を数値化する。** 簡単なログを残しましょう。各タスクが成功したか失敗したか、失敗した場合はどの層が原因だったかを記録します。数回まわすと、どの層がボトルネックかが見えてきます。その部分に力を集中させましょう。
+**Quantify improvements.** Keep a simple log: did each task succeed or fail, and which layer caused the failure. After a few rounds you'll see which layer is the bottleneck — focus your energy there.
 
-## 100 万行の実験
+## The Million-Line Experiment
 
-OpenAI が 2026 年に公開した記事では、2025 年後半に空の git リポジトリから始め、Codex を使って社内向けの完全なプロダクトを作った事例が紹介されています。5 か月後、そのリポジトリにはおよそ 100 万行のコードがありました。アプリケーションロジック、インフラ、ツール、ドキュメント、社内開発ツールまで、すべてエージェント生成です。3 人のエンジニアが Codex を運用し、約 1,500 件の PR を作成・マージしました。1 人あたり 1 日平均 3.5 件です。
+OpenAI ran an aggressive experiment in 2025: use Codex to build a complete internal product from an empty git repository. Five months later, the repo had roughly one million lines of code — application logic, infrastructure, tooling, documentation, internal dev tools — all agent-generated. Three engineers drove Codex, opening and merging about 1,500 PRs. An average of 3.5 PRs per person per day.
 
-重要な制約は、**人間がコードを直接書かないこと**でした。これは見せ物ではありません。エンジニアの主な仕事がコードを書くことではなく、環境を設計し、意図を表現し、フィードバックループを構築することに変わったとき、何が変わるのかをチームに考えさせるための設計です。
+The key constraint: **humans never write code directly.** This wasn't a gimmick — it was designed to force the team to figure out what changes when the engineer's primary job is no longer writing code, but designing environments, expressing intent, and building feedback loops.
 
-初期の進捗は予想より遅くなりました。Codex に能力がなかったからではなく、環境が十分に整っていなかったからです。エージェントには、高レベルの目標に進むために必要なツール、抽象化、内部構造が足りませんでした。エンジニアの仕事は、大きな目標を小さな部品（設計、コード、レビュー、テスト）に分解し、それをエージェントに組み立てさせ、その部品を使ってさらに複雑なタスクを解放していくことになりました。何かが失敗したとき、修正策はほとんどの場合「もっと頑張れ」ではありませんでした。「エージェントに足りない能力は何か、そしてそれをどうすれば理解可能かつ実行可能にできるか」でした。
+Early progress was slower than expected. Not because Codex wasn't capable, but because the environment wasn't complete enough — the agent lacked necessary tools, abstractions, and internal structures to advance high-level objectives. The engineers' work became: breaking large goals into small building blocks (design, code, review, test), letting the agent assemble them, then using those blocks to unlock more complex tasks. When something failed, the fix was almost never "try harder" — it was "what capability is the agent missing, and how do we make it both understandable and executable?"
 
-この実験は、この講義の中心命題を直接証明しています。**同じモデルでも、素の環境と完全なハーネスがある環境では、根本的に異なる出力を生む**ということです。モデルは変わっていません。変わったのは環境です。
+This experiment directly proves this lecture's core thesis: **the same model produces fundamentally different output in a bare environment versus one with a complete harness.** The model didn't change. The environment did.
 
 > Source: [OpenAI: Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/)
 
-## もっと身近な例
+## A More Down-to-Earth Example
 
-あるチームは、Claude Sonnet を使って、中規模の Python Web アプリ（FastAPI + PostgreSQL + Redis、約 15,000 行のコード）に新しい API エンドポイントを追加しました。
+A team used Claude Sonnet to add a new API endpoint to a mid-sized Python web app (FastAPI + PostgreSQL + Redis, ~15,000 lines of code).
 
-最初に与えたのは 1 文だけでした。「`/api/v2/users` の下にユーザー設定用エンドポイントを追加して」。結果はどうだったか。エージェントはコンテキストウィンドウの 40% を使ってリポジトリ構造の探索に費やし、一見するともっともらしいがプロジェクトのエラーハンドリング規約に従っていないコードを出し、古い SQLAlchemy 構文を使い、ランタイムエラーがあるのに完了を宣言しました。次のセッションでは、その探索作業をすべてやり直す必要がありました。
+Initially they gave only one sentence: "add user preferences endpoints under `/api/v2/users`." The result? The agent spent 40% of its context window exploring the repo structure, produced code that looked reasonable but didn't follow the project's error handling patterns, used old SQLAlchemy syntax, and declared completion while the endpoint had runtime errors. The next session had to redo all the discovery work.
 
-その後、`AGENTS.md`（プロジェクトのアーキテクチャと技術スタックのバージョンを説明するもの）、明示的な検証コマンド（`pytest tests/api/v2/ && python -m mypy src/`）、そしてアーキテクチャ決定記録を追加しました。同じモデルは、その後の 3 回の独立した実行すべてで成功し、コンテキスト効率も約 60% 改善しました。
+Later they added `AGENTS.md` (describing project architecture and tech stack versions), explicit verification commands (`pytest tests/api/v2/ && python -m mypy src/`), and architecture decision records. The same model succeeded in all three independent runs, with ~60% better context efficiency.
 
-変えたのはモデルではありません。ハーネスです。
+They didn't change the model. They changed the harness.
 
-## 要点
+## Key Takeaways
 
-- モデルの能力と実行の信頼性は別物です。サラブレッドにも、やはり良い鞍が必要です。
-- 失敗したら、まずハーネスを確認し、それからモデルを見ます。モデルの差し替えは最も高くつく選択肢であり、しかもそもそもモデルの問題ではないことが多いです。
-- すべての失敗は、ハーネスに構造的な欠陥があるというシグナルです。見つけて、直してください。
-- 5 つの防御層があります。タスク定義、コンテキスト提供、実行環境、検証フィードバック、状態管理です。医者がよくある原因から順に除外していくように、体系的に確認してください。
-- `AGENTS.md` が 1 つあるだけで、より高価なモデルにアップグレードするより効果があるかもしれません。本当です。
+- Model capability and execution reliability are different things. A thoroughbred still needs a good saddle.
+- When things fail, check the harness first, then the model. Swapping models is the most expensive option — and often it's not even a model problem.
+- Every failure is a signal: your harness has a structural defect. Find it, fix it.
+- Five defense layers: task specification, context provision, execution environment, verification feedback, state management. Check them systematically, like a doctor ruling out the most common causes first.
+- One `AGENTS.md` file might be more effective than upgrading to a more expensive model. Seriously.
 
-## 参考文献
+## Further Reading
 
 - [OpenAI: Harness Engineering — Leveraging Codex in an Agent-First World](https://openai.com/index/harness-engineering/)
 - [Anthropic: Effective Harnesses for Long-Running Agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
@@ -108,10 +108,10 @@ OpenAI が 2026 年に公開した記事では、2025 年後半に空の git リ
 - [SWE-bench Leaderboard](https://www.swebench.com/)
 - [Thoughtworks Technology Radar: Harness Engineering](https://www.thoughtworks.com/radar)
 
-## 演習
+## Exercises
 
-1. **比較実験**: よく知っているコードベースで、単純ではない変更タスクを 1 つ選びます。最初にハーネスの支援なしでエージェントを動かし、失敗を記録します。次に、明示的な検証コマンドを書いた `AGENTS.md` を追加し、同じエージェントで再実行します。結果を比較し、各失敗を 5 つの防御層のどれかに帰属させてください。
+1. **Comparison experiment**: Pick a codebase you know well and a non-trivial modification task. First, run the agent with no harness support and record failures. Then add an `AGENTS.md` with explicit verification commands and run again with the same agent. Compare results, attributing each failure to one of the five defense layers.
 
-2. **検証ギャップの測定**: 5 つのコーディングタスクを選びます。各タスクの後で、エージェントが完了を主張したかどうかを記録し、独立したテストで実際の正しさを確認します。実際には終わっていないのにエージェントが完了と言った割合を計算してください。それがあなたの verification gap です。そのうえで、この割合を減らすにはどんな検証コマンドが必要か考えます。
+2. **Verification gap measurement**: Pick 5 coding tasks. After each task, record whether the agent claims completion, then verify actual correctness with independent tests. Calculate the proportion of times the agent claims done when it's actually not done — that's your verification gap. Then think: what verification commands would reduce this proportion?
 
-3. **診断ループの練習**: 自分のプロジェクトで、エージェントが繰り返し失敗するタスクを見つけます。1 回実行して失敗を記録し、5 つの層のいずれかに帰属させます。その層を修正し、もう一度実行します。これを 3〜5 回繰り返し、そのたびに改善を記録してください。
+3. **Diagnostic loop practice**: Find a task where the agent repeatedly fails in your project. Run once, record the failure. Attribute it to one of the five layers. Fix that layer. Run again. Repeat three to five rounds, recording improvements each time.

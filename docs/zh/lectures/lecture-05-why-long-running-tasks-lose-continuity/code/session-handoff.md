@@ -1,17 +1,17 @@
-# セッション引き継ぎの例
+# Session Handoff Example
 
-## 完了済み
+## Completed
 
-- markdown のインポート対応を追加した
-- レンダラーに基本的なドキュメント一覧を追加した
+- Added markdown import support
+- Added a basic document list in the renderer
 
-## 破損または未確認
+## Broken or Unverified
 
-- `.md` のインポートは成功するが、大きな `.txt` ファイルでは失敗する
-- アプリは起動するが、詳細ビューはまだ接続されていない
+- Import succeeds for `.md` but fails for large `.txt` files
+- The app starts, but the detail view has not been wired up
 
-## 次にやるべきこと
+## Next Best Step
 
-- `.txt` のインポート経路を修正する
-- インポートをエンドツーエンドで検証する
-- その後、ドキュメント詳細パネルを追加する
+- Fix `.txt` import path
+- Verify import end-to-end
+- Then add the document detail panel

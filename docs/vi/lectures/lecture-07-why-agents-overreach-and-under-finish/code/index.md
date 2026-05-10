@@ -1,8 +1,8 @@
-# 第07講のコード
+# Mã cho Bài 07
 
-このディレクトリは、次のような例に使います。
+Sử dụng thư mục này cho các ví dụ về:
 
-- 一発実行での失敗
-- タスク用プロンプトが大きすぎる場合
-- 段階的なタスクの定義
-- 構造化された機能の表面
+- các thất bại one-shot
+- prompt tác vụ quá lớn
+- định hình tác vụ tăng dần
+- bề mặt tính năng có cấu trúc

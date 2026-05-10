@@ -1,34 +1,34 @@
-# Project 03: スコープ制御と根拠に基づく検証
+# Project 03: Scope Control and Grounded Verification
 
-明示的なスコープ制御と検証ゲートが、成果物の正確性を高められるかを評価します。
+评估显式范围控制和验证门控是否能提高交付准确性。
 
-## ディレクトリの説明
+## 目录说明
 
-| ディレクトリ | 意味 |
+| 目录 | 含义 |
 |------|------|
-| `starter/` | **出発点**——P2 solution をベースに、文書分割、メタデータ抽出、索引状態、基本的な Q&A 機能の追加実装が必要です。「一度に1機能」の方針制約はありません。 |
-| `solution/` | **参考実装**——すべての機能が実装済みで、AGENTS.md には「一度に1機能」の方針が含まれています。`feature_list.json` には fail→pass の変化と検証証跡が示されています。 |
+| `starter/` | **起点**——基于 P2 solution，新增文档分块、元数据提取、索引状态、基础问答功能待实现。没有一次一个功能的策略约束。 |
+| `solution/` | **参考实现**——所有功能已实现，AGENTS.md 包含"一次一个功能"策略，feature_list.json 展示 fail→pass 的转换过程和验证证据。 |
 
-## 使い方
+## 使用方法
 
 ```sh
 cd starter
 npm install
-# agent が複数の機能を同時に実装しようとするかを観察します（スコープ逸脱）
+# 观察 agent 是否会同时实现多个功能（范围漂移）
 
 cd ../solution
 npm install
-# scope control で再実行し、機能提供の正確性を比較します
+# 用 scope control 重跑，对比功能交付准确性
 ```
 
-## このプロジェクトで扱う機能
+## 本项目涉及的功能
 
-- 文書分割（段落を考慮し、約 500 文字）
-- メタデータ抽出（単語数、行数、段落数）
-- インデックス状態を UI に表示
-- 基本的な Q&A フロー、出典の引用付き
+- 文档分块（段落感知，~500 字符）
+- 元数据提取（词数、行数、段落数）
+- 索引状态在 UI 中显示
+- 基础问答流程，带来源引用
 
-## 対応する講義
+## 对应课件
 
-- [Lecture 05: セッションをまたいでコンテキストを維持する](../../docs/lectures/lecture-05-why-long-running-tasks-lose-continuity/index.md)
-- [Lecture 06: 各セッションの前に初期化を行う](../../docs/lectures/lecture-06-why-initialization-needs-its-own-phase/index.md)
+- [Lecture 05: 保持跨会话上下文](../../docs/lectures/lecture-05-why-long-running-tasks-lose-continuity/index.md)
+- [Lecture 06: 每次会话前先初始化](../../docs/lectures/lecture-06-why-initialization-needs-its-own-phase/index.md)

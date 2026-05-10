@@ -1,60 +1,60 @@
-# 製品説明 -- ナレッジベース
+# Product Description -- Knowledge Base
 
-## これは何？
+## What Is This?
 
-個人用ナレッジベースを管理するデスクトップアプリケーションです。ユーザーはファイルピッカーからテキストや Markdown のドキュメントを取り込み、内容を閲覧できます。システムはそれらを検索可能なチャンクにインデックス化し、出典付きの根拠ある Q&A を実現します。
+A desktop application for managing a personal knowledge base. Users import text and Markdown documents via a file picker, view document content, and the system indexes them into searchable chunks for grounded Q&A with citations.
 
-## 主な機能
+## Core Features
 
-### ドキュメント管理
-- ImportPanel のファイルピッカーから `.txt` と `.md` ファイルを取り込みます。
-- ドキュメントのメタデータを表示します: タイトル、ファイル名、サイズ、取り込み日、インデックス状況。
-- スクロール可能なテキストビューアーでドキュメント全文を表示します。
-- サイドバーパネルで、取り込んだすべてのドキュメント一覧を閲覧します。
-- ドキュメントと、その関連データ（content file、original copy）を削除します。
+### Document Management
+- Import `.txt` and `.md` files through a file picker in the ImportPanel.
+- View document metadata: title, filename, size, import date, indexing status.
+- View full document content in a scrollable text viewer.
+- Browse a list of all imported documents in a sidebar panel.
+- Delete documents and their associated data (content file, original copy).
 
-### テキストのインデックス化
-- ドキュメントを段落単位で、およそ 500 文字のチャンクに分割します。
-- チャンクをメタデータ（文字数、単語数）付きで保存します。
-- ドキュメントごと、また全体のインデックス状況を追跡します。
-- 個別ドキュメントまたはライブラリ全体のインデックス化に対応します。
+### Text Indexing
+- Split documents into ~500-character chunks at paragraph boundaries.
+- Store chunks with metadata (character count, word count).
+- Track indexing status per document and overall.
+- Support indexing individual documents or the full library.
 
-### 根拠付き Q&A
-- ドキュメントライブラリについて、自然言語で質問できます。
-- 特定のドキュメントチャンクを指す出典付きで回答を受け取れます。
-- 信頼度スコアは回答の信頼性を示します（出典ありで 0.85、なしで 0.30）。
-- Q&A の履歴全体はセッションをまたいで保持されます。
+### Grounded Q&A
+- Ask natural language questions about the document library.
+- Receive answers with citations pointing to specific document chunks.
+- Confidence scores indicate answer reliability (0.85 with citations, 0.30 without).
+- Full Q&A history is persisted across sessions.
 
-### 永続化
-- 取り込んだすべてのドキュメントは、アプリケーション再起動後も保持されます。
-- ドキュメント一覧はアプリケーション起動時に自動で読み込まれます。
-- データはユーザーのアプリケーションデータディレクトリにローカル保存されます。
+### Persistence
+- All imported documents persist across application restarts.
+- Document list loads automatically on application startup.
+- Data stored locally in the user's application data directory.
 
-### ステータスバー
-- インデックス状況（idle、indexing、ready、error）をリアルタイムで表示します。
-- ドキュメント数と最終アクティビティのタイムスタンプを表示します。
+### Status Bar
+- Real-time display of index status (idle, indexing, ready, error).
+- Document count and last activity timestamp.
 
-## ユーザーインターフェース
+## User Interface
 
 ```
 +------------------+----------------------------------------+
-| ヘッダー         |                                更新     |
+| Header           |                                Refresh |
 +------------------+----------------------------------------+
-| ドキュメント一覧| ImportPanel / ドキュメント詳細         |
-| (サイドバー)     |   - コンテンツ表示ボタン               |
-|                  |   - チャンク表示切り替え               |
-| [+ 取り込み]     |   - ドキュメントをインデックス化ボタン |
-|                  |   - 削除ボタン                         |
+| Document List    | ImportPanel / Document Detail          |
+| (sidebar)        |   - View Content button                |
+|                  |   - Show Chunks toggle                 |
+| [+ Import]       |   - Index Document button              |
+|                  |   - Delete button                      |
 +------------------+----------------------------------------+
-| 質問入力                                    [質問する]    |
+| Question Input                              [Ask]         |
 +-----------------------------------------------------------+
-| ステータス: idle | ドキュメント数: N                      |
+| Status: idle | Documents: N                                |
 +-----------------------------------------------------------+
 ```
 
-## 制約
+## Constraints
 
-- サポートされる最大ファイルサイズ: 10 MB。
-- サポートされる形式: `.txt`, `.md`.
-- Q&A はモック実装を使用します。このバージョンでは LLM 連携はありません。
-- すべてのデータはローカルに保存され、ネットワークリクエストは行いません。
+- Maximum supported file size: 10 MB.
+- Supported formats: `.txt`, `.md`.
+- Q&A uses mock patterns -- no LLM integration in this version.
+- All data is local; no network requests.

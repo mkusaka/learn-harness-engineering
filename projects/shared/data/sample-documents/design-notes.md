@@ -1,43 +1,43 @@
-# ソフトウェア設計メモ
+# Software Design Notes
 
-## アーキテクチャ概要
+## Architecture Overview
 
-このナレッジベースアプリケーションは、責務を明確に分離したレイヤードアーキテクチャを採用しています。システムは、メインプロセス、preload スクリプト、renderer レイヤー、services の4つの主要レイヤーに分かれています。
+The knowledge base application follows a layered architecture pattern with clear separation of concerns. The system is divided into four primary layers: the main process, preload scripts, the renderer layer, and services.
 
-## メインプロセス
+## Main Process
 
-メインプロセスは、ウィンドウ管理、IPC ハンドラーの登録、ライフサイクル管理を担当します。Electron アプリケーションのエントリーポイントとして機能し、オペレーティングシステムと renderer プロセスの間を調整します。
+The main process is responsible for window management, IPC handler registration, and lifecycle management. It serves as the entry point for the Electron application and coordinates between the operating system and the renderer process.
 
-主な責務:
-- `BrowserWindow` の作成と設定
-- IPC チャネルの登録
-- サービスの初期化と依存性注入
-- アプリケーションのライフサイクルイベント (`ready`, `window-all-closed`, `activate`)
+Key responsibilities:
+- BrowserWindow creation and configuration
+- IPC channel registration
+- Service initialization and dependency injection
+- Application lifecycle events (ready, window-all-closed, activate)
 
-## Preload レイヤー
+## Preload Layer
 
-preload スクリプトは、メインプロセスと renderer プロセスの間をつなぐ安全な橋渡し役です。Electron の `contextBridge` を使って、Node.js への完全なアクセスを許可せずに型付き API を renderer に公開します。
+The preload script acts as a secure bridge between the main and renderer processes. It uses Electron's contextBridge to expose a typed API to the renderer without granting full Node.js access.
 
-公開される API は、3つの名前空間に整理されています。
-- `documents` - ドキュメント管理の CRUD 操作
-- `indexing` - ドキュメントのチャンク化とインデックス管理
-- `qa` - 引用付きの質問応答
+The exposed API is organized into three namespaces:
+- `documents` - CRUD operations for document management
+- `indexing` - Document chunking and index management
+- `qa` - Question answering with citations
 
-## Renderer レイヤー
+## Renderer Layer
 
-renderer では、React と TypeScript を使ってユーザーインターフェースを構築します。コンポーネントは preload ブリッジ API を通じてのみ通信し、Node.js API やファイルシステムへ直接アクセスすることはありません。
+The renderer uses React with TypeScript to build the user interface. Components communicate exclusively through the preload bridge API, never directly accessing Node.js APIs or the filesystem.
 
-## Services レイヤー
+## Services Layer
 
-ビジネスロジックは、メインプロセスで動作するサービスクラスに実装されています。
-- `PersistenceService` - ファイルシステムの読み書き操作
-- `DocumentService` - ドキュメントの取り込み、保存、取得
-- `IndexingService` - テキストのチャンク化とインデックス生成
-- `QaService` - 引用対応のモック Q&A
+Business logic lives in service classes that run in the main process:
+- `PersistenceService` - Filesystem read/write operations
+- `DocumentService` - Document import, storage, and retrieval
+- `IndexingService` - Text chunking and index building
+- `QaService` - Mock Q&A with citation support
 
-## データフロー
+## Data Flow
 
-1. renderer 上のユーザー操作が preload ブリッジ経由で IPC 呼び出しを発生させる
-2. メインプロセスの IPC ハンドラーが適切なサービスに処理を委譲する
-3. サービスが永続化レイヤーを使ってビジネスロジックを実行する
-4. 結果が IPC を通じて renderer に戻り、画面に表示される
+1. User action in renderer triggers IPC call via preload bridge
+2. IPC handler in main process delegates to appropriate service
+3. Service performs business logic using persistence layer
+4. Result flows back through IPC to renderer for display

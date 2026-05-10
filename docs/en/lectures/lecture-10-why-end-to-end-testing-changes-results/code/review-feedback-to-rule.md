@@ -1,10 +1,10 @@
-# 例: レビューコメントをルールに変える
+# Example: Turning Review Feedback into a Rule
 
-繰り返し出たレビューコメント:
+Repeated review comment:
 
-> renderer から filesystem ユーティリティを呼び出さないでください。preload bridge を使ってください。
+> Do not call filesystem utilities from the renderer. Use the preload bridge.
 
-ハーネスのルールに昇格した内容:
+Promoted harness rule:
 
-- `fs` の使用を renderer code で禁止する lint または import ルールを追加する
-- preload boundary を説明する remediation text を追加する
+- add a lint or import rule preventing `fs` usage in renderer code
+- add remediation text explaining the preload boundary

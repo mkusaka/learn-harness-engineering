@@ -1,27 +1,28 @@
 # DESIGN.md
 
-このファイルは設計の入口です。簡潔に保ち、`docs/design-docs/` 配下の
-より詳細なファイルへ案内するために使ってください。
+This file is the design entrypoint. Keep it brief and use it to route into the
+more detailed files under `docs/design-docs/`.
 
 ## Purpose
 
-1回のチャット、1スプリント、あるいはレビュー担当者の記憶を超えて残るべき、
-永続的な製品およびシステム設計上の決定を記録します。
+Record durable product and system design decisions that should survive beyond a
+single chat, sprint, or reviewer memory.
 
 ## Read This When
 
-- 現在の設計方針を知りたいとき
-- 新しいパターンを導入しようとしているとき
-- どの設計判断が確定済みで、どれが未決定かを知りたいとき
+- you need the current design philosophy
+- you are about to introduce a new pattern
+- you need to know which design decisions are settled versus still open
 
 ## Canonical Design Docs
 
-- `docs/design-docs/index.md`: 受理済み、提案中、非推奨のドキュメント一覧
-- `docs/design-docs/core-beliefs.md`: プロジェクト全体に共通する agent-first の考え方
+- `docs/design-docs/index.md`: index of accepted, proposed, and deprecated docs
+- `docs/design-docs/core-beliefs.md`: project-wide agent-first beliefs
 
 ## Design Rules
 
-- 設計ドキュメントは小さく、最新の状態に保ってください。
-- 1つの判断領域につき1つのドキュメントを優先してください。
-- 変更が設計ドキュメントに依存する場合は、計画書や仕様書からリンクしてください。
-- 設計ルールが運用上クリティカルになったら、自動チェックに昇格させるか、`ARCHITECTURE.md` を更新してください。
+- Keep design docs small and current.
+- Prefer one doc per decision area.
+- Link design docs from plans and specs when a change depends on them.
+- If a design rule becomes operationally critical, promote it into an automated
+  check or update `ARCHITECTURE.md`.

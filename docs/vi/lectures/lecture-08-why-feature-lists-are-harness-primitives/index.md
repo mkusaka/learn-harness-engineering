@@ -1,137 +1,137 @@
-[英語版 →](../../../en/lectures/lecture-08-why-feature-lists-are-harness-primitives/) | [中国語版 →](../../../zh/lectures/lecture-08-why-feature-lists-are-harness-primitives/)
+[English Version →](../../../en/lectures/lecture-08-why-feature-lists-are-harness-primitives/) | [中文版本 →](../../../zh/lectures/lecture-08-why-feature-lists-are-harness-primitives/)
 
-> ソースコード例: [code/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/vi/lectures/lecture-08-why-feature-lists-are-harness-primitives/code/)
-> 演習プロジェクト: [プロジェクト 04. 実行時フィードバックとスコープ制御](./../../projects/project-04-incremental-indexing/index.md)
+> Ví dụ mã nguồn: [code/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/vi/lectures/lecture-08-why-feature-lists-are-harness-primitives/code/)
+> Dự án thực hành: [Dự án 04. Phản hồi Runtime và Kiểm soát Phạm vi](./../../projects/project-04-incremental-indexing/index.md)
 
-# レクチャー 08. Feature List で Agent の振る舞いを制約する
+# Bài 08. Sử dụng Feature List để Ràng buộc những gì Agent Làm
 
-ある agent に EC サイトを作らせたとします。完了後、その agent はあなたに「終わりました」と言います。コードを見ると、ユーザー認証は動いていますが、カートの購入ボタンは何もせず、決済フローはまったくつながっていません。問題は、あなたが「終わり」の意味を定義していなかったことです。そのため agent は独自の基準を使いました。つまり、「たくさんコードを書いたし、それなりに完成して見える」という基準です。
+Bạn yêu cầu một agent xây dựng một trang web thương mại điện tử. Sau khi nó hoàn thành, nó nói với bạn "xong." Bạn nhìn vào mã — xác thực người dùng hoạt động, nhưng nút thanh toán trong giỏ hàng không làm gì cả, và luồng thanh toán hoàn toàn không được kết nối. Vấn đề: bạn không bao giờ nói với nó "xong" có nghĩa là gì, vì vậy nó đã sử dụng tiêu chuẩn của riêng mình — "tôi đã viết nhiều mã và nó trông khá đầy đủ."
 
-多くの人にとって feature list は、忘れないように全部書いておくための単なるメモに見えるかもしれません。しかし harness の世界では、feature list は人間向けのメモではなく、harness 全体の背骨です。スケジューラはタスク選択のためにこれに依存し、verifier は完了判定のためにこれに依存し、handoff reporter は要約生成のためにこれに依存します。背骨を壊せば、身体全体が麻痺します。
+Feature list, theo mắt nhiều người, chỉ là một ghi chú nhắc nhở — viết mọi thứ xuống để không quên, sau đó để sang một bên. Nhưng trong thế giới harness, feature list không phải là ghi chú cho con người — nó là xương sống của toàn bộ harness. Bộ lập lịch phụ thuộc vào nó để chọn tác vụ, bộ xác minh phụ thuộc vào nó để đánh giá hoàn thành, trình báo cáo bàn giao phụ thuộc vào nó để tạo tóm tắt. Phá vỡ xương sống và toàn bộ cơ thể bị tê liệt.
 
-Anthropic も OpenAI も、**artifact は外部化されるべきだ** と強調しています。feature の状態は、構造化されていない会話文ではなく、リポジトリ内の機械可読なファイルに置かれていなければなりません。
+Cả Anthropic và OpenAI đều nhấn mạnh: **các artifact phải được ngoại hóa.** Trạng thái tính năng phải sống trong một tệp có thể đọc bởi máy trong repo, không phải trong văn bản hội thoại không có cấu trúc.
 
-## Agent は「終わり」の意味を知らない
+## Agent Không Biết "Xong" Có nghĩa là Gì
 
-Claude Code も Codex も、あなたが「終わり」と言ったときに、その意味を自動では知りません。あなたが「カート機能を追加して」と言うと、モデルの解釈は「Cart component と addToCart method を書くこと」かもしれません。しかしあなたが本当に望んでいるのは、「ユーザーが商品を閲覧し、カートに追加し、end-to-end で決済を完了できること」です。この認識の差は、feature list がなければずっと残り続けます。agent は自分の暗黙の基準を使います。たいていは「明らかな構文エラーがないコード」です。必要なのは、end-to-end の振る舞いを検証することです。果物を買ってきてと頼む場面と同じです。「何か果物を買ってきて」と言うと、相手はレモンを持って帰ってくるかもしれません。相手の果物と、あなたの果物は同じ種類ではありません。
+Cả Claude Code lẫn Codex đều không tự động biết ý bạn là gì khi nói "xong." Bạn nói "thêm tính năng giỏ hàng," và sự diễn giải của mô hình có thể là "viết một Cart component và một addToCart method." Nhưng ý bạn là "người dùng có thể duyệt sản phẩm, thêm vào giỏ hàng, và hoàn thành thanh toán end-to-end." Khoảng cách hiểu biết này tồn tại mãi mà không có feature list. Agent sử dụng tiêu chuẩn ẩn của riêng mình — thường là "mã không có lỗi cú pháp rõ ràng." Những gì bạn cần là xác minh hành vi end-to-end. Giống như nhờ bạn mua hoa quả — bạn nói "lấy vài thứ hoa quả" và họ về với chanh. Hoa quả của họ và hoa quả của bạn không phải là cùng loại hoa quả.
 
-よくある進捗メモを見てください。
+Nhìn vào ghi chú tiến độ phổ biến này:
 
 ```
-ユーザー認証は完了、カートはほぼ完了、決済はまだ必要
+Đã làm xác thực người dùng, giỏ hàng hầu như xong, vẫn cần thanh toán
 ```
-新しい agent のセッションは、このメモだけで次の問いに答えられるでしょうか。「ほぼ完了」とは何を意味するのか。カートはどのテストに合格したのか。決済を妨げているものは何か。答えはすべて「誰にも分からない」です。医師に「お腹が痛いですが、最近は少しマシです」とだけ伝えるようなものです。そこから、何を処方できるでしょうか。
+Một phiên agent mới có thể trả lời những câu hỏi này từ ghi chú này không? "Hầu như xong" có nghĩa là gì? Test nào giỏ hàng đã vượt qua? Điều gì đang chặn thanh toán? Câu trả lời cho tất cả là "không ai biết." Giống như nói với bác sĩ "bụng tôi đau, gần đây ổn hơn" — họ có thể kê thuốc gì?
 
-その結果、新しいセッションはプロジェクト状態を推測するためにまとまった時間を費やし、完了済みの機能を再実装することすらあります。Anthropic の公開事例でも、progress file と git history を使って次の agent が状態を素早く理解できるようにする設計が紹介されています。
+Kết quả: phiên mới dành 20 phút để suy ra trạng thái dự án, và có thể triển khai lại các tính năng đã hoàn thành. Dữ liệu kỹ thuật của Anthropic cho thấy bản ghi tiến độ tốt giảm thời gian chẩn đoán khởi động phiên 60-80%.
 
-## Feature の状態機械
+## Máy trạng thái Tính năng
 
 ```mermaid
 flowchart LR
-    Feature["Feature の1行"] --> Behavior["振る舞い<br/>例: POST /cart/items が 201 を返す"]
-    Feature --> Check["検証コマンド<br/>実行すべき正確なチェック"]
-    Feature --> State["状態<br/>not_started / active / blocked / passing"]
+    Feature["Một hàng tính năng"] --> Behavior["Hành vi<br/>ví dụ: POST /cart/items trả về 201"]
+    Feature --> Check["Lệnh xác minh<br/>kiểm tra chính xác để chạy"]
+    Feature --> State["Trạng thái<br/>not_started / active / blocked / passing"]
 
-    Behavior --> Complete["この3項目がそろって初めて<br/>feature 行として使える"]
+    Behavior --> Complete["Chỉ với cả ba trường<br/>hàng tính năng mới sử dụng được"]
     Check --> Complete
     State --> Complete
 ```
 
 ```mermaid
 flowchart LR
-    List["feature_list.json / features.md"] --> Scheduler["次の not_started 項目を選ぶ"]
-    Scheduler --> Agent["agent がその項目に取り組む"]
-    Agent --> Verifier["その項目の検証コマンドを実行する"]
-    Verifier -->|合格| Passing["passing としてマークし<br/>証拠を記録する"]
-    Verifier -->|失敗| Active["active のまま維持する"]
-    Verifier -->|依存関係の問題| Blocked["blocked としてマークする"]
-    Passing --> Handoff["handoff メモと<br/>現在の進捗を更新する"]
+    List["feature_list.json / features.md"] --> Scheduler["Chọn mục not_started tiếp theo"]
+    Scheduler --> Agent["Agent làm việc trên mục đó"]
+    Agent --> Verifier["Chạy lệnh xác minh của mục đó"]
+    Verifier -->|vượt qua| Passing["Đánh dấu là passing<br/>và ghi bằng chứng"]
+    Verifier -->|thất bại| Active["Giữ nguyên active"]
+    Verifier -->|vấn đề phụ thuộc| Blocked["Đánh dấu là blocked"]
+    Passing --> Handoff["Cập nhật ghi chú bàn giao<br/>và tiến độ hiện tại"]
     Active --> Agent
 ```
 
-## 重要な概念
+## Các Khái niệm Cốt lõi
 
-- **Feature list は harness の基本原理である**: これは「任意の計画ツール」ではなく、他のすべての harness コンポーネントが依存する基盤データ構造です。データベースのテーブル構造のようなものです。「主キーを無視してよい」とは言えません。
-- **3 要素構造**: 各 feature 項目は `(behavior の説明, verification コマンド, 現在の状態)` の三つ組です。どれか 1 つでも欠けると不完全です。
-- **状態機械モデル**: 各 feature 項目には `not_started`, `active`, `blocked`, `passing` の 4 状態があります。状態遷移は harness が制御し、agent が自由に変更することはできません。
-- **Pass-state gating**: feature が `active` から `passing` に移る唯一の方法は、verification コマンドの成功実行です。これは逆戻りできません。試験に合格したら合格であり、後から点数を変えることはできないのと同じです。
-- **単一の真実の源**: 「何をすべきか」に関するすべての情報は、1 つの feature list に由来していなければなりません。feature list と会話履歴の間に矛盾があってはいけません。
-- **Back-pressure**: 未完了の feature 数が、harness が agent にかける圧力です。圧力がゼロなら、プロジェクトは完了です。
+- **Feature list là nguyên lý cơ bản của harness**: Không phải "công cụ lập kế hoạch tùy chọn," mà là cấu trúc dữ liệu nền tảng mà tất cả các thành phần harness khác phụ thuộc vào. Giống như cấu trúc bảng cơ sở dữ liệu — bạn không thể nói "hãy bỏ qua khóa chính."
+- **Cấu trúc ba yếu tố**: Mỗi mục tính năng là một bộ ba `(mô tả hành vi, lệnh xác minh, trạng thái hiện tại)`. Thiếu bất kỳ yếu tố nào làm cho mục không đầy đủ.
+- **Mô hình máy trạng thái**: Mỗi mục tính năng có bốn trạng thái — `not_started`, `active`, `blocked`, `passing`. Chuyển đổi trạng thái được kiểm soát bởi harness, không được thay đổi tự do bởi agent.
+- **Gating trạng thái vượt qua (Pass-state gating)**: Cách duy nhất một tính năng chuyển từ `active` sang `passing` là thực thi thành công lệnh xác minh. Điều này không thể đảo ngược — một khi `passing`, nó không thể quay lại. Giống như vượt qua bài thi có nghĩa là bạn đã qua, bạn không thể hồi tố thay đổi điểm.
+- **Nguồn sự thật duy nhất**: Tất cả thông tin về "những gì cần làm" phải bắt nguồn từ một feature list. Không có mâu thuẫn giữa feature list và lịch sử hội thoại.
+- **Áp lực ngược (Back-pressure)**: Số lượng tính năng chưa vượt qua là áp lực mà harness tác dụng lên agent. Áp lực bằng không = dự án hoàn thành.
 
-## なぜ Feature List が「基本原理」なのか
+## Tại sao Feature List Phải là "Nguyên lý Cơ bản"
 
-ドキュメントは人間が読むためのものですが、基本原理はシステムが実行するためのものです。ドキュメントは無視できますが、基本原理は迂回できません。
+Tài liệu là để con người đọc; nguyên lý cơ bản là để hệ thống thực thi. Tài liệu có thể bị bỏ qua; nguyên lý cơ bản không thể bị vượt qua.
 
-データベースのトリガ制約とアプリケーション層のチェックを比べてみてください。前者は DB エンジンによって実行されるため、どんな SQL でも迂回できません。後者はアプリケーションコードの正しさに依存しており、うっかりすり抜けることがあります。harness の基本原理としての feature list は、次の 4 つの具体的な harness コンポーネントに役立ちます。
+Nghĩ về nó như ràng buộc trigger cơ sở dữ liệu vs. kiểm tra lớp ứng dụng: cái trước được thực thi bởi engine cơ sở dữ liệu, không có SQL nào có thể bỏ qua nó; cái sau phụ thuộc vào tính đúng đắn của mã ứng dụng và có thể vô tình bị vượt qua. Feature list như nguyên lý cơ bản harness phục vụ bốn thành phần harness cụ thể:
 
-1. **Scheduler**: 状態を読み取り、次の `not_started` feature を選びます。工場の生産計画システムのようなものです。
-2. **Verifier**: 検証コマンドを実行し、状態遷移を許可するかどうかを判断します。品質検査のようなものです。
-3. **Handoff Reporter**: feature list からセッション引き継ぎ要約を自動生成します。自動シフト報告のようなものです。
-4. **Progress Tracker**: 状態分布を数え、プロジェクトの健全性メトリクスを提供します。ダッシュボードのようなものです。
+1. **Bộ lập lịch (Scheduler)**: Đọc trạng thái, chọn tính năng `not_started` tiếp theo. Giống như hệ thống lập kế hoạch sản xuất nhà máy.
+2. **Bộ xác minh (Verifier)**: Thực thi lệnh xác minh, quyết định có cho phép chuyển đổi trạng thái không. Giống như kiểm tra chất lượng.
+3. **Trình báo cáo bàn giao (Handoff Reporter)**: Tự động tạo tóm tắt bàn giao phiên từ feature list. Giống như báo cáo ca tự động.
+4. **Trình theo dõi tiến độ (Progress Tracker)**: Đếm phân phối trạng thái, cung cấp số liệu sức khỏe dự án. Giống như dashboard.
 
-## 正しいやり方
+## Cách Làm Đúng
 
-### 1. 最小限の Feature List 形式を定義する
+### 1. Định nghĩa Định dạng Feature List Tối giản
 
-複雑なシステムは必要ありません。構造化された Markdown または JSON ファイルで十分です。重要なのは、各項目が次の三つ組を持つことです。
+Bạn không cần một hệ thống phức tạp — một tệp Markdown hoặc JSON có cấu trúc là đủ. Điều quan trọng là mỗi mục phải có bộ ba:
 
 ```json
 {
   "id": "F03",
-  "behavior": "POST /cart/items は {product_id, quantity} で 201 を返す",
+  "behavior": "POST /cart/items với {product_id, quantity} trả về 201",
   "verification": "curl -X POST http://localhost:3000/api/cart/items -H 'Content-Type: application/json' -d '{\"product_id\":1,\"quantity\":2}' | jq .status == 201",
   "state": "passing",
-  "evidence": "commit abc123, テスト出力ログ"
+  "evidence": "commit abc123, test output log"
 }
 ```
 
-### 2. 状態遷移は Harness に制御させる
+### 2. Để Harness Kiểm soát Chuyển đổi Trạng thái
 
-agent は feature の状態を直接 `passing` に変更できません。できるのは検証要求を送ることだけです。harness が検証コマンドを実行し、遷移を許可するかどうかを決めます。これが「pass-state gating」です。
+Agent không thể trực tiếp thay đổi trạng thái của tính năng thành `passing`. Nó chỉ có thể gửi yêu cầu xác minh; harness thực thi lệnh xác minh và quyết định có cho phép chuyển đổi không. Đây là "pass-state gating."
 
-### 3. ルールを CLAUDE.md に書く
+### 3. Viết Quy tắc trong CLAUDE.md
 
 ```
-## Feature List ルール
-- feature list ファイル: /docs/features.md
-- 一度に active なのは 1 feature のみ
-- passing としてマークする前に検証コマンドが成功していなければならない
-- feature list の状態を自分で変更しないこと。検証スクリプトが自動で更新する
+## Quy tắc Feature List
+- Tệp feature list: /docs/features.md
+- Chỉ một tính năng active tại một thời điểm
+- Lệnh xác minh phải vượt qua trước khi đánh dấu là passing
+- Đừng tự mình sửa đổi trạng thái feature list — script xác minh cập nhật chúng tự động
 ```
 
-### 4. 粒度を調整する
+### 4. Hiệu chỉnh Độ hạt
 
-各 feature 項目は「1 セッションで完了できる範囲」でなければなりません。広すぎると終わらず、細かすぎると管理オーバーヘッドが増えます。「ユーザーが商品をカートに追加できる」はちょうどよい粒度です。「カートを実装する」は広すぎます。「Cart model に name フィールドを作る」は細かすぎます。ステーキを切り分けるのと同じです。1 枚丸ごとでも、ひき肉でもありません。
+Mỗi mục tính năng phải có phạm vi "có thể hoàn thành trong một phiên." Quá rộng thì không xong; quá hẹp thì overhead quản lý tăng lên. "Người dùng có thể thêm mục vào giỏ hàng" là độ hạt tốt. "Triển khai giỏ hàng" là quá rộng. "Tạo trường tên trên Cart model" là quá hẹp. Giống như cắt bít tết — không phải cả miếng, và cũng không phải thịt băm.
 
-## 実例
+## Trường hợp Thực tế
 
-10 個の feature を持つ EC プラットフォームを考えます。追跡方法を 2 つ比較します。
+Một nền tảng thương mại điện tử với 10 tính năng. Hai cách tiếp cận theo dõi được so sánh:
 
-**メモ運用モード**: agent は非構造化メモを使います。3 セッション後、メモは「ユーザー認証と商品一覧はできた、カートはほぼ完了だがバグあり、決済は未着手」といった状態になります。新しいセッションは状態推測に 20 分かかり、最終的に完了済みの feature を再実装することになります。買い物リストに「牛乳、パン、それとあれ」と書いてあるようなものです。店に着いても、何を買うべきか結局分かりません。
+**Chế độ ghi chú nhắc nhở**: Agent sử dụng ghi chú không có cấu trúc. Sau 3 phiên, ghi chú trở thành "đã làm xác thực người dùng và danh sách sản phẩm, giỏ hàng hầu như xong nhưng có lỗi, thanh toán chưa bắt đầu." Phiên mới cần 20 phút để suy ra trạng thái, cuối cùng triển khai lại các tính năng đã hoàn thành. Giống như danh sách mua sắm của bạn nói "sữa, bánh mì và cái đó" — ở cửa hàng, bạn vẫn không biết mua gì.
 
-**背骨運用モード**: 各 feature に状態と明確な検証コマンドがあります。新しいセッションは feature list を読めば、3 分で F01-F05 は `passing`、F06 は `active`、F07-F10 は `not_started` だと分かります。F06 からそのまま続行し、やり直しはありません。
+**Chế độ xương sống**: Mỗi tính năng có trạng thái và lệnh xác minh rõ ràng. Phiên mới đọc feature list và trong 3 phút biết: F01-F05 là `passing`, F06 là `active`, F07-F10 là `not_started`. Tiếp tục từ F06 trực tiếp, không có làm lại nào.
 
-この比較で重要なのは、構造化された feature list では完了条件と現在状態が機械可読に残るため、自由形式の追跡よりも「次に何をやるべきか」「何が完了済みか」を判断しやすいことです。
+Kết quả định lượng: các dự án sử dụng feature list có cấu trúc cho thấy tỷ lệ hoàn thành tính năng cao hơn 45% so với theo dõi tự do, với zero triển khai trùng lặp.
 
-## 覚えておくべき要点
+## Những Điểm chính cần Nhớ
 
-- **Feature list は harness の背骨であり、人間向けのメモではない**: スケジューラ、verifier、handoff reporter はすべてこれに依存します。
-- **各 feature 項目は三つ組である**: 行動の説明 + 検証コマンド + 現在の状態。1 つでも欠けると不完全です。3 本脚の椅子の脚が 1 本足りないようなものです。
-- **状態遷移は harness が制御する**: agent は状態を自分で変えられません。検証に合格することだけが唯一の昇格経路です。
-- **feature list はプロジェクトの唯一の真実の源である**: 「何をすべきか」に関する情報はすべて、1 つのリストに由来します。
-- **粒度は「1 セッションで完了できる」大きさに調整すること**
+- **Feature list là xương sống của harness**, không phải ghi chú cho con người. Bộ lập lịch, bộ xác minh và trình báo cáo bàn giao đều phụ thuộc vào chúng.
+- **Mỗi mục tính năng phải có bộ ba**: mô tả hành vi + lệnh xác minh + trạng thái hiện tại. Thiếu một yếu tố thì không đầy đủ — giống như ghế ba chân thiếu một chân.
+- **Chuyển đổi trạng thái được kiểm soát bởi harness** — agent không thể tự mình thay đổi trạng thái. Vượt qua xác minh = con đường nâng cấp duy nhất.
+- **Feature list là nguồn sự thật duy nhất của dự án** — tất cả thông tin "phải làm gì" đều bắt nguồn từ một danh sách.
+- **Hiệu chỉnh độ hạt thành "có thể hoàn thành trong một phiên."**
 
-## 参考資料
+## Đọc thêm
 
-- [Effective harnesses for long-running agents - Anthropic](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents) — feature list を使って、早すぎる完了宣言や scope drift を減らす方法を説明しています
-- [Harness Engineering - OpenAI](https://openai.com/index/harness-engineering/) — 「artifact の外部化」の原則を強調しています
-- [Design by Contract - Bertrand Meyer](https://www.goodreads.com/book/show/130439.Object_Oriented_Software_Construction) — contract 設計の原則であり、feature list の理論的基盤です
-- [The Practical Test Pyramid - Martin Fowler](https://martinfowler.com/articles/practical-test-pyramid.html) — テストピラミッドとユーザー視点の acceptance tests の実践
+- [Building Effective Agents - Anthropic](https://www.anthropic.com/research/building-effective-agents) — Xác định rõ ràng feature list là "cấu trúc dữ liệu cốt lõi" để kiểm soát phạm vi agent
+- [Harness Engineering - OpenAI](https://openai.com/index/harness-engineering/) — Nhấn mạnh nguyên tắc "ngoại hóa artifact"
+- [Design by Contract - Bertrand Meyer](https://www.goodreads.com/book/show/130439.Object_Oriented_Software_Construction) — Nguyên tắc thiết kế hợp đồng, nền tảng lý thuyết của feature list
+- [How Google Tests Software](https://www.goodreads.com/book/show/13563030-how-google-tests-software) — Tháp kiểm thử và thực hành kỹ thuật đặc tả hành vi
 
-## 演習
+## Bài tập
 
-1. **Feature List を設計する**: 最小限の feature list 用 JSON schema を定義してください。含める項目は、id、behavior の説明、verification コマンド、現在の状態、証拠参照です。これを使って、5 つの feature を持つ実際のプロジェクトを記述してください。
+1. **Thiết kế Feature List**: Định nghĩa một JSON schema feature list tối giản. Bao gồm: id, mô tả hành vi, lệnh xác minh, trạng thái hiện tại, tham chiếu bằng chứng. Sử dụng nó để mô tả một dự án thực tế với 5 tính năng.
 
-2. **検証の厳しさを比較する**: 3 つの feature を選び、「ゆるい」検証（例: 「コードに構文エラーがない」）と「厳しい」検証（例: 「end-to-end テストが通る」）の両方を設計してください。それぞれでの偽陽性率を比較してください。
+2. **So sánh Độ khắt khe Xác minh**: Chọn 3 tính năng và thiết kế cả xác minh "lỏng" (ví dụ: "mã không có lỗi cú pháp") và xác minh "nghiêm" (ví dụ: "test end-to-end vượt qua"). So sánh tỷ lệ dương tính giả dưới mỗi cách tiếp cận.
 
-3. **単一の真実の源を監査する**: 既存の agent プロジェクトを見直し、feature list と矛盾するスコープ情報（会話内の隠れた要件、コード内の TODO コメントなど）がないか確認してください。すべての情報を feature list に集約する計画を立ててください。
+3. **Kiểm toán Nguyên tắc Nguồn duy nhất**: Xem xét một dự án agent hiện có và kiểm tra thông tin phạm vi mâu thuẫn với feature list (yêu cầu ẩn trong hội thoại, chú thích TODO trong mã, v.v.). Thiết kế kế hoạch để hợp nhất tất cả thông tin vào feature list.

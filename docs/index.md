@@ -8,6 +8,7 @@ if (typeof window !== 'undefined') {
   const lang = navigator.language || navigator.languages?.[0] || ''
   let locale = 'en/'
   if (lang.startsWith('ko')) locale = 'ko/'
+  else if (lang.startsWith('ja')) locale = 'ja/'
   else if (lang.startsWith('zh')) locale = 'zh/'
   else if (lang.startsWith('ru')) locale = 'ru/'
   else if (lang.startsWith('vi')) locale = 'vi/'
@@ -46,6 +47,6 @@ if (typeof window !== 'undefined') {
 <div class="redirecting-wrapper">
   <div style="text-align: center;">
     <div class="spinner"></div>
-    <p>読み込み中...</p>
+    <p>Loading...</p>
   </div>
 </div>

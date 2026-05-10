@@ -1,17 +1,17 @@
-# スコープの表面積の例
+# Scope Surface Example
 
-課題:
+Task:
 
-- Electron のナレッジアプリにインデックス作成を追加する
+- Add indexing to the Electron knowledge app
 
-悪いスコープの形:
+Bad scope shape:
 
-- 「インデックス作成を実装する」
+- “Implement indexing”
 
-よりよいスコープの形:
+Better scope shape:
 
-- インポートされたドキュメントを解析する
-- ドキュメントをチャンクに分割する
-- チャンクのメタデータを永続化する
-- UI にインデックス作成の状態を表示する
-- 再インデックス実行のアクションを追加する
+- Parse imported documents
+- Split documents into chunks
+- Persist chunk metadata
+- Expose indexing status in the UI
+- Add a reindex action

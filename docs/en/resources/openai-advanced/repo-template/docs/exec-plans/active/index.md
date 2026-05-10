@@ -1,9 +1,10 @@
-# アクティブな計画
+# Active Plans
 
-このフォルダには、アクティブな実行計画ごとに 1 つの markdown ファイルを置いてください。
+Keep one markdown file per active execution plan in this folder.
 
-推奨するファイル名の形式:
+Suggested filename pattern:
 
 - `YYYY-MM-DD-short-topic.md`
 
-各アクティブな計画は、新しい agent セッションでもリポジトリだけから作業を再開できる程度に、十分最新である必要があります。
+Each active plan should be current enough that a fresh agent session can resume
+work from the repository alone.

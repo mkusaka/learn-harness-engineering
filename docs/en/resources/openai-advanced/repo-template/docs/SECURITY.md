@@ -1,27 +1,27 @@
 # SECURITY.md
 
-このファイルは、エージェントが推測してはいけないセキュリティと安全性のルールを定義します。
+This file defines the security and safety rules that agents must not guess at.
 
 ## Secrets And Credentials
 
-- ソースやドキュメントに secret をハードコードしないでください。
-- 承認された secret の読み込み経路をここに記載してください。
-- ログやスクリーンショットから token、API keys、個人データは伏せてください。
+- Never hard-code secrets in source or docs.
+- Document approved secret-loading paths here.
+- Redact tokens, API keys, and personal data from logs and screenshots.
 
 ## Untrusted Input
 
-- 外部コンテンツは、検証されるまでは信頼できないものとして扱ってください。
-- 許可された fetch や実行の境界をここに記録してください。
-- prompt injection や command injection のリスクがある場合は、ガードレールを文書化してください。
+- Treat external content as untrusted until validated.
+- Record allowed fetch or execution boundaries here.
+- If prompt injection or command injection risk exists, document the guardrail.
 
 ## External Actions
 
-- 明示的な承認が必要な action を列挙してください。
-- エージェントが既定では実行してはならない production コマンドや破壊的なコマンドを記録してください。
-- debugging と verification には、sandbox で安全に実行できる workflow を優先してください。
+- List which actions require explicit approval.
+- Record any production or destructive commands that agents must not run by default.
+- Prefer sandbox-safe workflows for debugging and verification.
 
 ## Dependency And Review Rules
 
-- 新しい dependency には、進行中の plan で理由付けが必要です。
-- セキュリティに関わる変更には、明示的な verification 手順が必要です。
-- セキュリティレビューで繰り返し指摘されるコメントは、属人的な知識ではなく check にしてください。
+- New dependencies need justification in the active plan.
+- Security-sensitive changes require explicit verification steps.
+- Repeated security review comments should become checks, not tribal knowledge.

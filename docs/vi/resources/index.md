@@ -1,50 +1,52 @@
-# リソースライブラリ
+# Thư viện Tài nguyên
 
-このディレクトリは、コースの手法を、そのままコピーして使えるテンプレートと、実際のリポジトリで参照できる簡潔な資料にまとめたものです。
+Thư mục này chuyển đổi các phương pháp của khóa học thành các mẫu sao chép ngay và tài liệu tham khảo ngắn gọn mà bạn có thể sử dụng trong một kho lưu trữ thực tế.
 
-## いつ使うか
+## Khi nào nên sử dụng
 
-Codex、Claude Code、または別の coding agent を、設定・状態・スコープを何度も立て直さずに複数セッションにわたって動かしたいときは、ここから始めてください。
+Bắt đầu từ đây khi bạn muốn Codex, Claude Code, hoặc một coding agent khác hoạt động qua nhiều phiên làm việc mà không cần liên tục thiết lập lại cài đặt, trạng thái và phạm vi.
 
-次のような場合に特に役立ちます。
+Nó đặc biệt hữu ích khi:
 
-- 作業が複数セッションにまたがる
-- 機能が多く、途中で中断されやすい
-- agent が成功を早めに宣言しがち
-- 初期化手順を毎回最初から探し直している
+- công việc kéo dài qua nhiều phiên
+- có nhiều tính năng và dễ bị bỏ dở giữa chừng
+- các agent có xu hướng tuyên bố thành công quá sớm
+- các bước khởi động bị tìm lại từ đầu mỗi lần
 
-## ここから始める
+## Bắt đầu từ đây
 
-最小構成なら、まず次を使ってください。
+Đối với thiết lập tối giản, hãy bắt đầu với:
 
-- 基本ガイド: [`templates/AGENTS.md`](./templates/AGENTS.md) または [`templates/CLAUDE.md`](./templates/CLAUDE.md)
-- 機能状態: [`templates/feature_list.json`](./templates/feature_list.json)
-- 進捗ログ: [`templates/claude-progress.md`](./templates/claude-progress.md)
-- 起動スクリプト参照: `docs/vi/resources/templates/init.sh`
+- hướng dẫn gốc: [`templates/AGENTS.md`](./templates/AGENTS.md) hoặc [`templates/CLAUDE.md`](./templates/CLAUDE.md)
+- trạng thái tính năng: [`templates/feature_list.json`](./templates/feature_list.json)
+- nhật ký tiến độ: [`templates/claude-progress.md`](./templates/claude-progress.md)
+- tham chiếu script khởi động: `docs/vi/resources/templates/init.sh`
 
-その後、必要に応じて次を追加します。
+Sau đó thêm:
 
-- セッション引き継ぎ: [`templates/session-handoff.md`](./templates/session-handoff.md)
-- クリーン終了チェックリスト: [`templates/clean-state-checklist.md`](./templates/clean-state-checklist.md)
-- 評価基準: [`templates/evaluator-rubric.md`](./templates/evaluator-rubric.md)
+- bàn giao phiên: [`templates/session-handoff.md`](./templates/session-handoff.md)
+- danh sách kiểm tra thoát sạch: [`templates/clean-state-checklist.md`](./templates/clean-state-checklist.md)
+- tiêu chí đánh giá: [`templates/evaluator-rubric.md`](./templates/evaluator-rubric.md)
 
-記事「Harness engineering」をベースに、OpenAI 方式のリポジトリ構成をより完全に取り入れたい場合は、拡張版を使ってください。
+Nếu bạn muốn cấu trúc kho lưu trữ kiểu OpenAI đầy đủ hơn từ bài viết
+"Harness engineering", hãy sử dụng gói nâng cao:
 
 - [`openai-advanced/index.md`](./openai-advanced/index.md)
 
-## ライブラリ構成
+## Cấu trúc Thư viện
 
-- [`templates/`](./templates/index.md): 実際のリポジトリにコピーするためのテンプレート
-- [`reference/`](./reference/index.md): 手法メモ、起動フロー、障害モードの図解
-- [`openai-advanced/`](./openai-advanced/index.md): 拡張リポジトリの枠組み、単一の信頼できる情報源となる資料、agent 優先の運用テンプレート
+- [`templates/`](./templates/index.md): các mẫu để sao chép vào một kho lưu trữ thực tế
+- [`reference/`](./reference/index.md): ghi chú phương pháp, luồng khởi động và sơ đồ chế độ lỗi
+- [`openai-advanced/`](./openai-advanced/index.md): khung kho lưu trữ nâng cao, tài liệu nguồn sự thật, và các mẫu quản trị ưu tiên agent
 
-## 推奨の最小パッケージ
+## Gói Tối giản Khuyên dùng
 
-- `AGENTS.md` または `CLAUDE.md`
+- `AGENTS.md` hoặc `CLAUDE.md`
 - `feature_list.json`
 - `claude-progress.md`
 - `init.sh`
 
-この 4 つのファイルがあれば、ほとんどの agent ワークフローを十分に安定させられます。
+Bốn tệp này là đủ để làm cho hầu hết các quy trình làm việc của agent ổn định hơn rõ rệt.
 
-リポジトリが、複数ドメイン、運用計画、品質採点、信頼性ポリシーを備えた、より長期稼働のシステムへ成長したら、最小パッケージを無理に拡張するのではなく、[`openai-advanced/`](./openai-advanced/index.md) に移行してください。
+Khi kho lưu trữ phát triển thành một hệ thống hoạt động lâu dài hơn với nhiều domain, kế hoạch hoạt động, chấm điểm chất lượng và chính sách độ tin cậy, hãy chuyển sang gói
+[`openai-advanced/`](./openai-advanced/index.md) thay vì cố mở rộng gói tối giản quá xa.

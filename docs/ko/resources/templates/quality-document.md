@@ -1,23 +1,23 @@
-# 品質ドキュメント (Quality Document)
+# 품질 문서 (Quality Document)
 
-各プロダクトドメイン(product domain)とアーキテクチャ(architecture)レイヤ(layer)の品質スナップショット(snapshot)です。エージェント(agent)と人間の両方がこの文書を使って、コードベース(codebase)の強みと補強が必要な部分をすばやく把握できます。
+각 제품 도메인(product domain)과 아키텍처(architecture) 레이어(layer)에 대한 품질 스냅샷(snapshot)입니다. 에이전트(agent)와 사람 모두 이 문서를 사용하여 코드베이스(codebase)에서 강한 부분과 보완이 필요한 부분을 빠르게 파악할 수 있습니다.
 
-この文書は、個々のセッションの成果物ではなく、プロジェクト全体の健全性を時間の経過とともに追跡するという点で、評価者ルーブリック(evaluator rubric)と区別されます。
+이 문서는 개별 세션 산출물이 아닌 프로젝트 전체의 건전성을 시간에 따라 추적한다는 점에서 평가자 루브릭(evaluator rubric)과 구분됩니다.
 
-**更新頻度:** 重要なセッションのたび、または新しい作業段階に入る前。
+**업데이트 주기:** 각 중요한 세션 후, 또는 새 작업 단계 시작 전.
 
-**等級基準:**
+**등급 기준:**
 
-- **A**: すべての検証(verification)に合格、クリーン(clean)なアーキテクチャ、エージェントから読み取り可能(agent-legible)、安定したテスト
-- **B**: 検証に合格、概ねクリーン、読みやすさまたはテストカバレッジに小さな不足あり
-- **C**: 部分的に動作、既知の不足あり、一部のコード領域がエージェントにとって理解しづらい
-- **D**: 動作しない、または主要な構造上の問題がある
+- **A**: 모든 검증(verification) 통과, 클린(clean) 아키텍처, 에이전트 가독성(agent-legible), 안정적인 테스트
+- **B**: 검증 통과, 대체로 클린, 가독성 또는 테스트 커버리지에 사소한 격차 있음
+- **C**: 부분적으로 작동, 알려진 격차, 일부 코드 영역이 에이전트가 이해하기 어려움
+- **D**: 작동하지 않거나, 주요 구조적 문제 있음
 
 ---
 
-## プロダクトドメイン (Product Domains)
+## 제품 도메인 (Product Domains)
 
-| ドメイン (Domain) | 等級 (Grade) | 検証 (Verification) | エージェント可読性 (Agent Legibility) | テスト安定性 (Test Stability) | 主な不足 (Key Gaps) | 最終更新 (Last Updated) |
+| 도메인 (Domain) | 등급 (Grade) | 검증 (Verification) | 에이전트 가독성 (Agent Legibility) | 테스트 안정성 (Test Stability) | 주요 격차 (Key Gaps) | 마지막 업데이트 (Last Updated) |
 |--------|-------|-------------|-----------------|---------------|----------|-------------|
 | Document Import | - | - | - | - | - | - |
 | Document Management | - | - | - | - | - | - |
@@ -25,21 +25,21 @@
 | Q&A Flow | - | - | - | - | - | - |
 | Grounded Answers | - | - | - | - | - | - |
 
-## アーキテクチャレイヤ (Architectural Layers)
+## 아키텍처 레이어 (Architectural Layers)
 
-| レイヤ (Layer) | 等級 (Grade) | 境界の適用 (Boundary Enforcement) | エージェント可読性 (Agent Legibility) | 主な不足 (Key Gaps) | 最終更新 (Last Updated) |
+| 레이어 (Layer) | 등급 (Grade) | 경계 적용 (Boundary Enforcement) | 에이전트 가독성 (Agent Legibility) | 주요 격차 (Key Gaps) | 마지막 업데이트 (Last Updated) |
 |-------|-------|---------------------|-----------------|----------|-------------|
 | Main Process | - | - | - | - | - |
 | Preload | - | - | - | - | - |
 | Renderer | - | - | - | - | - |
 | Services | - | - | - | - | - |
 
-## 変更履歴 (Change History)
+## 변경 이력 (Change History)
 
 ### YYYY-MM-DD
 
-- 変更:
-- 昇格したドメイン:
-- 降格:
-- 新たに見つかった不足:
-- 解消した不足:
+- Changes:
+- Domains promoted:
+- Demoted:
+- New gaps identified:
+- Gaps closed:

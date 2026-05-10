@@ -1,15 +1,15 @@
-[英語版 →](../../../en/resources/templates/) | [中国語版 →](../../../zh/resources/templates/)
+[English Version →](../../../en/resources/templates/) | [中文版本 →](../../../zh/resources/templates/)
 
-# テンプレートライブラリ
+# Thư viện Mẫu
 
-エージェント向けプロジェクトですぐに使える harness テンプレート集です。
+Các mẫu harness sẵn sàng sử dụng cho các dự án agent.
 
-## 利用可能なテンプレート
+## Mẫu Có sẵn
 
-- [AGENTS.md](./AGENTS.md) — 標準のエージェント向け指示ファイル
-- [CLAUDE.md](./CLAUDE.md) — Claude Code 向けの派生版
-- [claude-progress.md](./claude-progress.md) — セッション進捗ログ
-- [clean-state-checklist.md](./clean-state-checklist.md) — セッション終了時のクリーン状態チェックリスト
-- [evaluator-rubric.md](./evaluator-rubric.md) — evaluator 向けの採点ルーブリック
-- [quality-document.md](./quality-document.md) — 品質ドキュメントのテンプレート
-- [session-handoff.md](./session-handoff.md) — 簡潔なセッション引き継ぎテンプレート
+- [AGENTS.md](./AGENTS.md) — Tệp hướng dẫn agent chuẩn
+- [CLAUDE.md](./CLAUDE.md) — Biến thể dành cho Claude Code
+- [claude-progress.md](./claude-progress.md) — Nhật ký tiến độ phiên
+- [clean-state-checklist.md](./clean-state-checklist.md) — Danh sách kiểm tra trạng thái sạch khi thoát phiên
+- [evaluator-rubric.md](./evaluator-rubric.md) — Rubric tính điểm evaluator
+- [quality-document.md](./quality-document.md) — Mẫu tài liệu chất lượng
+- [session-handoff.md](./session-handoff.md) — Mẫu bàn giao phiên ngắn gọn

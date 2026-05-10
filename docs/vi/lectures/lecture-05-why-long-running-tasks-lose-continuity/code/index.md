@@ -1,7 +1,7 @@
-# 第05講のコード
+# Mã cho Bài 05
 
-このディレクトリは、次の例に使います:
+Sử dụng thư mục này cho các ví dụ về:
 
-- 壊れやすいマルチセッションのタスク
-- 継続性のアーティファクトが不足しているケース
-- 継続性を回復するためのパターン
+- các tác vụ đa phiên bị hỏng
+- thiếu artifact tính liên tục
+- các mẫu phục hồi tính liên tục

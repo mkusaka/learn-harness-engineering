@@ -1,35 +1,35 @@
-# 進捗ログ
+# Progress Log
 
-## 現在の検証済み状態
+## Current Verified State
 
-- リポジトリのルート:
-- 標準の起動パス:
-- 標準の検証パス:
-- 現在の最優先未完了機能:
-- 現在のブロッカー:
+- Repository root:
+- Standard startup path:
+- Standard verification path:
+- Current highest-priority unfinished feature:
+- Current blocker:
 
-## セッションログ
+## Session Log
 
-### セッション 001
+### Session 001
 
-- 日付:
-- 目的:
-- 完了内容:
-- 実施した検証:
-- 記録した証跡:
-- コミット:
-- 更新したファイルまたは成果物:
-- 既知のリスクまたは未解決の問題:
-- 次の最善手:
+- Date:
+- Goal:
+- Completed:
+- Verification run:
+- Evidence captured:
+- Commits:
+- Files or artifacts updated:
+- Known risk or unresolved issue:
+- Next best step:
 
-### セッション 002
+### Session 002
 
-- 日付:
-- 目的:
-- 完了内容:
-- 実施した検証:
-- 記録した証跡:
-- コミット:
-- 更新したファイルまたは成果物:
-- 既知のリスクまたは未解決の問題:
-- 次の最善手:
+- Date:
+- Goal:
+- Completed:
+- Verification run:
+- Evidence captured:
+- Commits:
+- Files or artifacts updated:
+- Known risk or unresolved issue:
+- Next best step:

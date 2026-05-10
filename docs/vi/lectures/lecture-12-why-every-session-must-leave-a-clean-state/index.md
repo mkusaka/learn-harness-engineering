@@ -1,179 +1,186 @@
-[英語版 →](../../../en/lectures/lecture-12-why-every-session-must-leave-a-clean-state/) | [中国語版 →](../../../zh/lectures/lecture-12-why-every-session-must-leave-a-clean-state/)
+[English Version →](../../../en/lectures/lecture-12-why-every-session-must-leave-a-clean-state/) | [中文版本 →](../../../zh/lectures/lecture-12-why-every-session-must-leave-a-clean-state/)
 
-> ソースコード例: [code/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/vi/lectures/lecture-12-why-every-session-must-leave-a-clean-state/code/)
-> 実践プロジェクト: [プロジェクト 06. 完全なハーネス (Capstone)](./../../projects/project-06-runtime-observability-and-debugging/index.md)
+> Ví dụ mã nguồn: [code/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/vi/lectures/lecture-12-why-every-session-must-leave-a-clean-state/code/)
+> Dự án thực hành: [Dự án 06. Harness Đầy đủ (Capstone)](./../../projects/project-06-runtime-observability-and-debugging/index.md)
 
-# 第12講. 各セッションの最後は必ずクリーンな状態で終える
+# Bài 12. Bàn giao Sạch Sẽ ở Cuối Mỗi Phiên
 
-## この講義で解決したいこと
+## Bài giảng này Giải quyết Vấn đề Gì?
 
-あなたの agent が午後いっぱい動き続け、20 個のファイルを変更し、コードを commit し、セッションが終わります。次の agent セッションが始まると、build が壊れている、test が赤い、debug 用の一時ファイルが散らばっている、feature list が更新されていない、そして進捗がまったく分からないことにすぐ気づきます。新しいセッションの最初の30分は、ただ「前のセッションで実際に何が起きたのか」を解き明かすことに費やされます。
+Agent của bạn chạy cả buổi chiều, sửa đổi 20 tệp, commit mã, phiên kết thúc. Phiên agent tiếp theo bắt đầu và ngay lập tức phát hiện: build bị hỏng, test đang đỏ, các tệp debug tạm thời ở khắp nơi, feature list không được cập nhật, và tiến độ hoàn toàn không rõ ràng. Phiên mới dành 30 phút đầu tiên chỉ để tìm hiểu "phiên cuối thực sự đã làm gì."
 
-OpenAI と Anthropic のどちらも明確に述べています。**長期的な信頼性は、一度の成功ではなく、運用上の規律にかかっています。** セッション終了時の状態の質が、次のセッションの効率を直接左右します。Git のベストプラクティスに重ねて考えてください。各 commit は、元に戻せる単位で、build 可能な1つの変更であるべきであり、途中までの作業の寄せ集めであってはいけません。
+Cả OpenAI và Anthropic đều nói rõ ràng: **độ tin cậy dài hạn phụ thuộc vào kỷ luật vận hành, không chỉ là thành công một lần chạy.** Chất lượng trạng thái khi thoát phiên trực tiếp xác định hiệu quả của phiên tiếp theo. Hãy nghĩ về nó giống như các thực hành tốt nhất của Git — mỗi commit nên là một thay đổi nguyên tử, có thể biên dịch, không phải một đống mã làm dở.
 
-## 主要概念
+## Các Khái niệm Cốt lõi
 
-- **クリーン状態 (Clean state)**: セッション終了時にシステムが5つの条件を満たしている状態です。build が成功し、test が成功し、進捗が記録され、古い artifact がなく、起動経路が利用可能であることです。どれか1つでも欠けていれば、そのセッションは「完了」していません。
-- **セッション整合性 (Session Integrity)**: データベースのトランザクションに似ています。完全に commit してクリーンな状態を残すか、一貫性のある最後の状態へ rollback するかのどちらかです。中間の選択肢はありません。
-- **品質ドキュメント (Quality Document)**: 各 module の品質評価を継続的に記録する、動的な artifact です。一度きりの評価ではなく、codebase が時間とともに強くなっているか弱くなっているかを示す tracker です。
-- **クリーンアップループ (Cleanup Loop)**: codebase 内の体系的なエントロピーを減らすための、定期的な保守セッションです。緊急対応ではなく、通常運用の一部です。
-- **ハーネス簡素化 (Harness Simplification)**: model の能力が向上したら、もはや不要な harness 要素を定期的に削除することです。今日必要な制約が、3か月後には不要な overhead になっているかもしれません。
-- **冪等なクリーンアップ (Idempotent Cleanup)**: 何回実行しても同じ結果になるクリーンアップ操作です。失敗後の再試行シナリオでも安全にクリーンアップできるようにします。
+- **Trạng thái sạch (Clean state)**: Hệ thống thỏa mãn năm điều kiện khi thoát phiên — build vượt qua, test vượt qua, tiến độ được ghi lại, không có artifact lỗi thời, đường dẫn khởi động khả dụng. Thiếu bất kỳ cái nào có nghĩa là phiên không "xong."
+- **Tính toàn vẹn phiên (Session Integrity)**: Tương tự như giao dịch cơ sở dữ liệu — hoặc commit đầy đủ và để lại trạng thái sạch, hoặc rollback về trạng thái nhất quán cuối cùng. Không có lựa chọn trung gian.
+- **Tài liệu chất lượng (Quality Document)**: Một artifact đang hoạt động liên tục ghi lại xếp loại chất lượng cho mỗi module. Không phải đánh giá một lần, mà là tracker cho thấy liệu codebase có đang trở nên mạnh hơn hay yếu hơn theo thời gian.
+- **Vòng lặp dọn dẹp (Cleanup Loop)**: Một phiên bảo trì thường xuyên nhằm giảm entropy có hệ thống trong codebase. Không phải sửa chữa khẩn cấp, mà là vận hành thường xuyên.
+- **Đơn giản hóa harness (Harness Simplification)**: Khi năng lực mô hình cải thiện, định kỳ xóa các thành phần harness không còn cần thiết. Một ràng buộc cần thiết ngày hôm nay có thể là overhead không cần thiết ba tháng sau.
+- **Dọn dẹp Idempotent**: Các hoạt động dọn dẹp tạo ra cùng kết quả bất kể chúng chạy bao nhiêu lần. Đảm bảo dọn dẹp vẫn an toàn ngay cả trong các kịch bản thất bại-thử lại.
 
-## クリーン状態の5つの次元
+## Năm Chiều của Trạng thái Sạch
 
 ```mermaid
 flowchart LR
-    Work["機能作業が完了"] --> Build{"Build は通るか?"}
-    Build -->|はい| Test{"Test は通るか?"}
-    Build -->|いいえ| Fix["終了前に修正"]
-    Test -->|はい| Record["feature list + 進捗を更新"]
-    Test -->|いいえ| Fix
-    Record --> Cleanup["一時 artifact / debug code を削除"]
-    Cleanup --> Startup{"標準起動経路は動くか?"}
-    Startup -->|はい| Clean["クリーンな引き渡し"]
-    Startup -->|いいえ| Fix
+    Work["Công việc tính năng hoàn thành"] --> Build{"Build vượt qua?"}
+    Build -->|có| Test{"Test vượt qua?"}
+    Build -->|không| Fix["Sửa trước khi thoát"]
+    Test -->|có| Record["Cập nhật feature list + tiến độ"]
+    Test -->|không| Fix
+    Record --> Cleanup["Xóa artifact tạm thời / mã debug"]
+    Cleanup --> Startup{"Đường dẫn khởi động chuẩn hoạt động?"}
+    Startup -->|có| Clean["Bàn giao sạch sẽ"]
+    Startup -->|không| Fix
     Fix --> Build
 ```
 
 ```mermaid
 flowchart LR
-    Dirty["セッション終了時に<br/>test が赤い / 一時ファイルが残る / 進捗が未更新"] --> Diagnose["次のセッションはまず<br/>何が起きたのかを調べる必要がある"]
-    Diagnose --> Fragile["新しい作業が散らかった repo 上で始まる"]
-    Fragile --> More["debug ファイルが増え、壊れた確認が増え、<br/>不明瞭な進捗が増える"]
+    Dirty["Phiên kết thúc với<br/>test đỏ / tệp tạm / không cập nhật tiến độ"] --> Diagnose["Phiên tiếp theo đầu tiên phải<br/>tìm hiểu chuyện gì đã xảy ra"]
+    Diagnose --> Fragile["Công việc mới bắt đầu trên repo lộn xộn"]
+    Fragile --> More["Thêm tệp debug, thêm kiểm tra hỏng,<br/>thêm tiến độ không rõ ràng"]
     More --> Dirty
 
-    Clean["セッション終了時に<br/>test が緑 / 進捗更新済み / 一時ファイル削除済み"] --> Fast["次のセッションはすぐに開発を始められる"]
-    Fast --> Stable["先に repo を立て直す必要がない"]
+    Clean["Phiên kết thúc với<br/>test xanh / tiến độ cập nhật / tệp tạm đã xóa"] --> Fast["Phiên tiếp theo có thể bắt đầu lập trình ngay"]
+    Fast --> Stable["Không cần cứu repo trước"]
     Stable --> Clean
 ```
 
-## なぜこれが起きるのか
+## Tại sao Điều này Xảy ra
 
-### エントロピー増大はデフォルト状態
+### Tăng trưởng Entropy là Trạng thái Mặc định
 
-Lehman の software evolution の法則は、継続的に変化するシステムは、意図的に管理しない限り複雑さが増していくことを示しています。これは AI coding agent に特に当てはまります。各セッションが変更を持ち込み、終了時にクリーンアップしなければ、技術的負債は指数関数的に蓄積します。
+Các quy luật tiến hóa phần mềm của Lehman cho chúng ta biết: các hệ thống trải qua thay đổi liên tục sẽ không thể tránh khỏi tăng độ phức tạp trừ khi được quản lý chủ động. Điều này đặc biệt đúng với AI coding agent — mỗi phiên giới thiệu các thay đổi, và nếu không dọn dẹp khi thoát, nợ kỹ thuật tích lũy theo cấp số nhân.
 
-この講義では、次のような想定例で差を考えます。
+Dữ liệu thực tế rất rõ ràng. Một dự án được phát triển với agent trong 12 tuần, không có chiến lược dọn dẹp:
 
-- クリーンアップ戦略なし: 週を追うごとに build と test の失敗が増え、新しい session はまず状態復元に時間を使う。
-- クリーンアップ戦略あり: 各 session の終了時に build、test、進捗、artifact、起動経路を確認し、次の session がすぐ作業に入れる状態を保つ。
+- Tuần 1: Tỷ lệ vượt qua build 100%, tỷ lệ vượt qua test 100%, khởi động phiên mới 5 phút
+- Tuần 4: Build 95%, test 92%, khởi động 15 phút
+- Tuần 8: Build 82%, test 78%, khởi động 35 phút
+- Tuần 12: Build 68%, test 61%, khởi động 60+ phút
 
-ここで重要なのは、特定の数値ではなく傾向です。クリーンな終了条件を持たない project は、時間の経過とともに「作る時間」より「状態を戻す時間」が増えていきます。
+Cùng dự án với chiến lược dọn dẹp:
 
-### クリーン状態の5つの次元
+- Tuần 1: 100%, 100%, 5 phút
+- Tuần 12: 97%, 95%, 9 phút
 
-クリーン状態は単に「コードが build できる」だけではありません。次の5つをまとめて評価します。
+Sau 12 tuần: tỷ lệ vượt qua build khác nhau 29 điểm phần trăm, thời gian khởi động phiên mới khác nhau 85%. Đây không phải lý thuyết — đây là sự khác biệt được quan sát.
 
-**Build の次元**: コードはエラーなく build できるか？ これが最も基本です。次のセッションが最初に build エラーを直すことになってはいけません。
+### Năm Chiều của Trạng thái Sạch
 
-**Test の次元**: すべての test は通るか？ これには、セッション前から存在していた test も含まれます。セッションには、既存機能を壊さない責任があります。そして、「自分の環境では動く」ではなく CI で確認しなければなりません。
+Trạng thái sạch không chỉ là "mã được biên dịch." Đó là năm chiều được đánh giá cùng nhau:
 
-**進捗の次元**: 現在の進捗は、機械可読な artifact に記録されているか？ 完了した subtask は合格条件とともに、進行中だが未完了の subtask は現在の状態とともに、未着手の subtask はそのままの状態で記録されます。良い進捗記録は、session 開始時の診断を減らします。
+**Chiều Build**: Mã có build không có lỗi không? Đây là cơ bản nhất — phiên tiếp theo không nên phải sửa lỗi build trước tiên.
 
-**Artifact の次元**: 古くなった、または曖昧な一時 artifact は残っていないか？ debug log、一時ファイル、コメントアウトされたコード、TODO マーカーなどはすべて、次のセッションの認知負荷を増やします。
+**Chiều Test**: Tất cả test có vượt qua không? Bao gồm cả test tồn tại trước phiên — phiên có trách nhiệm không làm hỏng chức năng hiện có. Và nó phải được xác minh trong CI, không chỉ "hoạt động trên máy của tôi."
 
-**起動の次元**: 標準起動経路は使えるか？ 次のセッションは、手作業なしで作業を始められるか？ 環境の初期化、codebase の読み込み、文脈の収集、タスクの選択。これらの経路は壊れていてはいけません。
+**Chiều Tiến độ**: Tiến độ hiện tại có được ghi lại trong một artifact có thể đọc bởi máy không? Các subtask đã hoàn thành với tiêu chí vượt qua của chúng, các subtask đang tiến hành nhưng chưa hoàn thành với trạng thái hiện tại, các subtask chưa bắt đầu. Bản ghi tiến độ tốt giảm 60-80% thời gian chẩn đoán khởi động phiên.
 
-### 「後でクリーンアップする」は、実質的に永遠にやらないのと同じ
+**Chiều Artifact**: Có các artifact tạm thời hoặc mơ hồ lỗi thời không? Debug log, tệp tạm, mã bị comment out, marker TODO — tất cả những thứ này tăng tải nhận thức cho phiên tiếp theo.
 
-最も典型的な心理的落とし穴は、「このセッションではクリーンアップする時間がない。次回やろう」というものです。しかし次の agent セッションは、あなたが何を残したのかを知りません。そこに見えるのは、コードの塊と不確かな状態だけです。そして「このコードのどこが意図的で、どこが一時的なのか」を推測することに時間を使います。
+**Chiều Khởi động**: Đường dẫn khởi động chuẩn có khả dụng không? Phiên tiếp theo có thể bắt đầu làm việc mà không cần can thiệp thủ công không? Khởi tạo môi trường, tải codebase, thu thập ngữ cảnh, lựa chọn tác vụ — các đường dẫn này không được bị hỏng.
 
-さらに悪いことに、各セッションにはそれぞれ別のタスク目標があります。新しいセッションは新しい作業をするためにあり、前のセッションが残した混乱を片付けるためではありません。だから混乱を無視してその上に新しい作業を始め、さらに混乱を積み重ねます。これはエントロピーの正のフィードバックループです。
+### "Dọn dẹp sau" Có nghĩa là Không bao giờ Dọn dẹp
 
-## 正しくやる方法
+Cái bẫy tâm lý phổ biến nhất là "không có thời gian dọn dẹp trong phiên này, tôi sẽ làm lần sau." Nhưng phiên agent tiếp theo không biết bạn đã để lại gì — nó thấy một mớ mã và trạng thái không chắc chắn. Nó sẽ dành nhiều thời gian để suy ra "phần nào của mã này là có chủ ý và phần nào là tạm thời."
 
-### 1. クリーン状態を完了条件にする
+Tệ hơn, mỗi phiên có mục tiêu tác vụ riêng của mình. Phiên mới ở đó để làm công việc mới, không phải dọn dẹp mớ bòng bong của phiên trước. Nó sẽ bỏ qua sự hỗn loạn và bắt đầu công việc mới trên đó, giới thiệu thêm hỗn loạn trên đỉnh hỗn loạn. Đây là vòng phản hồi tích cực của entropy.
 
-harness では、明確に定義してください。**セッション完了 = タスクの検証に合格し、かつクリーン状態チェックに合格すること。** どちらか1つでも欠ければ、そのセッションは完了ではありません。`CLAUDE.md` には次のように書きます。
+## Cách Làm Đúng
+
+### 1. Trạng thái Sạch như Yêu cầu Hoàn thành
+
+Định nghĩa rõ ràng trong harness: **hoàn thành phiên = tác vụ vượt qua xác minh VÀ kiểm tra trạng thái sạch vượt qua.** Thiếu bất kỳ cái nào có nghĩa là phiên không hoàn thành. Viết trong CLAUDE.md:
 
 ```
-## セッション終了チェックリスト
-- [ ] Build が通る (npm run build)
-- [ ] すべての test が通る (npm test)
-- [ ] feature list が更新されている
-- [ ] debug code が残っていない (console.log, debugger, TODO)
-- [ ] 標準起動経路が利用可能 (npm run dev)
+## Danh sách Kiểm tra Thoát Phiên
+- [ ] Build vượt qua (npm run build)
+- [ ] Tất cả test vượt qua (npm test)
+- [ ] Feature list đã được cập nhật
+- [ ] Không có mã debug còn lại (console.log, debugger, TODO)
+- [ ] Đường dẫn khởi động chuẩn khả dụng (npm run dev)
 ```
 
-### 2. 2 モードのクリーンアップ戦略
+### 2. Chiến lược Dọn dẹp Hai Chế độ
 
-2つのクリーンアップモードを組み合わせます。
+Kết hợp hai chế độ dọn dẹp:
 
-**即時クリーンアップ (各セッションの終了時)**: セッション中に生成された一時 artifact を削除し、feature list の状態を更新し、build と test が通ることを確認します。これは「参照的」なクリーンアップです。
+**Dọn dẹp tức thì (ở cuối mỗi phiên)**: Dọn dẹp các artifact tạm thời được tạo trong phiên, cập nhật trạng thái feature list, đảm bảo build và test vượt qua. Đây là dọn dẹp "tính tham chiếu."
 
-**定期クリーンアップ (週次)**: 全体をスキャンして、蓄積した構造的な問題を解消し、品質ドキュメントを更新し、benchmark test を実行して drift を検出します。これは「トレーシング」的なクリーンアップです。
+**Dọn dẹp định kỳ (hàng tuần)**: Quét toàn hệ thống — xử lý các vấn đề cấu trúc tích lũy, cập nhật tài liệu chất lượng, chạy test benchmark để phát hiện trôi dạt. Đây là dọn dẹp "tracing."
 
-### 3. 品質ドキュメントを維持する
+### 3. Duy trì Tài liệu Chất lượng
 
-品質ドキュメントは、各 module を継続的に採点する動的な artifact です。
+Tài liệu chất lượng là một artifact đang hoạt động liên tục tính điểm mỗi module:
 
 ```markdown
-# 品質ドキュメント
+# Tài liệu Chất lượng
 
-## 認証モジュール (品質: A)
-- 検証は通っている: はい
-- agent が理解可能: はい
-- test の安定性: 安定
-- アーキテクチャ境界: 遵守
-- コーディング規約: 遵守
+## Module Xác thực Người dùng (Chất lượng: A)
+- Xác minh vượt qua: Có
+- Agent có thể hiểu: Có
+- Độ ổn định test: Ổn định
+- Ranh giới kiến trúc: Tuân thủ
+- Quy ước mã: Được tuân theo
 
-## 支払いモジュール (品質: C)
-- 検証は通っている: 一部 (payment callback が未テスト)
-- agent が理解可能: 難しい (ロジックが3ファイルに分散)
-- test の安定性: 不安定 (flaky な test が2件)
-- アーキテクチャ境界: 逸脱あり
-- コーディング規約: 一部遵守
+## Module Thanh toán (Chất lượng: C)
+- Xác minh vượt qua: Một phần (payment callback chưa được test)
+- Agent có thể hiểu: Khó (logic trải rộng trên 3 tệp)
+- Độ ổn định test: Không ổn định (2 test flaky)
+- Ranh giới kiến trúc: Có vi phạm
+- Quy ước mã: Được tuân theo một phần
 ```
 
-新しいセッションはこのドキュメントを読めば、どこを優先すべきかすぐに分かります。最も点数が低い module から修正してください。
+Các phiên mới đọc tài liệu này và biết ngay nơi ưu tiên. Sửa module có điểm thấp nhất trước.
 
-### 4. 定期的に harness を簡素化する
+### 4. Định kỳ Đơn giản hóa Harness
 
-Anthropic からの重要な示唆があります。**各 harness 構成要素は、model が何かを確実にできなかったために存在しています。しかし model が改善すると、こうした前提は時代遅れになります。** 3か月前には必要だった制約が、今では不要な overhead になっているかもしれません。
+Một hiểu biết quan trọng từ Anthropic: **mỗi thành phần harness tồn tại vì mô hình không thể thực hiện điều gì đó một cách đáng tin cậy. Nhưng khi các mô hình cải thiện, các giả định này trở nên lỗi thời.** Một ràng buộc cần thiết ba tháng trước có thể là overhead không cần thiết ngày hôm nay.
 
-推奨される実践: 毎月、harness の構成要素を1つ選び、一時的に無効化して benchmark タスクを実行します。結果が悪化しなければ、恒久的に削除します。悪化するなら、戻すか、より軽い代替に置き換えます。
+Thực hành được khuyến nghị: Mỗi tháng, chọn một thành phần harness, tạm thời vô hiệu hóa nó, và chạy các tác vụ benchmark. Nếu kết quả không giảm sút, hãy xóa vĩnh viễn. Nếu có, hãy khôi phục hoặc thay thế bằng một thay thế nhẹ hơn.
 
-### 5. クリーンアップ操作は冪等にする
+### 5. Các Hoạt động Dọn dẹp Phải là Idempotent
 
-クリーンアップ script は、何度実行しても安全でなければなりません。
+Script dọn dẹp phải an toàn để chạy lặp đi lặp lại:
 
 ```bash
-# 冪等なクリーンアップ操作
-rm -f /tmp/debug-*.log  # -f により、ファイルが存在しなくてもエラーにならない
-git checkout -- .env.local  # 既知の状態へ戻す
-npm run test  # クリーンアップで何も壊していないことを確認する
+# Các hoạt động dọn dẹp idempotent
+rm -f /tmp/debug-*.log  # -f đảm bảo không có lỗi khi tệp không tồn tại
+git checkout -- .env.local  # Khôi phục về trạng thái đã biết
+npm run test  # Xác minh dọn dẹp không làm hỏng gì
 ```
 
-## 実例
+## Trường hợp Thực tế
 
-agent で継続開発した Electron アプリを想定し、2つのアプローチを比較します。
+Một ứng dụng Electron được phát triển với agent trong 12 tuần, so sánh hai cách tiếp cận:
 
-**クリーンアップ戦略なし** (対照群): session 終了時に一時 artifact、赤い test、曖昧な進捗メモが残ります。次の session は、まず何が意図的な変更で何が一時状態なのかを切り分ける必要があります。
+**Không có chiến lược dọn dẹp** (nhóm kiểm soát): Tuần 12, tỷ lệ vượt qua build 68%, tỷ lệ vượt qua test 61%, khởi động phiên mới 60+ phút, artifact lỗi thời 103.
 
-**クリーンアップ戦略あり** (実験群): 各 session 終了時に完全なクリーン状態チェックと定期的なクリーンアップループを走らせます。次の session は、標準の起動経路と進捗記録からそのまま作業を再開できます。
+**Với chiến lược dọn dẹp** (nhóm thực nghiệm): Kiểm tra trạng thái sạch đầy đủ ở cuối mỗi phiên + vòng lặp dọn dẹp hàng tuần. Tuần 12, tỷ lệ vượt qua build 97%, tỷ lệ vượt qua test 95%, khởi động phiên mới 9 phút, artifact lỗi thời 11.
 
-この例で見るべき点は、クリーンアップが美観の問題ではなく、次の session の立ち上がりと検証可能性を守るための完了条件だということです。
+Đến tuần 12, tỷ lệ vượt qua build của nhóm thực nghiệm cao hơn 29 điểm phần trăm, tỷ lệ vượt qua test cao hơn 34 điểm, và thời gian khởi động phiên mới thấp hơn 85%.
 
-## 覚えておくべき要点
+## Những Điểm chính cần Nhớ
 
-- **クリーン状態はセッション完了の必須条件** です。任意のクリーンアップではなく、「完了」の定義の一部です。
-- **5つの次元はすべて必須** です。build、test、進捗、artifact、起動。各項目を明確に確認してください。
-- **品質ドキュメントで codebase の健全性を追跡できる** ようになります。悪化していると分かるものしか改善できません。
-- **定期的に harness を簡素化する** ことで、model の能力向上に合わせて不要な制約を削除できます。
-- **「後でクリーンアップする」は、結局クリーンアップしないのと同じ** です。エントロピー増大はデフォルトであり、それに対抗できるのは能動的なクリーンアップだけです。
+- **Trạng thái sạch là điều kiện cần thiết cho hoàn thành phiên** — không phải dọn dẹp tùy chọn, mà là một phần của "định nghĩa hoàn thành."
+- **Tất cả năm chiều đều bắt buộc** — build, test, tiến độ, artifact, khởi động — mỗi cái phải được kiểm tra rõ ràng.
+- **Tài liệu chất lượng làm cho sức khỏe codebase có thể theo dõi** — bạn chỉ có thể sửa những gì bạn biết đang suy giảm.
+- **Định kỳ đơn giản hóa harness** — khi năng lực mô hình cải thiện, hãy xóa các ràng buộc không còn cần thiết.
+- **"Dọn dẹp sau" bằng với không bao giờ dọn dẹp** — tăng trưởng entropy là mặc định; chỉ có dọn dẹp chủ động mới chống lại nó.
 
-## 参考文献
+## Đọc thêm
 
-- [Clean Code - Robert C. Martin](https://www.goodreads.com/book/show/3735293-clean-code) — コードのクリーンさに関する体系的な原則
-- [Harness Engineering - OpenAI](https://openai.com/index/harness-engineering/) — 再現性を harness 設計の中核要件とする考え方
-- [Effective Harnesses - Anthropic](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents) — 長期的な信頼性におけるクリーンなセッション終了の重要性
-- [Programs, Life Cycles, and Laws of Software Evolution - Lehman](https://ieeexplore.ieee.org/document/1702314) — 能動的な保守がなければシステムの複雑さは避けられず増大することを示す software evolution の法則
+- [Clean Code - Robert C. Martin](https://www.goodreads.com/book/show/3735293-clean-code) — Các nguyên tắc có hệ thống về sự sạch sẽ của mã
+- [Harness Engineering - OpenAI](https://openai.com/index/harness-engineering/) — Khả năng tái tạo như một yêu cầu thiết kế harness cốt lõi
+- [Effective Harnesses - Anthropic](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents) — Vai trò quan trọng của thoát phiên sạch cho độ tin cậy dài hạn
+- [Programs, Life Cycles, and Laws of Software Evolution - Lehman](https://ieeexplore.ieee.org/document/1702314) — Các quy luật tiến hóa phần mềm chứng minh độ phức tạp hệ thống tất yếu tăng mà không có bảo trì chủ động
 
-## 演習
+## Bài tập
 
-1. **クリーン状態チェックリスト**: あなたの codebase 向けに、5つの次元すべてをカバーするセッション終了チェックリストを設計してください。それを5回連続のセッションで適用し、次元ごとの違反を記録してください。
+1. **Danh sách Kiểm tra Trạng thái Sạch**: Thiết kế một danh sách kiểm tra thoát phiên cho codebase của bạn bao phủ tất cả năm chiều. Áp dụng nó qua 5 phiên liên tiếp và ghi lại vi phạm theo từng chiều.
 
-2. **benchmark 比較**: クリーン状態要件の有無で2種類の harness を用意し、固定のタスクセットを使って比較してください。完了率、再試行回数、失敗して終了する割合を比較します。
+2. **So sánh Benchmark**: Sử dụng một bộ tác vụ cố định với hai biến thể harness (có/không có yêu cầu trạng thái sạch). So sánh tỷ lệ hoàn thành, số lần thử lại và tỷ lệ thoát lỗi.
 
-3. **harness 簡素化の実践**: harness の構成要素を1つ選び、一時的に無効化して benchmark タスクを実行してください。ある場合とない場合の結果を比較し、保持するか、削除するか、置き換えるかを判断してください。
+3. **Thực hành Đơn giản hóa Harness**: Chọn một thành phần harness, tạm thời vô hiệu hóa nó, và chạy các tác vụ benchmark. So sánh kết quả có và không có nó. Quyết định có giữ, xóa hay thay thế.

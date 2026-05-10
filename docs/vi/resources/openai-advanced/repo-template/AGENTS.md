@@ -1,55 +1,55 @@
 # AGENTS.md
 
-このリポジトリは、長時間稼働する coding-agent の作業に最適化されています。このファイルは短く保ってください。大きな指示書ではなく、記録されたシステム文書へのルーティング層として使ってください。
+Kho lưu trữ này được tối ưu hóa cho công việc coding-agent chạy lâu. Giữ tệp này ngắn. Sử dụng nó như lớp định tuyến vào các tài liệu hệ thống ghi chép, không phải như một đống hướng dẫn khổng lồ.
 
-## 起動手順
+## Quy trình Khởi động
 
-コードを変更する前に:
+Trước khi thay đổi mã:
 
-1. `pwd` で repo のルートディレクトリを確認してください。
-2. `ARCHITECTURE.md` を読んで、現在のシステムマップと厳格な依存ルールを把握してください。
-3. `docs/QUALITY_SCORE.md` を読んで、どの domain または layer が最も弱いかを確認してください。
-4. `docs/PLANS.md` を読んだうえで、そこから作業中の active plan を開いてください。
-5. `docs/product-specs/` にある関連する製品仕様を読んでください。
-6. この repo の bootstrap パスと標準の検証を実行してください。
-7. baseline の検証が失敗している場合は、作業範囲を追加する前に baseline を修正してください。
+1. Xác nhận thư mục gốc repo bằng `pwd`.
+2. Đọc `ARCHITECTURE.md` để biết bản đồ hệ thống hiện tại và các quy tắc phụ thuộc cứng.
+3. Đọc `docs/QUALITY_SCORE.md` để xem domain hoặc lớp nào yếu nhất.
+4. Đọc `docs/PLANS.md`, sau đó mở kế hoạch active bạn đang làm việc từ đó.
+5. Đọc spec sản phẩm liên quan trong `docs/product-specs/`.
+6. Chạy đường dẫn bootstrap và xác minh chuẩn cho repo này.
+7. Nếu xác minh baseline đang thất bại, hãy sửa baseline trước khi thêm phạm vi.
 
-## ルーティングマップ
+## Bản đồ Định tuyến
 
-- `ARCHITECTURE.md`: domain マップ、レイヤーモデル、依存ルール
-- `docs/design-docs/index.md`: 設計上の意思決定と中核となる前提
-- `docs/product-specs/index.md`: 現在の製品挙動と受け入れ目標
-- `docs/PLANS.md`: plan のライフサイクルと実行ポリシー
-- `docs/QUALITY_SCORE.md`: 製品 domain と layer の健全性
-- `docs/RELIABILITY.md`: runtime シグナル、benchmark、再起動の期待値
-- `docs/SECURITY.md`: secret、sandbox、データ、外部アクションのルール
-- `docs/FRONTEND.md`: UI 制約、design system のルール、accessibility チェック
+- `ARCHITECTURE.md`: bản đồ domain, mô hình lớp, quy tắc phụ thuộc
+- `docs/design-docs/index.md`: các quyết định thiết kế và niềm tin cốt lõi
+- `docs/product-specs/index.md`: các hành vi sản phẩm hiện tại và mục tiêu chấp nhận
+- `docs/PLANS.md`: vòng đời kế hoạch và chính sách kế hoạch thực thi
+- `docs/QUALITY_SCORE.md`: sức khỏe domain sản phẩm và lớp
+- `docs/RELIABILITY.md`: tín hiệu runtime, benchmark và kỳ vọng khởi động lại
+- `docs/SECURITY.md`: bí mật, sandbox, dữ liệu và quy tắc hành động bên ngoài
+- `docs/FRONTEND.md`: ràng buộc UI, quy tắc design system, kiểm tra accessibility
 
-## 作業契約
+## Hợp đồng Làm việc
 
-- 境界が明確な plan か、機能の slice 1つずつを基点に作業してください。
-- コードの確認だけで完了扱いにしないでください。実行可能な証拠が必要です。
-- 振る舞いを変更した場合は、同じセッション内で該当する製品文書、plan、または reliability 文書を更新してください。
-- 同じレビュー指摘が繰り返し出るなら、チャットで説明し直すのではなく、機械的なルール、テスト、または linter に落とし込んでください。
-- 生成された文書は `docs/generated/` に、ソース参照文書は `docs/references/` に保ってください。
-- このファイルを育てるより、小さくて最新の文書を追加することを優先してください。
+- Làm việc từ một kế hoạch có ranh giới hoặc slice tính năng tại một thời điểm.
+- Không đánh dấu công việc xong chỉ từ kiểm tra mã; cần bằng chứng có thể chạy được.
+- Nếu bạn thay đổi hành vi, hãy cập nhật tài liệu sản phẩm, kế hoạch hoặc độ tin cậy phù hợp trong cùng phiên.
+- Nếu bạn thấy phản hồi review lặp đi lặp lại, hãy thúc đẩy nó thành quy tắc cơ học, kiểm tra hoặc linter thay vì giải thích lại trong chat.
+- Giữ tài liệu được tạo ra trong `docs/generated/` và tài liệu tham khảo nguồn trong `docs/references/`.
+- Ưu tiên thêm tài liệu nhỏ, hiện tại hơn là phát triển tệp này.
 
-## 完了定義
+## Định nghĩa Hoàn thành
 
-変更が完了とみなされるのは、次のすべてが満たされている場合だけです:
+Một thay đổi chỉ xong khi tất cả những điều sau đây là đúng:
 
-- 対象の挙動が実装されている
-- 必要な検証が実際に実行されている
-- 証拠が plan または関連する品質文書から参照できる
-- 影響を受けた文書が最新の状態に保たれている
-- repo を標準の起動パスからクリーンに再起動できる
+- hành vi mục tiêu đã được triển khai
+- xác minh cần thiết đã thực sự chạy
+- bằng chứng được liên kết từ kế hoạch hoặc tài liệu chất lượng liên quan
+- các tài liệu bị ảnh hưởng vẫn là hiện tại
+- kho lưu trữ có thể khởi động lại sạch sẽ từ đường dẫn khởi động chuẩn
 
-## セッション終了時
+## Cuối Phiên
 
-セッションを終える前に:
+Trước khi kết thúc phiên:
 
-1. active な実行 plan を更新してください。
-2. どの domain または layer かが意味のある形で変わった場合は、`docs/QUALITY_SCORE.md` を更新してください。
-3. 後回しにした新しい負債があるなら、`docs/exec-plans/tech-debt-tracker.md` に記録してください。
-4. 完了した plan は、適切であれば `docs/exec-plans/completed/` に移してください。
-5. 次に取るべき行動が明確で、repo を再起動可能な状態に保ってください。
+1. Cập nhật kế hoạch thực thi active.
+2. Cập nhật `docs/QUALITY_SCORE.md` nếu bất kỳ domain hoặc lớp nào thay đổi có ý nghĩa.
+3. Ghi lại nợ mới trong `docs/exec-plans/tech-debt-tracker.md` nếu bạn đã hoãn nó.
+4. Di chuyển các kế hoạch đã hoàn thành sang `docs/exec-plans/completed/` khi phù hợp.
+5. Để repo ở trạng thái có thể khởi động lại với hành động tiếp theo rõ ràng.

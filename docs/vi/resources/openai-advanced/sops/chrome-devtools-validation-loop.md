@@ -1,48 +1,48 @@
-# SOP: Chrome DevTools 検証ループ
+# SOP: Vòng lặp Xác minh Chrome DevTools
 
-UI の作業が実際の runtime 操作に依存していて、コードの確認だけでなく screenshot、DOM 状態、console 出力が重要な場合にこの SOP を使います。
+Sử dụng SOP này khi công việc UI phụ thuộc vào tương tác runtime thực tế và screenshot, trạng thái DOM và đầu ra console quan trọng hơn chỉ kiểm tra mã.
 
-## 目的
+## Mục tiêu
 
-UI 検証を、journey がきれいに通るまで agent が繰り返し実行できる対話的なループに変えます。
+Biến xác minh UI thành một vòng lặp tương tác có thể lặp lại mà agent có thể chạy cho đến khi journey sạch sẽ.
 
-## コアループ
+## Vòng lặp Cốt lõi
 
-1. 対象ページまたはアプリのバージョンを選ぶ。
-2. 古い console ノイズを消す。
-3. BEFORE の状態をキャプチャする。
-4. UI のパスを起動する。
-5. 操作中の runtime イベントを観察する。
-6. AFTER の状態をキャプチャする。
-7. 必要なら修正を適用してアプリを再起動する。
-8. journey がきれいに通るまで検証をやり直す。
+1. Chọn trang mục tiêu hoặc phiên bản ứng dụng.
+2. Xóa noise console lỗi thời.
+3. Chụp trạng thái TRƯỚC.
+4. Kích hoạt đường dẫn UI.
+5. Quan sát các sự kiện runtime trong khi tương tác.
+6. Chụp trạng thái SAU.
+7. Áp dụng sửa chữa và khởi động lại ứng dụng nếu cần.
+8. Chạy lại xác minh cho đến khi journey sạch sẽ.
 
-## 必須入力
+## Đầu vào Bắt buộc
 
-- 安定して起動できるコマンド
-- 再現可能な UI journey
-- DOM、console、または screenshot を snapshot する手段
-- 「きれい」と見なす基準
+- một lệnh khởi động ổn định
+- một UI journey có thể tái tạo
+- một cách để snapshot DOM, console hoặc screenshot
+- một quy tắc cho những gì được tính là "sạch sẽ"
 
-## 実行 SOP
+## SOP Thực thi
 
-1. 目標の journey を active の計画に書く。
-2. 成功条件を、観察可能な言葉で定義する。たとえば、文言が表示される、ボタンが有効になる、エラーが消える、console がきれいになる、リクエストが成功する、など。
-3. 操作前に初期状態を snapshot する。
-4. 一度に起動する path は正確に 1 つだけにする。
-5. runtime イベント、DOM 変化、見えている出力を記録する。
-6. journey が失敗したら、責任範囲が最小の層を修正して再起動する。
-7. 同じ path を再実行し、BEFORE / AFTER の証拠を比較する。
+1. Viết journey mục tiêu trong kế hoạch active.
+2. Định nghĩa thành công theo các thuật ngữ có thể quan sát: văn bản hiện diện, nút được bật, lỗi biến mất, console sạch, yêu cầu thành công.
+3. Snapshot trạng thái ban đầu trước khi tương tác.
+4. Kích hoạt chính xác một đường dẫn mỗi lần.
+5. Ghi lại các sự kiện runtime, thay đổi DOM và đầu ra có thể nhìn thấy.
+6. Nếu journey thất bại, hãy sửa lớp chịu trách nhiệm nhỏ nhất và khởi động lại.
+7. Chạy lại cùng đường dẫn và so sánh bằng chứng TRƯỚC/SAU.
 
-## きれいな状態の基準
+## Tiêu chí Sạch sẽ
 
-- 想定した可視状態が表示されている
-- 予期しないエラーがない
-- console ノイズが理解済み、または削除済みである
-- 同じ path を再実行しても同じ結果になる
+- trạng thái có thể nhìn thấy dự định là hiện diện
+- các lỗi không mong đợi vắng mặt
+- noise console được hiểu hoặc đã xóa
+- chạy lại cùng đường dẫn cho cùng kết quả
 
-## 更新対象の Artifact Repo
+## Artifact Repo Cần Cập nhật
 
-- active の実行計画
-- journey が golden path になった場合は `docs/RELIABILITY.md`
-- 可視の挙動が変わった場合は product spec
+- kế hoạch thực thi active
+- `docs/RELIABILITY.md` nếu journey trở thành một golden path
+- product spec nếu hành vi có thể nhìn thấy thay đổi

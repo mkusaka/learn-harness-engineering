@@ -1,226 +1,226 @@
-# テンプレートガイド
+# Template Guide
 
-これらのテンプレートは、そのまま自分のプロジェクトにコピーして使えるようになっています。各テンプレートは、エージェントの作業フローの中で特定の役割を担います。内容は、プロジェクトのコマンド、パス、機能名、検証手順に合わせて編集してください。
+These templates are ready to copy into your own project. Each one serves a specific purpose in the agent's workflow. Edit the contents to match your project's commands, paths, feature names, and verification steps.
 
-## はじめ方
+## How to Get Started
 
-まず、次の4つのファイルをプロジェクトのルートにコピーしてください。
+Copy these four files into your project root first:
 
-1. `AGENTS.md` または `CLAUDE.md`
+1. `AGENTS.md` or `CLAUDE.md`
 2. `init.sh`
 3. `claude-progress.md`
 4. `feature_list.json`
 
-残りのファイルは、プロジェクトの成長に合わせて追加していきます。
+Add the remaining files as your project grows.
 
 ---
 
 ## AGENTS.md
 
-ルートの指示ファイルです。セッション開始時にエージェントが最初に読むファイルです。ここでは、コードを書く前に何をするか、どのように作業するか、そしてどう締めくくるかといった運用ルールを定義します。
+The root instruction file. This is the first thing the agent reads when it starts a session. It defines the operating rules: what to do before writing code, how to work, and how to wrap up.
 
-**使い方:**
+**How to use it:**
 
-- プロジェクトのルートディレクトリにコピーする
-- 起動時のワークフロー手順を、実際のプロジェクトのパスとコマンドに置き換える
-- チームの慣例に合わせて作業ルールを調整する
-- definition of done のセクションは残す。ここが最も重要です
+- Copy to your project root directory
+- Replace the startup workflow steps with your actual project paths and commands
+- Adjust the working rules to match your team's conventions
+- Keep the definition of done section — it's the most important part
 
-**エージェントに対して果たす役割:**
+**What it does for the agent:**
 
-- 作業を始める前に、進捗と機能の状態を読むよう指示する
-- 1つの機能に一度に1つずつ取り組むよう強制する
-- 何かを完了扱いにする前に証拠を求める
-- セッション終了時にどう見えるべきかを定義する
+- Tells it to read progress and feature state before starting work
+- Forces it to work on one feature at a time
+- Requires evidence before marking anything as done
+- Defines what a clean end-of-session looks like
 
-Codex や他のエージェントには `AGENTS.md` を使ってください。Claude Code を使う場合は `CLAUDE.md` を使ってください。構成は同じで、Claude 向けの指示スタイルになっているだけです。
+Use `AGENTS.md` for Codex or other agents. Use `CLAUDE.md` if you're working with Claude Code — the structure is the same, just formatted for Claude's instruction style.
 
 ## init.sh
 
-起動用スクリプトです。依存関係のインストール、検証、起動コマンドの表示を、1回でまとめて実行します。
+The startup script. Runs dependency installation, verification, and prints the start command — all in one shot.
 
-**使い方:**
+**How to use it:**
 
-- プロジェクトのルートにコピーする
-- 先頭の3つの変数を編集する
-  - `INSTALL_CMD` — 依存関係のインストールコマンド（例: `npm install`, `pip install -r requirements.txt`）
-  - `VERIFY_CMD` — 基本的な検証コマンド（例: `npm test`, `pytest`）
-  - `START_CMD` — 開発サーバーの起動コマンド（例: `npm run dev`）
-- 実行可能にする: `chmod +x init.sh`
+- Copy to your project root
+- Edit these three variables at the top:
+  - `INSTALL_CMD` — your dependency install command (e.g. `npm install`, `pip install -r requirements.txt`)
+  - `VERIFY_CMD` — your basic verification command (e.g. `npm test`, `pytest`)
+  - `START_CMD` — your dev server start command (e.g. `npm run dev`)
+- Make it executable: `chmod +x init.sh`
 
-**動作:**
+**What it does:**
 
-1. 現在のディレクトリを表示する（正しい場所で実行されているか確認できるようにするため）
-2. 依存関係をインストールする
-3. 検証コマンドを実行する
-4. 起動コマンドを表示する（`RUN_START_COMMAND=1` が設定されていれば実行する）
+1. Prints the current directory (so you can confirm it's running in the right place)
+2. Installs dependencies
+3. Runs the verification command
+4. Prints the start command (or runs it if `RUN_START_COMMAND=1` is set)
 
-検証に失敗した場合、エージェントはそこで止まり、他の作業を始める前に基盤を修正する必要があります。
+If verification fails, the agent should stop and fix the baseline before doing anything else.
 
 ## claude-progress.md
 
-進捗ログです。すべてのセッションがこのファイルに書き込み、次の新しいセッションは最初にこれを読みます。
+The progress log. Every session writes to this file, and every new session reads it first.
 
-**使い方:**
+**How to use it:**
 
-- プロジェクトのルートにコピーする
-- "Current Verified State" セクションに、プロジェクトの情報を入力する
-- 各セッションの終わりに、セッション記録を更新する
+- Copy to your project root
+- Fill in the "Current Verified State" section with your project's info
+- After each session, update the session record
 
-**各フィールドの意味:**
+**What each field means:**
 
-- **Current Verified State** — プロジェクトの現状を示す唯一の正しい情報源
-  - `Repository root directory` — プロジェクトの場所
-  - `Standard startup path` — プロジェクトを起動するコマンド
-  - `Standard verification path` — テストを実行するコマンド
-  - `Highest priority unfinished feature` — 次のセッションで取り組むべき内容
-  - `Current blocker` — 停滞している要因
-- **Session Record** — セッションごとの1件の記録
-  - `Goal` — 何をしようとしていたか
-  - `Completed` — 実際に完了したこと
-  - `Verification run` — 実行したテスト
-  - `Evidence recorded` — 記録した証拠
-  - `Commits` — 何をコミットしたか
-  - `Known risks` — 壊れている可能性があるもの
-  - `Next best action` — 次のセッションがどこから始めるべきか
+- **Current Verified State** — the single source of truth for where the project stands
+  - `Repository root directory` — where the project lives
+  - `Standard startup path` — the command to get the project running
+  - `Standard verification path` — the command to run tests
+  - `Highest priority unfinished feature` — what the next session should work on
+  - `Current blocker` — anything that's stuck
+- **Session Record** — one entry per session
+  - `Goal` — what you planned to do
+  - `Completed` — what actually got done
+  - `Verification run` — what tests were executed
+  - `Evidence recorded` — what proof was captured
+  - `Commits` — what was committed
+  - `Known risks` — what might be broken
+  - `Next best action` — where the next session should start
 
 ## feature_list.json
 
-機能トラッカーです。エージェントが実装すべきすべての機能を、人間にも機械にも読める形で一覧化したもので、各機能の状態、検証手順、証拠を含みます。
+The feature tracker. A machine-readable list of every feature the agent needs to implement, along with its status, verification steps, and evidence.
 
-**使い方:**
+**How to use it:**
 
-- プロジェクトのルートにコピーする
-- サンプルの機能を自分の機能に置き換える
-- 各機能に必要な項目:
-  - `id` — 短く一意な識別子
-  - `priority` — 整数。小さいほど優先度が高い
-  - `area` — アプリのどの部分か（例: "chat", "import", "search"）
-  - `title` — 短い説明
-  - `user_visible_behavior` — 正常に動作したときにユーザーが見る内容
-  - `status` — `not_started`, `in_progress`, `blocked`, `passing` のいずれか
-  - `verification` — 動作確認のための手順
-  - `evidence` — 検証が通った証拠（エージェントが記入する）
-  - `notes` — 追加の文脈
+- Copy to your project root
+- Replace the example features with your own
+- Each feature needs:
+  - `id` — a short unique identifier
+  - `priority` — integer, lower = higher priority
+  - `area` — which part of the app (e.g. "chat", "import", "search")
+  - `title` — short description
+  - `user_visible_behavior` — what the user should see when it works
+  - `status` — one of `not_started`, `in_progress`, `blocked`, `passing`
+  - `verification` — step-by-step instructions to confirm it works
+  - `evidence` — recorded proof that verification passed (filled in by the agent)
+  - `notes` — any extra context
 
-**ステータスのルール:**
+**Status rules:**
 
-- `not_started` — まだ手を付けていない
-- `in_progress` — 現在取り組んでいる唯一の機能（同時に1つだけ）
-- `blocked` — 記録された問題のため、先に進めない
-- `passing` — 検証に合格し、証拠が記録されている
+- `not_started` — hasn't been touched
+- `in_progress` — the one feature currently being worked on (only one at a time)
+- `blocked` — can't proceed due to a documented issue
+- `passing` — verification passed and evidence is recorded
 
-エージェントは、`in_progress` の機能を常に1つだけにしてください。
+The agent should only have one feature in `in_progress` at any time.
 
 ## session-handoff.md
 
-セッション間の簡潔な引き継ぎメモです。セッションが終わるとき、次のセッションが素早く引き継げるように使います。
+A compact handoff note between sessions. Use this when a session ends and you want the next one to pick up quickly.
 
-**使い方:**
+**How to use it:**
 
-- プロジェクトのルートにコピーする
-- 各セッションの終わりに記入する（またはエージェントに記入させる）
+- Copy to your project root
+- Fill it out at the end of each session (or have the agent fill it out)
 
-**各セクションの内容:**
+**What each section covers:**
 
-- **Currently verified** — 何が確認済みで、どの検証を実施したか
-- **Changes this session** — このセッションで変わったコードやインフラ
-- **Still broken or unverified** — 既知の問題やリスクのある箇所
-- **Next best action** — 次のセッションで何をすべきか、何に触れないべきか
-- **Commands** — 起動、検証、デバッグ用のコマンド一覧
+- **Currently verified** — what's confirmed working and what verification was run
+- **Changes this session** — what code or infrastructure changed
+- **Still broken or unverified** — known issues and risky areas
+- **Next best action** — what the next session should do, and what not to touch
+- **Commands** — startup, verification, and debug commands for quick reference
 
-このファイルは、小規模なセッションでは任意です。セッションが長い場合や、複数の作業領域がある場合に重要になります。
+This file is optional for small sessions. It becomes important when sessions are long or when the project has multiple active areas.
 
 ## clean-state-checklist.md
 
-各セッションを終える前に確認するためのチェックリストです。次のセッションがきれいな状態から始められるように、リポジトリが良好な状態にあることを確かめます。
+A checklist to run through before ending each session. Makes sure the repo is in a good state for the next session to start cleanly.
 
-**使い方:**
+**How to use it:**
 
-- プロジェクトのルートにコピーする
-- セッションを閉じる前に、このチェックを実行する
-- エージェントもセッション終了時のルーチンの一部として確認する
+- Copy to your project root
+- Run through it before you close a session
+- The agent should also check these items as part of its end-of-session routine
 
-**確認する内容:**
+**What it checks:**
 
-- 標準の起動が引き続き動作する
-- 標準の検証が引き続き実行できる
-- 進捗ログが更新されている
-- 機能一覧が実際の状態を反映している（false の `passing` がない）
-- 記録されていない中途半端な作業が残っていない
-- 次のセッションが手作業の修正なしで続けられる
+- Standard startup still works
+- Standard verification still runs
+- Progress log is updated
+- Feature list reflects actual state (no false `passing` entries)
+- No half-finished work left unrecorded
+- Next session can continue without manual fixes
 
 ## evaluator-rubric.md
 
-セッション成果の品質を評価するためのスコアカードです。セッション後や、複数セッションにわたる節目で、作業が基準を満たしているかを確認するために使います。
+A scorecard for reviewing agent output quality. Use this after a session or at project milestones to evaluate whether the work meets the bar.
 
-**使い方:**
+**How to use it:**
 
-- プロジェクトのルートにコピーする
-- セッション後（または一連のセッション後）に、エージェントの成果を6つの観点で採点する
-- 各項目は 0-2 で評価する
+- Copy to your project root
+- After a session (or a set of sessions), score the agent's work across six dimensions
+- Each dimension is scored 0-2
 
-**6つの観点:**
+**The six dimensions:**
 
-1. **Correctness** — 実装は目標の動作に一致しているか
-2. **Verification** — 必要な確認が実際に実行され、証拠もあるか
-3. **Scope discipline** — エージェントは選択した機能の範囲内にとどまったか
-4. **Reliability** — 再起動や再実行でも結果が維持されるか
-5. **Maintainability** — 次のセッション向けに、コードとドキュメントは十分わかりやすいか
-6. **Handoff readiness** — 新しいセッションがリポジトリ内の成果物だけで続行できるか
+1. **Correctness** — does the implementation match the target behavior?
+2. **Verification** — were the required checks actually run, with evidence?
+3. **Scope discipline** — did the agent stay within the selected feature?
+4. **Reliability** — does the result survive a restart or re-run?
+5. **Maintainability** — is the code and documentation clear enough for the next session?
+6. **Handoff readiness** — can a new session continue using only repo artifacts?
 
-**結論の選択肢:**
+**Conclusion options:**
 
-- Accept — 基準を満たしている
-- Revise — 受け入れる前に修正が必要
-- Block — 先に解決すべき根本的な問題がある
+- Accept — meets the bar
+- Revise — needs fixes before accepting
+- Block — fundamental issues that need to be resolved first
 
-**重要: evaluator は調整が必要です。** 初期状態のエージェントは自己評価が苦手で、問題を見つけても最終的には自分で合格判定を出してしまいがちです。調整が必要です。
+**Important: the evaluator needs tuning.** Out of the box, agents are poor self-judges — they identify issues then talk themselves into approving. You will need to iterate:
 
-1. 完了したスプリントに対して evaluator を実行する
-2. そのスコアを自分の人間としての判断と比較する
-3. ずれがある箇所では、合格・不合格の基準をより具体的にする
-4. もう一度実行して、評価の一致を確認する
-5. 一致が安定するまで繰り返す
+1. Run the evaluator on a completed sprint.
+2. Compare its scores against your own human judgment.
+3. Where they diverge, make the rubric more specific about pass/fail criteria.
+4. Re-run and check alignment.
+5. Repeat until the evaluator consistently matches human review.
 
-調整は 3〜5 回のラウンドを見込んでください。各変更を記録し、何が一致度の改善に役立ったか追跡できるようにします。
+Plan for 3-5 tuning rounds. Record each change so you can track what improved alignment.
 
 ## quality-document.md
 
-プロダクトの各ドメインとアーキテクチャ層を採点する品質スナップショットです。個々のセッション成果だけでなく、時間の経過とともにコードベース全体の健全性を追跡します。
+A quality snapshot that grades each product domain and architectural layer in your project. Tracks codebase health over time, not just individual session output.
 
-**使い方:**
+**How to use it:**
 
-- プロジェクトのルートにコピーする
-- セッション開始前に読むことで、コードベースのどこが最も弱いかを把握する
-- セッション後に、変更内容に基づいて評価を更新する
-- 長期的には、スナップショットを比較して、どのハーネス変更が実際にコードベースの健全性を改善したかを確認する
+- Copy to your project root
+- Before starting a session: read it to understand where the codebase is weakest
+- After a session: update grades based on what changed
+- Over time: compare snapshots to see which harness changes actually improved codebase health
 
-**評価対象:**
+**What it grades:**
 
-- **Product domains**（例: document import, Q&A flow, indexing）: 各ドメインを、検証状況、エージェントの読みやすさ、テストの安定性、主要なギャップの観点で A-D 評価する
-- **Architectural layers**（例: main process, preload, renderer, services）: 各レイヤーを、境界の厳密さとエージェントの読みやすさで評価する
+- **Product domains** (e.g., document import, Q&A flow, indexing): each domain gets a grade (A-D) across verification status, agent legibility, test stability, and key gaps
+- **Architectural layers** (e.g., main process, preload, renderer, services): each layer gets a grade for boundary enforcement and agent legibility
 
-**重要性:**
+**Why it matters:**
 
-evaluator rubric は、個々のエージェント成果を採点します。quality document は、コードベースそのものを採点します。両者は異なる問いに答えます。
+The evaluator rubric scores individual agent outputs. The quality document scores the codebase itself. They answer different questions:
 
-- evaluator rubric: 「このセッションでエージェントは良い仕事をしたか？」
-- quality document: 「このプロジェクトは時間とともに強くなっているか、弱くなっているか？」
+- Evaluator rubric: "Did the agent do good work this session?"
+- Quality document: "Is the project getting stronger or weaker over time?"
 
-**更新のタイミング:**
+**When to update:**
 
-- 各重要セッションの後
-- ベンチマーク比較の前
-- クリーンアップや簡素化の作業の後
-- 新しいエージェントやモデルをプロジェクトに導入するとき
+- After each significant session
+- Before benchmark comparisons
+- After cleanup or simplification passes
+- When onboarding a new agent or model to the project
 
-**ハーネス簡素化との関係:**
+**Harness simplification tie-in:**
 
-quality document は、ハーネスの簡素化も支えます。各ハーネス要素は、モデルにできないことについての前提をエンコードしています。モデルが改善すると、こうした前提は古くなります。ある要素がまだ必要かどうか確認するには、次の手順を踏みます。
+The quality document also supports harness simplification. Every harness component encodes an assumption about what the model cannot do. As models improve, these assumptions go stale. To check whether a component is still needed:
 
-1. quality document のスナップショットを取る
-2. ハーネス要素を1つ削除する
-3. ベンチマークのタスク一式を実行する
-4. もう一度スナップショットを取る
-5. 比較する。グレードが下がらなければ、その要素は過剰だったことになる。下がったなら、元に戻す
+1. Take a quality document snapshot.
+2. Remove one harness component.
+3. Run the benchmark task suite.
+4. Take another snapshot.
+5. Compare — if grades didn't drop, the component was overhead. If they did, restore it.

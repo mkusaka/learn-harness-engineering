@@ -1,7 +1,7 @@
 # Code for Lecture 01
 
-このフォルダは、次のようなことを示す小さな例に使ってください。
+Use this folder for small examples that show:
 
-- 強力なモデルでも、弱い環境では失敗しうること
-- リポジトリのセットアップが不十分であること
-- フィードバックループが欠けていること
+- a strong model failing in a weak environment
+- underspecified repo setup
+- missing feedback loops

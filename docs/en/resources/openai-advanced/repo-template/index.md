@@ -1,24 +1,24 @@
-# 高度なリポジトリテンプレート
+# Advanced Repo Template
 
-最小限のハーネスだけでなく、OpenAI 風のエージェントファーストなドキュメント基盤がほしい場合は、
-このスターターを実際のリポジトリにコピーしてください。
+Copy this starter into a real repository when you want an OpenAI-style
+agent-first documentation surface instead of only a minimal harness.
 
-## コピー順
+## Copy Order
 
-1. `AGENTS.md` と `ARCHITECTURE.md` をリポジトリのルートにコピーします。
-2. `docs/` ツリー全体をコピーします。
-3. まず `docs/PRODUCT_SENSE.md`、`docs/QUALITY_SCORE.md`、`docs/RELIABILITY.md`
-   を埋めます。
-4. 最初のアクティブなプランを `docs/exec-plans/active/` に追加します。
-5. エントリーポイントのファイルは短く保ち、詳細はリンク先のドキュメントに分けます。
+1. Copy `AGENTS.md` and `ARCHITECTURE.md` to the repo root.
+2. Copy the whole `docs/` tree.
+3. Fill in `docs/PRODUCT_SENSE.md`, `docs/QUALITY_SCORE.md`, and
+   `docs/RELIABILITY.md` first.
+4. Add your first active plan under `docs/exec-plans/active/`.
+5. Keep the entrypoint files short and route detail into the linked docs.
 
-## このテンプレートが最適化していること
+## What This Template Optimizes For
 
-- リポジトリ内に永続するコンテキスト
-- 巨大な指示ファイル 1 つではなく、段階的に開示する構成
-- 明示的なプランのライフサイクル
-- 時系列での品質トラッキング
-- エージェントと人間の両方にとって読みやすい境界
+- durable repo-local context
+- progressive disclosure instead of one giant instruction file
+- explicit plan lifecycle
+- quality tracking over time
+- readable boundaries for agents and humans
 
-ここにある各ファイルはすべてスターターとして扱ってください。実際に頼る前に、
-プレースホルダー、例、サンプルコマンドは自分のプロジェクト固有の内容に置き換えてください。
+Treat every file here as a starter. Replace placeholders, examples, and sample
+commands with your real project specifics before relying on it.

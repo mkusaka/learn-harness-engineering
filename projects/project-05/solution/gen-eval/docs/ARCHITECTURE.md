@@ -1,8 +1,10 @@
-# アーキテクチャ
+# Architecture
 
-## レイヤー概要
+## Layer Overview
 
-Knowledge Base アプリケーションは、4つの主要レイヤーからなる厳格なレイヤーアーキテクチャに従っています。各レイヤーには明確な責務と境界があり、それを越えてはいけません。
+The Knowledge Base application follows a strict layered architecture with four
+primary layers. Each layer has well-defined responsibilities and boundaries
+that must not be crossed.
 
 ```
 Renderer (React UI)
@@ -20,85 +22,86 @@ Services (Business Logic)
 Persistence (Filesystem)
 ```
 
-## レイヤー境界
+## Layer Boundaries
 
 ### Renderer Layer (`src/renderer/`)
 
 **Responsibilities:**
-- React を使って UI コンポーネントを描画する
-- ユーザー入力を処理し、結果を表示する
-- main process とは `window.knowledgeBase` API 経由でのみ通信する
+- Render UI components using React
+- Handle user input and display results
+- Communicate with main process exclusively through `window.knowledgeBase` API
 
 **Constraints:**
-- `fs`, `path`, `os`, `child_process`、または任意の Node.js コアモジュールを import してはならない
-- Electron API に直接アクセスしてはならない
-- 表示用の整形を超えるビジネスロジックやデータ変換を含めてはならない
-- すべてのデータアクセスは preload bridge を通す
+- MUST NOT import `fs`, `path`, `os`, `child_process`, or any Node.js core module
+- MUST NOT access Electron APIs directly
+- MUST NOT contain business logic or data transformation beyond display formatting
+- All data access goes through the preload bridge
 
 ### Preload Layer (`src/preload/`)
 
 **Responsibilities:**
-- `contextBridge.exposeInMainWorld` を通じて、型付き API を renderer に公開する
-- IPC チャンネル名を型付きの関数シグネチャに対応付ける
-- renderer と main process の間のセキュリティ境界として機能する
+- Expose a typed API to the renderer via `contextBridge.exposeInMainWorld`
+- Map IPC channel names to typed function signatures
+- Act as the security boundary between renderer and main process
 
 **Constraints:**
-- ビジネスロジックを含めてはならない
-- services を直接 import してはならない
-- 通信には `ipcRenderer.invoke` のみを使う
+- MUST NOT contain business logic
+- MUST NOT import services directly
+- Only uses `ipcRenderer.invoke` for communication
 
 ### Main Process (`src/main/`)
 
 **Responsibilities:**
-- `BrowserWindow` インスタンスを作成し、管理する
-- services に処理を委譲する IPC ハンドラを登録する
-- services を初期化し、そのライフサイクルを管理する
-- アプリケーションのライフサイクルイベント（ready, activate, window-all-closed）を処理する
+- Create and manage BrowserWindow instances
+- Register IPC handlers that delegate to services
+- Initialize services and manage their lifecycle
+- Handle application lifecycle events (ready, activate, window-all-closed)
 
 **Constraints:**
-- リクエストのルーティング以外のビジネスロジックを含めてはならない
-- すべての処理を service クラスに委譲する
-- persistence layer に直接アクセスしない
+- MUST NOT contain business logic beyond request routing
+- Delegates all work to service classes
+- Does not directly access persistence layer
 
 ### Services Layer (`src/services/`)
 
 **Responsibilities:**
-- すべてのビジネスロジック（document management, indexing, Q&A）を実装する
-- すべての filesystem 操作で `PersistenceService` を使う
-- 構造化ログ出力に `logger` を使う
+- Implement all business logic (document management, indexing, Q&A)
+- Use `PersistenceService` for all filesystem operations
+- Use `logger` for structured logging
 
 **Constraints:**
-- Electron API（`ipcMain`, `BrowserWindow`, など）を import してはならない
-- React や renderer コンポーネントを import してはならない
-- すべての filesystem アクセスは `PersistenceService` を経由する
+- MUST NOT import Electron APIs (`ipcMain`, `BrowserWindow`, etc.)
+- MUST NOT import React or renderer components
+- All filesystem access goes through `PersistenceService`
 
 ## IPC Channels
 
-すべての IPC 通信は、`src/shared/types.ts` で定義された名前付きチャネルを使います:
+All IPC communication uses named channels defined in `src/shared/types.ts`:
 
 | Channel | Direction | Purpose |
 |---------|-----------|---------|
-| `documents:list` | Renderer -> Main | すべての document を一覧表示する |
-| `documents:import` | Renderer -> Main | ファイルを import する |
-| `documents:get` | Renderer -> Main | ID で document を取得する |
-| `documents:delete` | Renderer -> Main | document を削除する |
-| `indexing:start` | Renderer -> Main | indexing を開始する |
-| `indexing:status` | Renderer -> Main | indexing の状態を取得する |
-| `indexing:chunks` | Renderer -> Main | document の chunks を取得する |
-| `qa:ask` | Renderer -> Main | 質問する |
-| `qa:history` | Renderer -> Main | Q&A 履歴を取得する |
+| `documents:list` | Renderer -> Main | List all documents |
+| `documents:import` | Renderer -> Main | Import a file |
+| `documents:get` | Renderer -> Main | Get document by ID |
+| `documents:delete` | Renderer -> Main | Delete a document |
+| `indexing:start` | Renderer -> Main | Start indexing |
+| `indexing:status` | Renderer -> Main | Get indexing status |
+| `indexing:chunks` | Renderer -> Main | Get chunks for document |
+| `qa:ask` | Renderer -> Main | Ask a question |
+| `qa:history` | Renderer -> Main | Get Q&A history |
 
-## データフロー
+## Data Flow
 
-1. renderer 上でのユーザー操作が `window.knowledgeBase.*` の呼び出しを発生させる
-2. preload bridge がその呼び出しを `ipcRenderer.invoke(channel, ...args)` に変換する
-3. main process の IPC ハンドラが呼び出しを受け取り、適切な service に委譲する
-4. service が `PersistenceService` を使って storage に対するビジネスロジックを実行する
-5. 結果が IPC を通って renderer に戻り、表示される
+1. User action in renderer triggers a call to `window.knowledgeBase.*`
+2. Preload bridge converts the call to `ipcRenderer.invoke(channel, ...args)`
+3. Main process IPC handler receives the call and delegates to the appropriate service
+4. Service executes business logic using PersistenceService for storage
+5. Result flows back through IPC to the renderer for display
 
-## アーキテクチャ検証
+## Architecture Verification
 
-`bash scripts/check-architecture.sh` を実行すると、レイヤー境界の違反がないことを検証できます。このスクリプトは次を確認します:
-- renderer コードに `fs` または `path` の import がないこと
-- service コードに Electron IPC の import がないこと
-- services または main process に React の import がないこと
+Run `bash scripts/check-architecture.sh` to verify that no layer boundary
+violations exist. This script checks that:
+- No `fs` or `path` imports in renderer code
+- No Electron IPC imports in service code
+- No React imports in services or main process

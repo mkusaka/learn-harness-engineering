@@ -1,43 +1,43 @@
-# 品質ドキュメント
+# Tài liệu Chất lượng
 
-各プロダクトドメインとアーキテクチャ層ごとの品質スナップショットです。agent と人間の両方が、このドキュメントを使って、codebase の強い部分と改善が必要な部分をすばやく把握できます。
+Một snapshot chất lượng cho mỗi domain sản phẩm và lớp kiến trúc. Cả agent và con người đều có thể sử dụng tài liệu này để nhanh chóng hiểu nơi nào codebase mạnh và nơi nào cần cải thiện.
 
-**更新頻度:** 重要なセッションごと、または新しい作業フェーズを始める前に更新します。
+**Tần suất cập nhật:** Sau mỗi phiên quan trọng, hoặc trước khi bắt đầu giai đoạn công việc mới.
 
-**評価基準:**
+**Thang điểm:**
 
-- **A**: すべての検証が通っており、アーキテクチャは整理されていて、agent から読みやすく、test も安定している
-- **B**: 検証は通っており、ほとんど整理されているが、可読性または test の網羅性に小さな不足がある
-- **C**: 一部は動作しているが、既知のギャップがあり、コードの一部は agent にとって理解しづらい
-- **D**: 動作していない、または構造上の大きな問題がある
+- **A**: Tất cả xác minh đang vượt qua, kiến trúc sạch, agent có thể đọc được, test ổn định
+- **B**: Xác minh đang vượt qua, hầu hết sạch, thiếu nhỏ về khả năng đọc hoặc độ phủ test
+- **C**: Hoạt động một phần, có khoảng trống đã biết, một số khu vực mã khó cho agent hiểu
+- **D**: Không hoạt động, hoặc có vấn đề cấu trúc lớn
 
 ---
 
-## プロダクトドメイン
+## Domain Sản phẩm
 
-| ドメイン | 評価 | 検証 | Agent の可読性 | Test の安定性 | 主なギャップ | 最終更新 |
+| Domain | Điểm | Xác minh | Khả năng đọc của Agent | Độ ổn định Test | Khoảng trống chính | Cập nhật lần cuối |
 |--------|-------|-------------|-----------------|---------------|----------|-------------|
-| ドキュメント取り込み | - | - | - | - | - | - |
-| ドキュメント管理 | - | - | - | - | - | - |
-| ドキュメントのインデックス化 | - | - | - | - | - | - |
-| Q&A フロー | - | - | - | - | - | - |
-| Grounding 付き回答 | - | - | - | - | - | - |
+| Import Tài liệu | - | - | - | - | - | - |
+| Quản lý Tài liệu | - | - | - | - | - | - |
+| Indexing Tài liệu | - | - | - | - | - | - |
+| Luồng Q&A | - | - | - | - | - | - |
+| Câu trả lời có Grounding | - | - | - | - | - | - |
 
-## アーキテクチャ層
+## Lớp Kiến trúc
 
-| 層 | 評価 | 境界の実装 | Agent の可読性 | 主なギャップ | 最終更新 |
+| Lớp | Điểm | Thực thi Ranh giới | Khả năng đọc của Agent | Khoảng trống chính | Cập nhật lần cuối |
 |-------|-------|---------------------|-----------------|----------|-------------|
 | Main Process | - | - | - | - | - |
 | Preload | - | - | - | - | - |
 | Renderer | - | - | - | - | - |
 | Services | - | - | - | - | - |
 
-## 変更履歴
+## Lịch sử Thay đổi
 
 ### YYYY-MM-DD
 
-- 変更内容:
-- 評価が上がったドメイン:
-- 評価が下がったドメイン:
-- 新たに特定されたギャップ:
-- 解消されたギャップ:
+- Thay đổi:
+- Domain được nâng cấp:
+- Domain bị hạ cấp:
+- Khoảng trống mới được xác định:
+- Khoảng trống đã đóng:

@@ -1,8 +1,8 @@
-# 講義 12 のコード
+# 강의 12 코드
 
-このフォルダは、次の項目の例に使用します。
+이 폴더는 다음 항목의 예제에 사용합니다.
 
-- ベンチマークスライス(benchmark slices)
-- クリーンアップタスク(cleanup tasks)
-- エントロピー削減の例(entropy reduction examples)
-- 再現可能なハーネス実行(repeatable harness runs)
+- 벤치마크 슬라이스(benchmark slices)
+- 정리 작업(cleanup tasks)
+- 엔트로피 감소 예제(entropy reduction examples)
+- 반복 가능한 하네스 실행(repeatable harness runs)

@@ -1,47 +1,47 @@
-# SOP：分層ドメインアーキテクチャ
+# SOP：分层领域架构
 
-agent が層をまたいで無秩序につなげ続けたり、別の層で同じロジックを重複させたり、数回の会話を経るうちにコードがどんどんレビューしづらくなったりするなら、この SOP を使います。
+当 agent 反复跨层乱连、在不同层重复逻辑、或者几轮会话后代码越来越难审时，就用这份 SOP。
 
-## 目的
+## 目标
 
-ドメイン境界を明確に書き、確立し、実行可能にして、agent が高速に動いても、気づかないうちに構造を壊さないようにします。
+把领域边界写清楚、立起来、能执行，让 agent 在高速度下也不至于悄悄把结构做烂。
 
-## 目標モデル
+## 目标模型
 
-1 つの業務ドメインの内部では、まず次の一方向の流れを使います。
+在一个业务领域内部，优先使用这条单向流：
 
 `Types -> Config -> Repo -> Service -> Runtime -> UI`
 
-ドメインをまたぐ関心事は、明示的な provider か adapter を通して入れます。共有 utils はドメインの外に置き、業務ロジックのごみ箱にじわじわ変質させてはいけません。
+跨领域关注点通过明确的 provider 或 adapter 进入。共享 utils 保持在领域之外，不能慢慢长成业务逻辑垃圾场。
 
-## 構築チェックリスト
+## 建设检查清单
 
-- `ARCHITECTURE.md` に現在の domains を列挙する。
-- `ARCHITECTURE.md` に許可される依存方向を明記する。
-- auth、telemetry、外部 API などの cross-cutting interface を記録する。
-- 現時点で最も扱いにくい境界違反について、短い説明を書く。
-- どのルールを lint、test、script に昇格させるべきか決める。
+- 在 `ARCHITECTURE.md` 里列清当前 domains。
+- 在 `ARCHITECTURE.md` 里写清允许的依赖方向。
+- 记录 auth、telemetry、外部 API 等 cross-cutting interface。
+- 为当前最难处理的边界违规写一条短说明。
+- 决定哪些规则应该升级成 lint、test 或 script。
 
-## 実行 SOP
+## 执行 SOP
 
-1. まずコードベースの domain map を作ってから、実装スタイルを考える。
-2. 各 domain ごとに、許可する layer sequence を明確にする。
-3. すべての横断的関心事を洗い出し、provider か adapter に切り替える。
-4. あいまいな shared logic は、所属する domain に戻すか、本当に汎用の utils として切り出す。
-5. ルールを `ARCHITECTURE.md` に書き込む。
-6. まず最もコストの高い種類の違反に対して、実行可能な guardrail を 1 つ追加する。
-7. 修正後に quality score を更新する。
+1. 先给代码库画 domain map，再谈实现风格。
+2. 对每个 domain，明确允许的 layer sequence。
+3. 找出所有横切关注点，并把它们改走 provider 或 adapter。
+4. 把含糊的 shared logic 重新放回所属 domain，或抽成真正通用的 utils。
+5. 把规则写进 `ARCHITECTURE.md`。
+6. 先为代价最高的一类违规补一个可执行 guardrail。
+7. 改完后更新质量评分。
 
-## 完了条件
+## 完成定义
 
-- 新しく入った agent でも、どの変更をどの層に置くべきか判断できる。
-- UI が repo や外部副作用に直接つながらない。
-- 横断的な機能に明確な入口がある。
-- 少なくとも 1 つの重要な境界が機械的に強制されている。
+- 一个全新的 agent 能判断某个改动应该落在哪一层。
+- UI 不再直接连 repo 或外部副作用。
+- 横切能力都有明确入口。
+- 至少一条重要边界已经被机械执行。
 
-## 同期更新が必要なリポジトリ成果物
+## 需要同步更新的仓库工件
 
 - `ARCHITECTURE.md`
 - `docs/QUALITY_SCORE.md`
-- 設計理由が変わった場合は `docs/design-docs/` を更新する
-- `docs/PLANS.md` または現在の active execution plan
+- 如果设计理由变了，更新 `docs/design-docs/`
+- `docs/PLANS.md` 或当前 active execution plan

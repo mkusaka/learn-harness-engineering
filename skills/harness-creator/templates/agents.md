@@ -1,68 +1,68 @@
 # AGENTS.md
 
-[プロジェクトの目的を1文で記述]
+[One-sentence project purpose]
 
-## 起動手順
+## Startup Workflow
 
-コードを書き始める前に:
+Before writing code:
 
-1. **作業ディレクトリを確認する**: `pwd`
-2. **このファイルを最後まで読む**
-3. **[ARCHITECTURE.md / CLAUDE.md]** を読み、システム構成と厳守ルールを確認する
-4. **`./init.sh` を実行する** ことで、環境が正常か確認する
-5. **`feature_list.json` を読む** ことで、現在の機能状況を把握する
-6. **最近のコミットを確認する**: `git log --oneline -5`
+1. **Confirm working directory** with `pwd`
+2. **Read this file** completely
+3. **Read [ARCHITECTURE.md / CLAUDE.md]** for system map and hard rules
+4. **Run `./init.sh`** to verify environment is healthy
+5. **Read `feature_list.json`** to see current feature state
+6. **Review recent commits** with `git log --oneline -5`
 
-基礎的な検証に失敗している場合は、新しい作業を追加する前に、まずそれを修復してください。
+If baseline verification is failing, repair that first before adding new scope.
 
-## 作業ルール
+## Working Rules
 
-- **一度に扱う機能は1つまで**: `feature_list.json` から未完了の機能をちょうど1つ選ぶ
-- **検証は必須**: 検証コマンドを実行せずに完了したとは言わない
-- **成果物を更新する**: セッション終了前に `progress.md` と `feature_list.json` を更新する
-- **範囲を外れない**: 現在の機能と無関係なファイルは変更しない
-- **クリーンな状態で終える**: 次のセッションがすぐに `./init.sh` を実行できるようにする
+- **One feature at a time**: Pick exactly one unfinished feature from `feature_list.json`
+- **Verification required**: Don't claim done without running verification commands
+- **Update artifacts**: Before ending session, update `progress.md` and `feature_list.json`
+- **Stay in scope**: Don't modify files unrelated to the current feature
+- **Leave clean state**: Next session must be able to run `./init.sh` immediately
 
-## 必須成果物
+## Required Artifacts
 
-- `feature_list.json` — 機能状態の追跡表（正本）
-- `progress.md` — セッション継続用ログ
-- `init.sh` — 標準の起動・検証手順
-- `session-handoff.md` — 任意。大きめのセッション向け
+- `feature_list.json` — Feature state tracker (source of truth)
+- `progress.md` — Session continuity log
+- `init.sh` — Standard startup and verification path
+- `session-handoff.md` — Optional, for larger sessions
 
-## 完了条件
+## Definition of Done
 
-機能が完了といえるのは、以下のすべてを満たしたときだけです:
+A feature is done only when ALL of the following are true:
 
-- [ ] 対象の動作が実装されている
-- [ ] 必要な検証を実際に実行した（テスト / lint / type-check）
-- [ ] 証跡が `feature_list.json` または `progress.md` に記録されている
-- [ ] リポジトリが標準の起動手順から再開可能な状態である
+- [ ] Target behavior is implemented
+- [ ] Required verification actually ran (tests / lint / type-check)
+- [ ] Evidence recorded in `feature_list.json` or `progress.md`
+- [ ] Repository remains restartable from standard startup path
 
-## セッション終了時
+## End of Session
 
-セッションを終了する前に:
+Before ending a session:
 
-1. 現在の状態を `progress.md` に更新する
-2. 新しい機能状態を `feature_list.json` に更新する
-3. 未解決のリスクやブロッカーがあれば記録する
-4. 安全な状態になってから、内容が分かるコミットメッセージでコミットする
-5. 次のセッションがすぐに `./init.sh` を実行できる程度に、リポジトリを整理して終える
+1. Update `progress.md` with current state
+2. Update `feature_list.json` with new feature status
+3. Record any unresolved risks or blockers
+4. Commit with descriptive message once work is in safe state
+5. Leave repo clean enough for next session to run `./init.sh` immediately
 
-## 検証コマンド
+## Verification Commands
 
 ```bash
-# 全体検証（推奨）
+# Full verification (recommended)
 ./init.sh
 
-# 個別確認
+# Individual checks
 npm install && npm run check && npm test
 ```
 
-## エスカレーション
+## Escalation
 
-次のような状況に遭遇した場合:
-- **Architecture decisions**: [ARCHITECTURE.md] を確認するか、ユーザーに相談する
-- **Unclear requirements**: [docs/PRODUCT.md] を確認するか、ユーザーに相談する
-- **Repeated test failures**: `progress.md` を更新し、人による確認が必要であることを示す
-- **Scope ambiguity**: `feature_list.json` を読み直し、完了条件を確認する
+If you encounter:
+- **Architecture decisions**: Consult [ARCHITECTURE.md] or ask user
+- **Unclear requirements**: Check [docs/PRODUCT.md] or ask user
+- **Repeated test failures**: Update progress, flag for human review
+- **Scope ambiguity**: Re-read `feature_list.json` for definition of done

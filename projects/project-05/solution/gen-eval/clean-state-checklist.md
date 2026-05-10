@@ -1,36 +1,36 @@
-# クリーン状態チェックリスト
+# Clean State Checklist
 
-このチェックリストは、コミット前と各セッションの終わりに実行してください。
+Run this checklist before committing and at the end of each session.
 
 ## Build
 
-- [ ] `npm run check` が型エラーなしで通る
-- [ ] `npm run build` が正常に完了する
+- [ ] `npm run check` passes with no type errors
+- [ ] `npm run build` completes successfully
 
 ## Architecture
 
-- [ ] `bash scripts/check-architecture.sh` が違反なしで通る
-- [ ] renderer コードで `fs` または `path` を import していない
-- [ ] service コードで Electron IPC を使っていない
-- [ ] services または main process で React を import していない
+- [ ] `bash scripts/check-architecture.sh` passes with no violations
+- [ ] No `fs` or `path` imports in renderer code
+- [ ] No Electron IPC in service code
+- [ ] No React imports in services or main process
 
 ## Runtime
 
-- [ ] アプリケーションがエラーなく起動する（`npm run dev`）
-- [ ] 起動時に構造化ログがコンソールに表示される
-- [ ] ドキュメントの import が動作する（`IMPORT_DOCUMENT` イベントをログで確認）
-- [ ] あらゆるサイズのドキュメントで indexing が動作する
-- [ ] Q&A が出典付きの回答を返す（`ASK_QUESTION` イベントをログで確認）
+- [ ] Application starts without errors (`npm run dev`)
+- [ ] Structured log output appears in console at startup
+- [ ] Document import works (check logs for IMPORT_DOCUMENT event)
+- [ ] Indexing works for documents of all sizes
+- [ ] Q&A returns answers with citations (check logs for ASK_QUESTION event)
 
 ## Data Integrity
 
-- [ ] index 済みドキュメントに空の chunk がない（`GET_CHUNKS` で確認）
-- [ ] Q&A 履歴が再起動後も保持される
-- [ ] ドキュメントの metadata が実ファイルと一致している
+- [ ] No empty chunks in indexed documents (verify with GET_CHUNKS)
+- [ ] Q&A history persists across restarts
+- [ ] Document metadata is consistent with actual files
 
 ## Repository
 
-- [ ] `git status` に意図しないファイルがない
-- [ ] 機密データ（`.env`、credentials）がステージされていない
-- [ ] `claude-progress.md` が現在の状態に更新されている
-- [ ] `feature_list.json` が実際の機能ステータスを反映している
+- [ ] No unintended files in git status
+- [ ] No sensitive data (.env, credentials) staged
+- [ ] `claude-progress.md` updated with current state
+- [ ] `feature_list.json` reflects actual feature status

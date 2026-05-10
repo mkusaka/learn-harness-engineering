@@ -1,101 +1,101 @@
-# Project 06. 完全な agent 作業環境を構築する
+# Project 06. 搭建一套完整的 agent 工作环境
 
-> 関連講義：[L11. なぜ可観測性は harness に属するのか](./../../lectures/lecture-11-why-observability-belongs-inside-the-harness/index.md) · [L12. なぜ毎回のセッションでクリーンな状態を残す必要があるのか](./../../lectures/lecture-12-why-every-session-must-leave-a-clean-state/index.md)
-> このページのテンプレートファイル：[templates/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/zh/resources/templates/)
+> 相关讲义：[L11. 为什么可观测性属于 harness](./../../lectures/lecture-11-why-observability-belongs-inside-the-harness/index.md) · [L12. 为什么每次会话都要留干净状态](./../../lectures/lecture-12-why-every-session-must-leave-a-clean-state/index.md)
+> 本篇模板文件：[templates/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/zh/resources/templates/)
 
-## 何をするか
+## 你要做什么
 
-これは修了課題です。これまでの 5 つのプロジェクトで学んだことをすべて組み合わせ、完全なベンチマークを 1 回実行し、その後に一通り整理して、品質を継続的に維持できることを検証します。
+这是结业项目。把前五个项目学到的所有东西组装起来，跑一次完整的基准测试，然后做一轮清理，验证质量是可以持续维护的。
 
-固定の多機能タスクセットを使って、ナレッジベースアプリの完全な製品スライスをカバーします。つまり、文書の取り込み、インデックスの構築、引用付きの Q&A、実行時の可観測性、読みやすく再起動可能なリポジトリ状態です。まず弱い harness のベースラインを 1 回走らせ、次に自分で組み立てた最強の harness でもう 1 回走らせ、その後に整理と再実行を行います。最後に harness の削減実験も行います。1 つコンポーネントを削って結果が悪化するかを確かめ、どのコンポーネントが本当に有用で、どれが余分なコストなのかを見極めます。
+你要用一套固定的多功能任务集，覆盖知识库应用的完整产品切片：导入文档、构建索引、带引用的问答、运行时可观测性、可读可重启的仓库状态。先跑一次弱 harness 基线，再跑一次你组装的最强 harness，然后做一轮清理和重跑。最后还要做一次 harness 精简实验——删掉一个组件看看结果会不会变差，判断哪些组件是真正有用的、哪些是多余的开销。
 
-## 使うもの
+## 用什么工具
 
-- Claude Code または Codex
+- Claude Code 或 Codex
 - Git
 - Node.js + Electron
-- 品質文書テンプレート（`docs/zh/resources/templates/quality-document.md`）
-- 評価ルーブリック（`docs/zh/resources/templates/evaluator-rubric.md`）
-- これまでの 5 つのプロジェクトで蓄積したすべての harness コンポーネント
+- 质量文档模板（`docs/zh/resources/templates/quality-document.md`）
+- 评估量表（`docs/zh/resources/templates/evaluator-rubric.md`）
+- 前五个项目积累的所有 harness 组件
 
-## 具体的な手順
+## 具体步骤
 
-### 準備作業
+### 准备工作
 
-1. P05 完了時点のコードを基準に、同じ commit から始める。
-2. 2 つのブランチを作成する: `p06-baseline` と `p06-improved`。
-3. 品質文書テンプレートを使って、現在のコードに初期評価を 1 回付ける（各製品領域とアーキテクチャ層の等級）。
-4. 固定のベンチマークタスクセットと採点表を定義する。agent を走らせる前に決め、実行中は変更しない。
+1. 基于 P05 完成后的代码，从同一个 commit 出发。
+2. 创建两个分支：`p06-baseline` 和 `p06-improved`。
+3. 用质量文档模板给当前代码打一次初始评分（每个产品领域和架构层的等级）。
+4. 定义一套固定的基准任务集和评分表——在跑任何 agent 之前就定好，跑的过程中不改。
 
-ベンチマークタスクセットには、少なくとも次を含めること。
+基准任务集至少包括：
 
-- 文書を 1 件取り込む
-- インデックスを構築または更新する
-- 引用付きの質問に答える
-- 実行時ログを確認して可観測性を確かめる
-- 終了して再起動しても状態が残っていることを確認する
+- 导入一篇文档
+- 构建或刷新索引
+- 回答一个带引用的问题
+- 查看运行时日志确认可观测性
+- 关掉重开后状态仍在
 
-### 1 回目の実行（弱い harness）
+### 第一次运行（弱 harness）
 
-`p06-baseline` ブランチに切り替える。
+切到 `p06-baseline` 分支。
 
-1. 講義の前半で使った弱い harness を用いる（完全な引き継ぎファイルなし、厳密な検証なし、可観測性も不十分）。
-2. agent でベンチマークタスクセット全体を実行する。
-3. すぐに採点する。各タスクの完了状況、再試行回数、不具合数を記録する。
-4. 品質文書を更新し、各領域と層の等級変化を記録する。
+1. 用课程早期阶段的弱 harness（没有完整交接文件、没有严格验证、可观测性不足）。
+2. 用 agent 跑完整个基准任务集。
+3. 立刻评分。记录每个任务的完成状态、重试次数、缺陷数。
+4. 更新质量文档，记录每个领域和层的等级变化。
 
-### 2 回目の実行（強い harness）
+### 第二次运行（强 harness）
 
-`p06-improved` ブランチに切り替える。
+切到 `p06-improved` 分支。
 
-1. この講義で組み立てた最強の harness を使う。引き継ぎファイルと起動スクリプト、明確なスコープと検証ゲート、実行時シグナルとアーキテクチャ制約、評価者または複数ロールによるレビュー、品質文書の追跡を含める。
-2. 同じベンチマークタスクセット、同じモデル、同じ予算で実行する。
-3. すぐに採点する。結果を記録する。
-4. 品質文書を更新する。
+1. 用你在这门课里组装的最强 harness：交接文件和启动脚本、明确的范围和验证关卡、运行时信号和架构约束、评估者或多角色审查、质量文档追踪。
+2. 同样的基准任务集，同样的模型和预算。
+3. 立刻评分。记录结果。
+4. 更新质量文档。
 
-### 整理と再実行
+### 清理和重跑
 
-`p06-improved` ブランチ上で行う。
+在 `p06-improved` 分支上：
 
-1. 一通り整理する。使われていないコードを削除し、わかりにくい文書を修正し、不安定な実行経路を整理する。
-2. 整理後に同じベンチマークタスクセットを再実行し、再採点する。
-3. 品質文書を更新する。
+1. 做一轮清理：删死代码、修不清楚的文档、理顺不稳定的运行路径。
+2. 清理后重跑同样的基准任务集，重新评分。
+3. 更新质量文档。
 
-ベースライン、強い harness、整理後の 3 つのスナップショットの品質文書を比較する。
+对比三个快照的质量文档：基线、强 harness、清理后。
 
-### Harness 削減実験
+### Harness 精简实验
 
-1. `p06-improved` ブランチから harness コンポーネントを 1 つ削除する（たとえば sprint contract を削除する、あるいは明示的なスコープゲートを削除する）。
-2. ベンチマークタスクセットを再実行する。
-3. 結果が悪化しなければ、そのコンポーネントは余分なコストなので削除できる。
-4. 結果が悪化したなら、そのコンポーネントは支えになっているので、残さなければならない。
-5. 実験結果を記録する。複数のコンポーネントを試してもよい。
+1. 从 `p06-improved` 分支中删掉一个 harness 组件（比如删掉 sprint contract，或者删掉显式范围关卡）。
+2. 重跑基准任务集。
+3. 如果结果没变差——说明这个组件是多余的开销，可以去掉。
+4. 如果结果变差了——说明这个组件是承重的，必须保留。
+5. 记录实验结果。可以多试几个组件。
 
-## 結果の測り方
+## 怎么衡量结果
 
-| 指標 | 説明 |
+| 指标 | 说明 |
 |------|------|
-| ベンチマーク完了率 | ベンチマークタスクセットのうち成功した割合 |
-| 再試行回数 | 各タスクで何回再試行が必要だったか |
-| 不具合数 | 人手による介入前に見つかった不具合の数 |
-| 整理作業量 | 整理にかかった時間と、変更したファイル数 |
-| 整理後の可読性と再起動成功率 | 整理後のリポジトリの保守しやすさ |
-| 品質文書の等級変化 | 3 つのスナップショットの等級比較 |
-| Harness 削減結果 | どのコンポーネントを削除できるか、どれが支えか |
+| 基准完成率 | 基准任务集中成功完成的比例 |
+| 重试次数 | 每个任务需要重试几次 |
+| 缺陷数 | 人工干预前发现的缺陷数量 |
+| 清理工作量 | 清理花了多长时间、改了多少文件 |
+| 清理后可读性和重启成功率 | 清理后仓库的可维护程度 |
+| 质量文档等级变化 | 三个快照的等级对比 |
+| Harness 精简结果 | 哪些组件可以删、哪些是承重的 |
 
-## 提出物
+## 要交什么
 
-- 品質文書の 3 つのスナップショット（ベースライン、強い harness、整理後）
-- ベースラインのベンチマーク記録: 採点結果と証拠
-- 強い harness のベンチマーク記録: 採点結果と証拠
-- 整理実行の記録: 整理前後の採点変化
-- Harness 削減ログ: 何を削ったか、ベンチマーク結果、残すか削除するかの判断
-- 最終的な修了まとめ: 重要な学び
+- 质量文档的三个快照（基线、强 harness、清理后）
+- 基线基准测试记录：评分和证据
+- 强 harness 基准测试记录：评分和证据
+- 清理运行记录：清理前后评分变化
+- Harness 精简日志：删了什么组件、基准结果、决定保留还是删
+- 最终结业总结：关键经验教训
 
-## 対応する講義
+## 对应讲义
 
-- [Lecture 01 — なぜ強力な agent でも失敗するのか](../../lectures/lecture-01-why-capable-agents-still-fail/index.md)
-- [Lecture 03 — なぜリポジトリが唯一の事実源にならなければならないのか](../../lectures/lecture-03-why-the-repository-must-become-the-system-of-record/index.md)
-- [Lecture 08 — なぜ feature list が harness の基本原語なのか](../../lectures/lecture-08-why-feature-lists-are-harness-primitives/index.md)
-- [Lecture 11 — なぜ可観測性は harness の一部なのか](../../lectures/lecture-11-why-observability-belongs-inside-the-harness/index.md)
-- [Lecture 12 — なぜ各セッションでクリーンな状態を残さなければならないのか](../../lectures/lecture-12-why-every-session-must-leave-a-clean-state/index.md)
+- [Lecture 01 — 为什么强 agent 仍然失败](../../lectures/lecture-01-why-capable-agents-still-fail/index.md)
+- [Lecture 03 — 为什么仓库必须成为唯一事实来源](../../lectures/lecture-03-why-the-repository-must-become-the-system-of-record/index.md)
+- [Lecture 08 — 为什么 feature list 是 harness 的基础原语](../../lectures/lecture-08-why-feature-lists-are-harness-primitives/index.md)
+- [Lecture 11 — 为什么可观测性属于 harness 的一部分](../../lectures/lecture-11-why-observability-belongs-inside-the-harness/index.md)
+- [Lecture 12 — 为什么每个会话都必须留下干净状态](../../lectures/lecture-12-why-every-session-must-leave-a-clean-state/index.md)

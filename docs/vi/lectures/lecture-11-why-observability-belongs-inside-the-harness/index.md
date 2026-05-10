@@ -1,154 +1,154 @@
-[英語版 →](../../../en/lectures/lecture-11-why-observability-belongs-inside-the-harness/) | [中国語版 →](../../../zh/lectures/lecture-11-why-observability-belongs-inside-the-harness/)
+[English Version →](../../../en/lectures/lecture-11-why-observability-belongs-inside-the-harness/) | [中文版本 →](../../../zh/lectures/lecture-11-why-observability-belongs-inside-the-harness/)
 
-> ソースコード例: [code/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/vi/lectures/lecture-11-why-observability-belongs-inside-the-harness/code/)
-> 実践プロジェクト: [Project 06. 完全な Harness（Capstone）](./../../projects/project-06-runtime-observability-and-debugging/index.md)
+> Ví dụ mã nguồn: [code/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/vi/lectures/lecture-11-why-observability-belongs-inside-the-harness/code/)
+> Dự án thực hành: [Dự án 06. Harness Đầy đủ (Capstone)](./../../projects/project-06-runtime-observability-and-debugging/index.md)
 
-# 講義 11. 観測可能性をハーネスの内側に組み込む理由
+# Bài 11. Làm Cho Runtime của Agent Có thể Quan sát Được
 
-## この講義で扱う問題は何か？
+## Bài giảng này Giải quyết Vấn đề Gì?
 
-あなたは agent に機能の実装を依頼します。agent は 20 分ほど動作し、いくつかのファイルを変更したあと、「完了しましたが、2 つの test が失敗しています」と報告します。失敗理由を尋ねると、「はっきりしません。たぶん timing の問題です」と返ってきます。さらに、どの重要な path を変更したのかを尋ねると、「コードを見てみます...」と言われます。
+Bạn yêu cầu một agent triển khai một tính năng. Nó chạy 20 phút, sửa đổi một loạt tệp, sau đó nói với bạn "xong, nhưng hai test đang thất bại." Bạn hỏi tại sao chúng thất bại — "không chắc, có thể là vấn đề timing." Bạn hỏi nó đã thay đổi những đường dẫn quan trọng nào — "để tôi nhìn vào mã..."
 
-これは agent の能力不足ではありません。harness に十分な observability がないことが問題です。**observability がなければ、agent は不確かな状況で判断し、評価は主観的な裁定になり、再試行は当てもなくさまようだけになります。** OpenAI も Anthropic も、信頼性を evidence の問題として定義しています。つまり harness は runtime の挙動と評価 signal を、次の判断につながる形で表に出さなければなりません。
+Đây không phải về việc agent thiếu năng lực. Đó là về việc harness của bạn không cung cấp đủ khả năng quan sát. **Không có khả năng quan sát, agent đưa ra quyết định trong sự không chắc chắn, đánh giá trở thành phán xét chủ quan, và thử lại trở thành lang thang mù quáng.** Cả OpenAI và Anthropic đều định nghĩa độ tin cậy là một vấn đề bằng chứng — harness phải phơi bày hành vi runtime và các tín hiệu đánh giá ở dạng có thể hướng dẫn quyết định tiếp theo.
 
-## 重要な概念
+## Các Khái niệm Cốt lõi
 
-- **Runtime observability**: log、trace、process event、health check などの system-level signal。「system が何をしたか」に答えます。
-- **Process observability**: plan、採点 rubric、acceptance criteria など、harness が判断するための artifact の可視性。「なぜこの変更が受け入れられるべきか」に答えます。
-- **Task trace**: 分散システムにおける request tracing に似た、task の開始から完了までの完全な decision path の記録です。agent が行った各 step を context 付きで残します。
-- **Sprint contract**: programming を始める前に交渉して決める短期契約です。task の範囲、検証基準、例外を定義します。process observability の中核となるツールです。
-- **Evaluator rubric**: 品質評価を主観的な裁定から、証拠に基づく構造化された採点へ変えるものです。同じ output に対して、異なる evaluator が似た結果を出しやすくなります。
-- **Layered observability**: system 層と process 層の observability を同時に設計し、相互に補強する考え方です。runtime signal が挙動を説明し、process artifact が意図を説明します。
+- **Quan sát runtime**: Các tín hiệu cấp hệ thống — log, trace, sự kiện process, health check. Trả lời "hệ thống đã làm gì."
+- **Quan sát quá trình**: Khả năng hiển thị vào các artifact quyết định harness — kế hoạch, rubric tính điểm, tiêu chí chấp nhận. Trả lời "tại sao thay đổi này nên được chấp nhận."
+- **Task trace**: Bản ghi đường dẫn quyết định hoàn chỉnh từ khi bắt đầu tác vụ đến khi hoàn thành, tương tự như request tracing trong hệ thống phân tán. Mỗi bước agent thực hiện, với ngữ cảnh, được ghi lại.
+- **Sprint contract**: Thỏa thuận ngắn hạn được thương lượng trước khi bắt đầu lập trình — chỉ định phạm vi tác vụ, tiêu chuẩn xác minh và các ngoại lệ. Công cụ cốt lõi cho quan sát quá trình.
+- **Evaluator rubric**: Biến đánh giá chất lượng từ phán xét chủ quan thành tính điểm có cấu trúc dựa trên bằng chứng. Làm cho các evaluator khác nhau tạo ra kết quả tương tự cho cùng một kết quả đầu ra.
+- **Quan sát phân lớp**: Quan sát lớp hệ thống và lớp quá trình được thiết kế đồng thời và củng cố lẫn nhau. Tín hiệu runtime giải thích hành vi; artifact quá trình giải thích ý định.
 
-## Layered Observability
+## Quan sát Phân lớp
 
 ```mermaid
 flowchart LR
-    Contract["task 前に書き出す<br/>何を変えるか / 変えないか / 合格基準"] --> Generator["Generator"]
-    Generator --> Signals["実行中に app log、trace、<br/>health check を収集"]
-    Contract --> Review["結果を項目ごとに確認<br/>挙動 / test / 境界条件"]
+    Contract["Ghi xuống tác vụ trước<br/>thay đổi gì / không thay đổi gì / tiêu chí vượt qua"] --> Generator["Generator"]
+    Generator --> Signals["Thu thập app log, trace,<br/>và health check trong khi chạy"]
+    Contract --> Review["Kiểm tra kết quả từng mục<br/>hành vi / test / ranh giới"]
     Signals --> Review
-    Review --> Verdict["失敗した検証と<br/>修正箇所を示す"]
+    Review --> Verdict["Chỉ ra kiểm tra thất bại<br/>và nơi cần sửa"]
     Verdict --> Generator
 ```
 
-## なぜこうなるのか
+## Tại sao Điều này Xảy ra
 
-### observability 不足の本当のコスト
+### Chi phí Thực sự của Thiếu Quan sát
 
-harness に observability が足りないと、体系的に 4 種類の問題が起こります。
+Khi một harness thiếu khả năng quan sát, bốn loại vấn đề xuất hiện có hệ thống:
 
-**「正しい」と「正しそう」の区別がつかない**: コードレビューでは完璧に見える関数でも、構文は正しく、ロジックも筋が通っています。しかし runtime では、edge case の処理ミスによって特定の入力で誤った結果が出ることがあります。実際の実行経路が期待から外れていることを示せるのは runtime trace だけです。
+**Không thể phân biệt "đúng" với "trông có vẻ đúng"**: Một hàm trông hoàn hảo trong code review — cú pháp đúng, logic hợp lý. Nhưng ở runtime, một lỗi xử lý edge case tạo ra kết quả không đúng với các đầu vào cụ thể. Chỉ có runtime trace mới có thể tiết lộ rằng đường dẫn thực thi thực tế lệch khỏi kỳ vọng.
 
-**評価が神秘化する**: 採点 rubric や acceptance criteria がなければ、evaluator（人間でも agent でも）は暗黙の前提に頼ることになります。同じ output が、評価者によってまったく異なる扱いを受けることがあります。品質評価は再現できなくなります。
+**Đánh giá trở thành huyền bí**: Không có rubric tính điểm và tiêu chí chấp nhận, các evaluator (con người hoặc agent) dựa vào các giả định ẩn. Cùng một kết quả đầu ra có thể nhận được đánh giá hoàn toàn khác nhau từ các người đánh giá khác nhau. Đánh giá chất lượng trở thành không thể tái tạo.
 
-**再試行が手探りになる**: 何が失敗したのか分からなければ、再試行の方向性はランダムです。関係のない code path を修正してしまい、本当の失敗原因を見落としたまま同じことを何度も繰り返すことがあります。こうした盲目的な再試行は、token と時間の無駄です。
+**Thử lại trở thành đoán mù**: Khi agent không biết tại sao thứ gì đó thất bại, hướng thử lại là ngẫu nhiên. Nó có thể thử lặp đi lặp lại theo hướng sai — sửa các đường dẫn mã không liên quan trong khi bỏ qua nguyên nhân thất bại thực sự. Mỗi lần thử lại mù quáng tốn token và thời gian.
 
-**session 引き継ぎで情報が崖になる**: 未完了の work を次の session に渡すとき、observability が不足していると、新しい session は system state を一から診断し直さなければなりません。Anthropic の公開事例でも、progress notes と git log を読ませ、起動時に基本動作を確認することで、前 session からの状態把握を助けています。
+**Vách đá thông tin bàn giao phiên**: Khi công việc chưa hoàn thành được bàn giao cho phiên tiếp theo, thiếu khả năng quan sát có nghĩa là phiên mới phải chẩn đoán trạng thái hệ thống từ đầu. Quan sát của Anthropic về agent chạy lâu cho thấy việc chẩn đoán thừa này có thể tiêu thụ 30-50% tổng thời gian phiên.
 
-### Claude Code の実例
+### Kịch bản Claude Code Thực tế
 
-「planner-generator-evaluator」の 3 役 workflow で、「dark mode を app に追加する」task を実行する harness を想像してください。
+Hãy tưởng tượng một harness sử dụng luồng công việc ba vai "planner-generator-evaluator," thực thi tác vụ "thêm dark mode vào ứng dụng."
 
-**observability なし**: Planner は曖昧な description を出します。Generator はその曖昧さを前提に dark mode を実装しますが、planner の暗黙の期待と一致しません。Evaluator は自分だけが持つ暗黙の基準で却下しますが、何が悪いのかを具体的には説明できません。Generator は曖昧な却下理由を頼りに、当てずっぽうな再試行を繰り返し、ようやく一応受け入れられる程度の結果に落ち着きます。
+**Không có khả năng quan sát**: Planner đưa ra mô tả mơ hồ. Generator triển khai dark mode dựa trên sự mơ hồ đó, nhưng nó không khớp với kỳ vọng ẩn của planner. Evaluator từ chối dựa trên tiêu chuẩn ẩn của riêng họ nhưng không thể nói cụ thể điều gì sai. Generator thử lại mù quáng dựa trên lý do từ chối mơ hồ. Chu kỳ lặp lại 3-4 lần, mất khoảng 45 phút, tạo ra kết quả vừa tạm chấp nhận.
 
-**十分な observability がある場合**: Planner は sprint contract を提示します。修正すべき component、各 component の検証基準、例外（print styles は扱わない）を列挙します。Generator は contract に従って実装します。runtime observability は各 component の style の読み込みと適用の流れを記録します。Evaluator は採点 rubric を使って各観点を個別に評価し、具体的な evidence を引用します。短い反復で高品質な結果を得やすくなります。
+**Với đầy đủ khả năng quan sát**: Planner đưa ra sprint contract — liệt kê các component cần sửa đổi, tiêu chuẩn xác minh cho mỗi cái, và các ngoại lệ (không xử lý print styles). Generator triển khai theo contract. Quan sát runtime ghi lại quá trình tải và áp dụng style của mỗi component. Evaluator sử dụng rubric tính điểm để đánh giá từng chiều một, với các trích dẫn bằng chứng cụ thể. Một lần lặp tạo ra kết quả chất lượng cao, trong khoảng 15 phút.
 
-効率は 3 倍です。変わったのは observability だけです。
+Khác biệt hiệu quả 3x. Thay đổi duy nhất là khả năng quan sát.
 
-### なぜ agent だけでは解決できないのか
+### Tại sao Agent Không thể Tự Giải quyết Điều này
 
-「agent 自身が log を出せばいいのでは？」と思うかもしれません。問題は次のとおりです。
+Bạn có thể đang nghĩ: "Agent không thể tự in log của nó sao?" Các vấn đề là:
 
-1. Agent は自分が知らないことを知りません。必要だと気づいていない signal を、自発的に記録することはありません。
-2. Log の形式は一貫しません。session ごとに形式が違うため、体系的な分析ができません。
-3. Process observability は log だけでは解決できません。sprint contract や採点 rubric は、harness 側で支える必要がある構造化 artifact です。
+1. Agent không biết những gì nó không biết — nó sẽ không chủ động ghi lại các tín hiệu mà nó không nhận ra là cần thiết.
+2. Các định dạng log không nhất quán — các phiên khác nhau sử dụng các định dạng log khác nhau, làm cho phân tích có hệ thống không thể thực hiện.
+3. Quan sát quá trình không thể được giải quyết bằng log — sprint contract và rubric tính điểm là artifact có cấu trúc cần hỗ trợ cấp harness.
 
-## 正しいやり方
+## Cách Làm Đúng
 
-### 1. Runtime signal の収集を harness に組み込む
+### 1. Xây dựng Thu thập Tín hiệu Runtime vào Harness
 
-agent が自分で log を出すことに頼ってはいけません。harness が以下の signal を自動で集めるべきです。
+Đừng dựa vào agent để tự in log của nó. Harness nên tự động thu thập các tín hiệu này:
 
-- **アプリケーションのライフサイクル**: Startup、ready、running、shutdown などの stage 状態
-- **Feature path の実行**: entry point、check point、exit point を含む、重要な処理経路の実行記録
-- **データフロー**: component 間を流れるデータの記録
-- **リソース使用状況**: 異常な resource usage パターン（たとえば memory が増え続ける）
-- **エラーと例外**: エラーメッセージだけでなく、十分な context を含める
+- **Vòng đời ứng dụng**: Các trạng thái giai đoạn Startup, ready, running, shutdown
+- **Thực thi đường dẫn tính năng**: Bản ghi thực thi đường dẫn quan trọng, bao gồm điểm vào, điểm kiểm tra và điểm thoát
+- **Luồng dữ liệu**: Bản ghi dữ liệu chảy giữa các component
+- **Sử dụng tài nguyên**: Các mẫu sử dụng tài nguyên bất thường (ví dụ: bộ nhớ liên tục tăng)
+- **Lỗi và ngoại lệ**: Đầy đủ ngữ cảnh lỗi, không chỉ thông báo lỗi
 
-### 2. Sprint contract を実装する
+### 2. Triển khai Sprint Contract
 
-各 task が始まる前に、generator と evaluator（同じ agent の別 call でもよい）が contract を交渉します。
+Trước khi mỗi tác vụ bắt đầu, generator và evaluator (có thể là các lần gọi khác nhau của cùng một agent) thương lượng một contract:
 
 ```markdown
-# Sprint Contract: Dark Mode のサポート
+# Sprint Contract: Hỗ trợ Dark Mode
 
-## 範囲
-- theme 切り替え component を修正する
-- global CSS variable を更新する
-- dark mode の test を追加する
+## Phạm vi
+- Sửa đổi component chuyển đổi theme
+- Cập nhật biến CSS toàn cục
+- Thêm test dark mode
 
-## 検証基準
-- 各 component の visual regression test が通る
-- main flow の end-to-end test が通る
-- FOUC（flash of unstyled content）が発生しない
+## Tiêu chuẩn Xác minh
+- Test hồi quy trực quan vượt qua cho mỗi component
+- Test end-to-end luồng chính vượt qua
+- Không có flash of unstyled content (FOUC)
 
-## 例外
-- print styles は扱わない
-- third-party component の dark mode は扱わない
+## Ngoại lệ
+- Không xử lý print styles
+- Không xử lý dark mode cho component bên thứ ba
 ```
 
-### 3. Evaluator rubric を整備する
+### 3. Thiết lập Evaluator Rubric
 
-「良いか悪いか」を、定量化できる採点に変えます。
+Biến "tốt hay không" thành tính điểm có thể định lượng:
 
 ```markdown
-# 採点 Rubric
+# Rubric Tính điểm
 
-| 観点 | A | B | C | D |
+| Chiều | A | B | C | D |
 |-------|---|---|---|---|
-| コードの正しさ | すべての test が通る | main flow が通る | 一部のみ通る | build 失敗 |
-| アーキテクチャ遵守 | 完全に遵守 | 軽微な逸脱 | 明確な逸脱 | 重大な違反 |
-| test の範囲 | main flow + edge case | main flow のみ | skeleton のみ | test なし |
+| Tính đúng đắn mã | Tất cả test vượt qua | Luồng chính vượt qua | Vượt qua một phần | Build thất bại |
+| Tuân thủ kiến trúc | Hoàn toàn tuân thủ | Sai lệch nhỏ | Sai lệch rõ ràng | Vi phạm nghiêm trọng |
+| Phạm vi test | Luồng chính + edge case | Chỉ luồng chính | Chỉ skeleton | Không có test |
 ```
 
-### 4. OpenTelemetry で標準化する
+### 4. Chuẩn hóa với OpenTelemetry
 
-harness の session ごとに trace を 1 つ、task ごとに span を 1 つ、検証 step ごとに sub-span を 1 つ作成します。重要な情報は標準属性で注釈します。こうすることで、observability data を標準的なツール（Jaeger、Zipkin）と統合できます。
+Tạo một trace cho mỗi phiên harness, một span cho mỗi tác vụ, và sub-span cho mỗi bước xác minh. Sử dụng các thuộc tính chuẩn để chú thích thông tin quan trọng. Theo cách này, dữ liệu quan sát tích hợp với các công cụ chuẩn (Jaeger, Zipkin).
 
-## 実践例
+## Trường hợp Thực tế
 
-planner-generator-evaluator の workflow で、「dark mode のサポートを追加する」を実行する harness を考えます。
+Một harness sử dụng luồng công việc planner-generator-evaluator, thực thi "thêm hỗ trợ dark mode":
 
-**observability が不十分な版**: 複数回の盲目的な再試行、ぎりぎり受け入れられる結果。Evaluator は「しっくりこない」と言うだけで、何が問題かは説明できません。Generator は間違った方向に多くの時間を費やします。
+**Phiên bản không quan sát được**: 3-4 vòng thử lại mù quáng, 45 phút, kết quả vừa tạm chấp nhận. Evaluator nói "nó không cảm thấy đúng" nhưng không thể nói cụ thể điều gì. Generator lãng phí nhiều thời gian theo hướng sai.
 
-**十分に観測可能な版**:
-- Sprint contract が範囲、基準、例外を明確化する
-- Runtime trace が各 component の style 読み込みの流れを記録する
-- 採点 rubric が各観点の構造化された評価を提供する
-- 具体的な evidence に沿って短い反復で高品質な結果を得やすい
+**Phiên bản quan sát đầy đủ**:
+- Sprint contract làm rõ phạm vi, tiêu chuẩn và ngoại lệ
+- Runtime trace ghi lại quá trình tải style của mỗi component
+- Rubric tính điểm cung cấp đánh giá có cấu trúc từng chiều một
+- Một lần lặp tạo ra kết quả chất lượng cao, 15 phút
 
-効率は 3 倍向上し、品質はより安定し、評価も再現可能になります。
+Cải thiện hiệu quả 3x, chất lượng ổn định hơn, đánh giá có thể tái tạo.
 
-## 覚えておくべき要点
+## Những Điểm chính cần Nhớ
 
-- **observability は harness のアーキテクチャ属性です**。後付けする機能ではなく、設計時に最初から考慮すべき中核能力です。
-- **2 層の observability が必要です**。runtime signal は「何が起きたか」を説明し、process artifact は「なぜそのやり方だったのか」を説明します。
-- **Sprint contract は alignment を前倒しします**。generator が作ったものを evaluator が予想できる理由で即座に却下する、という事態を防ぎます。
-- **採点 rubric によって評価は再現可能になります**。異なる evaluator でも、同じ output に対して似た点数をつけやすくなります。
-- **observability 不足は session 冒頭の余計な診断を増やします。**
+- **Khả năng quan sát là thuộc tính kiến trúc harness** — không phải tính năng được thêm vào sau, mà là khả năng cốt lõi phải được xem xét trong quá trình thiết kế.
+- **Cả hai lớp quan sát đều cần thiết** — tín hiệu runtime giải thích "điều gì đã xảy ra," artifact quá trình giải thích "tại sao nó được thực hiện theo cách đó."
+- **Sprint contract front-load alignment** — ngăn "generator xây dựng thứ gì đó mà evaluator ngay lập tức từ chối vì lý do có thể dự đoán trước."
+- **Rubric tính điểm làm cho đánh giá có thể tái tạo** — các evaluator khác nhau tạo ra điểm tương tự cho cùng một kết quả đầu ra.
+- **Thiếu khả năng quan sát lãng phí 30-50% thời gian phiên vào chẩn đoán thừa.**
 
-## さらに読む
+## Đọc thêm
 
-- [Observability Engineering - Charity Majors](https://www.honeycomb.io/blog/observability-engineering-book) — 現代の observability engineering に関する理論と実践の枠組み
-- [Dapper - Google (Sigelman et al.)](https://research.google/pubs/pub36356/) — 大規模 distributed tracing における画期的な実践
-- [Harness Design - Anthropic](https://www.anthropic.com/engineering/harness-design-long-running-apps) — sprint contract と evaluator rubric の紹介
-- [Site Reliability Engineering - Google](https://sre.google/sre-book/table-of-contents/) — production system における observability の体系的な応用
+- [Observability Engineering - Charity Majors](https://www.honeycomb.io/blog/observability-engineering-book) — Khung lý thuyết và thực hành cho kỹ thuật quan sát hiện đại
+- [Dapper - Google (Sigelman et al.)](https://research.google/pubs/pub36356/) — Thực hành đột phá trong distributed tracing quy mô lớn
+- [Harness Design - Anthropic](https://www.anthropic.com/engineering/harness-design-long-running-apps) — Giới thiệu sprint contract và evaluator rubric
+- [Site Reliability Engineering - Google](https://sre.google/sre-book/table-of-contents/) — Ứng dụng có hệ thống của khả năng quan sát trong hệ thống production
 
-## 演習
+## Bài tập
 
-1. **Observability Gap の分析**: 現在の harness を監査し、system 層と process 層の observability を洗い出してください。既存 signal では区別できない system state を見つけ、追加すべき情報を提案してください。
+1. **Phân tích Khoảng cách Quan sát**: Kiểm toán harness hiện tại của bạn để tìm quan sát lớp hệ thống và lớp quá trình. Tìm các trạng thái hệ thống không thể phân biệt từ các tín hiệu hiện có, và đề xuất bổ sung.
 
-2. **Sprint Contract の実践**: 実際の task に対して sprint contract を書いてください。agent に contract に従って実装させ、contract の有無で効率と品質がどう変わるか比較してください。
+2. **Thực hành Sprint Contract**: Viết một sprint contract cho một tác vụ thực tế. Để agent thực thi theo contract, và so sánh hiệu quả và chất lượng có và không có contract.
 
-3. **Task Trace の構築**: 完成した programming task における agent の各 step を記録してください。OpenTelemetry の semantic convention を使って注釈を付けてください。trace 内の information bottleneck を分析し、どの step で十分な signal support が欠けているかを特定してください。
+3. **Xây dựng Task Trace**: Ghi lại mỗi bước trong các hoạt động của agent trong một tác vụ lập trình hoàn chỉnh. Chú thích với các quy ước ngữ nghĩa OpenTelemetry. Phân tích các điểm nghẽn thông tin trong trace — bước nào thiếu hỗ trợ tín hiệu đủ cho các quyết định.

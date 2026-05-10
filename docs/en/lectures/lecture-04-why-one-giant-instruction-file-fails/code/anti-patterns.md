@@ -1,7 +1,7 @@
-# Instruction File のアンチパターン
+# Instruction File Anti-Patterns
 
-- リポジトリに関する知識をすべて 1 つのファイルに詰め込む
-- 同じルールを複数箇所に重複して書く
-- 誰も見直さない古いルールをそのまま残す
-- 条件付きの指示を細かく書きすぎて、ほとんど当てはまらなくする
-- 長いツールマニュアルを起動時コンテキストに埋め込む
+- Putting all repository knowledge into one file
+- Repeating the same rule in multiple places
+- Encoding obsolete rules that nobody audits
+- Writing conditional instructions so specific that they rarely apply
+- Embedding long tool manuals into the startup context

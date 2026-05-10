@@ -1,41 +1,41 @@
-[英語版](./README.md) · **日本語**
+[English](./README.md) · **한국어**
 
-# プロジェクト 05: 評価ループと 3役割のアップグレード
+# 프로젝트 05: 평가기 루프와 3역할 업그레이드
 
-役割分離（単一役割 / 生成器+評価器 / 計画者+生成器+評価器）が、実装品質をどう変えるかを測定します。
+역할 분리(단일 역할 / 생성기+평가기 / 계획기+생성기+평가기)가 구현 품질을 어떻게 변화시키는지 측정합니다.
 
-エージェントシステムでは、役割分離は重要な品質向上の手法です。1つのエージェントが作業を行いながら自分の成果を評価すると、利益相反が起きます。別の評価器役割を導入すれば、より客観的な品質検証が可能になります。このプロジェクトでは、3つの構成を直接比較します。
+에이전트 시스템에서 역할 분리는 중요한 품질 향상 기법입니다. 한 에이전트가 작업을 수행하는 동시에 자신의 작업을 평가하는 것은 이해충돌을 일으킵니다. 별도의 평가기 역할을 도입하면 더 객관적인 품질 검증이 가능합니다. 이 프로젝트는 세 가지 구성 방식을 직접 비교합니다.
 
-## ディレクトリの説明
+## 디렉터리 설명
 
-| ディレクトリ | 意味 |
+| 디렉터리 | 의미 |
 |----------|------|
-| `starter/` | **出発点** — P4 の solution を基にしており、マルチターンのQ&A履歴機能は実装待ちです。 |
-| `solution/single-role/` | **変種 A** — 1つのエージェントがすべての作業（計画 + 実装 + 自己レビュー）を担当します。基本品質です。 |
-| `solution/gen-eval/` | **変種 B** — generator + evaluator パターンです。修正の証跡があり、より高品質です。 |
-| `solution/plan-gen-eval/` | **変種 C** — planner + generator + evaluator です。sprint contract と rubric を備えた最上位品質です。 |
+| `starter/` | **시작점** — P4 풀이(solution) 기반으로, 다중 턴 문답 이력 기능이 구현 대기 중입니다. |
+| `solution/single-role/` | **변체 A** — 단일 에이전트가 모든 작업(계획 + 구현 + 자체 검토)을 수행합니다. 기본 품질. |
+| `solution/gen-eval/` | **변체 B** — 생성기(generator) + 평가기(evaluator) 패턴. 수정 증거가 있으며 더 높은 품질. |
+| `solution/plan-gen-eval/` | **변체 C** — 계획기(planner) + 생성기 + 평가기. 스프린트 계약(sprint contract)과 채점 기준(rubric)이 있는 최고 품질. |
 
-## 使い方
+## 사용 방법
 
 ```sh
-# 3つの変種はそれぞれ独立して実行
-cd solution/single-role && npm install  # 単一役割モード
-cd solution/gen-eval && npm install     # 生成+評価モード
-cd solution/plan-gen-eval && npm install # 完全な 3役割モード
+# 세 변체는 각자 독립적으로 실행
+cd solution/single-role && npm install  # 단일 역할 모드
+cd solution/gen-eval && npm install     # 생성+평가 모드
+cd solution/plan-gen-eval && npm install # 완전한 3역할 모드
 
-# 3つの変種で次を比較します:
-# - コード品質 (`evaluator-rubric.md` のスコア)
-# - 見つかった欠陥数
-# - 必要な手戻りの程度
+# 세 변체의 다음을 비교:
+# - 코드 품질 (evaluator-rubric.md 점수)
+# - 발견된 결함 수
+# - 필요한 재작업 정도
 ```
 
-## このプロジェクトで扱う機能
+## 이 프로젝트에서 다루는 기능
 
-- マルチターンQ&A履歴（対話型 UI）
-- sprint contract
-- evaluator rubric の調整
+- 다중 턴 문답 이력 (대화형 UI)
+- 스프린트 계약(sprint contract)
+- 평가기 채점 기준(evaluator rubric) 조정
 
-## 関連講義
+## 관련 강의
 
-- [講義 09: エージェントが早すぎる完了宣言をしないようにする方法](../../docs/lectures/lecture-09-why-agents-declare-victory-too-early/index.md)
-- [講義 10: パイプライン全体の実行だけが本当の検証である理由](../../docs/lectures/lecture-10-why-end-to-end-testing-changes-results/index.md)
+- [강의 09: 에이전트가 너무 일찍 완료를 선언하지 못하도록 막는 방법](../../docs/lectures/lecture-09-why-agents-declare-victory-too-early/index.md)
+- [강의 10: 전체 파이프라인 실행만이 진정한 검증인 이유](../../docs/lectures/lecture-10-why-end-to-end-testing-changes-results/index.md)

@@ -1,45 +1,45 @@
-# Learn Harness Engineering へようこそ
+# 欢迎来到 Learn Harness Engineering
 
-Learn Harness Engineering は、AI コーディングエージェントを実運用に載せるための工学に焦点を当てた講座です。本講座では、Harness Engineering（ツールハーネス/足場工学）に関する業界最前線の理論と実践を深く研究・整理しており、参考資料には以下が含まれます。
+Learn Harness Engineering 是一门专注于 AI 编程智能体工程化落地的课程。本课程深度研究并总结了业内最前沿的 Harness Engineering（工具马具/脚手架工程）理论与实践，参考资料包括：
 - [OpenAI: Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/)
 - [Anthropic: Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
 - [Anthropic: Harness design for long-running application development](https://www.anthropic.com/engineering/harness-design-long-running-apps)
 - [Awesome Harness Engineering](https://github.com/walkinglabs/awesome-harness-engineering)
 
-体系的な環境設計、状態管理、検証、制御の仕組みを通じて、本講座は Codex や Claude Code などの AI Agent が、実際のエンジニアリング作業を本当に確実に完了できるようにすることを目指します。明確なルールと境界によって AI コーディングアシスタントを制約し、機能追加、Bug 修正、開発作業の自動化をより確実に行えるようにします。
+通过系统的环境设计、状态管理、验证与控制机制，本课程旨在帮助你让 Codex 和 Claude Code 等 AI Agent 能够真正可靠地完成真实工程任务。它通过明确的规则和边界约束你的 AI 编程助手，帮助你更可靠地构建功能、修复 Bug 并自动化开发任务。
 
-## 学習を始める
+## 开始学习
 
-自分に合った学習ルートを選んでください。本講座は、理論講義、実践プロジェクト、すぐに使える資料集の3つに分かれています。
+选择适合你的学习路径。本课程分为理论讲义、实战项目和开箱即用的资料库。
 
 <div class="card-grid">
   <a href="./lectures/lecture-01-why-capable-agents-still-fail/" class="card">
-    <h3>講義</h3>
-    <p>なぜ高性能なモデルでも失敗するのかを理解し、有効な Harness を構築するための理論基盤を身につけます。</p>
+    <h3>讲义</h3>
+    <p>理解为什么强大的模型依然会失败，掌握构建有效 Harness 的理论基础。</p>
   </a>
   <a href="./projects/" class="card">
-    <h3>プロジェクト</h3>
-    <p>手を動かして、信頼できる Agent の作業環境をゼロから構築します。</p>
+    <h3>项目</h3>
+    <p>动手实践，从零开始搭建一个可靠的 Agent 工作环境。</p>
   </a>
   <a href="./resources/" class="card">
-    <h3>資料集</h3>
-    <p>すぐに使えるテンプレート（AGENTS.md、feature_list.json など）を、そのままあなたのリポジトリへコピーできます。</p>
+    <h3>资料库</h3>
+    <p>开箱即用的模板（AGENTS.md、feature_list.json 等），可直接复制到你自己的代码仓库中。</p>
   </a>
 </div>
 
-## Harness の中核メカニズム
+## Harness 的核心机制
 
-Harness の本質は「モデルを賢くすること」ではなく、モデルのために閉ループの**作業システム**を構築することにあります。以下の簡単な図で、その基本的な流れを理解できます。
+Harness 的本质不是“让模型变聪明”，而是给模型建立一套闭环的**工作系统**。你可以通过下面的简单图示理解它的核心运作流：
 
 ```mermaid
 graph TD
-    A["明確な目標<br/>AGENTS.md"] --> B("初期化チェック<br/>init.sh")
-    B --> C{"タスク実行<br/>AI Agent"}
-    C -->|障害に遭遇| D["実行フィードバック<br/>CLI / Logs"]
-    D -->|自動修復| C
-    C -->|実装完了| E{"検証とレビュー<br/>Test & QA"}
-    E -->|未通過| D
-    E -->|通過| F["整理と引き継ぎ<br/>claude-progress.md"]
+    A["明确目标<br/>AGENTS.md"] --> B("初始化检查<br/>init.sh")
+    B --> C{"运行任务<br/>AI Agent"}
+    C -->|遇到障碍| D["运行反馈<br/>CLI / Logs"]
+    D -->|自动修复| C
+    C -->|代码完成| E{"验证与评审<br/>Test & QA"}
+    E -->|未通过| D
+    E -->|通过| F["清理与交接<br/>claude-progress.md"]
     
     classDef primary fill:#D95C41,stroke:#C14E36,color:#fff,font-weight:bold;
     classDef process fill:#F4F3EE,stroke:#D1D1D1,color:#1A1A1A;
@@ -50,24 +50,24 @@ graph TD
     class C,E check;
 ```
 
-## 学べること
+## 你将学到什么
 
-本講座では、次のような核心概念を身につけます。
+你将在本课程中掌握以下核心概念：
 
 <ul class="index-list">
-  <li>明確なルールと境界によって<strong>Agent の振る舞いを制約する</strong>こと。</li>
-  <li>セッションをまたぐ長時間タスクで<strong>文脈の連続性を保つ</strong>こと。</li>
-  <li><strong>Agent が完了を早計に宣言するのを防ぐ</strong>こと。</li>
-  <li>完全なパイプラインテストを通じて、Agent に<strong>自分の作業を検証させる</strong>こと。</li>
-  <li>Agent の実行プロセスを<strong>可観測かつデバッグ可能</strong>にすること。</li>
+  <li>用明确的规则和边界<strong>约束 Agent 的行为</strong>。</li>
+  <li>在跨会话的长时任务中<strong>保持上下文连续性</strong>。</li>
+  <li><strong>防止 Agent 提前宣告</strong>任务完成。</li>
+  <li>让 Agent 学会通过完整的流水线测试来<strong>验证自己的工作</strong>。</li>
+  <li>让 Agent 的运行过程<strong>可观测、可调试</strong>。</li>
 </ul>
 
-## 次のステップ
+## 下一步
 
-核心概念を理解したら、以下の内容でさらに学習を進められます。
+了解核心概念后，可以通过以下内容深入学习：
 
 <ul class="index-list">
-  <li><a href="./lectures/lecture-01-why-capable-agents-still-fail/">L01. モデルの能力が高くても、実行の信頼性は別問題</a>：まずは理論から学びます。</li>
-  <li><a href="./projects/project-01-baseline-vs-minimal-harness/">P01. プロンプト vs ルール駆動</a>：最初の比較実践課題に取り組みます。</li>
-  <li><a href="./resources/templates/">日本語テンプレート</a>：最小構成の Harness テンプレート一式（AGENTS.md、feature_list.json など）を入手し、そのまま自分のプロジェクトで使えます。</li>
+  <li><a href="./lectures/lecture-01-why-capable-agents-still-fail/">L01. 模型能力强，不等于执行可靠</a>：从理论开始。</li>
+  <li><a href="./projects/project-01-baseline-vs-minimal-harness/">P01. 提示词 vs 规则驱动</a>：完成你的第一个对比实战任务。</li>
+  <li><a href="./resources/templates/">中文模板</a>：获取最小 Harness 模板包（AGENTS.md、feature_list.json 等），直接用于你的项目。</li>
 </ul>

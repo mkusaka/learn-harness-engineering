@@ -1,20 +1,24 @@
 # OpenAI Advanced Pack
 
-このフォルダは、OpenAI の「Harness engineering: leveraging Codex in an agent-first world」記事で紹介されている、より意見色の強いリポジトリ構成を、そのまま使えるスターターファイルとしてまとめたものです。
+This folder packages the more opinionated repository shape described in
+OpenAI's "Harness engineering: leveraging Codex in an agent-first world"
+article into copy-ready starter files.
 
-次のような場合に、このパックを使ってください。最小構成の harness では足りなくなり、リポジトリに次のものが必要になったときです。
+Use this pack when the minimal harness is no longer enough and your repository
+now needs:
 
-- ルーティング用の短い `AGENTS.md`
-- リポジトリ内にある、永続的な system-of-record 文書
-- 実行中と完了済みの実行計画
-- 製品、信頼性、セキュリティ、フロントエンドの各ポリシーファイル
-- 製品ドメインとアーキテクチャ層ごとの品質スコア
-- モデルが扱いやすい参照資料フォルダ
-- アーキテクチャ、知識の蓄積、実行時検証のための標準手順
+- a short routing-style `AGENTS.md`
+- durable system-of-record docs inside the repo
+- active and completed execution plans
+- explicit product, reliability, security, and frontend policy files
+- quality scoring by product domain and architectural layer
+- model-friendly reference material folders
+- standard operating procedures for architecture, knowledge capture, and runtime validation
 
 ## Included Starter Layout
 
-[`repo-template/`](./repo-template/index.md) 以下のスターターパックは、次の構成を再現しています。
+The starter pack under [`repo-template/`](./repo-template/index.md) mirrors the
+structure below:
 
 ```text
 AGENTS.md
@@ -47,27 +51,33 @@ docs/
 
 ## How To Adopt It
 
-1. リポジトリがまだ小さいなら、まずは最小構成のパックから始めてください。
-2. より強い構造が必要になったら、[`repo-template/`](./repo-template/index.md) のファイルを自分のリポジトリにコピーしてください。
-3. `AGENTS.md` は短く保ってください。百科事典ではなく、より深い文書への案内役として扱います。
-4. quality、reliability、plan の各文書は、独立した整理日を設けるのではなく、通常の作業の一部として更新してください。
-5. 生成物や外部参照は明示し、チャット履歴に頼らず agent が見つけられるようにしてください。
+1. Start from the minimal pack if your repo is still small.
+2. Copy the files in [`repo-template/`](./repo-template/index.md) into your
+   own repository once you need stronger structure.
+3. Keep `AGENTS.md` short. Treat it as a router into the deeper docs, not as an
+   encyclopedia.
+4. Update the quality, reliability, and plan docs as part of normal work, not
+   as a separate cleanup day.
+5. Keep generated artifacts and external references explicit so agents can find
+   them without relying on chat history.
 
 ## SOP Library
 
-[`sops/`](./sops/index.md) フォルダは、記事の図をステップごとの運用手順に落とし込んだものです。
+The [`sops/`](./sops/index.md) folder turns the article's diagrams into
+step-by-step operating procedures:
 
-- レイヤー化されたドメインアーキテクチャのセットアップ
-- 未知の知識をリポジトリに組み込む
-- ローカルの observability スタックとフィードバックループのワークフロー
-- UI 作業のための Chrome DevTools 検証ループ
+- layered domain architecture setup
+- encode unseen knowledge into the repository
+- local observability stack and feedback-loop workflow
+- Chrome DevTools validation loop for UI work
 
 ## Design Principles
 
-- 短い入口、深くリンクされた文書
-- リポジトリを system of record とする
-- 覚えているルールより機械的なチェックを優先する
-- 計画と品質の履歴はコードのそばに置く
-- 整理と単純化は第一級の責務として扱う
+- Short entrypoint, deeper linked docs
+- Repository as system of record
+- Mechanical checks beat remembered rules
+- Plans and quality history live beside the code
+- Cleanup and simplification are first-class responsibilities
 
-このパックは意図的に意見色を持たせていますが、盲目的にコピーするのではなく、必ず自分のプロジェクトに合わせて調整してください。
+This pack is intentionally opinionated, but it should still be adapted to your
+project rather than copied blindly.

@@ -1,42 +1,42 @@
-# SOP: 眠っている知識を Repo に組み込む
+# SOP: Mã hóa Kiến thức Ẩn vào Repo
 
-重要な文脈がまだ Google Docs、チャットの流れ、チケット、あるいは人の頭の中にしか残っていないときに、この SOP を使います。
+Sử dụng SOP này khi ngữ cảnh quan trọng vẫn còn trong Google Docs, luồng chat, ticket hoặc trong đầu của mọi người.
 
-## 目的
+## Mục tiêu
 
-エージェントにとって見えない知識を codebase 内で発見可能にし、新しいセッションが過去の会話に頼らずにその知識をもとに動けるようにします。
+Làm cho kiến thức ẩn với agent có thể khám phá được trong codebase để một phiên mới có thể hành động dựa trên nó mà không cần dựa vào hội thoại trước.
 
-## トリガーとなる兆候
+## Tín hiệu Kích hoạt
 
-- エージェントがシステムの動作について何度も質問してくる。
-- 人が「これは Slack で決めた」「先週 X が言った通りにやって」と言う。
-- review で、repo に書かれていない製品ルールやセキュリティ規則が参照される。
-- 新しいセッションが、本来は解決済みであるはずの調査作業を繰り返している。
+- Agent tiếp tục hỏi cách hệ thống hoạt động.
+- Con người nói "chúng tôi đã quyết định điều này trong Slack" hoặc "làm theo những gì X nói tuần trước."
+- Các review tham chiếu đến các quy tắc sản phẩm hoặc bảo mật không được viết trong repo.
+- Các phiên mới lặp lại công việc khám phá đáng lẽ đã được giải quyết.
 
-## SOP の実行
+## SOP Thực thi
 
-1. 眠っている知識の出どころを列挙します。対象は、資料、チャット、暗黙のチーム規則、口頭での決定です。
-2. それぞれについて、次のどれに当たるかを確認します。アーキテクチャ、製品の挙動、セキュリティポリシー、信頼性の期待、計画の文脈、参照資料。
-3. 適切な repo artifact に書き込みます。
-   - アーキテクチャ -> `ARCHITECTURE.md`
-   - 製品の挙動 -> `docs/product-specs/`
-   - 設計上の判断理由 -> `docs/design-docs/`
-   - 実行状況 -> `docs/exec-plans/`
-   - 繰り返し参照される外部資料 -> `docs/references/`
-   - 品質または信頼性の期待 -> `docs/QUALITY_SCORE.md` または `docs/RELIABILITY.md`
-4. あいまいな表現は、運用上役に立つ表現に置き換えます。
-5. 古くなった複製は削除するか使わないようにして、repo に発見可能な単一の真実を保ちます。
+1. Liệt kê các nguồn kiến thức ẩn: tài liệu, chat, quy tắc team mặc nhiên, quyết định bằng miệng.
+2. Cho mỗi nguồn, hỏi: đây là kiến trúc, hành vi sản phẩm, chính sách bảo mật, kỳ vọng độ tin cậy, ngữ cảnh kế hoạch hay tài liệu tham khảo?
+3. Mã hóa nó vào artifact repo phù hợp:
+   - kiến trúc -> `ARCHITECTURE.md`
+   - hành vi sản phẩm -> `docs/product-specs/`
+   - lý luận thiết kế -> `docs/design-docs/`
+   - trạng thái thực thi -> `docs/exec-plans/`
+   - tài liệu tham khảo bên ngoài lặp đi lặp lại -> `docs/references/`
+   - kỳ vọng chất lượng hoặc độ tin cậy -> `docs/QUALITY_SCORE.md` hoặc `docs/RELIABILITY.md`
+4. Thay thế các phát biểu mơ hồ bằng cách diễn đạt hữu ích về mặt vận hành.
+5. Xóa hoặc không dùng các bản sao lỗi thời để repo giữ một sự thật có thể khám phá.
 
-## 良い組み込みの原則
+## Quy tắc Mã hóa Tốt
 
-- 可読性の高い文学的な完成度ではなく、発見しやすさを重視して書きます。
-- 短く、ファイル名が明確な文書を優先します。
-- 関連する artifact は相互にリンクします。
-- 会議の記録ではなく、長く有効なルールを残します。
-- 決定したそのセッション内で repo を更新します。
+- Viết cho khả năng khám phá, không phải cho sự hoàn chỉnh về văn học.
+- Ưu tiên các tài liệu ngắn với tên tệp rõ ràng.
+- Liên kết các artifact liên quan với nhau.
+- Lưu trữ các quy tắc lâu bền, không phải bản ghi cuộc họp.
+- Cập nhật repo trong cùng phiên mà quyết định được đưa ra.
 
-## 完了条件
+## Định nghĩa Hoàn thành
 
-- 新しい agent が、人に聞かずに関連ルールを見つけられる。
-- 同じ事実が、矛盾する複数のファイルに分散していない。
-- 新しい artifact が、調整対象の code や workflow の近くに置かれている。
+- Một agent mới có thể khám phá quy tắc liên quan mà không cần hỏi con người.
+- Cùng một sự thật không bị phân tán qua nhiều tệp mâu thuẫn.
+- Artifact mới nằm gần mã hoặc workflow mà nó điều chỉnh.

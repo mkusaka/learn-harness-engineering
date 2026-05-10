@@ -1,39 +1,39 @@
 # QUALITY_SCORE.md
 
-このドキュメントは、リポジトリが時間の経過とともに改善しているか、劣化しているかを追跡します。
+Tài liệu này theo dõi liệu kho lưu trữ có đang trở nên mạnh hơn hay yếu hơn theo thời gian.
 
-## スコア基準
+## Thang điểm
 
-- `A`: 検証済み、可読、安定しており、境界が強制されている
-- `B`: 小さな欠落はあるが機能している
-- `C`: 部分的にしか機能せず、混乱がある、またはかなり不安定
-- `D`: 壊れている、安全でない、または構造が不明確
+- `A`: đã xác minh, có thể đọc được, ổn định, ranh giới được thực thi
+- `B`: hoạt động với các khoảng trống nhỏ
+- `C`: hoạt động một phần, nhầm lẫn hoặc không ổn định đáng kể
+- `D`: bị hỏng, không an toàn, hoặc cấu trúc không rõ ràng
 
-## プロダクトドメイン
+## Domain Sản phẩm
 
-| ドメイン | スコア | 検証 | Agent の可読性 | テストの安定性 | 主なギャップ | 最終更新 |
+| Domain | Điểm | Xác minh | Khả năng đọc của Agent | Độ ổn định Test | Khoảng trống chính | Cập nhật lần cuối |
 |--------|-------|-------------|-----------------|---------------|----------|-------------|
 | `[domain-a]` | - | - | - | - | - | - |
 | `[domain-b]` | - | - | - | - | - | - |
 | `[domain-c]` | - | - | - | - | - | - |
 
-## アーキテクチャ層
+## Lớp Kiến trúc
 
-| 層 | スコア | 境界の実装 | Agent の可読性 | 主なギャップ | 最終更新 |
+| Lớp | Điểm | Thực thi Ranh giới | Khả năng đọc của Agent | Khoảng trống chính | Cập nhật lần cuối |
 |-------|-------|---------------------|-----------------|----------|-------------|
-| 型 | - | - | - | - | - |
-| サービス | - | - | - | - | - |
-| ランタイム | - | - | - | - | - |
+| Types | - | - | - | - | - |
+| Services | - | - | - | - | - |
+| Runtime | - | - | - | - | - |
 | UI | - | - | - | - | - |
 
-## スナップショット ベンチマーク
+## Snapshot Benchmark
 
-| 日付 | Harness のバリアント | 完了率 | 再試行 | レビュー前のエラー | 備考 |
+| Ngày | Biến thể Harness | Tỷ lệ Hoàn thành | Thử lại | Lỗi trước Review | Ghi chú |
 |------|-----------------|----------------|--------|-----------------------|---------|
 | YYYY-MM-DD | `[baseline / improved / simplified]` | - | - | - | - |
 
-## 単純化ログ
+## Nhật ký Đơn giản hóa
 
-| 日付 | 削除したコンポーネント | 結果 | 判断 |
+| Ngày | Thành phần Đã xóa | Kết quả | Quyết định |
 |------|-------------------|---------|------------|
-| YYYY-MM-DD | `[コンポーネント]` | `[低下 / 変化なし]` | `[復元 / 削除したまま維持]` |
+| YYYY-MM-DD | `[thành phần]` | `[giảm sút / không thay đổi]` | `[khôi phục / giữ đã xóa]` |

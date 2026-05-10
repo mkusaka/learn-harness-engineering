@@ -1,35 +1,35 @@
-# 進捗記録
+# Nhật ký Tiến độ
 
-## 現在の検証済み状態
+## Trạng thái Đã xác minh Hiện tại
 
-- リポジトリのルート:
-- 標準の起動パス:
-- 標準の検証パス:
-- 現在最優先の未完了機能:
-- 現在のブロッカー:
+- Thư mục gốc kho lưu trữ:
+- Đường dẫn khởi động chuẩn:
+- Đường dẫn xác minh chuẩn:
+- Tính năng chưa hoàn thành có mức ưu tiên cao nhất hiện tại:
+- Sự cố chặn hiện tại:
 
-## セッション記録
+## Nhật ký Phiên
 
-### セッション 001
+### Phiên 001
 
-- 日付:
-- 目的:
-- 完了した内容:
-- 実行した検証:
-- 記録した証跡:
+- Ngày:
+- Mục tiêu:
+- Đã hoàn thành:
+- Xác minh đã chạy:
+- Bằng chứng đã ghi lại:
 - Commit:
-- 更新したファイルまたは artifact:
-- 判明しているリスクまたは未解決の問題:
-- 次の最適な一手:
+- Tệp hoặc artifact đã cập nhật:
+- Rủi ro đã biết hoặc vấn đề chưa được giải quyết:
+- Bước tốt nhất tiếp theo:
 
-### セッション 002
+### Phiên 002
 
-- 日付:
-- 目的:
-- 完了した内容:
-- 実行した検証:
-- 記録した証跡:
+- Ngày:
+- Mục tiêu:
+- Đã hoàn thành:
+- Xác minh đã chạy:
+- Bằng chứng đã ghi lại:
 - Commit:
-- 更新したファイルまたは artifact:
-- 判明しているリスクまたは未解決の問題:
-- 次の最適な一手:
+- Tệp hoặc artifact đã cập nhật:
+- Rủi ro đã biết hoặc vấn đề chưa được giải quyết:
+- Bước tốt nhất tiếp theo:

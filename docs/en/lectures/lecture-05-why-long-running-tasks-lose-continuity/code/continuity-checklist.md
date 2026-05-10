@@ -1,6 +1,6 @@
-# 継続性チェックリスト
+# Continuity Checklist
 
-- 新しく入ったエージェントが、5分以内に直近の作業を把握できるか？
-- 現在の安定した起動手順が文書化されているか？
-- 未完了の作業が明確に示されているか？
-- 古いチャットログを読まなくても、次にやるべき最適な作業が見えるか？
+- Can a fresh agent identify recent work in under five minutes?
+- Is the current stable startup path documented?
+- Is unfinished work clearly identified?
+- Is the next best task visible without reading old chat logs?

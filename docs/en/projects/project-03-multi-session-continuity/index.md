@@ -1,22 +1,22 @@
-[中国語版 →](../../../zh/projects/project-03-multi-session-continuity/)
+[中文版本 →](../../../zh/projects/project-03-multi-session-continuity/)
 
-> 関連講義: [Lecture 05. Keep context alive across sessions](./../../lectures/lecture-05-why-long-running-tasks-lose-continuity/index.md) · [Lecture 06. Initialize before every agent session](./../../lectures/lecture-06-why-initialization-needs-its-own-phase/index.md)
-> テンプレートファイル: [templates/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/en/resources/templates/)
+> Related lectures: [Lecture 05. Keep context alive across sessions](./../../lectures/lecture-05-why-long-running-tasks-lose-continuity/index.md) · [Lecture 06. Initialize before every agent session](./../../lectures/lecture-06-why-initialization-needs-its-own-phase/index.md)
+> Template files: [templates/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/en/resources/templates/)
 
-# Project 03. セッション再起動をまたいでエージェントを継続稼働させる
+# Project 03. Keep the Agent Working Across Session Restarts
 
-## 実施内容
+## What You Do
 
-エージェントにスコープ制御と検証ゲートを追加します。ドキュメントのチャンク分割、メタデータ抽出、インデックス作成の進捗表示、引用ベースの Q&A フローを実装してください。`feature_list.json` を使って機能の状態を管理し、1つずつ進めます。検証の証拠がないまま "pass" にしないでください。
+Add scope control and verification gates to the agent. Implement document chunking, metadata extraction, indexing progress display, and citation-based Q&A flow. Use `feature_list.json` to track feature status — one feature at a time, no marking as "pass" without verification evidence.
 
-2回実行します。1回目は制約を課さず、2回目は厳格に適用します。
+You run it twice: first without constraints, second with strict enforcement.
 
-## ツール
+## Tools
 
 - Claude Code or Codex
 - Git
 - Node.js + Electron
 
-## ハーネスの仕組み
+## Harness Mechanism
 
-進捗ログ + セッション引き継ぎ + マルチセッション継続
+Progress log + session handoff + multi-session continuity

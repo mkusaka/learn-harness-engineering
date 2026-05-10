@@ -1,8 +1,8 @@
-# レクチャー 11 のコード
+# Mã cho Bài 11
 
-このディレクトリは、次の例に使ってください。
+Sử dụng thư mục này cho các ví dụ về:
 
-- planner の出力
-- evaluator の rubric
-- generator/evaluator のループ
-- single-agent と multi-role の比較
+- kết quả đầu ra của planner
+- rubric của evaluator
+- các vòng lặp generator/evaluator
+- so sánh single-agent vs multi-role

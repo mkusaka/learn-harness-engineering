@@ -1,81 +1,81 @@
-# 製品説明 -- ナレッジベース
+# Product Description -- Knowledge Base
 
-## これは何？
+## What Is This?
 
-個人用ナレッジベースを管理するデスクトップアプリケーションです。ユーザーはファイルピッカーからテキストや Markdown ドキュメントを取り込み、システムがメタデータを抽出して検索可能なチャンクにインデックス化します。さらに、質問応答インターフェースが、引用と信頼度スコア付きの根拠ある回答を提供します。
+A desktop application for managing a personal knowledge base. Users import text and Markdown documents via a file picker, the system extracts metadata and indexes them into searchable chunks, and a question-answering interface provides grounded answers with citations and confidence scores.
 
-## 主要機能
+## Core Features
 
-### ドキュメント管理
-- ImportPanel のファイルピッカーから `.txt` と `.md` ファイルを取り込みます。
-- ドキュメントのメタデータを表示します: title, filename, size, import date, word count, line count, file type, paragraph count。
-- スクロール可能なテキストビューアーでドキュメント全体の内容を表示します。
-- サイドバーパネルで、取り込んだすべてのドキュメントの一覧を参照します。
-- ドキュメントとそれに関連するデータ（content file, original copy, chunks）を削除します。
+### Document Management
+- Import `.txt` and `.md` files through a file picker in the ImportPanel.
+- View document metadata: title, filename, size, import date, word count, line count, file type, paragraph count.
+- View full document content in a scrollable text viewer.
+- Browse a list of all imported documents in a sidebar panel.
+- Delete documents and their associated data (content file, original copy, chunks).
 
-### メタデータ抽出
-- 取り込み時に、ドキュメントの内容から以下のメタデータを自動的に抽出します:
+### Metadata Extraction
+- On import, automatically extract metadata from document content:
   - Word count
   - Line count
   - File type (txt or md)
   - Paragraph count
   - Character count
-- メタデータは、他のドキュメントプロパティとともに DocumentDetail パネルに表示されます。
+- Metadata displayed in DocumentDetail panel alongside other document properties.
 
-### テキストインデックス化
-- ドキュメントを段落境界で約 500 文字ごとのチャンクに分割します。
-- チャンクをメタデータ（character count, word count）とともに保存します。
-- ドキュメント単位と全体のインデックス状態を追跡します。
-- 個別ドキュメントまたはライブラリ全体のインデックス化をサポートします。
-- インデックス済みドキュメント数と総チャンク数は StatusBar で確認できます。
+### Text Indexing
+- Split documents into ~500-character chunks at paragraph boundaries.
+- Store chunks with metadata (character count, word count).
+- Track indexing status per document and overall.
+- Support indexing individual documents or the full library.
+- Indexed document count and total chunk count visible in StatusBar.
 
-### 根拠付き Q&A
-- ドキュメントライブラリについて自然言語で質問できます。
-- 特定のドキュメントチャンクを指す引用付きで回答を受け取れます。
-- 引用にはドキュメントの title, chunk index, text excerpt が含まれます。
-- 信頼度スコアで回答の信頼性を示します（引用ありは 0.85、引用なしは 0.30）。
-- 根拠が十分な回答と推測的な回答を視覚的に区別します。
-- Q&A の履歴全体はセッションをまたいで保持されます。
+### Grounded Q&A
+- Ask natural language questions about the document library.
+- Receive answers with citations pointing to specific document chunks.
+- Citations include document title, chunk index, and text excerpt.
+- Confidence scores indicate answer reliability (0.85 with citations, 0.30 without).
+- Visual distinction between well-grounded and speculative answers.
+- Full Q&A history is persisted across sessions.
 
-### 永続化
-- 取り込んだすべてのドキュメントはアプリケーションの再起動後も保持されます。
-- ドキュメント一覧はアプリケーション起動時に自動的に読み込まれます。
-- データはユーザーのアプリケーションデータディレクトリにローカル保存されます。
+### Persistence
+- All imported documents persist across application restarts.
+- Document list loads automatically on application startup.
+- Data stored locally in the user's application data directory.
 
-### ステータスバー
-- インデックス状態（idle, indexing, ready, error）をリアルタイムで表示します。
-- 色分けされたステータスインジケーター: gray (idle), yellow (indexing), green (ready), red (error)。
-- ドキュメント数、インデックス済みドキュメント数、総チャンク数を表示します。
-- 最終アクティビティのタイムスタンプを表示します。
+### Status Bar
+- Real-time display of index status (idle, indexing, ready, error).
+- Color-coded status indicator: gray (idle), yellow (indexing), green (ready), red (error).
+- Document count, indexed document count, and total chunk count.
+- Last activity timestamp.
 
-## ユーザーインターフェース
+## User Interface
 
 ```
 +------------------+----------------------------------------+
-| ヘッダー         |                                Refresh |
+| Header           |                                Refresh |
 +------------------+----------------------------------------+
-| ドキュメント一覧 | ImportPanel / Document Detail          |
-| (sidebar)        |   - メタデータセクション               |
-|                  |   - View Content ボタン                |
-| [+ Import]       |   - Show Chunks トグル                 |
-|                  |   - Index Document ボタン              |
-|                  |   - Delete ボタン                      |
+| Document List    | ImportPanel / Document Detail          |
+| (sidebar)        |   - Metadata section                   |
+|                  |   - View Content button                |
+| [+ Import]       |   - Show Chunks toggle                 |
+|                  |   - Index Document button              |
+|                  |   - Delete button                      |
 |                  |                                        |
 |                  | Q&A Response                           |
-|                  |   - 回答テキスト                       |
-|                  |   - 引用と抜粋                         |
-|                  |   - 信頼度インジケーター               |
+|                  |   - Answer text                        |
+|                  |   - Citations with excerpts            |
+|                  |   - Confidence indicator               |
 +------------------+----------------------------------------+
-| 質問入力                                 [Ask]            |
+| Question Input                              [Ask]         |
 +-----------------------------------------------------------+
 | Status: ready | Docs: 3 | Indexed: 3 | Chunks: 12        |
 +-----------------------------------------------------------+
 ```
 
-## 制約
+## Constraints
 
-- サポートされる最大ファイルサイズは 10 MB です。
-- 対応形式は `.txt`、`.md` です。
-- Q&A はキーワードベースの取得を使ったモックパターンで、このバージョンでは LLM 連携はありません。
-- すべてのデータはローカルに保存され、ネットワークリクエストは行いません。
-- チャンク分割は同期的かつブロッキングです（10 MB 未満のドキュメントに適しています）。
+- Maximum supported file size: 10 MB.
+- Supported formats: `.txt`, `.md`.
+- Q&A uses mock patterns with keyword-based retrieval -- no LLM integration in this version.
+- All data is local; no network requests.
+- Chunking is synchronous and blocking (suitable for documents under 10 MB).

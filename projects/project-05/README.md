@@ -1,37 +1,37 @@
-# Project 05: Evaluator Loops と 3 役への拡張
+# Project 05: Evaluator Loops and Three-Role Upgrades
 
-役割分担（単一ロール、generator と evaluator、planner と generator と evaluator）によって実装品質がどう変わるかを測ります。
+Measure how role separation (single role, generator plus evaluator, planner plus generator plus evaluator) changes implementation quality.
 
-## ディレクトリ案内
+## Directory Guide
 
-| ディレクトリ | 意味 |
+| Directory | Meaning |
 |------|------|
-| `starter/` | **開始地点**: P4 のソリューションをベースにしており、マルチターン QA 履歴はまだ実装が必要です。 |
-| `solution/single-role/` | **Variant A**: 1 つの agent がすべての作業（計画、実装、自己レビュー）を担当します。基準となる品質です。 |
-| `solution/gen-eval/` | **Variant B**: generator と evaluator のパターンです。修正の証跡があり、より高い品質になります。 |
-| `solution/plan-gen-eval/` | **Variant C**: planner と generator と evaluator の構成です。スプリント契約と採点基準があり、最も高い品質になります。 |
+| `starter/` | **Starting point**: based on the P4 solution, with multi-turn QA history still to implement. |
+| `solution/single-role/` | **Variant A**: one agent does all work (planning, implementation, and self-review). Baseline quality. |
+| `solution/gen-eval/` | **Variant B**: generator plus evaluator pattern. Higher quality, with revision evidence. |
+| `solution/plan-gen-eval/` | **Variant C**: planner plus generator plus evaluator. Highest quality, with a sprint contract and scoring criteria. |
 
-## 使い方
+## How to Use
 
 ```sh
-# 3 つの variant をそれぞれ独立して実行します
+# Run each of the three variants independently
 cd solution/single-role && npm install  # single-role mode
 cd solution/gen-eval && npm install     # generator plus evaluator mode
 cd solution/plan-gen-eval && npm install # full three-role mode
 
-# 3 つの variant を比較します:
-# - コード品質（evaluator-rubric.md のスコア）
-# - 見つかった欠陥の数
-# - 必要になった手戻りの量
+# Compare the three variants:
+# - Code quality (evaluator-rubric.md score)
+# - Number of defects found
+# - Amount of rework required
 ```
 
-## 対応機能
+## Features Covered
 
-- マルチターン QA 履歴（会話型 UI）
-- スプリント契約
-- evaluator rubric の調整
+- Multi-turn QA history (conversational UI)
+- Sprint contract
+- Evaluator rubric tuning
 
-## 関連講義
+## Related Lectures
 
 - [Lecture 09: Why Agents Declare Victory Too Early](../../docs/en/lectures/lecture-09-why-agents-declare-victory-too-early/index.md)
 - [Lecture 10: Why End-to-End Testing Changes Results](../../docs/en/lectures/lecture-10-why-end-to-end-testing-changes-results/index.md)

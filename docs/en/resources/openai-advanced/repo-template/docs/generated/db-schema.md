@@ -1,13 +1,14 @@
-# データベーススキーマ
+# Database Schema
 
-このフォルダには、エージェントがコードを逆解析しなくても確認できる、生成物または派生物を置いてください。
+Use this folder for generated or derived artifacts that agents should be able
+to inspect without reverse-engineering them from code.
 
-## ソース
+## Source
 
 - Generated from: `[command or source path]`
-- 最終更新: `YYYY-MM-DD`
+- Last refreshed: `YYYY-MM-DD`
 
-## 注意
+## Notes
 
-- 生成された部分は手で編集しないでください。
-- 基本となるスキーマが変更されたら、このファイルを再生成してください。
+- Do not hand-edit generated sections.
+- Regenerate this file when the underlying schema changes.

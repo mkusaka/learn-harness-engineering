@@ -1,98 +1,98 @@
-[英語版 →](../../../en/lectures/lecture-02-what-a-harness-actually-is/) | [中国語版 →](../../../zh/lectures/lecture-02-what-a-harness-actually-is/)
+[English Version →](../../../en/lectures/lecture-02-what-a-harness-actually-is/) | [中文版本 →](../../../zh/lectures/lecture-02-what-a-harness-actually-is/)
 
-> ソースコードの例: [code/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/vi/lectures/lecture-02-what-a-harness-actually-is/code/)
-> 実践プロジェクト: [プロジェクト 01. プロンプトのみ vs. ルール優先の最小 Harness](./../../projects/project-01-baseline-vs-minimal-harness/index.md)
+> Ví dụ mã nguồn: [code/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/vi/lectures/lecture-02-what-a-harness-actually-is/code/)
+> Dự án thực hành: [Dự án 01. Chỉ Prompt vs. Ưu tiên Quy tắc](./../../projects/project-01-baseline-vs-minimal-harness/index.md)
 
-# 講義 02. Harness とは実際には何か
+# Bài 02. Harness Thực sự Có nghĩa là Gì
 
-AI coding agent の世界では「harness」という言葉が何度も出てきますが、率直に言うと、多くの人は harness と言いながら「prompt ファイル」を指しています。ですが、それは harness ではありません。たとえば、厨房も調理器具もレシピも配膳手順もないまま、材料だけでレストランを開こうとするようなものです。それはレストランではありません。単なる冷蔵庫です。
+Từ "harness" được nhắc đến rất nhiều trong giới AI coding agent, nhưng thành thật mà nói, hầu hết mọi người đều có nghĩa là "một tệp prompt" khi họ nói harness. Đó không phải là harness. Giống như mở nhà hàng chỉ với nguyên liệu — không có bếp, không có dao, không có công thức, không có quy trình trình bày món ăn. Đó không phải là nhà hàng. Đó là tủ lạnh.
 
-この講義では、実践的で正確な harness の定義を示します。学術的な抽象論ではなく、今日から使える枠組みです。harness は 5 つのサブシステムで構成され、それぞれに明確な責任と評価基準があります。
+Bài giảng này cho bạn một định nghĩa harness chính xác, có thể hành động được. Không phải sự trừu tượng học thuật, mà là một khung bạn có thể sử dụng ngay hôm nay: một harness bao gồm năm hệ thống phụ, mỗi hệ thống có trách nhiệm và tiêu chí đánh giá rõ ràng.
 
-## まずはたとえ話から
+## Bắt đầu Bằng một Phép loại suy
 
-あなたが新しく採用されたエンジニアだと想像してください。ドキュメントのないプロジェクトに放り込まれたとします。README はなく、コードにはコメントもなく、テストの実行方法も誰も教えてくれない。CI の設定はどこかに埋もれています。そんな状況でも、良いコードは書けるでしょうか。おそらく、十分に賢くて忍耐強ければ可能です。しかし実際には、「このプロジェクトは何をしているのか」を理解するために多くの時間を使うことになり、「問題を解決する」ために使える時間は減ってしまいます。
+Hãy tưởng tượng bạn là một kỹ sư mới được tuyển, được thả vào một dự án không có tài liệu. Không có README, không có chú thích trong mã, không ai cho bạn biết cách chạy test, cấu hình CI bị chôn vùi đâu đó. Bạn có thể viết mã tốt không? Có thể — nếu bạn đủ thông minh và kiên nhẫn. Nhưng bạn sẽ dành rất nhiều thời gian để "tìm hiểu dự án này là về cái gì" thay vì "giải quyết vấn đề."
 
-AI agent も、まさに同じ状況に置かれます。しかも、さらに厳しいです。少なくとも人間なら同僚に聞けますが、agent が見られるのは、目の前にあるファイルと、自分で実行できるコマンドだけです。「このプロジェクトの ORM は何を使っているんですか？」と誰かの肩を叩いて聞くことはできません。
+Một AI agent đối mặt với chính xác tình huống tương tự. Và còn tệ hơn — ít nhất bạn có thể hỏi đồng nghiệp. Agent chỉ có thể nhìn thấy các tệp bạn đặt trước mặt nó và các lệnh nó có thể thực thi. Nó không thể vỗ vai ai đó và hỏi "này, phiên bản ORM nào dự án này sử dụng vậy?"
 
-OpenAI は核心原則を「repo が spec である」と表現しています。つまり、必要な文脈はすべてリポジトリの中にあり、構造化された指示ファイル、明確な検証コマンド、整理されたディレクトリ構成を通じて伝えるべきだということです。Anthropic の長時間稼働する agent に関する資料でも、状態の継続性、明確な復帰経路、構造化された進捗追跡が強調されています。両社は異なる観点から語っていますが、言っていることは同じです。**モデルの外側にある技術的な基盤が、そのモデルの能力をどれだけ実際に引き出せるかを決める**のです。
+OpenAI đóng khung nguyên tắc cốt lõi là "repo LÀ spec" — tất cả ngữ cảnh cần thiết phải có trong kho lưu trữ, được truyền qua các tệp hướng dẫn có cấu trúc, lệnh xác minh rõ ràng và tổ chức thư mục rõ ràng. Tài liệu về agent chạy lâu của Anthropic nhấn mạnh tính liên tục của trạng thái, các đường phục hồi rõ ràng và theo dõi tiến độ có cấu trúc. Hai công ty tập trung vào các khía cạnh khác nhau, nhưng họ đang nói cùng một điều: **tất cả mọi thứ trong cơ sở hạ tầng kỹ thuật bên ngoài mô hình xác định mức độ năng lực của mô hình thực sự được hiện thực hóa bao nhiêu.**
 
-すでに知っているいくつかのツールを見てみましょう。
+Nhìn vào một số công cụ bạn đã biết:
 
-**Claude Code** は harness 的な考え方を体現しています。リポジトリから `CLAUDE.md` を読み込み（レシピ棚）、shell コマンドを実行でき（包丁置き場）、ローカル環境で動作し（厨房）、セッション履歴を保持し（仕込み台）、テストを実行して結果を確認できます（品質確認の窓口）。しかし、テストの実行方法を教えなければ、その品質確認の窓口は機能しません。料理が本当に火が通っているか、誰にも分からないからです。
+**Claude Code** thể hiện tư duy harness. Nó đọc `CLAUDE.md` từ repo của bạn (kệ công thức), có thể chạy lệnh shell (giá dao), thực thi trong môi trường cục bộ của bạn (bếp), duy trì lịch sử phiên (bàn chuẩn bị), và có thể chạy test và xem kết quả (cửa sổ kiểm tra chất lượng). Nhưng nếu bạn không nói cho nó biết cách chạy test, cửa sổ kiểm tra chất lượng bị hỏng — không ai biết liệu món ăn đã chín chưa.
 
-**Cursor** も同じ論理で動いています。`.cursorrules` はレシピ棚、terminal は包丁置き場であり、プロジェクト構造や lint 設定を厨房として読み取ります。ただし Cursor の状態管理は比較的弱く、IDE を閉じて開き直すと、それ以前の文脈は消えてしまいます。
+**Cursor** theo logic tương tự. Tệp `.cursorrules` của nó là kệ công thức, terminal là giá dao, nó đọc cấu trúc dự án và cấu hình lint cho bếp. Nhưng quản lý trạng thái của Cursor tương đối yếu — đóng IDE và mở lại, ngữ cảnh trước đó biến mất.
 
-**Codex**（OpenAI の coding agent）は、各タスクの runtime を隔離するために git worktrees を使い、さらにローカルの可観測性スタック（logs、metrics、traces）と組み合わせることで、各変更を独立した環境で検証します。`AGENTS.md` と明確な検証コマンドがある repo では、何も整備されていない repo よりもずっとよく動きます。
+**Codex** (coding agent của OpenAI) sử dụng git worktrees để cô lập môi trường runtime của mỗi tác vụ, kết hợp với ngăn xếp quan sát cục bộ (logs, metrics, traces), vì vậy mỗi thay đổi được xác minh trong môi trường độc lập. Trong các repo có `AGENTS.md` và lệnh xác minh rõ ràng, nó hoạt động tốt hơn nhiều so với các repo "trần trụi".
 
-**AutoGPT** は警告例です。構造化された状態管理がないため、長いタスクでは文脈が蓄積し続け、正確なフィードバック機構がないために agent がループに陥ります。多くの人は AutoGPT が「動かない」と言いますが、実際には AutoGPT の harness が動いていないのです。壊れたコンロを渡されては、どれほど良い材料があっても料理はできません。
+**AutoGPT** là câu chuyện cảnh báo — thiếu quản lý trạng thái có cấu trúc dẫn đến tích lũy ngữ cảnh trong các tác vụ dài, và thiếu cơ chế phản hồi chính xác khiến agent lặp vòng. Nhiều người nói AutoGPT "không hoạt động," nhưng thực ra là harness của AutoGPT không hoạt động — đưa cho đầu bếp một cái bếp hỏng và ngay cả nguyên liệu tốt nhất cũng không tạo ra bữa ăn.
 
-## コア概念
+## Các Khái niệm Cốt lõi
 
-- **Harness とは何か**: モデルの重みの外側にある技術的基盤すべてです。OpenAI は、エンジニアリングの中核業務を「環境設計」「意図の表現」「フィードバックループの構築」の 3 つに要約しています。Anthropic は Claude Agent SDK を「汎用 agent harness」と呼んでいます。
-- **Repo が唯一の正本**: agent が見えないものは、実務上は存在しないのと同じです。OpenAI は repo を「記録システム」とみなし、必要な文脈はすべて、構造化されたファイルと明確なディレクトリ構成の中に置くべきだとしています。
-- **百科事典ではなく地図を渡す**: OpenAI の経験では、`AGENTS.md` はディレクトリ一覧であるべきで、百科事典であってはなりません。100 行程度で十分です。収まらない内容は `docs/` に分け、agent が必要に応じて読むようにします。
-- **マイクロマネジメントではなく制約を与える**: 良い harness は、agent を細かく逐一指示するのではなく、実行可能なルールで縛ります。OpenAI は「実装をマイクロマネジメントするのではなく、不変条件を強制せよ」と述べています。Anthropic は、agent が自分の仕事を自信満々に褒めてしまうことを見つけ、その解決策として「作業者」と「検査者」を分けています。
-- **1 つずつ削る**: 各 harness 要素の価値を定量化するには、それらを 1 つずつ取り除き、どれを消すと性能が最も下がるかを見ます。Anthropic はこの手法を使い、モデルが強くなるにつれて不要になる要素もある一方で、新しい要素が常に必要になることを発見しました。
+- **Harness là gì**: Mọi thứ trong cơ sở hạ tầng kỹ thuật bên ngoài trọng số mô hình. OpenAI chắt lọc công việc cốt lõi của kỹ sư thành ba thứ: thiết kế môi trường, diễn đạt ý định, và xây dựng vòng phản hồi. Anthropic gọi Claude Agent SDK của họ là "harness agent đa năng."
+- **Repo là nguồn sự thật duy nhất**: Bất cứ thứ gì agent không thể nhìn thấy, theo mọi nghĩa thực tế, không tồn tại. OpenAI coi repo là "hệ thống ghi chép" — tất cả ngữ cảnh cần thiết phải sống ở đó, qua các tệp có cấu trúc và tổ chức thư mục rõ ràng.
+- **Đưa bản đồ, không phải cẩm nang**: Kinh nghiệm của OpenAI — `AGENTS.md` nên là một trang thư mục, không phải bách khoa toàn thư. Khoảng 100 dòng là đủ. Nếu không vừa, chia vào thư mục `docs/` và để agent đọc theo yêu cầu.
+- **Ràng buộc, không vi quản lý**: Một harness tốt sử dụng các quy tắc có thể thực thi để ràng buộc agent, thay vì liệt kê hướng dẫn từng cái một. OpenAI nói "thực thi các bất biến, không vi quản lý triển khai"; Anthropic phát hiện rằng các agent tự tin khen ngợi công việc của chính mình, và giải pháp là tách "người làm việc" khỏi "người kiểm tra công việc."
+- **Xóa từng thành phần một**: Để định lượng giá trị của từng thành phần harness, hãy xóa chúng từng cái một và xem cái nào bị xóa gây ra giảm hiệu suất lớn nhất. Anthropic đã sử dụng phương pháp này và phát hiện ra rằng khi các mô hình trở nên mạnh hơn, một số thành phần không còn quan trọng — nhưng các thành phần mới luôn xuất hiện.
 
-## 5 サブシステムの Harness モデル
+## Mô hình Harness Năm Hệ thống Phụ
 
-厨房のたとえに戻りましょう。完全な厨房には 5 つの機能エリアがあり、harness にも 5 つのサブシステムがあります。
+Trở lại phép loại suy nhà bếp. Một nhà bếp hoàn chỉnh có năm khu vực chức năng, và một harness có năm hệ thống phụ:
 
 ```mermaid
 flowchart LR
-    Rules["プロジェクト規則<br/>AGENTS.md / CLAUDE.md"] --> Agent["AI Agent"]
-    State["進捗と git<br/>PROGRESS.md / commits"] --> Agent
-    Agent --> Tools["ツール<br/>shell / files / tests"]
+    Rules["Quy tắc dự án<br/>AGENTS.md / CLAUDE.md"] --> Agent["AI Agent"]
+    State["Tiến độ và git<br/>PROGRESS.md / commits"] --> Agent
+    Agent --> Tools["Công cụ<br/>shell / files / tests"]
     Tools --> Env["Runtime<br/>deps / services / versions"]
-    Env --> Checks["検証結果<br/>test / lint / build"]
+    Env --> Checks["Kết quả kiểm tra<br/>test / lint / build"]
     Checks --> Agent
 ```
 
-**指示サブシステム（レシピ棚）**: プロジェクトの概要と目的（1 文）、技術スタックとそのバージョン（Python 3.11、FastAPI 0.100+、PostgreSQL 15 など）、最初に実行するコマンド（`make setup`、`make test`）、譲れない厳格な制約（「すべての API は OAuth 2.0 を使うこと」）、さらに詳しい文書へのリンクを含む `AGENTS.md`（または `CLAUDE.md`）を作成します。
+**Hệ thống phụ Hướng dẫn (kệ công thức)**: Tạo `AGENTS.md` (hoặc `CLAUDE.md`) chứa tổng quan và mục đích dự án (một câu), tech stack và phiên bản (Python 3.11, FastAPI 0.100+, PostgreSQL 15), lệnh chạy đầu tiên (`make setup`, `make test`), các ràng buộc cứng không thể thương lượng ("Tất cả API phải sử dụng OAuth 2.0"), và các liên kết đến tài liệu chi tiết hơn.
 
-**ツールサブシステム（包丁置き場）**: agent が十分なツールアクセスを持てるようにします。「安全だから」という理由で shell を無効化してはいけません。`pip install` すら実行できないなら、どうやって作業するのでしょうか。ただし、すべてを開放するのも違います。最小権限の原則に従ってください。
+**Hệ thống phụ Công cụ (giá dao)**: Đảm bảo agent có đủ quyền truy cập công cụ. Đừng vô hiệu hóa shell vì "bảo mật" — nếu agent thậm chí không thể chạy `pip install`, làm sao nó được cho là hoạt động? Nhưng cũng đừng mở tất cả — tuân theo nguyên tắc ít đặc quyền nhất.
 
-**環境サブシステム（厨房）**: 環境状態を自己記述的にします。依存関係は `pyproject.toml` や `package.json` で固定し、実行環境のバージョンは `.nvmrc` や `.python-version` で管理し、Docker や devcontainer で再現性を確保します。
+**Hệ thống phụ Môi trường (bếp)**: Làm cho trạng thái môi trường tự mô tả. Sử dụng `pyproject.toml` hoặc `package.json` để khóa dependencies, `.nvmrc` hoặc `.python-version` cho các phiên bản runtime, Docker hoặc devcontainers để tái tạo.
 
-**状態サブシステム（仕込み台）**: 長いタスクには進捗追跡が必要です。`PROGRESS.md` のような簡単なファイルを用意し、完了したこと、進行中のこと、ブロックされていることを書きます。各セッションが終わる前に更新し、次のセッションが始まったら読み込みます。
+**Hệ thống phụ Trạng thái (bàn chuẩn bị)**: Các tác vụ dài cần theo dõi tiến độ. Sử dụng tệp `PROGRESS.md` đơn giản ghi lại: những gì đã xong, những gì đang tiến hành, những gì bị chặn. Cập nhật trước khi mỗi phiên kết thúc, đọc khi phiên tiếp theo bắt đầu.
 
-**フィードバックサブシステム（品質確認の窓口）**: これが最も ROI の高いサブシステムです。`AGENTS.md` に検証コマンドを明確に列挙します。
+**Hệ thống phụ Phản hồi (cửa sổ kiểm tra chất lượng)**: Đây là hệ thống phụ có ROI cao nhất. Liệt kê rõ ràng các lệnh xác minh trong `AGENTS.md`:
 ```
-検証コマンド:
-- テスト: pytest tests/ -x
-- 型チェック: mypy src/ --strict
+Lệnh xác minh:
+- Test: pytest tests/ -x
+- Type check: mypy src/ --strict
 - Lint: ruff check src/
-- 完全検証: make check (上記すべてを含む)
+- Xác minh đầy đủ: make check (bao gồm tất cả những trên)
 ```
 
-どれか 1 つでも欠けていると、厨房の機能エリアが 1 つ欠けているのと同じです。料理はできますが、ずっとぎこちなくなります。
+Thiếu bất kỳ hệ thống phụ nào cũng giống như thiếu một khu vực chức năng trong nhà bếp — bạn vẫn có thể nấu ăn, nhưng luôn gượng gạo.
 
-**harness の品質診断**: 「等圧モデル制御」を使います。モデルは固定したまま、サブシステムを 1 つずつ削除し、削除によってどれだけ性能が落ちるかを測定します。それがボトルネックです。厨房で詰まりを探すのと同じで、レシピ棚を取り払ってどれだけ遅くなるか、コンロを止めてどの程度影響が出るかを見ればよいのです。
+**Chẩn đoán chất lượng harness**: Sử dụng "kiểm soát mô hình đẳng áp." Giữ nguyên mô hình, xóa từng hệ thống phụ một, đo xem cái nào bị xóa gây ra giảm hiệu suất lớn nhất. Đó là điểm nghẽn cổ chai của bạn — tập trung nỗ lực ở đó. Giống như tìm điểm nghẽn cổ chai trong nhà bếp: lấy kệ công thức đi và xem mọi thứ chậm lại bao nhiêu, tắt bếp và xem tác động.
 
-## あるチームの実例
+## Câu chuyện Thực tế của Một Nhóm
 
-あるチームは、TypeScript + React のフロントエンドアプリケーション（約 20,000 行）で GPT-4o を使っていました。彼らは 4 つの段階を経ました。基本的には、厨房設備を 1 つずつ足していったようなものです。
+Một nhóm sử dụng GPT-4o trên ứng dụng frontend TypeScript + React (~20,000 dòng mã). Họ trải qua bốn giai đoạn — về cơ bản là thêm thiết bị nhà bếp từng cái một:
 
-**段階 1 - 空っぽの厨房**: README に基本的なプロジェクト説明があるだけ。成功率は 5 回中 1 回（20%）でした。主な失敗は、パッケージマネージャーの選択ミス（npm vs yarn）、コンポーネント命名規則の不遵守、テストの実行失敗でした。
+**Giai đoạn 1 — Nhà bếp trống**: Chỉ có mô tả dự án cơ bản trong README. 1 trong 5 lần chạy thành công (20%). Lỗi chính: chọn sai package manager (npm vs yarn), không tuân theo quy ước đặt tên component, không thể chạy test.
 
-**段階 2 - レシピ棚の設置**: 技術スタックのバージョン、命名規則、主要な設計判断を含む `AGENTS.md` を追加。成功率は 60% に上がりました。残る失敗は主に環境問題と検証不足でした。
+**Giai đoạn 2 — Kệ công thức được cài đặt**: Thêm `AGENTS.md` với phiên bản tech stack, quy ước đặt tên, các quyết định kiến trúc chính. Tỷ lệ thành công tăng lên 60%. Các lỗi còn lại chủ yếu là vấn đề môi trường và thiếu xác minh.
 
-**段階 3 - 品質確認の窓口を開放**: `AGENTS.md` に検証コマンドを列挙しました。`yarn test && yarn lint && yarn build`。成功率は 80% に上がりました。
+**Giai đoạn 3 — Cửa sổ kiểm tra chất lượng được mở**: Liệt kê các lệnh xác minh trong `AGENTS.md`: `yarn test && yarn lint && yarn build`. Tỷ lệ thành công tăng lên 80%.
 
-**段階 4 - 仕込み台の整備**: 各 agent が毎回の実行で完了した作業と未完了の作業を記録する進捗ファイルのテンプレートを導入しました。成功率は 80-100% で安定しました。
+**Giai đoạn 4 — Bàn chuẩn bị sẵn sàng**: Giới thiệu các mẫu tệp tiến độ nơi các agent ghi lại công việc đã hoàn thành và chưa hoàn thành mỗi lần chạy. Tỷ lệ thành công ổn định ở 80-100%.
 
-4 回の反復で、モデル自体はまったく変わっていません。それでも成功率は 20% からほぼ 100% まで上がりました。これが harness engineering の力です。高価な材料を買い足したのではなく、厨房を正しく整えただけなのです。
+Bốn lần lặp, mô hình hoàn toàn không thay đổi, tỷ lệ thành công từ 20% lên gần 100%. Đó là sức mạnh của harness engineering. Bạn không mua nguyên liệu đắt tiền hơn — bạn chỉ tổ chức lại nhà bếp đúng cách.
 
-## 覚えておくべき要点
+## Những Điểm chính cần Nhớ
 
-- Harness = 指示 + ツール + 環境 + 状態 + フィードバック。5 つのサブシステムがあり、厨房の 5 つの機能エリアのように、どれも必要です。
-- モデルの重み以外はすべて harness です。どれだけモデルの能力が実際に引き出されるかを、harness が決めます。
-- 5 つのサブシステムの中でも、フィードバックサブシステムは投資コストが最も低く、効果が最も高いことが多いです。まず検証コマンドを正しく整備してください。品質確認の窓口は、最も価値のあるアップグレードです。
-- 各サブシステムの限界的な貢献は「等圧モデル制御」で定量化してください。直感だけに頼ってはいけません。
-- Harness もソースコードと同じように劣化します。定期的に見直し、技術的負債と同じように harness の負債も返済してください。
+- Harness = Hướng dẫn + Công cụ + Môi trường + Trạng thái + Phản hồi. Năm hệ thống phụ, như năm khu vực chức năng của nhà bếp — tất cả đều cần thiết.
+- Nếu không phải trọng số mô hình, thì đó là harness. Harness của bạn xác định mức độ năng lực mô hình được hiện thực hóa bao nhiêu.
+- Trong số năm hệ thống phụ, hệ thống phụ phản hồi thường có đầu tư thấp nhất và lợi nhuận cao nhất. Đặt đúng các lệnh xác minh trước — cửa sổ kiểm tra chất lượng là bản nâng cấp đáng giá nhất.
+- Sử dụng "kiểm soát mô hình đẳng áp" để định lượng đóng góp biên của mỗi hệ thống phụ — đừng dựa vào trực giác.
+- Harness mục nát như mã nguồn. Kiểm tra thường xuyên, trả nợ harness như bạn trả nợ kỹ thuật.
 
-## さらに読む
+## Đọc thêm
 
 - [OpenAI: Harness Engineering](https://openai.com/index/harness-engineering/)
 - [Anthropic: Effective Harnesses for Long-Running Agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
@@ -100,10 +100,10 @@ flowchart LR
 - [SWE-agent: Agent-Computer Interfaces](https://github.com/princeton-nlp/SWE-agent)
 - [Thoughtworks: Harness Engineering on Technology Radar](https://www.thoughtworks.com/radar)
 
-## 演習
+## Bài tập
 
-1. **5 要素 harness の監査**: AI agent を使っているプロジェクトを 1 つ選び、5 要素の枠組みで完全に監査してください。各サブシステムを 1〜5 点で採点します。最も低いサブシステムを見つけ、30 分かけて改善し、その後 agent の性能変化を観察してください。
+1. **Kiểm toán harness năm tuple**: Lấy một dự án nơi bạn sử dụng AI agent và thực hiện kiểm toán đầy đủ bằng khung năm tuple. Chấm điểm mỗi hệ thống phụ từ 1-5. Tìm hệ thống phụ có điểm thấp nhất, dành 30 phút cải thiện nó, sau đó quan sát sự thay đổi về hiệu suất agent.
 
-2. **等圧モデル制御の実験**: 1 つのモデルと難しいタスクを選びます。次に、指示を削除し（`AGENTS.md` を消す）、フィードバックを削除し（検証コマンドを与えない）、状態を削除し（進捗ファイルを置かない）という操作を、毎回 1 つだけ行って性能低下を測定します。その結果をもとに、あなたのプロジェクトにおけるサブシステムの重要度を順位付けしてください。
+2. **Thí nghiệm kiểm soát mô hình đẳng áp**: Chọn một mô hình và một tác vụ đầy thách thức. Lần lượt xóa hướng dẫn (xóa AGENTS.md), xóa phản hồi (không cung cấp lệnh xác minh), xóa trạng thái (không có tệp tiến độ) — xóa chỉ một cái mỗi lần và đo lường giảm hiệu suất. Dựa trên kết quả, xếp hạng tầm quan trọng của hệ thống phụ cho dự án của bạn.
 
-3. **アフォーダンス分析**: あなたのプロジェクトで agent が「やりたいのにできない」状況を 1 つ見つけます（たとえば、パラメータ化されたクエリを使うべきだと分かっていても、プロジェクトの ORM パターンを知らない場合など）。それが Gulf of Execution（どうやるかが分からない）なのか、Gulf of Evaluation（正しいかどうかが分からない）なのかを分析し、そのギャップを埋める harness 改善を設計してください。
+3. **Phân tích affordance**: Tìm một tình huống mà agent trong dự án của bạn "muốn làm gì đó nhưng không thể" (ví dụ: biết nó nên sử dụng các truy vấn được tham số hóa nhưng không biết các mẫu ORM của dự án của bạn). Phân tích liệu đây là Gulf of Execution (không biết làm thế nào) hay Gulf of Evaluation (không biết có đúng không), sau đó thiết kế một cải tiến harness để thu hẹp khoảng cách đó.

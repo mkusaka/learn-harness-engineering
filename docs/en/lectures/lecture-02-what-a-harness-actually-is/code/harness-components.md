@@ -1,9 +1,9 @@
 # Harness Components Example
 
-ローカルリポジトリで動作する coding agent にとって:
+For a coding agent working in a local repository:
 
 - Model:
-  LLM そのもの
+  the LLM itself
 
 - Harness:
   - system prompt
@@ -18,4 +18,4 @@
   - lint checks
   - evaluator loop
 
-上記の harness の要素のいずれかを変更すると、実際の agent も変わります。
+If you change any of the above harness pieces, you change the effective agent.

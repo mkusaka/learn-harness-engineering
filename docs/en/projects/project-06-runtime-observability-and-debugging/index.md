@@ -1,25 +1,25 @@
-[中国語版 →](../../../zh/projects/project-06-runtime-observability-and-debugging/)
+[中文版本 →](../../../zh/projects/project-06-runtime-observability-and-debugging/)
 
-> 関連講義: [Lecture 11. エージェントの実行時状態を可観測にする](./../../lectures/lecture-11-why-observability-belongs-inside-the-harness/index.md) · [Lecture 12. すべてのセッションの最後にクリーンな引き継ぎを行う](./../../lectures/lecture-12-why-every-session-must-leave-a-clean-state/index.md)
-> テンプレート: [templates/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/en/resources/templates/)
+> Related lectures: [Lecture 11. Make the agent's runtime observable](./../../lectures/lecture-11-why-observability-belongs-inside-the-harness/index.md) · [Lecture 12. Clean handoff at the end of every session](./../../lectures/lecture-12-why-every-session-must-leave-a-clean-state/index.md)
+> Template files: [templates/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/en/resources/templates/)
 
-# プロジェクト 06. 完全な Agent Harness を構築する（総仕上げ）
+# Project 06. Build a Complete Agent Harness (Capstone)
 
-## やること
+## What You Do
 
-これは集大成となるプロジェクトです。最初の 5 つのプロジェクトで学んだことをすべて組み合わせ、フルベンチマークを実行し、そのあとクリーンアップを行って、品質を保ちやすい状態になっているかを確認します。
+This is the capstone project. Assemble everything learned in the first five projects, run a full benchmark, then do a cleanup pass to verify quality is maintainable.
 
-文書の取り込み、インデックス作成、引用ベースの Q&A、実行時の可観測性、そして読みやすく再開しやすい repo 状態までを含む、固定の多機能タスクセットを使います。まず弱い harness のベースラインで実行し、次に最も強い harness で実行し、そのあとクリーンアップして再実行します。最後に harness のアブレーション実験を行い、一度に 1 つずつ要素を取り除いて、実際に何が効いているのかを確かめます。
+Use a fixed multi-feature task set covering the complete product slice: document import, indexing, citation-based Q&A, runtime observability, and readable restartable repo state. First run with weak harness baseline, then with your strongest harness, then a cleanup and re-run. Finally, do a harness ablation experiment — remove one component at a time and see which ones actually matter.
 
-## ツール
+## Tools
 
 - Claude Code or Codex
 - Git
 - Node.js + Electron
-- 品質ドキュメントテンプレート
-- 評価用ルーブリック
-- 最初の 5 つのプロジェクトで蓄積したすべての harness コンポーネント
+- Quality document template
+- Evaluator rubric
+- All harness components accumulated from the first five projects
 
-## Harness の仕組み
+## Harness Mechanism
 
-完全な harness: すべての仕組み + 可観測性 + アブレーション調査
+Complete harness: all mechanisms + observability + ablation study

@@ -1,8 +1,8 @@
-# レクチャー 02 用コード
+# Code for Lecture 02
 
-このフォルダは、次の違いを示す小さな例に使います。
+Use this folder for small examples that distinguish:
 
-- model の振る舞い
-- harness の振る舞い
-- prompt のみの構成
-- environment に支えられた agent 構成
+- model behavior
+- harness behavior
+- prompt-only setups
+- environment-backed agent setups

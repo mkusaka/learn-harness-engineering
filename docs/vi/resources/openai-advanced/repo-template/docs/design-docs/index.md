@@ -1,21 +1,21 @@
-# 設計ドキュメント一覧
+# Chỉ mục Tài liệu Thiết kế
 
-この一覧を、設計履歴をたどれる探索用マップとして使ってください。
+Sử dụng chỉ mục này như bản đồ có thể khám phá của lịch sử thiết kế.
 
-## 採用済み
+## Đã Chấp nhận
 
-- `core-beliefs.md`: agent-first の運用原則と、長く使えるプロジェクト基準
+- `core-beliefs.md`: niềm tin vận hành agent-first và chuẩn mực dự án lâu bền
 
-## 提案
+## Đề xuất
 
-- `[新しい設計ドキュメントのパスをここに追加]`
+- `[thêm đường dẫn tài liệu thiết kế mới ở đây]`
 
-## 廃止済み
+## Không còn Dùng
 
-- `[移行先へのリンク付きで、古い設計ドキュメントや置き換え済みドキュメントをここに移動]`
+- `[di chuyển các tài liệu thiết kế cũ hoặc đã bị thay thế ở đây với các liên kết thay thế]`
 
-## 保守ルール
+## Quy tắc Bảo trì
 
-- すべての設計ドキュメントには、オーナーか更新のきっかけが必要です。
-- 古くなったドキュメントは、放置せず削除するか、廃止済みとして明示してください。
-- 実装計画が依存する設計ドキュメントには、進行中の計画へのリンクを張ってください。
+- Mọi tài liệu thiết kế nên có người sở hữu hoặc kích hoạt cập nhật.
+- Xóa các tài liệu lỗi thời hoặc đánh dấu chúng không còn dùng thay vì để chúng trôi dạt.
+- Liên kết các kế hoạch thực thi active với các tài liệu thiết kế mà chúng phụ thuộc vào.

@@ -1,37 +1,37 @@
 # Project 05: Evaluator Loops and Three-Role Upgrades
 
-役割分離（単一役割 / 生成 + 評価 / 計画 + 生成 + 評価）が実装品質にどう影響するかを測定します。
+测量角色分离（单角色 / 生成+评估 / 计划+生成+评估）如何改变实现质量。
 
 ## 目录说明
 
 | 目录 | 含义 |
 |------|------|
-| `starter/` | **出発点** - P4 の solution をベースに、多輪の Q&A 履歴機能を新たに実装する。 |
-| `solution/single-role/` | **変種 A** - 1 つのエージェントがすべての作業を担当する（計画 + 実装 + 自己レビュー）。基本品質。 |
-| `solution/gen-eval/` | **変種 B** - 生成器 + 評価器のパターン。修正の証跡があり、より高い品質。 |
-| `solution/plan-gen-eval/` | **変種 C** - 計画者 + 生成器 + 評価器。最も高品質で、スプリント契約と評価基準がある。 |
+| `starter/` | **起点**——基于 P4 solution，新增多轮问答历史功能待实现。 |
+| `solution/single-role/` | **变体 A**——一个代理完成所有工作（规划 + 实现 + 自我评审）。基础质量。 |
+| `solution/gen-eval/` | **变体 B**——生成器 + 评估器模式。较高质量，有修订证据。 |
+| `solution/plan-gen-eval/` | **变体 C**——计划器 + 生成器 + 评估器。最高质量，有冲刺合约和评分标准。 |
 
 ## 使用方法
 
 ```sh
-# 3 つの変種はそれぞれ独立して実行する
-cd solution/single-role && npm install  # 単一役割モード
-cd solution/gen-eval && npm install     # 生成 + 評価モード
-cd solution/plan-gen-eval && npm install # 完全な三役割モード
+# 三个变体各自独立运行
+cd solution/single-role && npm install  # 单角色模式
+cd solution/gen-eval && npm install     # 生成+评估模式
+cd solution/plan-gen-eval && npm install # 完整三角色模式
 
-# 3 つの変種を比較する：
-# - コード品質（evaluator-rubric.md の採点）
-# - 見つかった欠陥の数
-# - 手戻りの必要度
+# 对比三个变体的：
+# - 代码质量（evaluator-rubric.md 评分）
+# - 发现的缺陷数量
+# - 需要返工的程度
 ```
 
-## このプロジェクトで扱う機能
+## 本项目涉及的功能
 
-- 多輪 Q&A 履歴（対話型 UI）
-- スプリント契約（sprint contract）
-- 評価器の採点基準（evaluator rubric）の調整
+- 多轮问答历史（对话式 UI）
+- 冲刺合约（sprint contract）
+- 评估器评分标准（evaluator rubric）调优
 
-## 対応する講義
+## 对应课件
 
-- [Lecture 09: エージェントが勝利を早まって宣言するのを防ぐ](../../docs/lectures/lecture-09-why-agents-declare-victory-too-early/index.md)
-- [Lecture 10: 本当の検証は全工程を通して実行してこそ成立する](../../docs/lectures/lecture-10-why-end-to-end-testing-changes-results/index.md)
+- [Lecture 09: 阻止代理过早宣布胜利](../../docs/lectures/lecture-09-why-agents-declare-victory-too-early/index.md)
+- [Lecture 10: 只有全流程运行才算真正的验证](../../docs/lectures/lecture-10-why-end-to-end-testing-changes-results/index.md)

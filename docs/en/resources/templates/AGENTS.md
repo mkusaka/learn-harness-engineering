@@ -1,50 +1,55 @@
 # AGENTS.md
 
-このリポジトリは、長時間にわたる coding-agent の作業を前提に設計されています。目的は、単純なコード出力量を最大化することではありません。次のセッションが推測なしで続けられる状態でリポジトリを残すことが目的です。
+This repository is designed for long-running coding-agent work. The goal is not
+to maximize raw code output. The goal is to leave the repo in a state where the
+next session can continue without guessing.
 
-## 起動手順
+## Startup Workflow
 
-コードを書く前に:
+Before writing code:
 
-1. `pwd` で作業ディレクトリを確認する。
-2. `claude-progress.md` を読み、最新の検証済み状態と次の手順を確認する。
-3. `feature_list.json` を読み、優先度が最も高い未完了の機能を選ぶ。
-4. `git log --oneline -5` で直近のコミットを確認する。
-5. `./init.sh` を実行する。
-6. 新しい作業を始める前に、必要な smoke もしくは end-to-end の検証を実行する。
+1. Confirm the working directory with `pwd`.
+2. Read `claude-progress.md` for the latest verified state and next step.
+3. Read `feature_list.json` and choose the highest-priority unfinished feature.
+4. Review recent commits with `git log --oneline -5`.
+5. Run `./init.sh`.
+6. Run the required smoke or end-to-end verification before starting new work.
 
-ベースラインの検証がすでに失敗している場合は、まずそれを修正してください。壊れた開始状態の上に新しい機能作業を重ねてはいけません。
+If baseline verification is already failing, fix that first. Do not stack new
+feature work on top of a broken starting state.
 
-## 作業ルール
+## Working Rules
 
-- 一度に1つの機能だけに取り組む。
-- コードを追加しただけで機能完了と見なさない。
-- 選択した機能のスコープ内で変更を収めること。ブロッカーがある場合のみ、限定的な補助修正を行う。
-- 実装中に検証ルールを黙って変更しない。
-- チャットの要約よりも、リポジトリ内に残る永続的な成果物を優先する。
+- Work on one feature at a time.
+- Do not mark a feature complete just because code was added.
+- Keep changes within the selected feature scope unless a blocker forces a
+  narrow supporting fix.
+- Do not silently change verification rules during implementation.
+- Prefer durable repo artifacts over chat summaries.
 
-## 必須成果物
+## Required Artifacts
 
-- `feature_list.json`: 機能状態の唯一の正本
-- `claude-progress.md`: セッションログと現在の検証済み状態
-- `init.sh`: 標準の起動および検証手順
-- `session-handoff.md`: 大きなセッション向けの任意の簡易引き継ぎ資料
+- `feature_list.json`: source of truth for feature state
+- `claude-progress.md`: session log and current verified status
+- `init.sh`: standard startup and verification path
+- `session-handoff.md`: optional compact handoff for larger sessions
 
-## 完了条件
+## Definition Of Done
 
-機能が完了といえるのは、次のすべてを満たした場合だけです。
+A feature is done only when all of the following are true:
 
-- 対象の挙動が実装されている
-- 必要な検証が実際に実行されている
-- 証拠が `feature_list.json` または `claude-progress.md` に記録されている
-- リポジトリが標準の起動手順から再開可能な状態を保っている
+- the target behavior is implemented
+- the required verification actually ran
+- evidence is recorded in `feature_list.json` or `claude-progress.md`
+- the repository remains restartable from the standard startup path
 
-## セッション終了時
+## End Of Session
 
-セッションを終える前に:
+Before ending a session:
 
-1. `claude-progress.md` を更新する。
-2. `feature_list.json` を更新する。
-3. 未解決のリスクやブロッカーを記録する。
-4. 作業が安全な状態になったら、説明的なメッセージでコミットする。
-5. 次のセッションがすぐに `./init.sh` を実行できるよう、リポジトリをきれいな状態に保つ。
+1. Update `claude-progress.md`.
+2. Update `feature_list.json`.
+3. Record any unresolved risk or blocker.
+4. Commit with a descriptive message once the work is in a safe state.
+5. Leave the repo clean enough for the next session to run `./init.sh`
+   immediately.
