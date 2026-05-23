@@ -1,5 +1,4 @@
 name: Build course PDFs and publish release assets
-
 on:
   workflow_dispatch:
     inputs:
@@ -19,53 +18,48 @@ on:
   release:
     types:
       - published
-
 permissions:
   contents: write
-
 jobs:
   build-pdfs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
         with:
           fetch-depth: 0
-
+          persist-credentials: false
       - name: Setup Node
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version: 24
-          cache: npm
-
+          package-manager-cache: false
       - name: Install dependencies
         run: npm ci
-
       - name: Install Chromium for Playwright
         run: npx playwright install --with-deps chromium
-
       - name: Build course PDFs
         run: npm run pdf:build
-
       - name: Upload PDF artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: course-pdfs
           path: artifacts/pdfs
-
       - name: Publish PDFs to existing release
         if: github.event_name == 'release'
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2.6.2
         with:
           tag_name: ${{ github.event.release.tag_name }}
           files: artifacts/pdfs/*.pdf
-
       - name: Create or update release with PDFs
         if: github.event_name == 'workflow_dispatch'
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2.6.2
         with:
           tag_name: ${{ inputs.tag }}
           name: ${{ inputs.release_name }}
           prerelease: ${{ inputs.prerelease }}
           generate_release_notes: true
           files: artifacts/pdfs/*.pdf
+    permissions:
+      contents: write
+    timeout-minutes: 90
