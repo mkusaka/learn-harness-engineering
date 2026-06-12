@@ -16,7 +16,7 @@
     "pdf:build": "npm run docs:build && npm run pdf:export"
   },
   "devDependencies": {
-    "mermaid": "^11.14.0",
+    "mermaid": "^11.15.0",
     "pdf-lib": "^1.17.1",
     "playwright": "^1.59.1",
     "tsx": "^4.19.0",
